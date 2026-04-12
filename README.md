@@ -13,15 +13,15 @@
 
 ## 简体中文
 
-### 当前语言：中文 | [Switch to English](#english)
+### 当前语言：中文 | [切换到英文](#english)
 
-# Relaxed Risk Parity Research
+# 宽松风险平价研究
 
-### From Local Adaptation to Global Asset Allocation
+### 从本土适配到全球资产配置
 
 ## 📌 项目概览
 
-本项目在低利率环境下对传统风险平价（RP）框架进行改进，提出放松风险平价（RRP）模型。
+本项目在低利率环境下对传统风险平价（RP）框架进行改进，提出宽松风险平价（RRP）模型。
 
 核心目标是解决标准 RP 的关键局限：
 
