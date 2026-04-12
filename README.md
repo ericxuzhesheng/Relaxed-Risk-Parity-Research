@@ -1,3 +1,7 @@
+# Relaxed Risk Parity Research
+
+### 宽松风险平价研究 | From Local Adaptation to Global Asset Allocation
+
 <p align="center">
   <a href="#简体中文">
     <img src="https://img.shields.io/badge/LANGUAGE-中文-E74C3C?style=for-the-badge&labelColor=4B4B4B" alt="Language Chinese" />
@@ -57,7 +61,7 @@ $$
 而是引入：
 
 - ✅ 松弛变量
-- ✅ 惩罚项（$\lambda$）
+- ✅ 惩罚项（λ）
 - ✅ 动态收益约束
 
 核心思想：
@@ -99,7 +103,7 @@ $$
 - 随市场状态自适应
 - 避免固定目标收益假设不现实
 
-### 3. 惩罚系数（$\lambda$）
+### 3. 惩罚系数（λ）
 
 - 控制偏离风险平价的程度
 - 在 GMV（最小方差）与 ERC（风险平价）之间平衡
@@ -209,7 +213,7 @@ $$
 RRP introduces:
 
 - ✅ Relaxation variables
-- ✅ Penalty term ($\lambda$)
+- ✅ Penalty term (λ)
 - ✅ Dynamic return constraint
 
 Core idea:
@@ -251,7 +255,7 @@ $$
 - Adaptive to market regime
 - Avoids unrealistic fixed-return assumptions
 
-### 3. Penalty Coefficient ($\lambda$)
+### 3. Penalty Coefficient (λ)
 
 - Controls deviation from risk parity
 - Balances between GMV (minimum variance) and ERC (risk parity)
