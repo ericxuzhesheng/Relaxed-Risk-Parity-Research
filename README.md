@@ -177,6 +177,14 @@ report/
 - 市场风格切换风险
 - 交易执行与流动性风险
 
+## 📚 参考文献
+
+- APA:
+  Gambeta, V., & Kwon, R. (2020). _Risk return trade-off in relaxed risk parity portfolio optimization_. _Journal of Risk and Financial Management, 13_(10), 237. https://doi.org/10.3390/jrfm13100237
+- IEEE:
+  V. Gambeta and R. Kwon, "Risk Return Trade-Off in Relaxed Risk Parity Portfolio Optimization," _Journal of Risk and Financial Management_, vol. 13, no. 10, p. 237, 2020, doi: 10.3390/jrfm13100237.
+- 论文链接: https://www.mdpi.com/1911-8074/13/10/237
+
 ## 📄 许可证
 
 本项目采用 MIT 许可证，详情见 [LICENSE](LICENSE)。
@@ -346,6 +354,14 @@ report/
 - Model risk and backtest bias
 - Market regime shifts
 - Execution and liquidity risks
+
+## 📚 References
+
+- APA:
+  Gambeta, V., & Kwon, R. (2020). _Risk return trade-off in relaxed risk parity portfolio optimization_. _Journal of Risk and Financial Management, 13_(10), 237. https://doi.org/10.3390/jrfm13100237
+- IEEE:
+  V. Gambeta and R. Kwon, "Risk Return Trade-Off in Relaxed Risk Parity Portfolio Optimization," _Journal of Risk and Financial Management_, vol. 13, no. 10, p. 237, 2020, doi: 10.3390/jrfm13100237.
+- Article link: https://www.mdpi.com/1911-8074/13/10/237
 
 ## 📄 License
 
