@@ -124,6 +124,24 @@ $$
 
 RRP 在风险调整后收益上有显著提升。
 
+### 📷 关键图表（V3）
+
+#### 1) 组合累计收益对比
+
+![组合累计收益对比](backtest/V3/组合累计收益对比.png)
+
+#### 2) 风险收益散点图
+
+![风险收益散点图](backtest/V3/风险收益散点图.png)
+
+#### 3) 双模型核心绩效指标对比
+
+![双模型核心绩效指标对比](backtest/V3/双模型核心绩效指标对比.png)
+
+#### 4) 宽松 RP 资产类别权重变化
+
+![宽松RP资产类别权重变化](backtest/V3/宽松RP_资产类别权重变化.png)
+
 ## 🌍 全球扩展（V3）
 
 新增全球资产：
@@ -275,6 +293,24 @@ $$
 - V2 Sharpe: 3.33
 
 RRP shows a significant improvement in risk-adjusted return.
+
+### 📷 Key Charts (V3)
+
+#### 1) Cumulative Return Comparison
+
+![Cumulative Return Comparison](backtest/V3/组合累计收益对比.png)
+
+#### 2) Risk-Return Scatter
+
+![Risk Return Scatter](backtest/V3/风险收益散点图.png)
+
+#### 3) Core Performance Metrics Comparison
+
+![Core Performance Metrics Comparison](backtest/V3/双模型核心绩效指标对比.png)
+
+#### 4) Relaxed RP Asset-Class Weights
+
+![Relaxed RP Asset Class Weights](backtest/V3/宽松RP_资产类别权重变化.png)
 
 ## 🌍 Global Extension (V3)
 
