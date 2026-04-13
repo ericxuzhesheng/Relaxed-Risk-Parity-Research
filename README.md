@@ -138,9 +138,9 @@ RRP 在风险调整后收益上有显著提升。
 
 ![双模型核心绩效指标对比](backtest/V3/双模型核心绩效指标对比.png)
 
-#### 4) 宽松 RP 资产类别权重变化
+#### 4) 宽松RP模型持仓变化
 
-![宽松RP资产类别权重变化](backtest/V3/宽松RP_资产类别权重变化.png)
+![宽松RP模型持仓变化](backtest/V3/宽松RP模型持仓变化.png)
 
 ## 🌍 全球扩展（V3）
 
@@ -308,9 +308,9 @@ RRP shows a significant improvement in risk-adjusted return.
 
 ![Core Performance Metrics Comparison](backtest/V3/双模型核心绩效指标对比.png)
 
-#### 4) Relaxed RP Asset-Class Weights
+#### 4) Relaxed RP Holdings Change
 
-![Relaxed RP Asset Class Weights](backtest/V3/宽松RP_资产类别权重变化.png)
+![Relaxed RP Holdings Change](backtest/V3/宽松RP模型持仓变化.png)
 
 ## 🌍 Global Extension (V3)
 
