@@ -78,6 +78,14 @@ pip install -r requirements.txt
 python scripts/run_rrp_pipeline.py --mode full --fast-mode
 ```
 
+### 📚 参考文献
+1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
+2. López de Prado, M. (2018). *Advances in Financial Machine Learning*.
+3. Roncalli, T. (2013). *Introduction to Risk Parity and Budgeting*.
+
+### 📄 许可证
+本项目采用 MIT 许可证。详见 [LICENSE](LICENSE) 文件。
+
 ---
 
 <a id="en"></a>
@@ -141,11 +149,10 @@ pip install -r requirements.txt
 python scripts/run_rrp_pipeline.py --mode full --fast-mode
 ```
 
----
+### 📚 References
+1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
+2. López de Prado, M. (2018). *Advances in Financial Machine Learning*.
+3. Roncalli, T. (2013). *Introduction to Risk Parity and Budgeting*.
 
-## 📚 References
-1. Gambeta & Kwon (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
-2. López de Prado (2018). *Advances in Financial Machine Learning*.
-
-## 📄 License
-MIT License.
+### 📄 License
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
