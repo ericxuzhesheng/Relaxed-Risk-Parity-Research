@@ -22,8 +22,8 @@ We employ a rolling window approach:
 ## 3. Results Analysis
 ### 3.1 Static vs Dynamic Comparison
 Based on the backtest (Fast Mode):
-- **V1 Standard**: Stable but limited return potential.
-- **V3 Global**: Significant return improvement through global diversification and relaxation.
+- V1 Standard: Stable but limited return potential.
+- V3 Global: Significant return improvement through global diversification and relaxation.
 - **Dynamic RRP**: Successfully adapts to changing market regimes, maintaining a higher Sharpe ratio than standard RP while keeping turnover lower than fixed RRP models.
 
 ### 3.2 Parameter Stability

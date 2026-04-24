@@ -29,9 +29,9 @@
 ### 🚀 核心版本演进
 | 版本 | 模型类型 | 资产池范围 | 特性说明 |
 | :--- | :--- | :--- | :--- |
-| **V1** | 标准 RP | 本土资产 | 严格等风险贡献，极致稳健。 |
-| **V2** | 宽松 RRP | 本土资产 | **引入松弛变量**，本土股债混合增强。 |
-| **V3** | 宽松 RRP | 全球资产 | 加入美债、标普、汇率，利用全球分散化。 |
+| V1 | 标准 RP | 本土资产 | 严格等风险贡献，极致稳健。 |
+| V2 | 宽松 RRP | 本土资产 | **引入松弛变量**，本土股债混合增强。 |
+| V3 | 宽松 RRP | 全球资产 | 加入美债、标普、汇率，利用全球分散化。 |
 | **Dynamic** | 动态 RRP | 全球资产 | **最新升级**：趋势过滤 + 动态风险闸门自适应。 |
 
 ### 🧠 风险控制杀手锏 (Risk Overlay)
@@ -40,12 +40,12 @@
 3.  **波动率目标管理**: 全量资产遵循 2.5% 的极致波动率目标约束。
 
 ### 📊 绩效看板 (Evaluation: 2021-01-01 to Present)
-| 指标 | V1 Standard | **V2 Relaxed** | V3 Global | **Dynamic RRP** |
+| 指标 | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
 | :--- | :--- | :--- | :--- | :--- |
-| **年化收益** | 1.67% | **1.63%** | 3.64% | **4.27%** |
-| **最大回撤** | -0.70% | **-2.83%** | -2.69% | **-5.12%** |
-| **夏普比率** | -0.30 | **-0.13** | 0.94 | **0.65** |
-| **月度换手率** | 0.024 | **0.015** | 0.019 | **0.020** |
+| **年化收益** | 1.67% | 1.63% | 3.64% | 4.27% |
+| **最大回撤** | -0.70% | -2.83% | -2.69% | -5.12% |
+| **夏普比率** | -0.30 | -0.13 | 0.94 | 0.65 |
+| **月度换手率** | 0.024 | 0.015 | 0.019 | 0.020 |
 
 > **结论**：在 2.5% 的目标波动率约束下，V3 和 Dynamic 模型成功将回撤压制在 3%-5% 左右，实现了极高的绝对收益盈利质量。
 
@@ -90,9 +90,9 @@ This project enhances the traditional Risk Parity framework with **Relaxed Risk 
 ### 🚀 Evolution of Models
 | Version | Model Type | Asset Pool | Key Features |
 | :--- | :--- | :--- | :--- |
-| **V1** | Standard RP | Local Assets | Strict ERC, extreme stability. |
-| **V2** | Relaxed RRP | Local Assets | **Relaxation introduced**, domestic enhancement. |
-| **V3** | Relaxed RRP | Global Assets | Diversification with USDX, S&P, Treasuries. |
+| V1 | Standard RP | Local Assets | Strict ERC, extreme stability. |
+| V2 | Relaxed RRP | Local Assets | **Relaxation introduced**, domestic enhancement. |
+| V3 | Relaxed RRP | Global Assets | Diversification with USDX, S&P, Treasuries. |
 | **Dynamic** | Dynamic RRP | Global Assets | **Latest**: Adaptive risk budget + trend filtering. |
 
 ### 🧠 Killer Risk Controls (Risk Overlay)
@@ -101,12 +101,12 @@ This project enhances the traditional Risk Parity framework with **Relaxed Risk 
 3.  **Volatility Targeting**: Enforces a strict 2.5% volatility target across all assets.
 
 ### 📊 Performance Dashboard (Evaluation: 2021-01-01 to Present)
-| Metric | V1 Standard | **V2 Relaxed** | V3 Global | **Dynamic RRP** |
+| Metric | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
 | :--- | :--- | :--- | :--- | :--- |
-| **Ann. Return** | 1.67% | **1.63%** | 3.64% | **4.27%** |
-| **Max Drawdown** | -0.70% | **-2.83%** | -2.69% | **-5.12%** |
-| **Sharpe Ratio** | -0.30 | **-0.13** | 0.94 | **0.65** |
-| **Turnover** | 0.024 | **0.015** | 0.019 | **0.020** |
+| **Ann. Return** | 1.67% | 1.63% | 3.64% | 4.27% |
+| **Max Drawdown** | -0.70% | -2.83% | -2.69% | -5.12% |
+| **Sharpe Ratio** | -0.30 | -0.13 | 0.94 | 0.65 |
+| **Turnover** | 0.024 | 0.015 | 0.019 | 0.020 |
 
 > **Conclusion**: With a 2.5% Vol Target, V3 and Dynamic models successfully capped drawdowns within 3%-5%, achieving superior quality in absolute returns.
 
