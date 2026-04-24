@@ -39,12 +39,19 @@ def run_dynamic_rrp_selection(
         cfg.update(params)
         
         try:
+            # --- Killer 2: Momentum Filter in Selection ---
+            mom_lookback = 60
+            recent_ret = (1 + df_train.iloc[-mom_lookback:]).prod() - 1
+            mu_filtered = mu.copy()
+            mu_filtered[recent_ret < 0] = -0.1
+            # ----------------------------------------------
+
             R_base = mu.mean()
             if bond_indices:
-                w_train, lev = optimize_with_leverage(Sigma.values, n_assets, bond_indices, mu.values, Theta, R_base, is_relaxed=True, config=cfg)
+                w_train, lev = optimize_with_leverage(Sigma.values, n_assets, bond_indices, mu_filtered.values, Theta, R_base, is_relaxed=True, config=cfg)
                 w_train = w_train * lev
             else:
-                w_train = solve_relaxed_rp(Sigma.values, mu.values, Theta, n_assets, R_base, cfg)
+                w_train = solve_relaxed_rp(Sigma.values, mu_filtered.values, Theta, n_assets, R_base, cfg)
             
             port_ret = df_train.fillna(0) @ w_train
             
