@@ -14,7 +14,8 @@ def main():
     parser.add_argument("--mode", type=str, choices=["static", "dynamic", "full"], default="full")
     parser.add_argument("--update-wind", action="store_true")
     parser.add_argument("--train-window-months", type=int, default=24)
-    parser.add_argument("--selection-metric", type=str, default="sharpe_ratio")
+    parser.add_argument("--selection-metric", type=str, default="utility")
+    parser.add_argument("--top-k", type=int, default=3)
     parser.add_argument("--fast-mode", action="store_true")
     args = parser.parse_args()
 
@@ -58,14 +59,14 @@ def main():
 
     # 2. Dynamic Selection
     if args.mode in ["dynamic", "full"]:
-        print("Running Dynamic Selection...")
+        print(f"Running Dynamic Selection with metric={args.selection_metric}, top_k={args.top_k}...")
         if args.fast_mode:
-            param_grid = [{"lambda_pen": l, "m": m} for l in [0.5, 1.9] for m in [1.0, 1.9]]
+            param_grid = [{"lambda_pen": l, "m": m} for l in [0.5, 1.0, 1.9, 3.0] for m in [1.0, 1.5, 1.9, 2.5]]
         else:
             param_grid = [
                 {"lambda_pen": l, "m": m, "bond_leverage_upper": lev} 
                 for l in [0.1, 0.5, 1.0, 1.9, 5.0] 
-                for m in [1.0, 1.3, 1.6, 1.9, 2.2]
+                for m in [1.0, 1.3, 1.6, 1.9, 2.2, 2.5]
                 for lev in [1.0, 1.2, 1.4]
             ]
             
@@ -76,6 +77,7 @@ def main():
             param_grid, 
             train_window_months=args.train_window_months,
             selection_metric=args.selection_metric,
+            top_k=args.top_k,
             config_base=config
         )
         
@@ -92,6 +94,9 @@ def main():
         res_dyn.to_csv(resolve_path("results/tables/dynamic_rrp_full.csv"), index=False)
         
         # Stability Audit
+        res_dyn['selected_lambda'] = res_dyn['avg_selected_lambda']
+        res_dyn['selected_m'] = res_dyn['avg_selected_m']
+        
         stability = {
             "parameter_switch_count": (res_dyn['selected_lambda'].diff() != 0).sum(),
             "avg_lambda": res_dyn['selected_lambda'].mean(),
@@ -131,9 +136,6 @@ def main():
 
     print("\nSummary Results:")
     print(summary_df)
-
-    # Final NAV Plot
-    # (Simplified: logic to load all and plot comparison)
     print("Pipeline completed successfully.")
 
 if __name__ == "__main__":
