@@ -47,12 +47,20 @@ def run_dynamic_rrp_selection(
                 w_train = solve_relaxed_rp(Sigma.values, mu.values, Theta, n_assets, R_base, cfg)
             
             port_ret = df_train.fillna(0) @ w_train
+            
+            # --- Volatility Targeting in Selection ---
+            expected_vol_train = np.sqrt(w_train @ Sigma.values @ w_train)
+            target_vol = config_base.get("target_vol", 0.03)
+            if expected_vol_train > target_vol:
+                port_ret = port_ret * (target_vol / expected_vol_train)
+            # ----------------------------------------
+
             nav = (1 + port_ret).cumprod()
             m = calculate_metrics(nav, trading_days=config_base["trading_days_per_year"])
             
-            # 效用函数：收益 - 2.0 * 波动 (更保守，追求夏普比率)
+            # 效用函数：年化收益 - 5.0 * 最大回撤 (极致抗回撤)
             if selection_metric == "utility":
-                return m["annualized_return"] - 2.0 * m["annualized_volatility"]
+                return m["annualized_return"] - 5.0 * abs(m["max_drawdown"])
             return m.get(selection_metric, -999)
         except:
             return -999

@@ -43,7 +43,16 @@ def run_static_backtest(returns: pd.DataFrame, model_type: str = "relaxed", conf
                         current_weights = w * lev
                     else:
                         current_weights = solve_relaxed_rp(Sigma.values, mu.values, Theta, n_assets, R_base, config)
-        
+                
+                # --- Volatility Targeting ---
+                expected_vol = np.sqrt(current_weights @ Sigma.values @ current_weights)
+                target_vol = config.get("target_vol", 0.03)
+                if expected_vol > target_vol:
+                    scaling_factor = target_vol / expected_vol
+                    current_weights = current_weights * scaling_factor
+                    # 剩余仓位默认视为现金(不贡献收益)
+                # ----------------------------
+
         ret = np.dot(returns.fillna(0).loc[d], current_weights)
         res = {"date": d, "portfolio_return": ret}
         for j, asset in enumerate(returns.columns):

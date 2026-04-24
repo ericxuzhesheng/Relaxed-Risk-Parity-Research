@@ -16,6 +16,8 @@ DEFAULT_CONFIG = {
     "bond_keywords": ["国债", "信用票", "美债", "债"],
     "bond_leverage_upper": 1.4,
     "risk_free_rate": 0.0182,
+    "target_vol": 0.025, # 极致稳健目标：2.5%
+    "tushare_token": "ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53",
 }
 
 def resolve_path(path_like):

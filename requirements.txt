@@ -6,3 +6,4 @@ openpyxl
 akshare
 cvxpy
 ecos
+tushare

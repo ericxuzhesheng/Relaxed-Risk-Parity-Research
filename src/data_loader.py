@@ -1,98 +1,104 @@
 import os
 import pandas as pd
 import numpy as np
-import glob
+import tushare as ts
+import time
 from datetime import datetime, timedelta
-from src.utils import resolve_path
+from src.utils import resolve_path, get_config
 
-try:
-    from WindPy import w
-    WIND_AVAILABLE = True
-except ImportError:
-    WIND_AVAILABLE = False
-
-def update_data_from_wind(file_path: str = None) -> str:
-    if not WIND_AVAILABLE:
-        print("Warning: WindPy not available. Skipping update.")
-        return None
+# 精简后的核心资产映射表 (25个)
+ASSET_MAP = {
+    # --- 债券及衍生品 ---
+    "0-5中高信用票": ("932339.CSI", "I"),
+    "中证转债": ("000832.SH", "I"),
+    "CFFEX2年期国债期货": ("TS.CFE", "F"),
+    "CFFEX10年期国债期货": ("T.CFE", "F"),
+    "CFFEX30年期国债期货": ("TL.CFE", "F"),
+    "CBOT10年美债连续": ("TY00.CBT", "F"),
     
-    if file_path is None:
+    # --- 宽基指数 ---
+    "沪深300ETF": ("510300.SH", "E"),
+    "中证1000ETF": ("512100.SH", "E"),
+    "科创50ETF": ("588000.SH", "E"),
+    "红利ETF": ("510880.SH", "E"),
+    "上证指数ETF": ("510210.SH", "E"),
+    "恒生ETF": ("159920.SZ", "E"),
+    "恒生科技ETF": ("513180.SH", "E"),
+    "纳指ETF": ("159941.SZ", "E"),
+    "标普500ETF": ("513500.SH", "E"),
+    "日经225ETF": ("513880.SH", "E"),
+    
+    # --- 核心外汇 ---
+    "美元指数": ("USDX.FX", "X"),
+    "离岸人民币": ("USDCNY.FX", "X"),
+    "欧元兑美元": ("EURUSD.FX", "X"),
+    "英镑兑美元": ("GBPUSD.FX", "X"),
+    "美元兑日元": ("USDJPY.FX", "X"),
+    
+    # --- 核心商品 ---
+    "黄金ETF": ("518880.SH", "E"),
+    "有色ETF": ("159980.SZ", "E"),
+    "WTI原油": ("CL.NYM", "F"),
+    "豆粕连续": ("M.DCE", "F"),
+}
+
+def fetch_from_tushare(start_date="20180101", end_date=None):
+    config = get_config()
+    ts.set_token(config["tushare_token"])
+    pro = ts.pro_api()
+    if end_date is None:
+        end_date = datetime.now().strftime("%Y%m%d")
+    all_data = []
+    print(f"Starting Precision Sync ({len(ASSET_MAP)} core assets)...")
+    for name, (code, asset_type) in ASSET_MAP.items():
+        print(f"  Syncing {name} ({code})...")
+        try:
+            df = None
+            if asset_type == "E": df = pro.fund_daily(ts_code=code, start_date=start_date, end_date=end_date)
+            elif asset_type == "I": df = pro.index_daily(ts_code=code, start_date=start_date, end_date=end_date)
+            elif asset_type == "F": df = pro.fut_daily(ts_code=code, start_date=start_date, end_date=end_date)
+            elif asset_type == "X": df = pro.fx_daily(ts_code=code, start_date=start_date, end_date=end_date)
+            if df is not None and not df.empty:
+                date_col = 'trade_date' if 'trade_date' in df.columns else 'date'
+                df = df[[date_col, 'close']]
+                df[date_col] = pd.to_datetime(df[date_col])
+                df = df.set_index(date_col).sort_index()
+                df.columns = [name]
+                all_data.append(df)
+            time.sleep(0.3)
+        except Exception as e:
+            print(f"  Skip {name}: {e}")
+    if not all_data:
+        raise ValueError("No data fetched.")
+    final_df = pd.concat(all_data, axis=1)
+    cache_path = resolve_path("data/processed/tushare_data.csv")
+    os.makedirs(os.path.dirname(cache_path), exist_ok=True)
+    final_df.to_csv(cache_path)
+    return final_df
+
+def load_data(source="tushare", force_update=False):
+    if source == "tushare":
+        cache_path = resolve_path("data/processed/tushare_data.csv")
+        if force_update or not os.path.exists(cache_path):
+            df = fetch_from_tushare()
+        else:
+            df = pd.read_csv(cache_path, index_col=0, parse_dates=True)
+    else:
         file_path = str(resolve_path("资产数据.xlsx"))
-        if not os.path.exists(file_path):
-            files = glob.glob(str(resolve_path("资产数据*.xlsx")))
-            if files:
-                files.sort(reverse=True)
-                file_path = files[0]
-            else:
-                return None
-
-    if not w.isconnected():
-        w.start()
-    
-    df = pd.read_excel(file_path, header=None)
-    TICKER_ROW_INDEX = 4
-    DATA_START_INDEX = 5
-    DATE_COL_INDEX = 0
-    
-    raw_tickers = df.iloc[TICKER_ROW_INDEX, 1:].tolist()
-    valid_tickers = [t for t in raw_tickers if isinstance(t, str) and t.strip()]
-    ticker_col_map = {t: i + 1 for i, t in enumerate(raw_tickers) if t in valid_tickers}
-    
-    last_date = pd.to_datetime(df.iloc[-1, DATE_COL_INDEX])
-    start_date = last_date + timedelta(days=1)
-    end_date = datetime.now()
-    
-    if start_date.date() > end_date.date():
-        return file_path
-
-    wind_data = w.wsd(",".join(valid_tickers), "close", start_date, end_date, "")
-    if wind_data.ErrorCode != 0 or not wind_data.Data:
-        return file_path
-
-    new_dates = [pd.to_datetime(d) for d in wind_data.Times]
-    new_rows = []
-    for i in range(len(new_dates)):
-        row = [None] * df.shape[1]
-        row[DATE_COL_INDEX] = new_dates[i]
-        for idx, code in enumerate(wind_data.Codes):
-            col_idx = ticker_col_map.get(code)
-            if col_idx is not None:
-                row[col_idx] = wind_data.Data[idx][i]
-        new_rows.append(row)
-        
-    updated_df = pd.concat([df, pd.DataFrame(new_rows)], ignore_index=True)
-    updated_df.to_excel(file_path, index=False, header=False)
-    return file_path
-
-def load_data(file_path: str) -> pd.DataFrame:
-    """加载数据并预处理为收益率格式"""
-    file_path = str(resolve_path(file_path))
-    if file_path.endswith('.xlsx'):
-        # 针对本项目Excel结构的特殊处理
         df_raw = pd.read_excel(file_path, header=None)
         names = df_raw.iloc[3, 1:].tolist()
-        # 创建列名映射
-        col_names = ['date'] + [str(n).strip() for n in names]
         df = df_raw.iloc[5:].copy()
-        df.columns = col_names
+        df.columns = ['date'] + [str(n).strip() for n in names]
         df['date'] = pd.to_datetime(df['date'])
-        df.set_index('date', inplace=True)
-    else:
-        df = pd.read_csv(file_path, parse_dates=["date"], index_col="date")
-    
-    df.index = pd.to_datetime(df.index)
-    df = df.sort_index(ascending=True)
-    
-    # 转换为收益率
-    if np.abs(df).max().max() > 1:
-        df_returns = df.pct_change().dropna(how="all")
-    else:
-        df_returns = df.copy()
-    
-    # 3 sigma 异常值处理
+        df = df.set_index('date').sort_index()
+    df = df.apply(pd.to_numeric, errors='coerce')
+    df = df.ffill().bfill()
+    df_returns = df.pct_change().dropna(how="all")
     def remove_outliers(series):
         m, s = series.mean(), series.std()
         return series.mask((series - m).abs() > 3 * s)
+    return df_returns.apply(remove_outliers).dropna(how="all")
 
-    df_returns = df_returns.apply(remove_outliers)
-    return df_returns.dropna(how="all")
+def update_data_from_wind(file_path=None):
+    print("Wind update placeholder")
+    return None
