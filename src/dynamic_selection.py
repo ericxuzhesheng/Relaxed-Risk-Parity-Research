@@ -12,7 +12,7 @@ def run_dynamic_rrp_selection(
     test_window_months: int = 1,
     rebalance_frequency: str = "M",
     selection_metric: str = "utility",
-    top_k: int = 3,  # 取表现最好的前K组参数进行平滑
+    top_k: int = 1,  # 取表现最好的前K组参数进行平滑
     config_base: dict = None
 ) -> pd.DataFrame:
     """
@@ -65,9 +65,9 @@ def run_dynamic_rrp_selection(
             nav = (1 + port_ret).cumprod()
             m = calculate_metrics(nav, trading_days=config_base["trading_days_per_year"])
             
-            # 效用函数：年化收益 - 5.0 * 最大回撤 (极致抗回撤)
+            # 效用函数：年化收益 - 2.0 * 最大回撤 (适度激进)
             if selection_metric == "utility":
-                return m["annualized_return"] - 5.0 * abs(m["max_drawdown"])
+                return m["annualized_return"] - 2.0 * abs(m["max_drawdown"])
             return m.get(selection_metric, -999)
         except:
             return -999

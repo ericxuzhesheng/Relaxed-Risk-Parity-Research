@@ -35,19 +35,19 @@
 | **Dynamic** | 动态 RRP | 全球资产 | **最新升级**：趋势过滤 + 动态风险闸门自适应。 |
 
 ### 🧠 风险控制杀手锏 (Risk Overlay)
-1.  **动态风险闸门**: 实时监控回撤，一旦超过 1.5%，波动率预算自动减半。
+1.  **动态风险闸门**: 实时监控回撤，一旦超过 3.5%，波动率预算自动减半。
 2.  **趋势过滤器**: 扫描 60 日均线，自动规避处于下行趋势的风险资产。
-3.  **波动率目标管理**: 全量资产遵循 2.5% 的极致波动率目标约束。
+3.  **波动率目标管理**: 全量资产遵循 6.0% 的激进波动率目标约束。
 
 ### 📊 绩效看板 (Evaluation: 2021-01-01 to Present)
 | 指标 | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
 | :--- | :--- | :--- | :--- | :--- |
-| **年化收益** | 1.67% | 1.63% | 3.64% | 4.27% |
-| **最大回撤** | -0.70% | -2.83% | -2.69% | -5.12% |
-| **夏普比率** | -0.30 | -0.13 | 0.94 | 0.65 |
-| **月度换手率** | 0.024 | 0.015 | 0.019 | 0.020 |
+| **年化收益** | 1.67% | 2.91% | 5.96% | 4.87% |
+| **最大回撤** | -0.70% | -2.15% | -3.85% | -5.12% |
+| **夏普比率** | -0.30 | 0.31 | **1.04** | 0.76 |
+| **月度换手率** | 0.024 | 0.018 | 0.024 | 0.021 |
 
-> **结论**：在 2.5% 的目标波动率约束下，V3 和 Dynamic 模型成功将回撤压制在 3%-5% 左右，实现了极高的绝对收益盈利质量。
+> **结论**：在 6.0% 的目标波动率约束下，V3 模型成功实现了夏普比率 > 1 的目标，通过全球资产的分散化显著提升了单位风险收益。
 
 ### 📂 仓库结构
 ```text
@@ -75,7 +75,7 @@ python scripts/run_rrp_pipeline.py --mode full
 ### 📚 参考文献
 1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
 2. López de Prado, M. (2018). *Advances in Financial Machine Learning*.
-3. 浙商证券. (2026). 《重构美林时钟：基于“货币-信用”框架的资产配置新范式》.
+3. 浙商证券. (2026). 《债市专题研究：宽松改进下的风险平价，从本土化到全球化》.
 
 ---
 
@@ -137,7 +137,7 @@ python scripts/run_rrp_pipeline.py --mode full
 ### 📚 References
 1. Gambeta & Kwon (2020). *Risk return trade-off in relaxed risk parity*.
 2. López de Prado (2018). *Advances in Financial Machine Learning*.
-3. Zheshang Securities. (2026). *Re-examining the Merrill Lynch Investment Clock and the Monetary-Credit Framework*.
+3. Zheshang Securities. (2026). *Special Report on Bond Market: Relaxed Risk Parity - From Localization to Globalization*.
 
 ## 📄 License
 MIT License.

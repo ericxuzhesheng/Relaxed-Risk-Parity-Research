@@ -64,9 +64,9 @@ def run_static_backtest(returns: pd.DataFrame, model_type: str = "relaxed", conf
                 expected_vol = np.sqrt(current_weights @ Sigma.values @ current_weights)
                 base_target_vol = config.get("target_vol", 0.025)
                 
-                # 如果当前回撤超过 1.5%，触发防御模式，目标波动率减半
+                # 如果当前回撤超过 3.5%，触发防御模式，目标波动率减半
                 current_target_vol = base_target_vol
-                if abs(drawdown) > 0.015:
+                if abs(drawdown) > 0.035:
                     current_target_vol = base_target_vol * 0.5
                 
                 if expected_vol > current_target_vol:

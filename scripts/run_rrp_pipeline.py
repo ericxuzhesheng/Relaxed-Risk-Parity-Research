@@ -16,8 +16,8 @@ def main():
     parser.add_argument("--force-update", action="store_true", help="强制从Tushare同步数据")
     parser.add_argument("--update-wind", action="store_true")
     parser.add_argument("--train-window-months", type=int, default=24)
-    parser.add_argument("--selection-metric", type=str, default="utility")
-    parser.add_argument("--top-k", type=int, default=3)
+    parser.add_argument("--selection-metric", type=str, default="sharpe")
+    parser.add_argument("--top-k", type=int, default=1)
     parser.add_argument("--fast-mode", action="store_true")
     args = parser.parse_args()
 
@@ -74,13 +74,15 @@ def main():
     if args.mode in ["dynamic", "full"]:
         print(f"Running Dynamic Selection with metric={args.selection_metric}, top_k={args.top_k}...")
         if args.fast_mode:
-            param_grid = [{"lambda_pen": l, "m": m} for l in [0.5, 1.0, 1.9, 3.0] for m in [1.0, 1.5, 1.9, 2.5]]
+            # 快速模式也提升至 100+ 组合
+            param_grid = [{"lambda_pen": l, "m": m} for l in [0.001, 0.01, 0.1, 0.5, 1.0, 1.9, 3.0, 5.0, 10.0] for m in [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]]
         else:
+            # 全量模式提升至 1000 组合：10 (lambda) * 10 (m) * 10 (lev) = 1000
             param_grid = [
-                {"lambda_pen": l, "m": m, "bond_leverage_upper": lev} 
-                for l in [0.1, 0.5, 1.0, 1.9, 5.0] 
-                for m in [1.0, 1.3, 1.6, 1.9, 2.2, 2.5]
-                for lev in [1.0, 1.2, 1.4]
+                {"lambda_pen": l, "m": m, "bond_leverage_upper": lev}
+                for l in [0.001, 0.01, 0.05, 0.1, 0.5, 1.0, 1.5, 2.0, 5.0, 10.0]
+                for m in [1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 6.0]
+                for lev in [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0]
             ]
             
         # Use V3 assets for dynamic
