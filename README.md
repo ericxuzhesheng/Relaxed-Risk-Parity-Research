@@ -47,6 +47,17 @@
 | **夏普比率** | -0.30 | 0.31 | **1.04** | 0.76 |
 | **月度换手率** | 0.024 | 0.018 | 0.024 | 0.021 |
 
+#### 📈 净值走势对比 (NAV Comparison)
+<p align="center">
+  <img src="results/figures/static_vs_dynamic_nav.png" width="800" alt="NAV Comparison">
+</p>
+
+#### 🧩 动态权重与参数演进 (Weights & Parameters)
+<p align="center">
+  <img src="results/figures/dynamic_rrp_weights.png" width="400" alt="Weights">
+  <img src="results/figures/lambda_selection_timeline.png" width="400" alt="Lambda Timeline">
+</p>
+
 > **结论**：在 6.0% 的目标波动率约束下，V3 模型成功实现了夏普比率 > 1 的目标，通过全球资产的分散化显著提升了单位风险收益。
 
 ### 📂 仓库结构
@@ -97,19 +108,30 @@ This project enhances the traditional Risk Parity framework with **Relaxed Risk 
 | **Dynamic** | Dynamic RRP | Global Assets | **Latest**: Adaptive risk budget + trend filtering. |
 
 ### 🧠 Killer Risk Controls (Risk Overlay)
-1.  **Risk Budget Overlay**: Automatically halves Vol Target if drawdown exceeds 1.5%.
+1.  **Risk Budget Overlay**: Automatically halves Vol Target if drawdown exceeds 3.5%.
 2.  **Momentum Filter**: Scans 60-day MA to avoid assets in downward trends.
-3.  **Volatility Targeting**: Enforces a strict 2.5% volatility target across all assets.
+3.  **Volatility Targeting**: Enforces a strict 6.0% aggressive volatility target.
 
 ### 📊 Performance Dashboard (Evaluation: 2021-01-01 to Present)
 | Metric | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
 | :--- | :--- | :--- | :--- | :--- |
-| **Ann. Return** | 1.67% | 1.63% | 3.64% | 4.27% |
-| **Max Drawdown** | -0.70% | -2.83% | -2.69% | -5.12% |
-| **Sharpe Ratio** | -0.30 | -0.13 | 0.94 | 0.65 |
-| **Turnover** | 0.024 | 0.015 | 0.019 | 0.020 |
+| **Ann. Return** | 1.67% | 2.91% | 5.96% | 4.87% |
+| **Max Drawdown** | -0.70% | -2.15% | -3.85% | -5.12% |
+| **Sharpe Ratio** | -0.30 | 0.31 | **1.04** | 0.76 |
+| **Turnover** | 0.024 | 0.018 | 0.024 | 0.021 |
 
-> **Conclusion**: With a 2.5% Vol Target, V3 and Dynamic models successfully capped drawdowns within 3%-5%, achieving superior quality in absolute returns.
+#### 📈 NAV Comparison
+<p align="center">
+  <img src="results/figures/static_vs_dynamic_nav.png" width="800" alt="NAV Comparison">
+</p>
+
+#### 🧩 Model Dynamics
+<p align="center">
+  <img src="results/figures/dynamic_rrp_weights.png" width="400" alt="Weights">
+  <img src="results/figures/m_selection_timeline.png" width="400" alt="M Timeline">
+</p>
+
+> **Conclusion**: With a 6.0% Vol Target, V3 model achieved Sharpe > 1, proving that global diversification significantly enhances risk-adjusted returns.
 
 ### 📂 Repository Structure
 ```text
