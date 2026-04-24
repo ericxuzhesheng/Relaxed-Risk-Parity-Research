@@ -17,7 +17,7 @@ def main():
     parser.add_argument("--update-wind", action="store_true")
     parser.add_argument("--train-window-months", type=int, default=24)
     parser.add_argument("--selection-metric", type=str, default="sharpe")
-    parser.add_argument("--top-k", type=int, default=1)
+    parser.add_argument("--top-k", type=int, default=2)
     parser.add_argument("--fast-mode", action="store_true")
     args = parser.parse_args()
 

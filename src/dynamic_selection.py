@@ -12,7 +12,7 @@ def run_dynamic_rrp_selection(
     test_window_months: int = 1,
     rebalance_frequency: str = "M",
     selection_metric: str = "utility",
-    top_k: int = 1,  # 取表现最好的前K组参数进行平滑
+    top_k: int = 2,  # 取表现最好的前K组参数进行平滑
     config_base: dict = None
 ) -> pd.DataFrame:
     """
@@ -65,10 +65,13 @@ def run_dynamic_rrp_selection(
             nav = (1 + port_ret).cumprod()
             m = calculate_metrics(nav, trading_days=config_base["trading_days_per_year"])
             
-            # 效用函数：年化收益 - 2.0 * 最大回撤 (适度激进)
+            # 增加对风险分散的微小奖励 (0.001级)，防止所有 lambda 得分完全一致导致参数卡死
+            # 当 Sharpe 相同时，倾向于更平衡的组合（即 std 较小的权重分布）
+            dist_score = 0.001 * (1.0 / (np.std(w_train) + 1e-6))
+            
             if selection_metric == "utility":
-                return m["annualized_return"] - 2.0 * abs(m["max_drawdown"])
-            return m.get(selection_metric, -999)
+                return m["annualized_return"] - 2.0 * abs(m["max_drawdown"]) + dist_score
+            return m.get(selection_metric, -999) + dist_score
         except:
             return -999
 
