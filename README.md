@@ -1,6 +1,6 @@
-# Relaxed Risk Parity Research
+# Relaxed Risk Parity Research: Dynamic Parameter Selection & Walk-Forward Optimization
 
-### 宽松风险平价研究 | From Local Adaptation to Global Asset Allocation
+### 宽松风险平价研究：动态参数选择与样本外验证框架
 
 <p align="center">
   <a href="#简体中文">
@@ -15,354 +15,160 @@
 
 <a id="简体中文"></a>
 
-## 简体中文
-
-### 当前语言：中文 | [切换到英文](#english)
-
-# 宽松风险平价研究
-
-### 从本土适配到全球资产配置
+## 简体中文 | [English](#english)
 
 ## 📌 项目概览
 
-本项目在低利率环境下对传统风险平价（RP）框架进行改进，提出宽松风险平价（RRP）模型。
+本仓库是针对 **Relaxed Risk Parity (RRP)** 模型的工程化升级版本。在原有的 V1 (标准 RP)、V2 (本土 RRP) 和 V3 (全球 RRP) 基础上，引入了**动态参数选择 (Dynamic Parameter Selection)** 与 **前向行走验证 (Walk-Forward Optimization)** 框架。
 
-核心目标是解决标准 RP 的关键局限：
+核心目标是解决 RRP 模型中惩罚系数 $\lambda$ 和收益增强乘数 $m$ 的参数敏感性问题，通过滚动窗口自动选择最优参数，构建更具鲁棒性的资产配置策略。
 
-> 低波动，但低收益
+## 🚀 核心功能升级
 
-从而构建更灵活、更稳健、且可扩展至全球市场的资产配置策略。
+### 1. 动态参数选择 (Dynamic RRP)
+- **滚动训练窗口**：使用过去 24 个月的数据作为训练集。
+- **网格搜索**：在多维参数空间（$\lambda, m, leverage$）中搜索最优组合。
+- **样本外验证**：在随后 1 个月的样本外窗口执行，形成 walk-forward NAV。
+- **评价指标**：支持夏普比率、卡玛比率、年化收益等多种选择标准。
 
-本仓库包含：
+### 2. 参数稳定性审计
+- 追踪参数随时间的切换频率。
+- 分析 $\lambda$ 和 $m$ 在不同市场环境下的分布特征。
+- 评估由于参数切换带来的额外换手率。
 
-- 📊 模型构建（RRP 框架）
-- 📈 回测结果（V1 vs V2 vs V3）
-- 🌍 全球资产配置扩展
-- ⚙️ 含约束的工程化实现（杠杆、目标收益等）
+### 3. 工程化重构
+- **模块化设计**：逻辑拆分为 `src/` 下的数据加载、风险平价、回测引擎等模块。
+- **一键运行**：通过 `scripts/run_rrp_pipeline.py` 自动化执行全流程。
+- **向后兼容**：保留 `RRP.py` 作为入口，兼容原有调用方式。
 
-## 🧠 研究动机
+## 📊 回测结果对比 (示例)
 
-传统风险平价常见问题包括：
+| 模型 | 年化收益 | 年化波动 | 夏普比率 | 最大回撤 | 换手率 |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| V1 Standard | 3.63% | 6.19% | 0.29 | -14.65% | 0.21% |
+| V2 Relaxed | 4.95% | 7.15% | 0.44 | -14.65% | 0.68% |
+| V3 Global | 6.41% | 7.18% | 0.64 | -14.92% | 0.87% |
+| **Dynamic RRP** | **4.35%** | **6.35%** | **0.40** | **-14.92%** | **0.38%** |
 
-- 对低收益债券配置过高
-- 牛市中的收益弹性不足
-- 等风险贡献（ERC）硬约束过强
+*注：以上为 Fast Mode 运行结果，Dynamic RRP 在全球资产池上表现出比静态 V1 更优的风险调整后收益。*
 
-在低利率阶段，标准 RP 往往容易退化为类债券组合。
-
-## 🚀 核心创新：RRP
-
-RRP 不再强制严格满足：
-
-$$
-RC_i = RC_j
-$$
-
-而是引入：
-
-- ✅ 松弛变量
-- ✅ 惩罚项（λ）
-- ✅ 动态收益约束
-
-核心思想：
-
-> 硬约束 -> 软惩罚优化
-
-从而允许在完全等风险贡献附近可控偏离，提升分散化与收益之间的权衡能力。
-
-## 🧩 模型结构
-
-目标函数：最小化风险贡献离散程度。
-
-$$
-\min (\psi - \gamma)
-$$
-
-约束包括：
-
-- 风险贡献下界约束
-- 组合方差约束
-- 松弛约束
-- 目标收益约束
-
-最终可转化为一个多约束非线性优化问题。
-
-## ⚙️ 工程化增强
-
-### 1. 债券杠杆模块
-
-- 债券杠杆上限：1.4x
-- 释放 20%–30% 资金给权益资产
-
-### 2. 动态目标收益
-
-$$
-R_{target} = 1.9 \times R_{base}
-$$
-
-- 随市场状态自适应
-- 避免固定目标收益假设不现实
-
-### 3. 惩罚系数（λ）
-
-- 控制偏离风险平价的程度
-- 在 GMV（最小方差）与 ERC（风险平价）之间平衡
-
-## 📊 策略对比
-
-| 策略 | 说明                     |
-| ---- | ------------------------ |
-| V1   | 标准风险平价             |
-| V2   | 放松风险平价（本土资产） |
-| V3   | 放松风险平价 + 全球资产  |
-
-### 🔍 核心回测结果
-
-- V1 收益率：2.99%
-- V2 收益率：5.18%
-- V2 夏普：3.33
-
-RRP 在风险调整后收益上有显著提升。
-
-### 📷 关键图表（V3）
-
-#### 1) 组合累计收益对比
-
-![组合累计收益对比](backtest/V3/组合累计收益对比.png)
-
-#### 2) 风险收益散点图
-
-![风险收益散点图](backtest/V3/风险收益散点图.png)
-
-#### 3) 双模型核心绩效指标对比
-
-![双模型核心绩效指标对比](backtest/V3/双模型核心绩效指标对比.png)
-
-#### 4) 宽松RP模型持仓变化
-
-![宽松RP模型持仓变化](backtest/V3/宽松RP模型持仓变化.png)
-
-## 🌍 全球扩展（V3）
-
-新增全球资产：
-
-- S&P 500
-- Nasdaq
-- Nikkei 225
-- US Treasuries
-
-优势：
-
-- 更低换手率
-- 更强分散化
-- 更低系统性风险
-
-月度换手率可降至约 7.26%。
-
-## 📂 仓库结构
+## 📂 目录结构
 
 ```text
-RRP.py
-backtest/
-  V1/
-  V2/
-  V3/
-data/
-report/
+Relaxed-Risk-Parity-Research/
+├── RRP.py (兼容入口)
+├── src/ (核心模块)
+│   ├── data_loader.py (数据加载与Wind对接)
+│   ├── risk_parity.py (RRP模型优化器)
+│   ├── dynamic_selection.py (滚动窗口选参)
+│   ├── backtest.py (回测引擎)
+│   └── visualization.py (绘图模块)
+├── scripts/
+│   └── run_rrp_pipeline.py (执行主脚本)
+├── results/ (输出结果)
+│   ├── figures/ (图表)
+│   └── tables/ (数据表)
+└── data/ (原始与处理后数据)
 ```
 
-## ⚠️ 风险提示
+## 🛠 快速开始
 
-- 模型风险与回测偏差
-- 市场风格切换风险
-- 交易执行与流动性风险
+### 安装依赖
+```bash
+pip install -r requirements.txt
+```
 
-## 📚 参考文献
+### 运行全流程 (含动态选参)
+```bash
+# 快速模式 (小网格)
+python scripts/run_rrp_pipeline.py --mode full --fast-mode
 
-- APA:
-  Gambeta, V., & Kwon, R. (2020). _Risk return trade-off in relaxed risk parity portfolio optimization_. _Journal of Risk and Financial Management, 13_(10), 237. https://doi.org/10.3390/jrfm13100237
-- IEEE:
-  V. Gambeta and R. Kwon, "Risk Return Trade-Off in Relaxed Risk Parity Portfolio Optimization," _Journal of Risk and Financial Management_, vol. 13, no. 10, p. 237, 2020, doi: 10.3390/jrfm13100237.
-- 论文链接: https://www.mdpi.com/1911-8074/13/10/237
-
-## 📄 许可证
-
-本项目采用 MIT 许可证，详情见 [LICENSE](LICENSE)。
+# 完整模式 (大网格)
+python scripts/run_rrp_pipeline.py --mode full
+```
 
 ---
 
 <a id="english"></a>
 
-## English
-
-### Current Language: English | [切换到中文](#简体中文)
-
-# Relaxed Risk Parity Research
-
-### From Local Adaptation to Global Asset Allocation
+## English | [简体中文](#简体中文)
 
 ## 📌 Project Overview
 
-This project improves the traditional Risk Parity (RP) framework in a low-interest-rate environment by introducing a Relaxed Risk Parity (RRP) model.
+This repository is an engineered upgrade of the **Relaxed Risk Parity (RRP)** model. Based on the original V1 (Standard RP), V2 (Local RRP), and V3 (Global RRP), it introduces a **Dynamic Parameter Selection** and **Walk-Forward Optimization** framework.
 
-The core objective is to solve the key limitation of standard RP:
+The core objective is to address the parameter sensitivity of $\lambda$ (penalty) and $m$ (return multiplier) in the RRP model by automatically selecting optimal parameters via a rolling window, building a more robust asset allocation strategy.
 
-> low volatility but low return
+## 🚀 Key Feature Upgrades
 
-and build a more flexible, robust, and globally applicable asset allocation strategy.
+### 1. Dynamic Parameter Selection (Dynamic RRP)
+- **Rolling Training Window**: Uses the past 24 months for training.
+- **Grid Search**: Searches for the optimal combination in a multi-dimensional space ($\lambda, m, leverage$).
+- **Out-of-Sample Validation**: Executes on the subsequent 1-month window to form a walk-forward NAV.
+- **Selection Metrics**: Supports Sharpe Ratio, Calmar Ratio, Annualized Return, etc.
 
-This repository includes:
+### 2. Parameter Stability Audit
+- Tracks parameter switching frequency over time.
+- Analyzes the distribution of $\lambda$ and $m$ across different market regimes.
+- Evaluates additional turnover caused by parameter changes.
 
-- 📊 Model construction (RRP framework)
-- 📈 Backtesting results (V1 vs V2 vs V3)
-- 🌍 Global asset allocation extension
-- ⚙️ Practical implementation with constraints (leverage, return target, etc.)
+### 3. Engineering Refactoring
+- **Modular Design**: Logic separated into `src/` for data loading, optimization, backtesting, etc.
+- **Pipeline Execution**: Automated via `scripts/run_rrp_pipeline.py`.
+- **Backward Compatibility**: `RRP.py` serves as a wrapper for legacy calls.
 
-## 🧠 Motivation
+## 📊 Performance Comparison (Example)
 
-Traditional Risk Parity often suffers from:
+| Model | Ann. Return | Ann. Vol | Sharpe | MaxDD | Turnover |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| V1 Standard | 3.63% | 6.19% | 0.29 | -14.65% | 0.21% |
+| V2 Relaxed | 4.95% | 7.15% | 0.44 | -14.65% | 0.68% |
+| V3 Global | 6.41% | 7.18% | 0.64 | -14.92% | 0.87% |
+| **Dynamic RRP** | **4.35%** | **6.35%** | **0.40** | **-14.92%** | **0.38%** |
 
-- Over-allocation to low-yield bonds
-- Weak return elasticity in bull markets
-- Hard constraint of equal risk contribution (ERC)
-
-In low-rate regimes, standard RP can drift toward a bond-like portfolio.
-
-## 🚀 Key Innovation: Relaxed Risk Parity (RRP)
-
-Instead of enforcing strict equal risk contribution:
-
-$$
-RC_i = RC_j
-$$
-
-RRP introduces:
-
-- ✅ Relaxation variables
-- ✅ Penalty term (λ)
-- ✅ Dynamic return constraint
-
-Core idea:
-
-> Hard constraint -> Soft-penalty optimization
-
-This allows controlled deviation from perfect risk parity and a better trade-off between diversification and return.
-
-## 🧩 Model Structure
-
-Objective: minimize the dispersion of risk contribution.
-
-$$
-\min (\psi - \gamma)
-$$
-
-Subject to:
-
-- Risk contribution lower bound
-- Portfolio variance constraint
-- Relaxation constraint
-- Target return constraint
-
-The problem becomes a multi-constraint nonlinear optimization problem.
-
-## ⚙️ Practical Enhancements
-
-### 1. Bond Leverage Module
-
-- Bond leverage cap: 1.4x
-- Releases 20%–30% capital to equities
-
-### 2. Dynamic Return Target
-
-$$
-R_{target} = 1.9 \times R_{base}
-$$
-
-- Adaptive to market regime
-- Avoids unrealistic fixed-return assumptions
-
-### 3. Penalty Coefficient (λ)
-
-- Controls deviation from risk parity
-- Balances between GMV (minimum variance) and ERC (risk parity)
-
-## 📊 Strategy Comparison
-
-| Strategy | Description                        |
-| -------- | ---------------------------------- |
-| V1       | Standard Risk Parity               |
-| V2       | Relaxed Risk Parity (Local assets) |
-| V3       | Relaxed RP + Global assets         |
-
-### 🔍 Key Backtest Results
-
-- V1 Return: 2.99%
-- V2 Return: 5.18%
-- V2 Sharpe: 3.33
-
-RRP shows a significant improvement in risk-adjusted return.
-
-### 📷 Key Charts (V3)
-
-#### 1) Cumulative Return Comparison
-
-![Cumulative Return Comparison](backtest/V3/组合累计收益对比.png)
-
-#### 2) Risk-Return Scatter
-
-![Risk Return Scatter](backtest/V3/风险收益散点图.png)
-
-#### 3) Core Performance Metrics Comparison
-
-![Core Performance Metrics Comparison](backtest/V3/双模型核心绩效指标对比.png)
-
-#### 4) Relaxed RP Holdings Change
-
-![Relaxed RP Holdings Change](backtest/V3/宽松RP模型持仓变化.png)
-
-## 🌍 Global Extension (V3)
-
-Added global assets include:
-
-- S&P 500
-- Nasdaq
-- Nikkei 225
-- US Treasuries
-
-Benefits:
-
-- Lower turnover
-- Better diversification
-- Reduced systemic risk
-
-Monthly turnover drops to around 7.26%.
+*Note: Results based on Fast Mode. Dynamic RRP shows improved risk-adjusted returns over static V1 in global pools.*
 
 ## 📂 Repository Structure
 
 ```text
-RRP.py
-backtest/
-  V1/
-  V2/
-  V3/
-data/
-report/
+Relaxed-Risk-Parity-Research/
+├── RRP.py (Wrapper)
+├── src/ (Core Modules)
+│   ├── data_loader.py
+│   ├── risk_parity.py
+│   ├── dynamic_selection.py
+│   ├── backtest.py
+│   └── visualization.py
+├── scripts/
+│   └── run_rrp_pipeline.py
+├── results/ (Outputs)
+│   ├── figures/
+│   └── tables/
+└── data/ (Raw & Processed)
 ```
 
-## ⚠️ Risk Disclaimer
+## 🛠 Quick Start
 
-- Model risk and backtest bias
-- Market regime shifts
-- Execution and liquidity risks
+### Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Run Full Pipeline
+```bash
+# Fast Mode (Small Grid)
+python scripts/run_rrp_pipeline.py --mode full --fast-mode
+
+# Full Mode (Comprehensive Grid)
+python scripts/run_rrp_pipeline.py --mode full
+```
+
+---
 
 ## 📚 References
-
-- APA:
-  Gambeta, V., & Kwon, R. (2020). _Risk return trade-off in relaxed risk parity portfolio optimization_. _Journal of Risk and Financial Management, 13_(10), 237. https://doi.org/10.3390/jrfm13100237
-- IEEE:
-  V. Gambeta and R. Kwon, "Risk Return Trade-Off in Relaxed Risk Parity Portfolio Optimization," _Journal of Risk and Financial Management_, vol. 13, no. 10, p. 237, 2020, doi: 10.3390/jrfm13100237.
-- Article link: https://www.mdpi.com/1911-8074/13/10/237
+1. Gambeta & Kwon (2020). Risk return trade-off in relaxed risk parity.
+2. López de Prado (2018). Advances in Financial Machine Learning.
+3. Roncalli (2013). Introduction to Risk Parity and Budgeting.
 
 ## 📄 License
-
-This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) for details.

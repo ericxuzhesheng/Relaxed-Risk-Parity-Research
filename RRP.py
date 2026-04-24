@@ -2411,8 +2411,18 @@ def run_version(version, model_type, asset_columns, output_folder):
 
 
 if __name__ == "__main__":
-    """月度更新主入口：支持Wind数据更新 + 风险平价分析"""
+    """月度更新主入口：支持新Pipeline + 原有逻辑兼容"""
+    import argparse
+    import sys
     
+    # 检查是否有新参数，如果没有或者只有原有参数，则运行原有逻辑
+    # 如果有 --mode 参数，则调用新pipeline
+    if "--mode" in sys.argv:
+        from scripts.run_rrp_pipeline import main as run_pipeline
+        run_pipeline()
+        sys.exit(0)
+
+    # 原有逻辑...
     # 解析命令行参数
     parser = argparse.ArgumentParser(description="资产配置月度更新脚本")
     parser.add_argument(
