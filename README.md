@@ -54,8 +54,13 @@
 
 #### 🧩 动态权重与参数演进 (Weights & Parameters)
 <p align="center">
-  <img src="results/figures/dynamic_rrp_weights.png" width="400" alt="Weights">
-  <img src="results/figures/lambda_selection_timeline.png" width="400" alt="Lambda Timeline">
+  <img src="results/figures/dynamic_rrp_weights.png" width="800" alt="Weights">
+</p>
+<p align="center">
+  <img src="results/figures/lambda_selection_timeline.png" width="800" alt="Lambda Timeline">
+</p>
+<p align="center">
+  <img src="results/figures/m_selection_timeline.png" width="800" alt="M Timeline">
 </p>
 
 > **结论**：在 6.0% 的目标波动率约束下，V3 模型成功实现了夏普比率 > 1 的目标，通过全球资产的分散化显著提升了单位风险收益。
@@ -127,8 +132,13 @@ This project enhances the traditional Risk Parity framework with **Relaxed Risk 
 
 #### 🧩 Model Dynamics
 <p align="center">
-  <img src="results/figures/dynamic_rrp_weights.png" width="400" alt="Weights">
-  <img src="results/figures/m_selection_timeline.png" width="400" alt="M Timeline">
+  <img src="results/figures/dynamic_rrp_weights.png" width="800" alt="Weights">
+</p>
+<p align="center">
+  <img src="results/figures/lambda_selection_timeline.png" width="800" alt="Lambda Timeline">
+</p>
+<p align="center">
+  <img src="results/figures/m_selection_timeline.png" width="800" alt="M Timeline">
 </p>
 
 > **Conclusion**: With a 6.0% Vol Target, V3 model achieved Sharpe > 1, proving that global diversification significantly enhances risk-adjusted returns.
