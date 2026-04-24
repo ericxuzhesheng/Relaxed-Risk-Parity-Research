@@ -75,6 +75,7 @@ python scripts/run_rrp_pipeline.py --mode full
 ### 📚 参考文献
 1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
 2. López de Prado, M. (2018). *Advances in Financial Machine Learning*.
+3. 浙商证券. (2024). 《风险收益的权衡：宽松型风险平价模型》.
 
 ---
 
@@ -136,6 +137,7 @@ python scripts/run_rrp_pipeline.py --mode full
 ### 📚 References
 1. Gambeta & Kwon (2020). *Risk return trade-off in relaxed risk parity*.
 2. López de Prado (2018). *Advances in Financial Machine Learning*.
+3. Zheshang Securities. (2024). *Risk-Return Trade-off in Relaxed Risk Parity*.
 
 ## 📄 License
 MIT License.
