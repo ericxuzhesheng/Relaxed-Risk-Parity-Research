@@ -3,6 +3,12 @@ import pandas as pd
 
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp, solve_standard_rp
+from src.risk_overlay import (
+    RiskOverlayConfig,
+    apply_risk_overlay,
+    apply_trend_confirmation,
+    transaction_cost_rate,
+)
 from src.utils import get_config
 
 
@@ -25,7 +31,8 @@ def run_static_backtest(
     keywords = config["bond_keywords"]
     bond_indices = [i for i, col in enumerate(returns.columns) if any(k in col for k in keywords)]
     rebalance_dates = _monthly_rebalance_dates(returns)
-    transaction_cost_rate = config.get("transaction_cost_bps", 0.0) / 10000.0
+    overlay_config = RiskOverlayConfig.from_config(config)
+    cost_rate = transaction_cost_rate(overlay_config)
 
     results = []
     current_weights = np.ones(n_assets) / n_assets
@@ -37,12 +44,20 @@ def run_static_backtest(
         high_water_mark = max(high_water_mark, current_nav)
         drawdown = (current_nav / high_water_mark) - 1.0
         turnover = 0.0
+        overlay_state = {
+            "target_vol_scalar": 1.0,
+            "drawdown_scalar": 1.0,
+            "turnover_cap_bound": False,
+            "gross_exposure": float(np.abs(current_weights).sum()),
+            "trend_positive_count": n_assets,
+        }
 
         if d in rebalance_dates:
             lookback = config["lookback_weeks"] * 5
             df_window = returns[returns.index < d].iloc[-lookback:]
             if len(df_window) > 20:
                 previous_weights = current_weights.copy()
+                trend_positive_count = n_assets
 
                 if model_type == "hrp":
                     current_weights = solve_hrp(df_window).values
@@ -53,10 +68,11 @@ def run_static_backtest(
                     sigma = df_window.cov() * config["trading_days_per_year"]
                     theta = np.diag(np.diag(sigma))
 
-                    mom_lookback = 60
-                    recent_ret = (1.0 + df_window.iloc[-mom_lookback:]).prod() - 1.0
-                    mu_filtered = mu.copy()
-                    mu_filtered[recent_ret < 0] = -0.1
+                    mu_filtered, trend_positive_count = apply_trend_confirmation(
+                        mu,
+                        df_window,
+                        overlay_config,
+                    )
                     r_base = mu.mean()
 
                     if model_type == "standard":
@@ -93,21 +109,32 @@ def run_static_backtest(
                                 config,
                             )
 
-                    expected_vol = np.sqrt(current_weights @ sigma.values @ current_weights)
-                    target_vol = config.get("target_vol", 0.025)
-                    if abs(drawdown) > 0.035:
-                        target_vol *= 0.5
-                    if expected_vol > target_vol:
-                        current_weights = current_weights * (target_vol / expected_vol)
+                current_weights, overlay_state = apply_risk_overlay(
+                    current_weights,
+                    previous_weights,
+                    df_window,
+                    drawdown,
+                    overlay_config,
+                )
+                overlay_state["trend_positive_count"] = trend_positive_count
 
-                turnover = float(np.abs(current_weights - previous_weights).sum())
+                turnover = overlay_state["turnover"]
 
         ret = float(np.dot(returns.fillna(0.0).loc[d], current_weights))
-        if turnover > 0.0 and transaction_cost_rate > 0.0:
-            ret -= transaction_cost_rate * turnover
+        if turnover > 0.0 and cost_rate > 0.0:
+            ret -= cost_rate * turnover
 
         portfolio_navs.append(portfolio_navs[-1] * (1.0 + ret))
-        res = {"date": d, "portfolio_return": ret, "turnover": turnover}
+        res = {
+            "date": d,
+            "portfolio_return": ret,
+            "turnover": turnover,
+            "target_vol_scalar": overlay_state["target_vol_scalar"],
+            "drawdown_scalar": overlay_state["drawdown_scalar"],
+            "turnover_cap_bound": overlay_state["turnover_cap_bound"],
+            "gross_exposure": overlay_state["gross_exposure"],
+            "trend_positive_count": overlay_state["trend_positive_count"],
+        }
         for j, asset in enumerate(returns.columns):
             res[f"weight_{asset}"] = current_weights[j]
         results.append(res)

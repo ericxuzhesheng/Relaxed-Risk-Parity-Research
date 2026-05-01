@@ -11,8 +11,16 @@ results/figures/*
 results/tables/*
 !results/figures/nav_comparison.png
 !results/figures/drawdown_comparison.png
+!results/figures/dynamic_parameter_timeline.png
+!results/figures/risk_overlay_ablation.png
+!results/figures/pbo_heatmap.png
 !results/figures/hrp_weights_timeline.png
 !results/tables/performance_summary.csv
+!results/tables/risk_overlay_ablation.csv
+!results/tables/walkforward_validation.csv
+!results/tables/parameter_stability.csv
+!results/tables/afml_diagnostics.csv
+!results/tables/pbo_diagnostic.csv
 !results/tables/hrp_comparison.csv
 backtest/V1/*
 backtest/V2/*

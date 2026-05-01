@@ -17,6 +17,9 @@ DEFAULT_CONFIG = {
     "bond_leverage_upper": 1.4,
     "risk_free_rate": 0.0182,
     "target_vol": 0.060, # 激进型目标：6.0% (追求 Sharpe > 1)
+    "gross_exposure_cap": 1.50,
+    "turnover_cap": 0.25,
+    "transaction_cost_bps": 3.0,
     "tushare_token": "ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53",
 }
 

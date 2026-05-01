@@ -1,0 +1,8 @@
+model,raw_sharpe,adjusted_sharpe_conservative,diagnostic_note
+V3_Global_RRP,1.15334293607668,1.0356019338251325,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Dynamic_RRP,0.3569407232133251,0.2391997209617776,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+HERC_Benchmark,-5.163130930237053,-5.2808719324886,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+HRP_Benchmark,-5.185256615956087,-5.302997618207634,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+V1_Standard,-0.47129699077185166,-0.5890379930233991,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+V2_Relaxed,1.0170696753521404,0.899328673100593,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Dynamic_RRP_overlay,,,Turnover cap bound on 56.7% of rows; simplified diagnostic.

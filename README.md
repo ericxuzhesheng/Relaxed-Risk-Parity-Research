@@ -1,204 +1,140 @@
-# 宽松风险平价研究框架 | Relaxed Risk Parity Research
+# 宽松型风险平价研究框架 | Relaxed Risk Parity Research
 
-<p align="center">
-  <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-%E4%B8%AD%E6%96%87-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
-  <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
-</p>
+This repository is a thesis-oriented Relaxed Risk Parity framework for low-rate and global macro regimes. The main workflow compares standard Risk Parity, Relaxed Risk Parity, global RRP, Dynamic RRP with an AFML-inspired risk overlay, and HRP/HERC benchmarks.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/Asset%20Allocation-Risk%20Parity-F2C94C?style=for-the-badge" alt="Asset Allocation">
-  <img src="https://img.shields.io/badge/Model-Relaxed%20Risk%20Parity-7AC943?style=for-the-badge" alt="Relaxed Risk Parity">
-</p>
+The authoritative report generator is:
 
-<p align="center">
-  A quantitative asset allocation research framework bridging standard Risk Parity, Relaxed Risk Parity, and dynamic walk-forward parameter selection.
-</p>
+```bash
+python scripts/run_rrp_pipeline.py --mode full
+```
 
----
+## 中文
 
-<a id="zh"></a>
+### 项目定位
 
-## 简体中文
+本项目研究传统风险平价在低利率、债券收益弹性下降、全球宏观波动加剧环境下的改进路径。核心模型为宽松型风险平价（Relaxed Risk Parity, RRP），并在 V3 全球资产池上加入动态选参与风险覆盖层，用于检验模型稳健性，而不是宣称未来一定跑赢。
 
-当前语言：中文 | [Switch to English](#en)
+### 模型演进
 
-### 📌 项目概览
-本项目旨在低利率与全球宏观剧烈波动的环境下，对传统风险平价（Risk Parity）框架进行工程化改良。引入 **宽松风险平价（Relaxed Risk Parity, RRP）** 模型，解决了标准 RP 组合收益弹性不足的问题，并集成了**动态风险闸门**与**趋势过滤**等先进控撤手段。
-
-### 🚀 核心版本演进
-| 版本 | 模型类型 | 资产池范围 | 特性说明 |
+| 版本 | 模型 | 资产池 | 研究重点 |
 | :--- | :--- | :--- | :--- |
-| V1 | 标准 RP | 本土资产 | 严格等风险贡献，极致稳健。 |
-| V2 | 宽松 RRP | 本土资产 | **引入松弛变量**，本土股债混合增强。 |
-| V3 | 宽松 RRP | 全球资产 | 加入美债、标普、汇率，利用全球分散化。 |
-| **Dynamic** | 动态 RRP | 全球资产 | **最新升级**：趋势过滤 + 动态风险闸门自适应。 |
+| V1 | Standard RP | 本土资产 | 标准等风险贡献基准 |
+| V2 | Relaxed RRP | 本土资产 | 加入收益目标与松弛约束 |
+| V3 Global RRP | Relaxed RRP | 全球资产 | 当前静态全球配置展示模型 |
+| Dynamic RRP | Walk-forward RRP + Overlay | 全球资产 | AFML-inspired 动态选参、风控覆盖与稳健性诊断 |
+| HRP/HERC | Hierarchical benchmarks | 全球资产 | 二级分散化基准，不作为主叙事模型 |
 
-### 🧠 风险控制杀手锏 (Risk Overlay)
-1.  **动态风险闸门**: 实时监控回撤，一旦超过 3.5%，波动率预算自动减半。
-2.  **趋势过滤器**: 扫描 60 日均线，自动规避处于下行趋势的风险资产。
-3.  **波动率目标管理**: 全量资产遵循 6.0% 的激进波动率目标约束。
+### AFML-Inspired Risk Overlay
 
-### 📊 绩效看板 (Evaluation: 2021-01-01 to Present)
-| 指标 | V1 Standard RP | V2 Relaxed RRP | V3 Global RRP | **Dynamic RRP** | HRP | HERC |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **年化收益** | 0.69% | 4.56% | **7.18%** | 4.49% | -0.11% | -0.10% |
-| **最大回撤** | -6.69% | -6.10% | -5.26% | -6.28% | -0.70% | -0.70% |
-| **夏普比率** | -0.55 | 0.75 | **1.31** | 0.49 | -6.35 | -6.29 |
-| **月度换手率** | 0.049 | 0.022 | 0.037 | 0.022 | 0.001 | 0.001 |
+Dynamic RRP 使用月度再平衡与严格过去窗口数据：
 
-#### 📈 净值走势对比 (NAV Comparison)
+- Walk-forward selection: 默认 24 个月滚动训练、1 个月测试；参数选择只使用再平衡日前数据。
+- Drawdown scaling: 回撤不超过 2.5% 时权重缩放 1.00，2.5%-4.0% 时为 0.75，高于 4.0% 时为 0.50。
+- Trend confirmation: 60 日动量为正且 20 日确认动量为正，才视为趋势正向。
+- Vol targeting: EWMA realized volatility，decay 为 0.94，目标波动率 6.0%，不允许因低波动将风险暴露放大到 1.0 以上。
+- Turnover-aware rebalancing: 默认月度 L1 换手上限 0.25，触发时向上一期权重线性混合。
+- Transaction costs: 默认 3 bps，按换手扣减。
+- Simplified PBO and adjusted Sharpe: 输出简化 PBO-style 诊断和保守 adjusted Sharpe；二者不是完整 CSCV 或完整 Deflated Sharpe Ratio。
+
+### 回测看板
+
+Evaluation starts on 2021-01-01. Current generated results:
+
+| Model | Ann. Return | Volatility | Sharpe | Sortino | Max DD | Ann. Turnover |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| V3 Global RRP | 5.98% | 3.61% | 1.15 | 1.35 | -4.25% | 2.78 |
+| Dynamic RRP | 3.22% | 3.93% | 0.36 | 0.37 | -7.12% | 2.31 |
+| V2 Relaxed | 5.53% | 3.65% | 1.02 | 1.10 | -5.12% | 2.68 |
+| V1 Standard | 1.25% | 1.21% | -0.47 | -0.50 | -2.65% | 2.60 |
+| HRP | -0.09% | 0.37% | -5.19 | -3.84 | -0.77% | 0.12 |
+| HERC | -0.09% | 0.37% | -5.16 | -4.65 | -0.77% | 0.12 |
+
+结论应保持克制：本样本内 V3 Global RRP 的原始 Sharpe 和保守 adjusted Sharpe 更强；Dynamic RRP 的贡献是提供经过 walk-forward、交易成本、趋势确认、波动目标与换手约束检验的动态风险覆盖工作流。当前生成结果中，Dynamic RRP 并未改善最大回撤。
+
+### Figures
+
 <p align="center">
   <img src="results/figures/nav_comparison.png" width="800" alt="NAV Comparison">
 </p>
 
-#### 📉 回撤走势对比 (Drawdown Comparison)
 <p align="center">
   <img src="results/figures/drawdown_comparison.png" width="800" alt="Drawdown Comparison">
 </p>
 
-#### 🧩 HRP 权重演进 (HRP Weights)
 <p align="center">
-  <img src="results/figures/hrp_weights_timeline.png" width="800" alt="HRP Weights Timeline">
+  <img src="results/figures/dynamic_parameter_timeline.png" width="800" alt="Dynamic Parameter Timeline">
 </p>
 
-> **结论**：在当前样本区间内，V3 Global RRP 的夏普比率最高；HRP/HERC 提供层次化风险基准，但在本资产池与区间内收益弹性较弱。
+<p align="center">
+  <img src="results/figures/risk_overlay_ablation.png" width="800" alt="Risk Overlay Ablation">
+</p>
 
-### 📂 仓库结构
-```text
-Relaxed-Risk-Parity-Research/
-├── RRP.py (兼容入口/Wrapper)
-├── src/ (核心模块库)
-│   ├── risk_parity.py (RRP优化核心)
-│   ├── dynamic_selection.py (动态选参引擎)
-│   ├── backtest.py (集成风险闸门的回测引擎)
-│   └── data_loader.py (Tushare Pro 数据引擎)
-├── scripts/
-│   └── run_rrp_pipeline.py (全流程一键运行)
-└── results/ (报告与图表)
-```
+<p align="center">
+  <img src="results/figures/pbo_heatmap.png" width="800" alt="Simplified PBO Heatmap">
+</p>
 
-### 🛠 快速开始
-```bash
-# 安装依赖
-pip install -r requirements.txt
+### 主要输出
 
-# 运行全流程 (默认使用 Tushare)
-python scripts/run_rrp_pipeline.py --mode full
-
-# 运行 HRP/HERC 基准对比
-python scripts/run_hrp_comparison.py
-```
-
-### HRP 与 HERC 基准
-本项目加入了 Hierarchical Risk Parity (HRP) 与 Hierarchical Equal Risk Contribution (HERC) 作为 RRP 框架的分散化基准。HRP 是层次化风险基准，HERC 是实用的层次化等风险贡献变体；二者均为多头、满仓的基准配置模型，用于比较组合分散结构，不代表一定优于 RRP。由于仓库当前没有定义可辩护的股债资产映射，暂不加入 60/40 基准。
-
-输出文件：
 - `results/tables/performance_summary.csv`
-- `results/tables/hrp_comparison.csv`
+- `results/tables/risk_overlay_ablation.csv`
+- `results/tables/walkforward_validation.csv`
+- `results/tables/parameter_stability.csv`
+- `results/tables/afml_diagnostics.csv`
+- `results/tables/pbo_diagnostic.csv`
 - `results/figures/nav_comparison.png`
 - `results/figures/drawdown_comparison.png`
-- `results/figures/hrp_weights_timeline.png`
+- `results/figures/dynamic_parameter_timeline.png`
+- `results/figures/risk_overlay_ablation.png`
+- `results/figures/pbo_heatmap.png`
 
-### 📚 参考文献
-1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
-2. López de Prado, M. (2018). *Advances in Financial Machine Learning*.
-3. 浙商证券. (2026). 《债市专题研究：宽松改进下的风险平价，从本土化到全球化》.
+### 局限
 
----
-
-<a id="en"></a>
+本项目是回测研究，不构成投资建议。参数选择不使用未来数据，但简化 PBO、保守 adjusted Sharpe、交易成本与滑点假设都不能证明未来表现。当前数据源、资产映射、交易可行性和杠杆融资成本仍需在正式实盘前单独验证。
 
 ## English
 
-Current Language: English | [切换到中文](#zh)
+### Project Scope
 
-### 📌 Project Overview
-This project enhances the traditional Risk Parity framework with **Relaxed Risk Parity (RRP)** and **Dynamic Risk Overlays**. It addresses return elasticity limitations and integrates advanced drawdown controls like **Risk Budget Overlay** and **Momentum Filters**.
+This project studies Relaxed Risk Parity as an extension of standard Risk Parity under low-rate and global macro regimes. V3 Global RRP is the static global showcase. Dynamic RRP is the validated risk-overlay showcase, using walk-forward selection and AFML-inspired diagnostics.
 
-### 🚀 Evolution of Models
-| Version | Model Type | Asset Pool | Key Features |
-| :--- | :--- | :--- | :--- |
-| V1 | Standard RP | Local Assets | Strict ERC, extreme stability. |
-| V2 | Relaxed RRP | Local Assets | **Relaxation introduced**, domestic enhancement. |
-| V3 | Relaxed RRP | Global Assets | Diversification with USDX, S&P, Treasuries. |
-| **Dynamic** | Dynamic RRP | Global Assets | **Latest**: Adaptive risk budget + trend filtering. |
+### Quick Start
 
-### 🧠 Killer Risk Controls (Risk Overlay)
-1.  **Risk Budget Overlay**: Automatically halves Vol Target if drawdown exceeds 3.5%.
-2.  **Momentum Filter**: Scans 60-day MA to avoid assets in downward trends.
-3.  **Volatility Targeting**: Enforces a strict 6.0% aggressive volatility target.
+```bash
+pip install -r requirements.txt
+python scripts/run_rrp_pipeline.py --mode full
+python -m pytest
+```
 
-### 📊 Performance Dashboard (Evaluation: 2021-01-01 to Present)
-| Metric | V1 Standard RP | V2 Relaxed RRP | V3 Global RRP | **Dynamic RRP** | HRP | HERC |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Ann. Return** | 0.69% | 4.56% | **7.18%** | 4.49% | -0.11% | -0.10% |
-| **Max Drawdown** | -6.69% | -6.10% | -5.26% | -6.28% | -0.70% | -0.70% |
-| **Sharpe Ratio** | -0.55 | 0.75 | **1.31** | 0.49 | -6.35 | -6.29 |
-| **Turnover** | 0.049 | 0.022 | 0.037 | 0.022 | 0.001 | 0.001 |
+### Repository Structure
 
-#### 📈 NAV Comparison
-<p align="center">
-  <img src="results/figures/nav_comparison.png" width="800" alt="NAV Comparison">
-</p>
-
-#### 📉 Drawdown Comparison
-<p align="center">
-  <img src="results/figures/drawdown_comparison.png" width="800" alt="Drawdown Comparison">
-</p>
-
-#### 🧩 HRP Weights
-<p align="center">
-  <img src="results/figures/hrp_weights_timeline.png" width="800" alt="HRP Weights Timeline">
-</p>
-
-> **Conclusion**: In the current sample, V3 Global RRP has the strongest Sharpe ratio. HRP/HERC provide hierarchical risk benchmarks, but they have weaker return elasticity in this asset universe and period.
-
-### 📂 Repository Structure
 ```text
 Relaxed-Risk-Parity-Research/
-├── RRP.py (Legacy Wrapper)
-├── src/ (Core Modules)
-│   ├── risk_parity.py (Optimization core)
-│   ├── dynamic_selection.py (Selection engine)
-│   ├── backtest.py (Backtest with Risk Gates)
-│   └── data_loader.py (Tushare Pro engine)
-├── scripts/
-│   └── run_rrp_pipeline.py (Main execution script)
-└── data/ (Market data)
+|-- src/
+|   |-- risk_parity.py
+|   |-- risk_overlay.py
+|   |-- dynamic_selection.py
+|   |-- validation.py
+|   |-- backtest.py
+|   |-- metrics.py
+|   `-- visualization.py
+|-- scripts/
+|   |-- run_rrp_pipeline.py
+|   `-- run_hrp_comparison.py
+|-- results/
+|   |-- tables/
+|   `-- figures/
+`-- tests/
 ```
 
-### 🛠 Quick Start
-```bash
-# Install dependencies
-pip install -r requirements.txt
+### References
 
-# Run full pipeline
-python scripts/run_rrp_pipeline.py --mode full
+1. Gambeta, V., & Kwon, R. (2020). Risk return trade-off in relaxed risk parity portfolio optimization.
+2. López de Prado, M. (2018). Advances in Financial Machine Learning.
+3. Bailey, D. H., Borwein, J. M., López de Prado, M., & Zhu, Q. J. (2015). The Probability of Backtest Overfitting.
+4. Bailey, D. H., & López de Prado, M. (2014). The Deflated Sharpe Ratio.
+5. López de Prado, M. (2016). Building Diversified Portfolios that Outperform Out-of-Sample.
+6. Zheshang Securities. (2026). Relaxed Risk Parity: From Localization to Globalization.
 
-# Run HRP/HERC benchmark comparison
-python scripts/run_hrp_comparison.py
-```
+## License
 
-### HRP And HERC Benchmarks
-The repository includes Hierarchical Risk Parity (HRP) and Hierarchical Equal Risk Contribution (HERC) as diversification benchmarks for the Relaxed Risk Parity workflow. HRP is a hierarchical risk-based benchmark, and HERC is a practical hierarchical equal-risk-contribution variant. These models are long-only, fully invested benchmark allocators; they are included to compare diversification structure, not to imply guaranteed outperformance. A 60/40 benchmark is excluded because the repository does not currently define a defensible equity-bond asset mapping.
-
-Run:
-```bash
-python scripts/run_hrp_comparison.py
-```
-
-Generated outputs:
-- `results/tables/performance_summary.csv`
-- `results/tables/hrp_comparison.csv`
-- `results/figures/nav_comparison.png`
-- `results/figures/drawdown_comparison.png`
-- `results/figures/hrp_weights_timeline.png`
-
-### 📚 References
-1. Gambeta & Kwon (2020). *Risk return trade-off in relaxed risk parity*.
-2. López de Prado (2018). *Advances in Financial Machine Learning*.
-3. Zheshang Securities. (2026). *Special Report on Bond Market: Relaxed Risk Parity - From Localization to Globalization*.
-
-## 📄 License
 MIT License.
