@@ -9,6 +9,11 @@ data/raw/*
 !data/raw/.gitkeep
 results/figures/*
 results/tables/*
+!results/figures/nav_comparison.png
+!results/figures/drawdown_comparison.png
+!results/figures/hrp_weights_timeline.png
+!results/tables/performance_summary.csv
+!results/tables/hrp_comparison.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

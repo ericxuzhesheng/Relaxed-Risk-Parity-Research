@@ -40,30 +40,29 @@
 3.  **波动率目标管理**: 全量资产遵循 6.0% 的激进波动率目标约束。
 
 ### 📊 绩效看板 (Evaluation: 2021-01-01 to Present)
-| 指标 | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
-| :--- | :--- | :--- | :--- | :--- |
-| **年化收益** | 1.67% | 2.91% | 5.96% | 4.87% |
-| **最大回撤** | -0.70% | -2.15% | -3.85% | -5.12% |
-| **夏普比率** | -0.30 | 0.31 | **1.04** | 0.76 |
-| **月度换手率** | 0.024 | 0.018 | 0.024 | 0.021 |
+| 指标 | V1 Standard RP | V2 Relaxed RRP | V3 Global RRP | **Dynamic RRP** | HRP | HERC |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **年化收益** | 0.69% | 4.56% | **7.18%** | 4.49% | -0.11% | -0.10% |
+| **最大回撤** | -6.69% | -6.10% | -5.26% | -6.28% | -0.70% | -0.70% |
+| **夏普比率** | -0.55 | 0.75 | **1.31** | 0.49 | -6.35 | -6.29 |
+| **月度换手率** | 0.049 | 0.022 | 0.037 | 0.022 | 0.001 | 0.001 |
 
 #### 📈 净值走势对比 (NAV Comparison)
 <p align="center">
-  <img src="results/figures/static_vs_dynamic_nav.png" width="800" alt="NAV Comparison">
+  <img src="results/figures/nav_comparison.png" width="800" alt="NAV Comparison">
 </p>
 
-#### 🧩 动态权重与参数演进 (Weights & Parameters)
+#### 📉 回撤走势对比 (Drawdown Comparison)
 <p align="center">
-  <img src="results/figures/dynamic_rrp_weights.png" width="800" alt="Weights">
-</p>
-<p align="center">
-  <img src="results/figures/lambda_selection_timeline.png" width="800" alt="Lambda Timeline">
-</p>
-<p align="center">
-  <img src="results/figures/m_selection_timeline.png" width="800" alt="M Timeline">
+  <img src="results/figures/drawdown_comparison.png" width="800" alt="Drawdown Comparison">
 </p>
 
-> **结论**：在 6.0% 的目标波动率约束下，V3 模型成功实现了夏普比率 > 1 的目标，通过全球资产的分散化显著提升了单位风险收益。
+#### 🧩 HRP 权重演进 (HRP Weights)
+<p align="center">
+  <img src="results/figures/hrp_weights_timeline.png" width="800" alt="HRP Weights Timeline">
+</p>
+
+> **结论**：在当前样本区间内，V3 Global RRP 的夏普比率最高；HRP/HERC 提供层次化风险基准，但在本资产池与区间内收益弹性较弱。
 
 ### 📂 仓库结构
 ```text
@@ -92,7 +91,7 @@ python scripts/run_hrp_comparison.py
 ```
 
 ### HRP 与 HERC 基准
-本项目加入了 Hierarchical Risk Parity (HRP) 与 Hierarchical Equal Risk Contribution (HERC) 作为 RRP 框架的分散化基准。它们是多头、满仓的基准配置模型，用于比较组合分散结构，不代表一定优于 RRP。
+本项目加入了 Hierarchical Risk Parity (HRP) 与 Hierarchical Equal Risk Contribution (HERC) 作为 RRP 框架的分散化基准。HRP 是层次化风险基准，HERC 是实用的层次化等风险贡献变体；二者均为多头、满仓的基准配置模型，用于比较组合分散结构，不代表一定优于 RRP。由于仓库当前没有定义可辩护的股债资产映射，暂不加入 60/40 基准。
 
 输出文件：
 - `results/tables/performance_summary.csv`
@@ -131,30 +130,29 @@ This project enhances the traditional Risk Parity framework with **Relaxed Risk 
 3.  **Volatility Targeting**: Enforces a strict 6.0% aggressive volatility target.
 
 ### 📊 Performance Dashboard (Evaluation: 2021-01-01 to Present)
-| Metric | V1 Standard | V2 Relaxed | V3 Global | **Dynamic RRP** |
-| :--- | :--- | :--- | :--- | :--- |
-| **Ann. Return** | 1.67% | 2.91% | 5.96% | 4.87% |
-| **Max Drawdown** | -0.70% | -2.15% | -3.85% | -5.12% |
-| **Sharpe Ratio** | -0.30 | 0.31 | **1.04** | 0.76 |
-| **Turnover** | 0.024 | 0.018 | 0.024 | 0.021 |
+| Metric | V1 Standard RP | V2 Relaxed RRP | V3 Global RRP | **Dynamic RRP** | HRP | HERC |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Ann. Return** | 0.69% | 4.56% | **7.18%** | 4.49% | -0.11% | -0.10% |
+| **Max Drawdown** | -6.69% | -6.10% | -5.26% | -6.28% | -0.70% | -0.70% |
+| **Sharpe Ratio** | -0.55 | 0.75 | **1.31** | 0.49 | -6.35 | -6.29 |
+| **Turnover** | 0.049 | 0.022 | 0.037 | 0.022 | 0.001 | 0.001 |
 
 #### 📈 NAV Comparison
 <p align="center">
-  <img src="results/figures/static_vs_dynamic_nav.png" width="800" alt="NAV Comparison">
+  <img src="results/figures/nav_comparison.png" width="800" alt="NAV Comparison">
 </p>
 
-#### 🧩 Model Dynamics
+#### 📉 Drawdown Comparison
 <p align="center">
-  <img src="results/figures/dynamic_rrp_weights.png" width="800" alt="Weights">
-</p>
-<p align="center">
-  <img src="results/figures/lambda_selection_timeline.png" width="800" alt="Lambda Timeline">
-</p>
-<p align="center">
-  <img src="results/figures/m_selection_timeline.png" width="800" alt="M Timeline">
+  <img src="results/figures/drawdown_comparison.png" width="800" alt="Drawdown Comparison">
 </p>
 
-> **Conclusion**: With a 6.0% Vol Target, V3 model achieved Sharpe > 1, proving that global diversification significantly enhances risk-adjusted returns.
+#### 🧩 HRP Weights
+<p align="center">
+  <img src="results/figures/hrp_weights_timeline.png" width="800" alt="HRP Weights Timeline">
+</p>
+
+> **Conclusion**: In the current sample, V3 Global RRP has the strongest Sharpe ratio. HRP/HERC provide hierarchical risk benchmarks, but they have weaker return elasticity in this asset universe and period.
 
 ### 📂 Repository Structure
 ```text
@@ -183,7 +181,7 @@ python scripts/run_hrp_comparison.py
 ```
 
 ### HRP And HERC Benchmarks
-The repository includes Hierarchical Risk Parity (HRP) and Hierarchical Equal Risk Contribution (HERC) as diversification benchmarks for the Relaxed Risk Parity workflow. These models are long-only, fully invested benchmark allocators; they are included to compare diversification structure, not to imply guaranteed outperformance.
+The repository includes Hierarchical Risk Parity (HRP) and Hierarchical Equal Risk Contribution (HERC) as diversification benchmarks for the Relaxed Risk Parity workflow. HRP is a hierarchical risk-based benchmark, and HERC is a practical hierarchical equal-risk-contribution variant. These models are long-only, fully invested benchmark allocators; they are included to compare diversification structure, not to imply guaranteed outperformance. A 60/40 benchmark is excluded because the repository does not currently define a defensible equity-bond asset mapping.
 
 Run:
 ```bash
