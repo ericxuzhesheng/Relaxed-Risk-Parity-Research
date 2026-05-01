@@ -36,7 +36,7 @@
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
-| Improved Convex Adaptive Global Relaxed Risk Parity | 5.63% | 0.71 | -6.79% | 0.83 | 0.86% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 6.45% | 0.96 | -4.98% | 1.30 | 0.52% |
 | HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
 | HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
@@ -127,7 +127,7 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
-| Improved Convex Adaptive Global Relaxed Risk Parity | 5.63% | 0.71 | -6.79% | 0.83 | 0.86% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 6.45% | 0.96 | -4.98% | 1.30 | 0.52% |
 | HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
 | HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 

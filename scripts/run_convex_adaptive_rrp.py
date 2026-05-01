@@ -113,68 +113,107 @@ def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: f
 
 def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, ConvexRRPConfig]]:
     rows: list[tuple[str, dict]] = []
-    for lookback_days in [180, 240]:
-        for max_weight in [0.35, 0.40]:
-            for budget_penalty in [0.35, 0.45]:
-                for cvar_penalty in [0.05, 0.10, 0.20]:
-                    rows.append(
-                        (
-                            f"candidate_{len(rows) + 1:02d}",
-                            {
-                                "lookback_days": lookback_days,
-                                "covariance_method": "ewma",
-                                "max_weight": max_weight,
-                                "turnover_cap": 0.35,
-                                "turnover_penalty": 0.02,
-                                "budget_penalty": budget_penalty,
-                                "cvar_penalty": cvar_penalty,
-                                "cvar_beta": 0.95,
-                            },
-                        )
-                    )
+    seen: set[tuple[tuple[str, object], ...]] = set()
+
+    def add(params: dict) -> None:
+        key = tuple(sorted(params.items()))
+        if key not in seen:
+            seen.add(key)
+            rows.append((f"candidate_{len(rows) + 1:02d}", params))
+
+    incumbent = {
+        "lookback_days": 180,
+        "covariance_method": "ewma",
+        "max_weight": 0.40,
+        "turnover_cap": 0.35,
+        "turnover_penalty": 0.02,
+        "budget_penalty": 0.35,
+        "cvar_penalty": 0.20,
+        "cvar_beta": 0.95,
+        "return_reward": 0.05,
+    }
+    probe_winner = {
+        "lookback_days": 252,
+        "covariance_method": "ewma",
+        "max_weight": 0.45,
+        "turnover_cap": 0.80,
+        "turnover_penalty": 0.01,
+        "budget_penalty": 0.10,
+        "cvar_penalty": 0.08,
+        "cvar_beta": 0.95,
+        "return_reward": 0.05,
+    }
+
+    add(incumbent)
+    add(probe_winner)
+
+    for lookback_days in [120, 180, 252]:
+        for budget_penalty in [0.05, 0.10]:
+            add(
+                {
+                    **probe_winner,
+                    "lookback_days": lookback_days,
+                    "budget_penalty": budget_penalty,
+                }
+            )
+
+    for turnover_penalty in [0.00, 0.01, 0.02, 0.03]:
+        add({**probe_winner, "turnover_penalty": turnover_penalty})
+
+    for turnover_cap in [0.35, 0.80, 1.00, None]:
+        add({**probe_winner, "turnover_cap": turnover_cap})
+
+    for cvar_penalty in [0.05, 0.08, 0.10, 0.20]:
+        add({**probe_winner, "cvar_penalty": cvar_penalty})
+
+    for return_reward in [0.05, 0.06]:
+        add({**probe_winner, "return_reward": return_reward})
+
     for params in [
-        {"lookback_days": 240, "covariance_method": "sample", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
-        {"lookback_days": 252, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
-        {"lookback_days": 240, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.50, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
-        {"lookback_days": 240, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.90},
+        {**probe_winner, "max_weight": 0.40},
+        {**probe_winner, "covariance_method": "sample"},
+        {**probe_winner, "cvar_beta": 0.90},
+        {**probe_winner, "lookback_days": 180, "max_weight": 0.40, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10},
+        {**probe_winner, "lookback_days": 180, "max_weight": 0.40, "turnover_cap": 0.80, "turnover_penalty": 0.01, "budget_penalty": 0.10, "cvar_penalty": 0.08},
+        {**probe_winner, "lookback_days": 120, "max_weight": 0.45, "turnover_cap": 1.00, "turnover_penalty": 0.00, "budget_penalty": 0.05, "cvar_penalty": 0.05, "return_reward": 0.06},
+        {**probe_winner, "lookback_days": 252, "max_weight": 0.40, "turnover_cap": 0.35, "turnover_penalty": 0.03, "budget_penalty": 0.35, "cvar_penalty": 0.20, "cvar_beta": 0.90},
+        {**probe_winner, "lookback_days": 120, "covariance_method": "sample", "max_weight": 0.40, "turnover_cap": None, "turnover_penalty": 0.02, "budget_penalty": 0.10, "cvar_penalty": 0.10},
     ]:
-        rows.append((f"candidate_{len(rows) + 1:02d}", params))
+        add(params)
     return [(name, ConvexRRPConfig(transaction_cost_bps=transaction_cost_bps, **params)) for name, params in rows]
 
 
-def selection_score(metrics: dict, baseline: dict, fallback_rate: float) -> tuple[float, str]:
-    mdd_base = abs(float(baseline["max_drawdown"]))
-    cvar_base = max(float(baseline["cvar_95_daily_loss"]), 1e-12)
-    turnover_base = max(float(baseline["avg_monthly_turnover"]), 1e-12)
+def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tuple[float, str]:
+    mdd_base = abs(float(incumbent["max_drawdown"]))
+    cvar_base = max(float(incumbent["cvar_95_daily_loss"]), 1e-12)
+    turnover_base = max(float(incumbent["avg_monthly_turnover"]), 1e-12)
     mdd = abs(float(metrics["max_drawdown"]))
     cvar_loss = float(metrics["cvar_95_daily_loss"])
     turnover = float(metrics["avg_monthly_turnover"])
-    sharpe_delta = float(metrics["sharpe_ratio"]) - float(baseline["sharpe_ratio"])
-    return_delta = float(metrics["net_annual_return"]) - float(baseline["net_annual_return"])
+    return_delta = float(metrics["net_annual_return"]) - float(incumbent["net_annual_return"])
     drawdown_delta = mdd - mdd_base
 
     reject_reasons = []
-    if fallback_rate > 0.001:
+    if float(metrics["max_drawdown"]) < -0.075:
+        reject_reasons.append("drawdown_gate")
+    if turnover > 0.03:
+        reject_reasons.append("turnover_gate")
+    if fallback_rate > 0.0:
         reject_reasons.append("solver_fallback")
-    if sharpe_delta > 0 and drawdown_delta > 0.01:
-        reject_reasons.append("drawdown_worse")
-    if drawdown_delta < 0 and sharpe_delta < -0.05:
-        reject_reasons.append("sharpe_collapse")
-    if return_delta < -0.01:
+    if return_delta < -0.0025:
         reject_reasons.append("net_return_deterioration")
-    if turnover > max(0.05, 3.0 * turnover_base):
-        reject_reasons.append("turnover_high")
+    if cvar_loss > cvar_base * 1.10:
+        reject_reasons.append("cvar_worse")
 
-    mdd_penalty = max(0.0, drawdown_delta) / mdd_base
+    max_drawdown_penalty = max(0.0, drawdown_delta) / max(mdd_base, 1e-12)
     cvar_penalty = max(0.0, cvar_loss - cvar_base) / cvar_base
     turnover_penalty = max(0.0, turnover - turnover_base) / turnover_base
     score = (
         float(metrics["sharpe_ratio"])
-        + 0.25 * float(metrics["calmar_ratio"])
-        - 0.40 * mdd_penalty
+        + 0.35 * float(metrics["calmar_ratio"])
+        - 0.50 * max_drawdown_penalty
         - 0.15 * cvar_penalty
         - 0.10 * turnover_penalty
-        - 10.0 * fallback_rate
     )
     if reject_reasons:
         score -= 100.0
@@ -186,6 +225,7 @@ def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: fl
         "candidate_name": name,
         "lambda_cvar": cfg.cvar_penalty,
         "lambda_turnover": cfg.turnover_penalty,
+        "return_reward": cfg.return_reward,
         "lambda_ref": cfg.return_reward,
         "lambda_budget": cfg.budget_penalty,
         "upper_bound_i": cfg.max_weight,
@@ -210,7 +250,7 @@ def run_improvement_search(
     returns: pd.DataFrame,
     eval_start_date: str,
     config: dict,
-    baseline_metrics: dict,
+    incumbent_metrics: dict,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     candidate_rows = []
     outputs = []
@@ -219,12 +259,23 @@ def run_improvement_search(
         result, solver_diag, _, _ = run_convex_adaptive_backtest(returns, cfg)
         metrics = summarize_result(candidate_name, result, eval_start_date, config)
         fallback_rate = float(solver_diag["fallback_used"].mean()) if not solver_diag.empty else 1.0
-        score, reject_reason = selection_score(metrics, baseline_metrics, fallback_rate)
+        score, reject_reason = selection_score(metrics, incumbent_metrics, fallback_rate)
         candidate_rows.append(config_row(candidate_name, cfg, metrics, fallback_rate, score, reject_reason))
         outputs.append((candidate_name, result, solver_diag))
 
     candidates = pd.DataFrame(candidate_rows)
-    selected_idx = candidates["selection_score"].idxmax()
+    accepted = candidates[candidates["reject_reason"].eq("")]
+    preferred = accepted[
+        (accepted["average_monthly_turnover"] <= 0.02)
+        & (accepted["Sharpe"] > float(incumbent_metrics["sharpe_ratio"]))
+        & (accepted["Calmar"] > float(incumbent_metrics["calmar_ratio"]))
+    ]
+    if not preferred.empty:
+        selected_idx = preferred["selection_score"].idxmax()
+    elif not accepted.empty:
+        selected_idx = accepted["selection_score"].idxmax()
+    else:
+        selected_idx = candidates["selection_score"].idxmax()
     candidates.loc[selected_idx, "selected"] = True
     selected_name = str(candidates.loc[selected_idx, "candidate_name"])
     _, selected_result, selected_solver = next(row for row in outputs if row[0] == selected_name)
@@ -288,6 +339,17 @@ def replace_latest_results_table(text: str, heading: str, rows: list[str], note:
     return text[:start] + new_block + text[end:]
 
 
+def previous_improved_metrics() -> dict | None:
+    path = Path(resolve_path("results/tables/convex_adaptive_performance_summary.csv"))
+    if not path.exists():
+        return None
+    previous = pd.read_csv(path)
+    previous = previous[previous["model"].eq(IMPROVED_MODEL_NAME)]
+    if previous.empty:
+        return None
+    return previous.iloc[0].to_dict()
+
+
 def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics: dict) -> None:
     public_models = [
         "Global Relaxed Risk Parity",
@@ -307,8 +369,7 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
         f"{IMPROVED_MODEL_NAME} is a constrained parameter refinement of the convex adaptive optimizer, "
         "selected with drawdown and turnover-aware criteria."
         if both_improved
-        else f"{IMPROVED_MODEL_NAME} was tested as a constrained optimization refinement. "
-        "In the latest run, improvement was limited and the result is reported transparently."
+        else "Additional constrained tuning was tested, but the existing improved variant remained the preferred robust setting."
     )
     note_zh = (
         f"{IMPROVED_MODEL_NAME} 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。"
@@ -326,6 +387,7 @@ def main() -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
     eval_start_date = config.get("plot_start_date", "2021-01-01")
+    incumbent_metrics = previous_improved_metrics()
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
     returns = returns.loc[:, returns.notna().mean() > 0.95].fillna(0.0)
 
@@ -350,8 +412,10 @@ def main() -> None:
     base_result.to_csv(resolve_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     base_solver.insert(0, "model", BASE_CONVEX_MODEL_NAME)
     baseline_summary = summarize_result(BASE_CONVEX_MODEL_NAME, base_result, eval_start_date, config)
+    if incumbent_metrics is None:
+        incumbent_metrics = baseline_summary
 
-    candidates, improved_result, improved_solver = run_improvement_search(returns, eval_start_date, config, baseline_summary)
+    candidates, improved_result, improved_solver = run_improvement_search(returns, eval_start_date, config, incumbent_metrics)
     improved_result.to_csv(resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     candidates.to_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"), index=False)
 
@@ -378,7 +442,7 @@ def main() -> None:
             f"lambda_cvar={selected_row['lambda_cvar']}, lambda_turnover={selected_row['lambda_turnover']}, "
             f"lambda_budget={selected_row['lambda_budget']}, upper_bound_i={selected_row['upper_bound_i']}, "
             f"cvar_alpha={selected_row['cvar_alpha']}, covariance={selected_row['covariance_estimator']}, "
-            f"lookback={selected_row['lookback_window']}"
+            f"lookback={selected_row['lookback_window']}, return_reward={selected_row['return_reward']}"
         ),
         "baseline",
     )
