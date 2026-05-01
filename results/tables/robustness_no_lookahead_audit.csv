@@ -1,0 +1,10 @@
+component,uses_future_data,lag_applied,notes
+return_universe_loading,False,input returns only,Loads cached historical prices and evaluates realized returns after each date.
+monthly_rebalance_schedule,False,rebalance at month end,Rebalance dates are calendar diagnostics; model windows still exclude the rebalance date.
+global_rrp_covariance,False,window index < rebalance date,Robustness covariance wrapper changes only the estimator.
+convex_adaptive_covariance,False,window index < rebalance date,Convex backtest estimates covariance from trailing returns only.
+adaptive_budget_target,False,trailing lookback window,Budget target is derived from past-window asset risk and bounded state inputs.
+transaction_cost_scenarios,False,cost applied on rebalance turnover,Cost levels are fixed diagnostics and are not selected from outcomes.
+parameter_perturbation,False,selected row read once,One-at-a-time perturbations around the selected public configuration; no candidate search is performed.
+stress_period_identification,True,not used for trading,Stress periods are identified ex post solely for evaluation.
+solver_diagnostics,False,per-rebalance solve record,Solver status summarizes optimization diagnostics after the fact.

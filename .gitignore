@@ -25,6 +25,12 @@ results/tables/*
 !results/figures/convex_adaptive_nav_comparison.png
 !results/figures/convex_adaptive_transaction_cost_comparison.png
 !results/figures/online_regime_timeline.png
+!results/figures/robustness_subperiod_sharpe.png
+!results/figures/robustness_subperiod_drawdown.png
+!results/figures/robustness_transaction_cost_sensitivity.png
+!results/figures/robustness_covariance_comparison.png
+!results/figures/robustness_parameter_sensitivity.png
+!results/figures/robustness_stress_period_performance.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -47,6 +53,14 @@ results/tables/*
 !results/tables/convex_adaptive_solver_diagnostics.csv
 !results/tables/convex_adaptive_transaction_cost_summary.csv
 !results/tables/online_regime_diagnostics.csv
+!results/tables/robustness_subperiod_summary.csv
+!results/tables/robustness_covariance_summary.csv
+!results/tables/robustness_transaction_cost_summary.csv
+!results/tables/robustness_stress_period_summary.csv
+!results/tables/robustness_parameter_perturbation.csv
+!results/tables/robustness_no_lookahead_audit.csv
+!results/tables/robustness_solver_stability.csv
+!results/tables/robustness_overall_summary.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

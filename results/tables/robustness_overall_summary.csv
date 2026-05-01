@@ -1,0 +1,5 @@
+model,subperiod_rating,transaction_cost_rating,covariance_rating,stress_rating,parameter_stability_rating,overall_assessment,notes
+Convex Adaptive Global RRP,Strong,Strong,Strong,Moderate,Not applicable,Strong,Validation-only robustness diagnostics; ratings are qualitative and do not select or retune models.
+Defensive Dynamic Relaxed Risk Parity,Strong,Strong,Strong,Moderate,Not applicable,Strong,Validation-only robustness diagnostics; ratings are qualitative and do not select or retune models.
+Global Relaxed Risk Parity,Strong,Strong,Strong,Moderate,Not applicable,Strong,Validation-only robustness diagnostics; ratings are qualitative and do not select or retune models.
+Improved Convex Adaptive Global RRP,Strong,Strong,Strong,Moderate,Strong,Strong,Validation-only robustness diagnostics; ratings are qualitative and do not select or retune models.

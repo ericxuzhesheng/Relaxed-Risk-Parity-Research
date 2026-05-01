@@ -1,0 +1,3 @@
+model,solver,status,status_count,fallback_rate,failed_dates,fallback_dates,average_objective_value
+Convex Adaptive Global RRP,CLARABEL,optimal,99,0.0,,,0.0942414987362948
+Improved Convex Adaptive Global RRP,CLARABEL,optimal,99,0.0,,,0.009703109253430832
