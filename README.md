@@ -42,6 +42,16 @@
 
 Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
+## 资产定价解释层
+
+资产定价解释层只用于解释现有组合结果，不新增组合模型、不改变回测逻辑、不调参，也不使用因子诊断结果生成权重。
+
+- [解释报告](report/asset_pricing_interpretation.md)
+- [因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)
+- [收益归因表](results/tables/asset_pricing_return_attribution.csv)
+
+![因子暴露图](results/figures/asset_pricing_factor_exposure.png)
+
 ## 方法说明
 
 Convex Adaptive Global Relaxed Risk Parity 使用的是凸化后的宽松风险预算近似，而不是把经典精确风险平价问题直接表述为全局凸优化问题。最终组合权重始终由凸优化层生成。
@@ -113,16 +123,6 @@ python scripts/run_convex_adaptive_rrp.py
 - `results/tables/asset_graph_diagnostics.csv`
 - `results/tables/online_regime_diagnostics.csv`
 - `results/tables/convex_adaptive_solver_diagnostics.csv`
-
-## 资产定价解释层
-
-资产定价解释层只用于解释现有组合结果，不新增组合模型、不改变回测逻辑、不调参，也不使用因子诊断结果生成权重。
-
-- [解释报告](report/asset_pricing_interpretation.md)
-- [因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)
-- [收益归因表](results/tables/asset_pricing_return_attribution.csv)
-
-![因子暴露图](results/figures/asset_pricing_factor_exposure.png)
 
 <a id="english"></a>
 ## English
