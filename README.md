@@ -114,6 +114,15 @@ python scripts/run_convex_adaptive_rrp.py
 - `results/tables/online_regime_diagnostics.csv`
 - `results/tables/convex_adaptive_solver_diagnostics.csv`
 
+## 资产定价解释层
+
+资产定价解释层只用于解释现有组合结果，不新增组合模型、不改变回测逻辑、不调参，也不使用因子诊断结果生成权重。
+
+- [解释报告](report/asset_pricing_interpretation.md)
+- [因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)
+- [收益归因表](results/tables/asset_pricing_return_attribution.csv)
+- [因子暴露图](results/figures/asset_pricing_factor_exposure.png)
+
 <a id="english"></a>
 ## English
 
@@ -148,6 +157,15 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 | HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
 Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
+
+## Asset-Pricing Interpretation Layer
+
+The asset-pricing interpretation layer is explanatory only: it adds no portfolio model, changes no backtest logic, tunes no parameters, and never uses factor diagnostics to generate weights.
+
+- [Interpretation report](report/asset_pricing_interpretation.md)
+- [Factor exposure summary table](results/tables/asset_pricing_factor_exposure_summary.csv)
+- [Return attribution table](results/tables/asset_pricing_return_attribution.csv)
+- [Factor exposure figure](results/figures/asset_pricing_factor_exposure.png)
 
 ## Method
 

@@ -31,6 +31,9 @@ results/tables/*
 !results/figures/robustness_covariance_comparison.png
 !results/figures/robustness_parameter_sensitivity.png
 !results/figures/robustness_stress_period_performance.png
+!results/figures/asset_pricing_factor_exposure.png
+!results/figures/asset_pricing_rolling_betas.png
+!results/figures/asset_pricing_return_attribution.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -61,6 +64,10 @@ results/tables/*
 !results/tables/robustness_no_lookahead_audit.csv
 !results/tables/robustness_solver_stability.csv
 !results/tables/robustness_overall_summary.csv
+!results/tables/asset_pricing_factor_exposure_summary.csv
+!results/tables/asset_pricing_return_attribution.csv
+!results/tables/asset_pricing_risk_attribution.csv
+!results/tables/asset_pricing_rolling_beta_summary.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*
