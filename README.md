@@ -86,7 +86,20 @@ pip install -r requirements.txt
 
 # 运行全流程 (默认使用 Tushare)
 python scripts/run_rrp_pipeline.py --mode full
+
+# 运行 HRP/HERC 基准对比
+python scripts/run_hrp_comparison.py
 ```
+
+### HRP 与 HERC 基准
+本项目加入了 Hierarchical Risk Parity (HRP) 与 Hierarchical Equal Risk Contribution (HERC) 作为 RRP 框架的分散化基准。它们是多头、满仓的基准配置模型，用于比较组合分散结构，不代表一定优于 RRP。
+
+输出文件：
+- `results/tables/performance_summary.csv`
+- `results/tables/hrp_comparison.csv`
+- `results/figures/nav_comparison.png`
+- `results/figures/drawdown_comparison.png`
+- `results/figures/hrp_weights_timeline.png`
 
 ### 📚 参考文献
 1. Gambeta, V., & Kwon, R. (2020). *Risk return trade-off in relaxed risk parity portfolio optimization*.
@@ -164,7 +177,25 @@ pip install -r requirements.txt
 
 # Run full pipeline
 python scripts/run_rrp_pipeline.py --mode full
+
+# Run HRP/HERC benchmark comparison
+python scripts/run_hrp_comparison.py
 ```
+
+### HRP And HERC Benchmarks
+The repository includes Hierarchical Risk Parity (HRP) and Hierarchical Equal Risk Contribution (HERC) as diversification benchmarks for the Relaxed Risk Parity workflow. These models are long-only, fully invested benchmark allocators; they are included to compare diversification structure, not to imply guaranteed outperformance.
+
+Run:
+```bash
+python scripts/run_hrp_comparison.py
+```
+
+Generated outputs:
+- `results/tables/performance_summary.csv`
+- `results/tables/hrp_comparison.csv`
+- `results/figures/nav_comparison.png`
+- `results/figures/drawdown_comparison.png`
+- `results/figures/hrp_weights_timeline.png`
 
 ### 📚 References
 1. Gambeta & Kwon (2020). *Risk return trade-off in relaxed risk parity*.

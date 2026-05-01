@@ -16,6 +16,17 @@ def plot_nav_comparison(nav_dict: dict, title: str, save_path: str):
     plt.savefig(save_path)
     plt.close()
 
+def plot_drawdown_comparison(nav_dict: dict, title: str, save_path: str):
+    plt.figure(figsize=(12, 6))
+    for name, nav in nav_dict.items():
+        drawdown = nav / nav.cummax() - 1
+        plt.plot(drawdown, label=name)
+    plt.title(title)
+    plt.legend()
+    plt.grid(True)
+    plt.savefig(save_path)
+    plt.close()
+
 def plot_weights(weights_df: pd.DataFrame, title: str, save_path: str):
     plt.figure(figsize=(12, 6))
     weights_df.plot.area(stacked=True, ax=plt.gca())

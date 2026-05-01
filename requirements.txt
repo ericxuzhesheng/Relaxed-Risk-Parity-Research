@@ -7,3 +7,5 @@ akshare
 cvxpy
 ecos
 tushare
+tqdm
+pytest
