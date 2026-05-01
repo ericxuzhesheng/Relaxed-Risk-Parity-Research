@@ -155,24 +155,49 @@ def write_report(outputs, output_root: Path) -> Path:
     summary = outputs.factor_exposure_summary.set_index("model")
     global_beta = summary.loc[GLOBAL_LABEL].get("beta_global_risk", float("nan")) if GLOBAL_LABEL in summary.index else float("nan")
     improved_beta = summary.loc[IMPROVED_CONVEX_LABEL].get("beta_global_risk", float("nan")) if IMPROVED_CONVEX_LABEL in summary.index else float("nan")
-    text = f"""# Asset-Pricing Interpretation Layer
+    text = f"""# 资产定价解释层
+
+## 中文
+
+本层只用于解释现有组合结果。它不新增组合模型、不调参、不改变回测逻辑，也不使用资产定价输出生成权重。
+
+因子代理来自现有收益率资产池，并按资产名称推断为 equity、bond、commodity_gold、defensive 和 global_risk。缺失的资产组会在回归中跳过，并通过 available_factors 字段记录。
+
+### 模型解释
+
+- Global Relaxed Risk Parity 是解释基准组合。当前 global_risk beta 为 {global_beta:.3f}，因此其收益应放在广义多资产风险代理下理解，而不是被解释为独立 alpha 预测。
+- Improved Convex Adaptive Global RRP 是受约束优化器的结果。当前 global_risk beta 为 {improved_beta:.3f}；它相对 Global RRP 的差异应理解为暴露、换手和约束共同作用的结果。
+- Defensive Dynamic Relaxed Risk Parity 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
+- HRP 和 HERC 仍然是 benchmark 配置方法。它们可用于横向比较，但本解释层不会把它们升级为资产定价模型。
+
+### 归因
+
+收益归因使用已有每日权重和资产收益，将组合实现收益分摊到推断出的资产类别。风险归因使用协方差式波动贡献和压力回撤阶段平均贡献作为近似解释。
+
+### 局限
+
+这些因子是由同一可交易资产池构造的近似代理，不是外部学术因子。结果依赖样本区间和可用资产，不应被解释为预测信号或投资建议。
+
+最终权重仍由既有风险预算、动态选择和凸优化代码路径生成。本模块不导出生成式组合权重建议。
+
+## English
 
 This layer is explanatory only. It does not create portfolio models, tune parameters, alter backtest logic, or use asset-pricing outputs to generate weights.
 
-The factor proxies are broad equal-weight proxies inferred from the existing return universe: equity, bond, commodity/gold, defensive, and global_risk. Missing groups are skipped in the regressions and recorded through the available_factors column.
+The factor proxies are broad equal-weight proxies inferred from the existing return universe: equity, bond, commodity_gold, defensive, and global_risk. Missing groups are skipped in the regressions and recorded through the available_factors column.
 
-## Model Interpretation
+### Model Interpretation
 
 - Global Relaxed Risk Parity is the reference RRP portfolio. Its current global_risk beta is {global_beta:.3f}, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
 - Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current global_risk beta is {improved_beta:.3f}; differences versus Global RRP should be read as exposure, turnover, and constraint effects.
 - Defensive Dynamic Relaxed Risk Parity is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
 - HRP and HERC remain benchmark allocation methods. They are useful for comparison, but this diagnostics layer does not promote them into asset-pricing models.
 
-## Attribution
+### Attribution
 
 Return attribution allocates realized portfolio returns to inferred asset classes using available daily weights and asset returns. Risk attribution uses covariance-style volatility contribution and stress-period drawdown contribution approximations by asset class.
 
-## Limitations
+### Limitations
 
 These are approximate proxies built from the same tradable universe, not external academic factors. The results are sample-dependent, sensitive to available assets, and should not be interpreted as predictive signals or investment advice.
 
