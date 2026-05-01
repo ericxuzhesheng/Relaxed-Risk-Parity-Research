@@ -20,6 +20,11 @@ results/tables/*
 !results/figures/showcase_risk_overlay_ablation.png
 !results/figures/showcase_parameter_timeline.png
 !results/figures/showcase_pbo_heatmap.png
+!results/figures/asset_graph_stress_timeline.png
+!results/figures/convex_adaptive_drawdown_comparison.png
+!results/figures/convex_adaptive_nav_comparison.png
+!results/figures/convex_adaptive_transaction_cost_comparison.png
+!results/figures/online_regime_timeline.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -37,6 +42,11 @@ results/tables/*
 !results/tables/showcase_pbo_diagnostic.csv
 !results/tables/showcase_v3_candidate_ranking.csv
 !results/tables/showcase_dynamic_candidate_ranking.csv
+!results/tables/asset_graph_diagnostics.csv
+!results/tables/convex_adaptive_performance_summary.csv
+!results/tables/convex_adaptive_solver_diagnostics.csv
+!results/tables/convex_adaptive_transaction_cost_summary.csv
+!results/tables/online_regime_diagnostics.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

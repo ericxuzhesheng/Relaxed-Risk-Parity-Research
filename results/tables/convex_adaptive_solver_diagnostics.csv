@@ -1,0 +1,694 @@
+model,date,solver_name,solver_status,objective_value,failure_reason,fallback_used
+Convex Global Relaxed Risk Parity,2018-02-28,CLARABEL,optimal,0.11597750699132976,,False
+Convex Global Relaxed Risk Parity,2018-03-30,CLARABEL,optimal,0.07490303103956089,,False
+Convex Global Relaxed Risk Parity,2018-04-27,CLARABEL,optimal,0.06504824815347002,,False
+Convex Global Relaxed Risk Parity,2018-05-31,CLARABEL,optimal,0.05866657615241314,,False
+Convex Global Relaxed Risk Parity,2018-06-29,CLARABEL,optimal,0.05911469886347968,,False
+Convex Global Relaxed Risk Parity,2018-07-31,CLARABEL,optimal,0.04973381086841912,,False
+Convex Global Relaxed Risk Parity,2018-08-31,CLARABEL,optimal,0.04381973669523903,,False
+Convex Global Relaxed Risk Parity,2018-09-28,CLARABEL,optimal,0.0438358927661276,,False
+Convex Global Relaxed Risk Parity,2018-10-31,CLARABEL,optimal,0.04644246801999757,,False
+Convex Global Relaxed Risk Parity,2018-11-30,CLARABEL,optimal,0.0470073883021445,,False
+Convex Global Relaxed Risk Parity,2018-12-28,CLARABEL,optimal,0.04885494195169131,,False
+Convex Global Relaxed Risk Parity,2019-01-31,CLARABEL,optimal,0.04552904779631532,,False
+Convex Global Relaxed Risk Parity,2019-02-28,CLARABEL,optimal,0.041326863726372044,,False
+Convex Global Relaxed Risk Parity,2019-03-29,CLARABEL,optimal,0.039903103506764626,,False
+Convex Global Relaxed Risk Parity,2019-04-30,CLARABEL,optimal,0.03776834927282324,,False
+Convex Global Relaxed Risk Parity,2019-05-31,CLARABEL,optimal,0.037490923359100356,,False
+Convex Global Relaxed Risk Parity,2019-06-28,CLARABEL,optimal,0.012829436072614515,,False
+Convex Global Relaxed Risk Parity,2019-07-31,CLARABEL,optimal,0.022733806004457072,,False
+Convex Global Relaxed Risk Parity,2019-08-30,CLARABEL,optimal,0.053159597909812596,,False
+Convex Global Relaxed Risk Parity,2019-09-30,CLARABEL,optimal,0.05378238125058582,,False
+Convex Global Relaxed Risk Parity,2019-10-31,CLARABEL,optimal,0.05315637053356333,,False
+Convex Global Relaxed Risk Parity,2019-11-29,CLARABEL,optimal,0.05518032762994522,,False
+Convex Global Relaxed Risk Parity,2019-12-31,CLARABEL,optimal,0.021749110522882135,,False
+Convex Global Relaxed Risk Parity,2020-01-23,CLARABEL,optimal,0.03804641164260892,,False
+Convex Global Relaxed Risk Parity,2020-02-28,CLARABEL,optimal,0.050185659240296214,,False
+Convex Global Relaxed Risk Parity,2020-03-31,CLARABEL,optimal,0.07266516636197058,,False
+Convex Global Relaxed Risk Parity,2020-04-30,CLARABEL,optimal,0.07611435065460653,,False
+Convex Global Relaxed Risk Parity,2020-05-29,CLARABEL,optimal,0.07191178630803484,,False
+Convex Global Relaxed Risk Parity,2020-06-30,CLARABEL,optimal,0.06861487021609379,,False
+Convex Global Relaxed Risk Parity,2020-07-31,CLARABEL,optimal,0.06606101962813073,,False
+Convex Global Relaxed Risk Parity,2020-08-31,CLARABEL,optimal,0.06290429698874885,,False
+Convex Global Relaxed Risk Parity,2020-09-30,CLARABEL,optimal,0.06634519895655076,,False
+Convex Global Relaxed Risk Parity,2020-10-30,CLARABEL,optimal,0.06621479427151876,,False
+Convex Global Relaxed Risk Parity,2020-11-30,CLARABEL,optimal,0.043402526750459344,,False
+Convex Global Relaxed Risk Parity,2020-12-31,CLARABEL,optimal,0.05174073852161974,,False
+Convex Global Relaxed Risk Parity,2021-01-29,CLARABEL,optimal,0.055275207184298986,,False
+Convex Global Relaxed Risk Parity,2021-02-26,CLARABEL,optimal,0.05433143270101694,,False
+Convex Global Relaxed Risk Parity,2021-03-31,CLARABEL,optimal,0.055584319147288286,,False
+Convex Global Relaxed Risk Parity,2021-04-30,CLARABEL,optimal,0.0560702076482889,,False
+Convex Global Relaxed Risk Parity,2021-05-31,CLARABEL,optimal,0.028449976950710595,,False
+Convex Global Relaxed Risk Parity,2021-06-30,CLARABEL,optimal,0.05216590031223327,,False
+Convex Global Relaxed Risk Parity,2021-07-30,CLARABEL,optimal,0.05680456977572931,,False
+Convex Global Relaxed Risk Parity,2021-08-31,CLARABEL,optimal,0.06298989915517939,,False
+Convex Global Relaxed Risk Parity,2021-09-30,CLARABEL,optimal,0.06420714758651878,,False
+Convex Global Relaxed Risk Parity,2021-10-29,CLARABEL,optimal,0.061891493071528685,,False
+Convex Global Relaxed Risk Parity,2021-11-30,CLARABEL,optimal,0.06914094754855603,,False
+Convex Global Relaxed Risk Parity,2021-12-31,CLARABEL,optimal,0.07161708048988394,,False
+Convex Global Relaxed Risk Parity,2022-01-28,CLARABEL,optimal,0.07848284031817868,,False
+Convex Global Relaxed Risk Parity,2022-02-28,CLARABEL,optimal,0.07892959010520359,,False
+Convex Global Relaxed Risk Parity,2022-03-31,CLARABEL,optimal,0.07749879784536694,,False
+Convex Global Relaxed Risk Parity,2022-04-29,CLARABEL,optimal,0.08000598038322711,,False
+Convex Global Relaxed Risk Parity,2022-05-31,CLARABEL,optimal,0.08083656510144147,,False
+Convex Global Relaxed Risk Parity,2022-06-30,CLARABEL,optimal,0.08075383808480038,,False
+Convex Global Relaxed Risk Parity,2022-07-29,CLARABEL,optimal,0.0819785157054816,,False
+Convex Global Relaxed Risk Parity,2022-08-31,CLARABEL,optimal,0.07981968788838519,,False
+Convex Global Relaxed Risk Parity,2022-09-30,CLARABEL,optimal,0.08317827871389241,,False
+Convex Global Relaxed Risk Parity,2022-10-31,CLARABEL,optimal,0.08214778303123556,,False
+Convex Global Relaxed Risk Parity,2022-11-30,CLARABEL,optimal,0.07603295661177523,,False
+Convex Global Relaxed Risk Parity,2022-12-30,CLARABEL,optimal,0.07027715825772328,,False
+Convex Global Relaxed Risk Parity,2023-01-31,CLARABEL,optimal,0.06518512885138214,,False
+Convex Global Relaxed Risk Parity,2023-02-28,CLARABEL,optimal,0.06317589221561891,,False
+Convex Global Relaxed Risk Parity,2023-03-31,CLARABEL,optimal,0.06253960929373795,,False
+Convex Global Relaxed Risk Parity,2023-04-28,CLARABEL,optimal,0.058275657242366455,,False
+Convex Global Relaxed Risk Parity,2023-05-31,CLARABEL,optimal,0.05840834766752981,,False
+Convex Global Relaxed Risk Parity,2023-06-30,CLARABEL,optimal,0.056048696496486125,,False
+Convex Global Relaxed Risk Parity,2023-07-31,CLARABEL,optimal,0.05417123587567177,,False
+Convex Global Relaxed Risk Parity,2023-08-31,CLARABEL,optimal,0.05360637536619801,,False
+Convex Global Relaxed Risk Parity,2023-09-28,CLARABEL,optimal,0.050660712242931824,,False
+Convex Global Relaxed Risk Parity,2023-10-31,CLARABEL,optimal,0.05030973722301222,,False
+Convex Global Relaxed Risk Parity,2023-11-30,CLARABEL,optimal,0.05585166386596696,,False
+Convex Global Relaxed Risk Parity,2023-12-29,CLARABEL,optimal,0.06192594619755321,,False
+Convex Global Relaxed Risk Parity,2024-01-31,CLARABEL,optimal,0.06918056419476164,,False
+Convex Global Relaxed Risk Parity,2024-02-29,CLARABEL,optimal,0.06864931430086545,,False
+Convex Global Relaxed Risk Parity,2024-03-29,CLARABEL,optimal,0.06709242957424005,,False
+Convex Global Relaxed Risk Parity,2024-04-30,CLARABEL,optimal,0.06682402364653407,,False
+Convex Global Relaxed Risk Parity,2024-05-31,CLARABEL,optimal,0.06478686795886107,,False
+Convex Global Relaxed Risk Parity,2024-06-28,CLARABEL,optimal,0.06732742148927782,,False
+Convex Global Relaxed Risk Parity,2024-07-31,CLARABEL,optimal,0.0709542820571064,,False
+Convex Global Relaxed Risk Parity,2024-08-30,CLARABEL,optimal,0.06665800274393617,,False
+Convex Global Relaxed Risk Parity,2024-09-30,CLARABEL,optimal,0.06985595753619096,,False
+Convex Global Relaxed Risk Parity,2024-10-31,CLARABEL,optimal,0.06523502047268442,,False
+Convex Global Relaxed Risk Parity,2024-11-29,CLARABEL,optimal,0.06841392510423064,,False
+Convex Global Relaxed Risk Parity,2024-12-31,CLARABEL,optimal,0.06537680939197592,,False
+Convex Global Relaxed Risk Parity,2025-01-27,CLARABEL,optimal,0.06108030166246044,,False
+Convex Global Relaxed Risk Parity,2025-02-28,CLARABEL,optimal,0.05862119873850361,,False
+Convex Global Relaxed Risk Parity,2025-03-31,CLARABEL,optimal,0.05800463622726129,,False
+Convex Global Relaxed Risk Parity,2025-04-30,CLARABEL,optimal,0.05905990998777526,,False
+Convex Global Relaxed Risk Parity,2025-05-30,CLARABEL,optimal,0.05793628932703842,,False
+Convex Global Relaxed Risk Parity,2025-06-30,CLARABEL,optimal,0.056713995767155065,,False
+Convex Global Relaxed Risk Parity,2025-07-31,CLARABEL,optimal,0.05236678009025861,,False
+Convex Global Relaxed Risk Parity,2025-08-29,CLARABEL,optimal,0.052043055606930386,,False
+Convex Global Relaxed Risk Parity,2025-09-30,CLARABEL,optimal,0.049222189220016616,,False
+Convex Global Relaxed Risk Parity,2025-10-31,CLARABEL,optimal,0.051038301174519046,,False
+Convex Global Relaxed Risk Parity,2025-11-28,CLARABEL,optimal,0.053870553392419855,,False
+Convex Global Relaxed Risk Parity,2025-12-31,CLARABEL,optimal,0.057389370891224076,,False
+Convex Global Relaxed Risk Parity,2026-01-30,CLARABEL,optimal,0.06119683874136317,,False
+Convex Global Relaxed Risk Parity,2026-02-27,CLARABEL,optimal,0.06622332000288107,,False
+Convex Global Relaxed Risk Parity,2026-03-31,CLARABEL,optimal,0.07736068371657452,,False
+Convex Global Relaxed Risk Parity,2026-04-24,CLARABEL,optimal,0.08035418844933195,,False
+Turnover-Aware Convex Global RRP,2018-02-28,CLARABEL,optimal,0.15861396485810203,,False
+Turnover-Aware Convex Global RRP,2018-03-30,CLARABEL,optimal,0.11716164067911242,,False
+Turnover-Aware Convex Global RRP,2018-04-27,CLARABEL,optimal,0.07822557242623392,,False
+Turnover-Aware Convex Global RRP,2018-05-31,CLARABEL,optimal,0.05848868983031171,,False
+Turnover-Aware Convex Global RRP,2018-06-29,CLARABEL,optimal,0.058860341292256965,,False
+Turnover-Aware Convex Global RRP,2018-07-31,CLARABEL,optimal,0.04944875334190549,,False
+Turnover-Aware Convex Global RRP,2018-08-31,CLARABEL,optimal,0.04348472456552881,,False
+Turnover-Aware Convex Global RRP,2018-09-28,CLARABEL,optimal,0.04354465108832817,,False
+Turnover-Aware Convex Global RRP,2018-10-31,CLARABEL,optimal,0.04623990672314821,,False
+Turnover-Aware Convex Global RRP,2018-11-30,CLARABEL,optimal,0.046779679581344207,,False
+Turnover-Aware Convex Global RRP,2018-12-28,CLARABEL,optimal,0.04873769696419076,,False
+Turnover-Aware Convex Global RRP,2019-01-31,CLARABEL,optimal,0.04540354329673697,,False
+Turnover-Aware Convex Global RRP,2019-02-28,CLARABEL,optimal,0.04112581989390597,,False
+Turnover-Aware Convex Global RRP,2019-03-29,CLARABEL,optimal,0.039739281099213354,,False
+Turnover-Aware Convex Global RRP,2019-04-30,CLARABEL,optimal,0.037614770768317526,,False
+Turnover-Aware Convex Global RRP,2019-05-31,CLARABEL,optimal,0.037637350804352494,,False
+Turnover-Aware Convex Global RRP,2019-06-28,CLARABEL,optimal,0.02239099007986798,,False
+Turnover-Aware Convex Global RRP,2019-07-31,CLARABEL,optimal,0.02473591675118627,,False
+Turnover-Aware Convex Global RRP,2019-08-30,CLARABEL,optimal,0.0510123974313415,,False
+Turnover-Aware Convex Global RRP,2019-09-30,CLARABEL,optimal,0.05366162371891898,,False
+Turnover-Aware Convex Global RRP,2019-10-31,CLARABEL,optimal,0.052956676867737223,,False
+Turnover-Aware Convex Global RRP,2019-11-29,CLARABEL,optimal,0.05488341541452586,,False
+Turnover-Aware Convex Global RRP,2019-12-31,CLARABEL,optimal,0.04027484846580418,,False
+Turnover-Aware Convex Global RRP,2020-01-23,CLARABEL,optimal,0.03709795555217475,,False
+Turnover-Aware Convex Global RRP,2020-02-28,CLARABEL,optimal,0.049374290073091055,,False
+Turnover-Aware Convex Global RRP,2020-03-31,CLARABEL,optimal,0.0732454926170405,,False
+Turnover-Aware Convex Global RRP,2020-04-30,CLARABEL,optimal,0.07917603411489658,,False
+Turnover-Aware Convex Global RRP,2020-05-29,CLARABEL,optimal,0.07513244136402857,,False
+Turnover-Aware Convex Global RRP,2020-06-30,CLARABEL,optimal,0.07197815127021585,,False
+Turnover-Aware Convex Global RRP,2020-07-31,CLARABEL,optimal,0.06945268997453923,,False
+Turnover-Aware Convex Global RRP,2020-08-31,CLARABEL,optimal,0.06624201755258959,,False
+Turnover-Aware Convex Global RRP,2020-09-30,CLARABEL,optimal,0.06980970813889638,,False
+Turnover-Aware Convex Global RRP,2020-10-30,CLARABEL,optimal,0.06968469677379886,,False
+Turnover-Aware Convex Global RRP,2020-11-30,CLARABEL,optimal,0.04784676219207247,,False
+Turnover-Aware Convex Global RRP,2020-12-31,CLARABEL,optimal,0.05590597402342775,,False
+Turnover-Aware Convex Global RRP,2021-01-29,CLARABEL,optimal,0.05898591953233149,,False
+Turnover-Aware Convex Global RRP,2021-02-26,CLARABEL,optimal,0.05720385265459578,,False
+Turnover-Aware Convex Global RRP,2021-03-31,CLARABEL,optimal,0.058388502506767664,,False
+Turnover-Aware Convex Global RRP,2021-04-30,CLARABEL,optimal,0.05924225785423953,,False
+Turnover-Aware Convex Global RRP,2021-05-31,CLARABEL,optimal,0.038124339325328216,,False
+Turnover-Aware Convex Global RRP,2021-06-30,CLARABEL,optimal,0.053066699907640597,,False
+Turnover-Aware Convex Global RRP,2021-07-30,CLARABEL,optimal,0.057445234323474086,,False
+Turnover-Aware Convex Global RRP,2021-08-31,CLARABEL,optimal,0.0642067170807972,,False
+Turnover-Aware Convex Global RRP,2021-09-30,CLARABEL,optimal,0.06574467734439322,,False
+Turnover-Aware Convex Global RRP,2021-10-29,CLARABEL,optimal,0.06438151808608199,,False
+Turnover-Aware Convex Global RRP,2021-11-30,CLARABEL,optimal,0.0723422692158545,,False
+Turnover-Aware Convex Global RRP,2021-12-31,CLARABEL,optimal,0.07529779822160286,,False
+Turnover-Aware Convex Global RRP,2022-01-28,CLARABEL,optimal,0.08204000902639125,,False
+Turnover-Aware Convex Global RRP,2022-02-28,CLARABEL,optimal,0.08292969454357588,,False
+Turnover-Aware Convex Global RRP,2022-03-31,CLARABEL,optimal,0.08146516286243878,,False
+Turnover-Aware Convex Global RRP,2022-04-29,CLARABEL,optimal,0.08375560022117111,,False
+Turnover-Aware Convex Global RRP,2022-05-31,CLARABEL,optimal,0.08509810421938825,,False
+Turnover-Aware Convex Global RRP,2022-06-30,CLARABEL,optimal,0.08560254937567727,,False
+Turnover-Aware Convex Global RRP,2022-07-29,CLARABEL,optimal,0.08699356700592965,,False
+Turnover-Aware Convex Global RRP,2022-08-31,CLARABEL,optimal,0.08448820969827295,,False
+Turnover-Aware Convex Global RRP,2022-09-30,CLARABEL,optimal,0.08807237416356929,,False
+Turnover-Aware Convex Global RRP,2022-10-31,CLARABEL,optimal,0.08698513352138011,,False
+Turnover-Aware Convex Global RRP,2022-11-30,CLARABEL,optimal,0.08082017764864341,,False
+Turnover-Aware Convex Global RRP,2022-12-30,CLARABEL,optimal,0.07475709682463252,,False
+Turnover-Aware Convex Global RRP,2023-01-31,CLARABEL,optimal,0.07028439701900359,,False
+Turnover-Aware Convex Global RRP,2023-02-28,CLARABEL,optimal,0.06827988406311171,,False
+Turnover-Aware Convex Global RRP,2023-03-31,CLARABEL,optimal,0.06797430781121645,,False
+Turnover-Aware Convex Global RRP,2023-04-28,CLARABEL,optimal,0.06433362057511334,,False
+Turnover-Aware Convex Global RRP,2023-05-31,CLARABEL,optimal,0.06375202388482665,,False
+Turnover-Aware Convex Global RRP,2023-06-30,CLARABEL,optimal,0.061027620833063456,,False
+Turnover-Aware Convex Global RRP,2023-07-31,CLARABEL,optimal,0.05856281981611968,,False
+Turnover-Aware Convex Global RRP,2023-08-31,CLARABEL,optimal,0.05799102391735056,,False
+Turnover-Aware Convex Global RRP,2023-09-28,CLARABEL,optimal,0.0550299704460081,,False
+Turnover-Aware Convex Global RRP,2023-10-31,CLARABEL,optimal,0.05466244588677672,,False
+Turnover-Aware Convex Global RRP,2023-11-30,CLARABEL,optimal,0.060065263600892156,,False
+Turnover-Aware Convex Global RRP,2023-12-29,CLARABEL,optimal,0.06582346562270329,,False
+Turnover-Aware Convex Global RRP,2024-01-31,CLARABEL,optimal,0.07295525031794602,,False
+Turnover-Aware Convex Global RRP,2024-02-29,CLARABEL,optimal,0.07177223183018461,,False
+Turnover-Aware Convex Global RRP,2024-03-29,CLARABEL,optimal,0.07026493844409984,,False
+Turnover-Aware Convex Global RRP,2024-04-30,CLARABEL,optimal,0.06968466812781537,,False
+Turnover-Aware Convex Global RRP,2024-05-31,CLARABEL,optimal,0.06818001800280078,,False
+Turnover-Aware Convex Global RRP,2024-06-28,CLARABEL,optimal,0.07100068783518113,,False
+Turnover-Aware Convex Global RRP,2024-07-31,CLARABEL,optimal,0.07452710196512131,,False
+Turnover-Aware Convex Global RRP,2024-08-30,CLARABEL,optimal,0.07018571639776179,,False
+Turnover-Aware Convex Global RRP,2024-09-30,CLARABEL,optimal,0.07285277148320564,,False
+Turnover-Aware Convex Global RRP,2024-10-31,CLARABEL,optimal,0.06866072957138215,,False
+Turnover-Aware Convex Global RRP,2024-11-29,CLARABEL,optimal,0.07185933614101116,,False
+Turnover-Aware Convex Global RRP,2024-12-31,CLARABEL,optimal,0.06883881541527637,,False
+Turnover-Aware Convex Global RRP,2025-01-27,CLARABEL,optimal,0.06419788909539974,,False
+Turnover-Aware Convex Global RRP,2025-02-28,CLARABEL,optimal,0.06139745775087392,,False
+Turnover-Aware Convex Global RRP,2025-03-31,CLARABEL,optimal,0.06069471134863298,,False
+Turnover-Aware Convex Global RRP,2025-04-30,CLARABEL,optimal,0.06201860748506597,,False
+Turnover-Aware Convex Global RRP,2025-05-30,CLARABEL,optimal,0.060837534130668156,,False
+Turnover-Aware Convex Global RRP,2025-06-30,CLARABEL,optimal,0.0594112749422896,,False
+Turnover-Aware Convex Global RRP,2025-07-31,CLARABEL,optimal,0.05520312154050855,,False
+Turnover-Aware Convex Global RRP,2025-08-29,CLARABEL,optimal,0.055241160995285726,,False
+Turnover-Aware Convex Global RRP,2025-09-30,CLARABEL,optimal,0.05145052861652348,,False
+Turnover-Aware Convex Global RRP,2025-10-31,CLARABEL,optimal,0.05375665788635266,,False
+Turnover-Aware Convex Global RRP,2025-11-28,CLARABEL,optimal,0.05653870554593769,,False
+Turnover-Aware Convex Global RRP,2025-12-31,CLARABEL,optimal,0.06033172966727132,,False
+Turnover-Aware Convex Global RRP,2026-01-30,CLARABEL,optimal,0.06477690575091419,,False
+Turnover-Aware Convex Global RRP,2026-02-27,CLARABEL,optimal,0.06987255672126137,,False
+Turnover-Aware Convex Global RRP,2026-03-31,CLARABEL,optimal,0.08088014676572389,,False
+Turnover-Aware Convex Global RRP,2026-04-24,CLARABEL,optimal,0.0838704257903573,,False
+CVaR-Aware Convex Global RRP,2018-02-28,CLARABEL,optimal,0.1177029183819426,,False
+CVaR-Aware Convex Global RRP,2018-03-30,CLARABEL,optimal,0.07607382423777662,,False
+CVaR-Aware Convex Global RRP,2018-04-27,CLARABEL,optimal,0.06620094745114674,,False
+CVaR-Aware Convex Global RRP,2018-05-31,CLARABEL,optimal,0.05991684002820438,,False
+CVaR-Aware Convex Global RRP,2018-06-29,CLARABEL,optimal,0.06042206923342832,,False
+CVaR-Aware Convex Global RRP,2018-07-31,CLARABEL,optimal,0.05111660123132463,,False
+CVaR-Aware Convex Global RRP,2018-08-31,CLARABEL,optimal,0.04527912242873669,,False
+CVaR-Aware Convex Global RRP,2018-09-28,CLARABEL,optimal,0.045162598043537706,,False
+CVaR-Aware Convex Global RRP,2018-10-31,CLARABEL,optimal,0.04770664664770029,,False
+CVaR-Aware Convex Global RRP,2018-11-30,CLARABEL,optimal,0.04826694504285674,,False
+CVaR-Aware Convex Global RRP,2018-12-28,CLARABEL,optimal,0.05000979148690597,,False
+CVaR-Aware Convex Global RRP,2019-01-31,CLARABEL,optimal,0.04669704924172733,,False
+CVaR-Aware Convex Global RRP,2019-02-28,CLARABEL,optimal,0.042517818346420676,,False
+CVaR-Aware Convex Global RRP,2019-03-29,CLARABEL,optimal,0.04108034519821025,,False
+CVaR-Aware Convex Global RRP,2019-04-30,CLARABEL,optimal,0.038997444955018445,,False
+CVaR-Aware Convex Global RRP,2019-05-31,CLARABEL,optimal,0.038591809738408325,,False
+CVaR-Aware Convex Global RRP,2019-06-28,CLARABEL,optimal,0.013399593057241435,,False
+CVaR-Aware Convex Global RRP,2019-07-31,CLARABEL,optimal,0.023562533602719527,,False
+CVaR-Aware Convex Global RRP,2019-08-30,CLARABEL,optimal,0.054304377045124134,,False
+CVaR-Aware Convex Global RRP,2019-09-30,CLARABEL,optimal,0.05501093541869995,,False
+CVaR-Aware Convex Global RRP,2019-10-31,CLARABEL,optimal,0.05445001526910177,,False
+CVaR-Aware Convex Global RRP,2019-11-29,CLARABEL,optimal,0.05646280744276604,,False
+CVaR-Aware Convex Global RRP,2019-12-31,CLARABEL,optimal,0.022274805058683244,,False
+CVaR-Aware Convex Global RRP,2020-01-23,CLARABEL,optimal,0.03923874386704665,,False
+CVaR-Aware Convex Global RRP,2020-02-28,CLARABEL,optimal,0.05143254281328223,,False
+CVaR-Aware Convex Global RRP,2020-03-31,CLARABEL,optimal,0.07434915934050547,,False
+CVaR-Aware Convex Global RRP,2020-04-30,CLARABEL,optimal,0.07794395147934557,,False
+CVaR-Aware Convex Global RRP,2020-05-29,CLARABEL,optimal,0.07378636689902779,,False
+CVaR-Aware Convex Global RRP,2020-06-30,CLARABEL,optimal,0.07054085545484871,,False
+CVaR-Aware Convex Global RRP,2020-07-31,CLARABEL,optimal,0.06806621858430484,,False
+CVaR-Aware Convex Global RRP,2020-08-31,CLARABEL,optimal,0.06495169241146109,,False
+CVaR-Aware Convex Global RRP,2020-09-30,CLARABEL,optimal,0.06848147924419955,,False
+CVaR-Aware Convex Global RRP,2020-10-30,CLARABEL,optimal,0.06836747383415603,,False
+CVaR-Aware Convex Global RRP,2020-11-30,CLARABEL,optimal,0.04537480944798874,,False
+CVaR-Aware Convex Global RRP,2020-12-31,CLARABEL,optimal,0.05385678198497357,,False
+CVaR-Aware Convex Global RRP,2021-01-29,CLARABEL,optimal,0.057537319068487365,,False
+CVaR-Aware Convex Global RRP,2021-02-26,CLARABEL,optimal,0.05655199005337433,,False
+CVaR-Aware Convex Global RRP,2021-03-31,CLARABEL,optimal,0.05790660206542314,,False
+CVaR-Aware Convex Global RRP,2021-04-30,CLARABEL,optimal,0.05832288191469862,,False
+CVaR-Aware Convex Global RRP,2021-05-31,CLARABEL,optimal,0.030131717375184316,,False
+CVaR-Aware Convex Global RRP,2021-06-30,CLARABEL,optimal,0.0542301166864884,,False
+CVaR-Aware Convex Global RRP,2021-07-30,CLARABEL,optimal,0.05894699938068217,,False
+CVaR-Aware Convex Global RRP,2021-08-31,CLARABEL,optimal,0.0651540235905955,,False
+CVaR-Aware Convex Global RRP,2021-09-30,CLARABEL,optimal,0.06624288910045845,,False
+CVaR-Aware Convex Global RRP,2021-10-29,CLARABEL,optimal,0.0640080450378622,,False
+CVaR-Aware Convex Global RRP,2021-11-30,CLARABEL,optimal,0.07122088321744444,,False
+CVaR-Aware Convex Global RRP,2021-12-31,CLARABEL,optimal,0.07367794801121484,,False
+CVaR-Aware Convex Global RRP,2022-01-28,CLARABEL,optimal,0.0805407614479894,,False
+CVaR-Aware Convex Global RRP,2022-02-28,CLARABEL,optimal,0.08082256291196999,,False
+CVaR-Aware Convex Global RRP,2022-03-31,CLARABEL,optimal,0.0793913331986445,,False
+CVaR-Aware Convex Global RRP,2022-04-29,CLARABEL,optimal,0.08199378847590086,,False
+CVaR-Aware Convex Global RRP,2022-05-31,CLARABEL,optimal,0.0828917429276591,,False
+CVaR-Aware Convex Global RRP,2022-06-30,CLARABEL,optimal,0.08288067613631096,,False
+CVaR-Aware Convex Global RRP,2022-07-29,CLARABEL,optimal,0.0841482305684356,,False
+CVaR-Aware Convex Global RRP,2022-08-31,CLARABEL,optimal,0.08200433598114924,,False
+CVaR-Aware Convex Global RRP,2022-09-30,CLARABEL,optimal,0.085349612691337,,False
+CVaR-Aware Convex Global RRP,2022-10-31,CLARABEL,optimal,0.08431836089160842,,False
+CVaR-Aware Convex Global RRP,2022-11-30,CLARABEL,optimal,0.07823499876028747,,False
+CVaR-Aware Convex Global RRP,2022-12-30,CLARABEL,optimal,0.07245861394227295,,False
+CVaR-Aware Convex Global RRP,2023-01-31,CLARABEL,optimal,0.06734663250050936,,False
+CVaR-Aware Convex Global RRP,2023-02-28,CLARABEL,optimal,0.06541680119595404,,False
+CVaR-Aware Convex Global RRP,2023-03-31,CLARABEL,optimal,0.06466997680837758,,False
+CVaR-Aware Convex Global RRP,2023-04-28,CLARABEL,optimal,0.060252727363946317,,False
+CVaR-Aware Convex Global RRP,2023-05-31,CLARABEL,optimal,0.06036975984119881,,False
+CVaR-Aware Convex Global RRP,2023-06-30,CLARABEL,optimal,0.057886488793543786,,False
+CVaR-Aware Convex Global RRP,2023-07-31,CLARABEL,optimal,0.05597416612654116,,False
+CVaR-Aware Convex Global RRP,2023-08-31,CLARABEL,optimal,0.055354975304818504,,False
+CVaR-Aware Convex Global RRP,2023-09-28,CLARABEL,optimal,0.052234026812942785,,False
+CVaR-Aware Convex Global RRP,2023-10-31,CLARABEL,optimal,0.0517840460629528,,False
+CVaR-Aware Convex Global RRP,2023-11-30,CLARABEL,optimal,0.05738233225760698,,False
+CVaR-Aware Convex Global RRP,2023-12-29,CLARABEL,optimal,0.06354150118434444,,False
+CVaR-Aware Convex Global RRP,2024-01-31,CLARABEL,optimal,0.07080436600314371,,False
+CVaR-Aware Convex Global RRP,2024-02-29,CLARABEL,optimal,0.07013275984860279,,False
+CVaR-Aware Convex Global RRP,2024-03-29,CLARABEL,optimal,0.06848967690568589,,False
+CVaR-Aware Convex Global RRP,2024-04-30,CLARABEL,optimal,0.0682144074506003,,False
+CVaR-Aware Convex Global RRP,2024-05-31,CLARABEL,optimal,0.06620545596301428,,False
+CVaR-Aware Convex Global RRP,2024-06-28,CLARABEL,optimal,0.06873995062848157,,False
+CVaR-Aware Convex Global RRP,2024-07-31,CLARABEL,optimal,0.07249719966382824,,False
+CVaR-Aware Convex Global RRP,2024-08-30,CLARABEL,optimal,0.06830278887112025,,False
+CVaR-Aware Convex Global RRP,2024-09-30,CLARABEL,optimal,0.07160546472964312,,False
+CVaR-Aware Convex Global RRP,2024-10-31,CLARABEL,optimal,0.06694350096034844,,False
+CVaR-Aware Convex Global RRP,2024-11-29,CLARABEL,optimal,0.07013994346637144,,False
+CVaR-Aware Convex Global RRP,2024-12-31,CLARABEL,optimal,0.06710647468913505,,False
+CVaR-Aware Convex Global RRP,2025-01-27,CLARABEL,optimal,0.06276734846626095,,False
+CVaR-Aware Convex Global RRP,2025-02-28,CLARABEL,optimal,0.060359699504303616,,False
+CVaR-Aware Convex Global RRP,2025-03-31,CLARABEL,optimal,0.05984153421829556,,False
+CVaR-Aware Convex Global RRP,2025-04-30,CLARABEL,optimal,0.06088347647119476,,False
+CVaR-Aware Convex Global RRP,2025-05-30,CLARABEL,optimal,0.05978093089074408,,False
+CVaR-Aware Convex Global RRP,2025-06-30,CLARABEL,optimal,0.05857217310443259,,False
+CVaR-Aware Convex Global RRP,2025-07-31,CLARABEL,optimal,0.0541148826133586,,False
+CVaR-Aware Convex Global RRP,2025-08-29,CLARABEL,optimal,0.05371890793039042,,False
+CVaR-Aware Convex Global RRP,2025-09-30,CLARABEL,optimal,0.05078125724354248,,False
+CVaR-Aware Convex Global RRP,2025-10-31,CLARABEL,optimal,0.05267747934422258,,False
+CVaR-Aware Convex Global RRP,2025-11-28,CLARABEL,optimal,0.05567543482945892,,False
+CVaR-Aware Convex Global RRP,2025-12-31,CLARABEL,optimal,0.059279914334806096,,False
+CVaR-Aware Convex Global RRP,2026-01-30,CLARABEL,optimal,0.0630473481731632,,False
+CVaR-Aware Convex Global RRP,2026-02-27,CLARABEL,optimal,0.06807893034887262,,False
+CVaR-Aware Convex Global RRP,2026-03-31,CLARABEL,optimal,0.07946700144912225,,False
+CVaR-Aware Convex Global RRP,2026-04-24,CLARABEL,optimal,0.0825612914530883,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-02-28,CLARABEL,optimal,0.18117871351734965,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-03-30,CLARABEL,optimal,0.11534591553942675,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-04-27,CLARABEL,optimal,0.10193489312427409,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-05-31,CLARABEL,optimal,0.09176269582806595,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-06-29,CLARABEL,optimal,0.09228805327313874,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-07-31,CLARABEL,optimal,0.07846036937631547,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-08-31,CLARABEL,optimal,0.06889844703218288,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-09-28,CLARABEL,optimal,0.06905392532144458,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-10-31,CLARABEL,optimal,0.07301303438405055,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-11-30,CLARABEL,optimal,0.07391180179577048,,False
+Convex Adaptive Global Relaxed Risk Parity,2018-12-28,CLARABEL,optimal,0.07625695327889537,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-01-31,CLARABEL,optimal,0.07098291578598412,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-02-28,CLARABEL,optimal,0.06439361747572753,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-03-29,CLARABEL,optimal,0.06216795720373231,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-04-30,CLARABEL,optimal,0.05886042339630502,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-05-31,CLARABEL,optimal,0.058334984465001724,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-06-28,CLARABEL,optimal,0.017948723123792844,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-07-31,CLARABEL,optimal,0.035727360925937396,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-08-30,CLARABEL,optimal,0.08387312527817085,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-09-30,CLARABEL,optimal,0.08468535784963516,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-10-31,CLARABEL,optimal,0.08384493512229424,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-11-29,CLARABEL,optimal,0.08672807942297817,,False
+Convex Adaptive Global Relaxed Risk Parity,2019-12-31,CLARABEL,optimal,0.03165816657801998,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-01-23,CLARABEL,optimal,0.06149293880943465,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-02-28,CLARABEL,optimal,0.07910696886020815,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-03-31,CLARABEL,optimal,0.1111987824976206,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-04-30,CLARABEL,optimal,0.11878442338556408,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-05-29,CLARABEL,optimal,0.11262576231647245,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-06-30,CLARABEL,optimal,0.10741772563821081,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-07-31,CLARABEL,optimal,0.10422127361382805,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-08-31,CLARABEL,optimal,0.10002765469330117,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-09-30,CLARABEL,optimal,0.10477339649558945,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-10-30,CLARABEL,optimal,0.10460916757196823,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-11-30,CLARABEL,optimal,0.06867438577735052,,False
+Convex Adaptive Global Relaxed Risk Parity,2020-12-31,CLARABEL,optimal,0.0827918652448748,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-01-29,CLARABEL,optimal,0.08837489602988916,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-02-26,CLARABEL,optimal,0.08717826564790046,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-03-31,CLARABEL,optimal,0.08834790746734339,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-04-30,CLARABEL,optimal,0.08872024178324821,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-05-31,CLARABEL,optimal,0.04332001532188879,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-06-30,CLARABEL,optimal,0.08290134648297356,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-07-30,CLARABEL,optimal,0.08840971271583442,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-08-31,CLARABEL,optimal,0.09741463381374509,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-09-30,CLARABEL,optimal,0.09945220057968998,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-10-29,CLARABEL,optimal,0.09658416504057671,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-11-30,CLARABEL,optimal,0.10790074405384863,,False
+Convex Adaptive Global Relaxed Risk Parity,2021-12-31,CLARABEL,optimal,0.1114176799341813,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-01-28,CLARABEL,optimal,0.12096780626779619,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-02-28,CLARABEL,optimal,0.12157321476366308,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-03-31,CLARABEL,optimal,0.11963724273111095,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-04-29,CLARABEL,optimal,0.12274562314789059,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-05-31,CLARABEL,optimal,0.12373679051921052,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-06-30,CLARABEL,optimal,0.1235713394961947,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-07-29,CLARABEL,optimal,0.1257237517419884,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-08-31,CLARABEL,optimal,0.12232450240230544,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-09-30,CLARABEL,optimal,0.1266901505397075,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-10-31,CLARABEL,optimal,0.12523452966648124,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-11-30,CLARABEL,optimal,0.11664369320496273,,False
+Convex Adaptive Global Relaxed Risk Parity,2022-12-30,CLARABEL,optimal,0.10708735956273106,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-01-31,CLARABEL,optimal,0.10034692334790866,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-02-28,CLARABEL,optimal,0.0974506620510685,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-03-31,CLARABEL,optimal,0.09616488775163533,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-04-28,CLARABEL,optimal,0.09059729126458958,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-05-31,CLARABEL,optimal,0.09075115324855822,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-06-30,CLARABEL,optimal,0.08800355830454973,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-07-31,CLARABEL,optimal,0.08559503766635143,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-08-31,CLARABEL,optimal,0.08481842992827995,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-09-28,CLARABEL,optimal,0.08069540107731818,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-10-31,CLARABEL,optimal,0.07928579211166205,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-11-30,CLARABEL,optimal,0.08779431181435507,,False
+Convex Adaptive Global Relaxed Risk Parity,2023-12-29,CLARABEL,optimal,0.09788232711888897,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-01-31,CLARABEL,optimal,0.10797389727796168,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-02-29,CLARABEL,optimal,0.10779785425673508,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-03-29,CLARABEL,optimal,0.10583189198470988,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-04-30,CLARABEL,optimal,0.10579150438198504,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-05-31,CLARABEL,optimal,0.10264164734599501,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-06-28,CLARABEL,optimal,0.10584621750566757,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-07-31,CLARABEL,optimal,0.11074450268125373,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-08-30,CLARABEL,optimal,0.10423738996684392,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-09-30,CLARABEL,optimal,0.11013700021860368,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-10-31,CLARABEL,optimal,0.10349914608714969,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-11-29,CLARABEL,optimal,0.10825672893412447,,False
+Convex Adaptive Global Relaxed Risk Parity,2024-12-31,CLARABEL,optimal,0.10381341846873957,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-01-27,CLARABEL,optimal,0.09755538900956044,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-02-28,CLARABEL,optimal,0.09327736827980421,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-03-31,CLARABEL,optimal,0.09139346108783988,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-04-30,CLARABEL,optimal,0.09305756094860157,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-05-30,CLARABEL,optimal,0.09177690246727165,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-06-30,CLARABEL,optimal,0.09026558387571329,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-07-31,CLARABEL,optimal,0.08383812943289826,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-08-29,CLARABEL,optimal,0.08401049911210585,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-09-30,CLARABEL,optimal,0.07947487356627105,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-10-31,CLARABEL,optimal,0.0828949858950381,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-11-28,CLARABEL,optimal,0.08638501120005371,,False
+Convex Adaptive Global Relaxed Risk Parity,2025-12-31,CLARABEL,optimal,0.09232977431937982,,False
+Convex Adaptive Global Relaxed Risk Parity,2026-01-30,CLARABEL,optimal,0.09855861441509364,,False
+Convex Adaptive Global Relaxed Risk Parity,2026-02-27,CLARABEL,optimal,0.10623852939938534,,False
+Convex Adaptive Global Relaxed Risk Parity,2026-03-31,CLARABEL,optimal,0.12276608400007598,,False
+Convex Adaptive Global Relaxed Risk Parity,2026-04-24,CLARABEL,optimal,0.12713602617107533,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-02-28,CLARABEL,optimal,0.1644458298853293,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-03-30,CLARABEL,optimal,0.10241805627448718,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-04-27,CLARABEL,optimal,0.08995521346333014,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-05-31,CLARABEL,optimal,0.07546967799366164,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-06-29,CLARABEL,optimal,0.07604918384193701,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-07-31,CLARABEL,optimal,0.06399739481733173,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-08-31,CLARABEL,optimal,0.051916105381524504,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-09-28,CLARABEL,optimal,0.05194900524006615,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-10-31,CLARABEL,optimal,0.05953193607954617,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-11-30,CLARABEL,optimal,0.06025136855366885,,False
+Convex Adaptive Global RRP + Asset Graph Features,2018-12-28,CLARABEL,optimal,0.06240657862035427,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-01-31,CLARABEL,optimal,0.057919181959598026,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-02-28,CLARABEL,optimal,0.052265437414197466,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-03-29,CLARABEL,optimal,0.050228007104721965,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-04-30,CLARABEL,optimal,0.04735941829706304,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-05-31,CLARABEL,optimal,0.04690604740529972,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-06-28,CLARABEL,optimal,0.013514842778317973,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-07-31,CLARABEL,optimal,0.027172519766789836,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-08-30,CLARABEL,optimal,0.06401405481729422,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-09-30,CLARABEL,optimal,0.06410487059211739,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-10-31,CLARABEL,optimal,0.0681747227199336,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-11-29,CLARABEL,optimal,0.07070230420591152,,False
+Convex Adaptive Global RRP + Asset Graph Features,2019-12-31,CLARABEL,optimal,0.023706876340961087,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-01-23,CLARABEL,optimal,0.044052582286849294,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-02-28,CLARABEL,optimal,0.05795950925410801,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-03-31,CLARABEL,optimal,0.08218995913480788,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-04-30,CLARABEL,optimal,0.08727319044186437,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-05-29,CLARABEL,optimal,0.08084112811127352,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-06-30,CLARABEL,optimal,0.0757533477784928,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-07-31,CLARABEL,optimal,0.08109855343127362,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-08-31,CLARABEL,optimal,0.07865499241662487,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-09-30,CLARABEL,optimal,0.07575193533376896,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-10-30,CLARABEL,optimal,0.07525647097684562,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-11-30,CLARABEL,optimal,0.0501301409754472,,False
+Convex Adaptive Global RRP + Asset Graph Features,2020-12-31,CLARABEL,optimal,0.060106856709569036,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-01-29,CLARABEL,optimal,0.06495943443962494,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-02-26,CLARABEL,optimal,0.06568941155704935,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-03-31,CLARABEL,optimal,0.06915948280859553,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-04-30,CLARABEL,optimal,0.06954785569604119,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-05-31,CLARABEL,optimal,0.03208815505939909,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-06-30,CLARABEL,optimal,0.06372976824677082,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-07-30,CLARABEL,optimal,0.06784533639544645,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-08-31,CLARABEL,optimal,0.07203308512244101,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-09-30,CLARABEL,optimal,0.08466704265955209,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-10-29,CLARABEL,optimal,0.08200779143159825,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-11-30,CLARABEL,optimal,0.09195209559261985,,False
+Convex Adaptive Global RRP + Asset Graph Features,2021-12-31,CLARABEL,optimal,0.09454162596698629,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-01-28,CLARABEL,optimal,0.09147681139541954,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-02-28,CLARABEL,optimal,0.09167633611573024,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-03-31,CLARABEL,optimal,0.0857542886402766,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-04-29,CLARABEL,optimal,0.09101025373710837,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-05-31,CLARABEL,optimal,0.08929145591000304,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-06-30,CLARABEL,optimal,0.08677822944369122,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-07-29,CLARABEL,optimal,0.08618829005754879,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-08-31,CLARABEL,optimal,0.0836188870187093,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-09-30,CLARABEL,optimal,0.08429684105918485,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-10-31,CLARABEL,optimal,0.08157616777548864,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-11-30,CLARABEL,optimal,0.07527062707295745,,False
+Convex Adaptive Global RRP + Asset Graph Features,2022-12-30,CLARABEL,optimal,0.06997156918465615,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-01-31,CLARABEL,optimal,0.0663913936815113,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-02-28,CLARABEL,optimal,0.0641218684486749,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-03-31,CLARABEL,optimal,0.06375964361022969,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-04-28,CLARABEL,optimal,0.06479784738142318,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-05-31,CLARABEL,optimal,0.0661683328474433,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-06-30,CLARABEL,optimal,0.06554922939959178,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-07-31,CLARABEL,optimal,0.06397410378234111,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-08-31,CLARABEL,optimal,0.057117921142966155,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-09-28,CLARABEL,optimal,0.055126131505119476,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-10-31,CLARABEL,optimal,0.054483924812276416,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-11-30,CLARABEL,optimal,0.06101133448661664,,False
+Convex Adaptive Global RRP + Asset Graph Features,2023-12-29,CLARABEL,optimal,0.056161527797593654,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-01-31,CLARABEL,optimal,0.06372489359831654,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-02-29,CLARABEL,optimal,0.0647588600629925,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-03-29,CLARABEL,optimal,0.06646185257857845,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-04-30,CLARABEL,optimal,0.06796882923440209,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-05-31,CLARABEL,optimal,0.0647100675831356,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-06-28,CLARABEL,optimal,0.08242434313007103,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-07-31,CLARABEL,optimal,0.08711397431621912,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-08-30,CLARABEL,optimal,0.08166486962760293,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-09-30,CLARABEL,optimal,0.08624299054106498,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-10-31,CLARABEL,optimal,0.08083248685006333,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-11-29,CLARABEL,optimal,0.08496325810981509,,False
+Convex Adaptive Global RRP + Asset Graph Features,2024-12-31,CLARABEL,optimal,0.08103712316631498,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-01-27,CLARABEL,optimal,0.07560217001436102,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-02-28,CLARABEL,optimal,0.07200400230202883,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-03-31,CLARABEL,optimal,0.07077290673570605,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-04-30,CLARABEL,optimal,0.07210100570277769,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-05-30,CLARABEL,optimal,0.07085790337188552,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-06-30,CLARABEL,optimal,0.06945529202474957,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-07-31,CLARABEL,optimal,0.06406911160766718,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-08-29,CLARABEL,optimal,0.0639399824729559,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-09-30,CLARABEL,optimal,0.048842960472945424,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-10-31,CLARABEL,optimal,0.05027467832391509,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-11-28,CLARABEL,optimal,0.05068352651721143,,False
+Convex Adaptive Global RRP + Asset Graph Features,2025-12-31,CLARABEL,optimal,0.052451623683428567,,False
+Convex Adaptive Global RRP + Asset Graph Features,2026-01-30,CLARABEL,optimal,0.05343230339861515,,False
+Convex Adaptive Global RRP + Asset Graph Features,2026-02-27,CLARABEL,optimal,0.05489804027790821,,False
+Convex Adaptive Global RRP + Asset Graph Features,2026-03-31,CLARABEL,optimal,0.06134623743374902,,False
+Convex Adaptive Global RRP + Asset Graph Features,2026-04-24,CLARABEL,optimal,0.05593810847692337,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-02-28,CLARABEL,optimal,0.24271815412344552,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-03-30,CLARABEL,optimal,0.17461509965747515,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-04-27,CLARABEL,optimal,0.11518708074847514,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-05-31,CLARABEL,optimal,0.09160629595546853,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-06-29,CLARABEL,optimal,0.09211081801340439,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-07-31,CLARABEL,optimal,0.0782295932467718,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-08-31,CLARABEL,optimal,0.06862310949766667,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-09-28,CLARABEL,optimal,0.06884053909288755,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-10-31,CLARABEL,optimal,0.0728942739926668,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-11-30,CLARABEL,optimal,0.07375955368582912,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2018-12-28,CLARABEL,optimal,0.0761821053982597,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-01-31,CLARABEL,optimal,0.07088419930685715,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-02-28,CLARABEL,optimal,0.06442388025589489,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-03-29,CLARABEL,optimal,0.0626109979559995,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-04-30,CLARABEL,optimal,0.05955575525134593,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-05-31,CLARABEL,optimal,0.05968068468930204,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-06-28,CLARABEL,optimal,0.03390177376611886,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-07-31,CLARABEL,optimal,0.0386225732706984,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-08-30,CLARABEL,optimal,0.07972538373459953,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-09-30,CLARABEL,optimal,0.0841376384223808,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-10-31,CLARABEL,optimal,0.08362979406445921,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-11-29,CLARABEL,optimal,0.08689020765193806,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2019-12-31,CLARABEL,optimal,0.06059896655258801,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-01-23,CLARABEL,optimal,0.059747800855337325,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-02-28,CLARABEL,optimal,0.0779528961145282,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-03-31,CLARABEL,optimal,0.11218376570359877,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-04-30,CLARABEL,optimal,0.12208395602766925,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-05-29,CLARABEL,optimal,0.11616220111576046,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-06-30,CLARABEL,optimal,0.11102466094987778,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-07-31,CLARABEL,optimal,0.1078860299118142,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-08-31,CLARABEL,optimal,0.10368092986932957,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-09-30,CLARABEL,optimal,0.10861255396149298,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-10-30,CLARABEL,optimal,0.10841906134705633,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-11-30,CLARABEL,optimal,0.0746844013577066,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2020-12-31,CLARABEL,optimal,0.08615907859889227,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-01-29,CLARABEL,optimal,0.0909216490211733,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-02-26,CLARABEL,optimal,0.08909724639859104,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-03-31,CLARABEL,optimal,0.09047009222444309,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-04-30,CLARABEL,optimal,0.09153058494558099,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-05-31,CLARABEL,optimal,0.05543106189115053,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-06-30,CLARABEL,optimal,0.08072111591515696,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-07-30,CLARABEL,optimal,0.08832713871211245,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-08-31,CLARABEL,optimal,0.09847288604559197,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-09-30,CLARABEL,optimal,0.10129130168729741,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-10-29,CLARABEL,optimal,0.099210319526858,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-11-30,CLARABEL,optimal,0.11099886899593371,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2021-12-31,CLARABEL,optimal,0.1151805667512246,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-01-28,CLARABEL,optimal,0.1250569980099455,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-02-28,CLARABEL,optimal,0.12607770114114036,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-03-31,CLARABEL,optimal,0.12468098316299923,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-04-29,CLARABEL,optimal,0.12773577192020322,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-05-31,CLARABEL,optimal,0.1290842065017246,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-06-30,CLARABEL,optimal,0.12917176545709777,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-07-29,CLARABEL,optimal,0.13100360557178425,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-08-31,CLARABEL,optimal,0.1272089578046754,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-09-30,CLARABEL,optimal,0.13174800664615882,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-10-31,CLARABEL,optimal,0.13026481217963742,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-11-30,CLARABEL,optimal,0.12178349448779971,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2022-12-30,CLARABEL,optimal,0.11222073970217386,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-01-31,CLARABEL,optimal,0.10605877438642489,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-02-28,CLARABEL,optimal,0.10262245875135471,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-03-31,CLARABEL,optimal,0.10158608400907845,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-04-28,CLARABEL,optimal,0.09622677014142378,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-05-31,CLARABEL,optimal,0.0959698491365109,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-06-30,CLARABEL,optimal,0.09324215624729745,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-07-31,CLARABEL,optimal,0.0904197992117474,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-08-31,CLARABEL,optimal,0.08984674203376009,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-09-28,CLARABEL,optimal,0.08558543409402956,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-10-31,CLARABEL,optimal,0.0843033012562081,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-11-30,CLARABEL,optimal,0.09235313115064518,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2023-12-29,CLARABEL,optimal,0.102144988763145,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-01-31,CLARABEL,optimal,0.11266129224644782,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-02-29,CLARABEL,optimal,0.11193727394773001,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-03-29,CLARABEL,optimal,0.11012964703886599,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-04-30,CLARABEL,optimal,0.1096370537763819,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-05-31,CLARABEL,optimal,0.10733387365519279,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-06-28,CLARABEL,optimal,0.11056903282050892,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-07-31,CLARABEL,optimal,0.11493423879481923,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-08-30,CLARABEL,optimal,0.10846331703747242,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-09-30,CLARABEL,optimal,0.11355060398005225,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-10-31,CLARABEL,optimal,0.10736836899401284,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-11-29,CLARABEL,optimal,0.1122929515359507,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2024-12-31,CLARABEL,optimal,0.10768570491919117,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-01-27,CLARABEL,optimal,0.10101352415859931,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-02-28,CLARABEL,optimal,0.09632836665241062,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-03-31,CLARABEL,optimal,0.0945472860865999,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-04-30,CLARABEL,optimal,0.09618881441973004,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-05-30,CLARABEL,optimal,0.09464795857123046,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-06-30,CLARABEL,optimal,0.09299495481497388,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-07-31,CLARABEL,optimal,0.08675079813422985,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-08-29,CLARABEL,optimal,0.08709589981299849,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-09-30,CLARABEL,optimal,0.08204242050487083,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-10-31,CLARABEL,optimal,0.08585206721423654,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-11-28,CLARABEL,optimal,0.08937967545287111,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2025-12-31,CLARABEL,optimal,0.09548383684860758,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2026-01-30,CLARABEL,optimal,0.10240858274256802,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2026-02-27,CLARABEL,optimal,0.11029035569883802,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2026-03-31,CLARABEL,optimal,0.12673233200185058,,False
+Convex Adaptive Global RRP + Transaction-Cost-Aware Objective,2026-04-24,CLARABEL,optimal,0.13117988005709713,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-02-28,CLARABEL,optimal,0.24929139765467673,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-03-30,CLARABEL,optimal,0.17722849549772868,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-04-27,CLARABEL,optimal,0.11538299506123106,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-05-31,CLARABEL,optimal,0.08729028983189206,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-06-29,CLARABEL,optimal,0.08784427325569288,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-07-31,CLARABEL,optimal,0.07435445475100179,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-08-31,CLARABEL,optimal,0.06172103303305986,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-09-28,CLARABEL,optimal,0.06186816862932382,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-10-31,CLARABEL,optimal,0.06922458322659306,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-11-30,CLARABEL,optimal,0.07004524643572135,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2018-12-28,CLARABEL,optimal,0.07238787492775586,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-01-31,CLARABEL,optimal,0.06727256801677291,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-02-28,CLARABEL,optimal,0.06099479044430085,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-03-29,CLARABEL,optimal,0.05921916103621123,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-04-30,CLARABEL,optimal,0.05628925180911293,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-05-31,CLARABEL,optimal,0.05643335100210255,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-06-28,CLARABEL,optimal,0.03193222223702508,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-07-31,CLARABEL,optimal,0.03577096758572447,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-08-30,CLARABEL,optimal,0.07174822078271273,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-09-30,CLARABEL,optimal,0.07591992063324661,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-10-31,CLARABEL,optimal,0.07954103287618045,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-11-29,CLARABEL,optimal,0.0827484535008886,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2019-12-31,CLARABEL,optimal,0.05718846678507887,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-01-23,CLARABEL,optimal,0.051672051078486755,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-02-28,CLARABEL,optimal,0.06868632871195317,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-03-31,CLARABEL,optimal,0.09912999369522872,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-04-30,CLARABEL,optimal,0.10801842616762032,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-05-29,CLARABEL,optimal,0.10134930320338283,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-06-30,CLARABEL,optimal,0.09581705107717527,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-07-31,CLARABEL,optimal,0.0997802768055358,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-08-31,CLARABEL,optimal,0.09683202412373065,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-09-30,CLARABEL,optimal,0.09571228251055809,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-10-30,CLARABEL,optimal,0.09522680949906445,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-11-30,CLARABEL,optimal,0.06707983309690112,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2020-12-31,CLARABEL,optimal,0.07612173311116212,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-01-29,CLARABEL,optimal,0.08093378547004779,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-02-26,CLARABEL,optimal,0.08059239470612642,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-03-31,CLARABEL,optimal,0.0839777033640944,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-04-30,CLARABEL,optimal,0.0850850528899234,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-05-31,CLARABEL,optimal,0.05083407831475882,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-06-30,CLARABEL,optimal,0.07371919018282488,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-07-30,CLARABEL,optimal,0.08056668436090654,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-08-31,CLARABEL,optimal,0.0874014693489899,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-09-30,CLARABEL,optimal,0.0993152868851031,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-10-29,CLARABEL,optimal,0.09729603928948427,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-11-30,CLARABEL,optimal,0.10894623784260961,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2021-12-31,CLARABEL,optimal,0.11266680732134536,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-01-28,CLARABEL,optimal,0.1126762046922471,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-02-28,CLARABEL,optimal,0.11328232438222804,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-03-31,CLARABEL,optimal,0.10840188799329961,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-04-29,CLARABEL,optimal,0.11352231026843639,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-05-31,CLARABEL,optimal,0.11274523246386027,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-06-30,CLARABEL,optimal,0.1109020211018266,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-07-29,CLARABEL,optimal,0.11065634361785903,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-08-31,CLARABEL,optimal,0.10719006833541664,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-09-30,CLARABEL,optimal,0.10879143475979101,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-10-31,CLARABEL,optimal,0.09497425067207867,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-11-30,CLARABEL,optimal,0.08833227120467248,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2022-12-30,CLARABEL,optimal,0.08247033980837785,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-01-31,CLARABEL,optimal,0.07928038869075993,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-02-28,CLARABEL,optimal,0.07630921836147571,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-03-31,CLARABEL,optimal,0.07604782820720031,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-04-28,CLARABEL,optimal,0.07755610874406144,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-05-31,CLARABEL,optimal,0.08500901727169449,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-06-30,CLARABEL,optimal,0.08391573359483795,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-07-31,CLARABEL,optimal,0.08164910026849174,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-08-31,CLARABEL,optimal,0.07577259527208707,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-09-28,CLARABEL,optimal,0.07299739996996829,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-10-31,CLARABEL,optimal,0.0720402238371786,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-11-30,CLARABEL,optimal,0.07920386969049084,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2023-12-29,CLARABEL,optimal,0.0773113031791869,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-01-31,CLARABEL,optimal,0.08649643203307487,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-02-29,CLARABEL,optimal,0.0868692038022916,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-03-29,CLARABEL,optimal,0.088086147013079,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-04-30,CLARABEL,optimal,0.08896292689330845,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-05-31,CLARABEL,optimal,0.08619484187170508,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-06-28,CLARABEL,optimal,0.10203313197753332,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-07-31,CLARABEL,optimal,0.10657264431232862,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-08-30,CLARABEL,optimal,0.10049885347711997,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-09-30,CLARABEL,optimal,0.10522222957685777,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-10-31,CLARABEL,optimal,0.09961923710528278,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-11-29,CLARABEL,optimal,0.10451060288227586,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2024-12-31,CLARABEL,optimal,0.09994039959133441,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-01-27,CLARABEL,optimal,0.09340553840172469,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-02-28,CLARABEL,optimal,0.08878816797681198,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-03-31,CLARABEL,optimal,0.08729202504119164,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-04-30,CLARABEL,optimal,0.08875652720680942,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-05-30,CLARABEL,optimal,0.08721722252889995,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-06-30,CLARABEL,optimal,0.08560095285981371,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-07-31,CLARABEL,optimal,0.07964477056454036,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-08-29,CLARABEL,optimal,0.07979022653275657,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-09-30,CLARABEL,optimal,0.06519819553729236,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-10-31,CLARABEL,optimal,0.06775215513711785,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-11-28,CLARABEL,optimal,0.06879633694405418,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2025-12-31,CLARABEL,optimal,0.07194920061040463,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2026-01-30,CLARABEL,optimal,0.07506020521953012,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2026-02-27,CLARABEL,optimal,0.07846012434878266,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2026-03-31,CLARABEL,optimal,0.08816152320562043,,False
+Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime,2026-04-24,CLARABEL,optimal,0.08450616487112285,,False
