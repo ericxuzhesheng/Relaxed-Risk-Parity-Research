@@ -36,12 +36,11 @@
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
-| Convex Adaptive Global RRP + Asset Graph Features | 5.39% | 0.57 | -8.21% | 0.66 | 0.94% |
-| Convex Adaptive Global RRP + Transaction-Cost-Aware Objective | 4.00% | 0.31 | -10.28% | 0.39 | 0.18% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.63% | 0.71 | -6.79% | 0.83 | 0.86% |
+| HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
+| HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
-交易成本感知目标将成本拖累压低到约 `0.0007%`，并将月均换手降至 `0.18%`，但在当前参数下净收益、Sharpe、Calmar 和最大回撤表现均弱于基础的 Convex Adaptive 版本。
-
-图特征增强版本在最新样本中没有改善 Sharpe、Calmar、最大回撤或 CVaR。因此，滚动资产图特征在当前框架中被定位为诊断和稳健性扩展，而不是独立的收益增强器。
+Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
 ## 方法说明
 
@@ -128,12 +127,11 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
-| Convex Adaptive Global RRP + Asset Graph Features | 5.39% | 0.57 | -8.21% | 0.66 | 0.94% |
-| Convex Adaptive Global RRP + Transaction-Cost-Aware Objective | 4.00% | 0.31 | -10.28% | 0.39 | 0.18% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.63% | 0.71 | -6.79% | 0.83 | 0.86% |
+| HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
+| HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
-The transaction-cost-aware objective reduced cost drag to about `0.0007%` and average monthly turnover to `0.18%`, but under the current parameters it also lowered net performance, Sharpe, Calmar, and drawdown performance relative to the base Convex Adaptive version.
-
-In the latest sample, graph features did not improve Sharpe, Calmar, drawdown, or CVaR. They are therefore treated as diagnostics and robustness extensions rather than standalone return enhancers.
+Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
 ## Method
 

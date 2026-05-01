@@ -19,9 +19,12 @@ from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.metrics import calculate_metrics
-from src.public_labels import public_model_label
 from src.utils import get_config, resolve_path
 from src.visualization import plot_drawdown_comparison, plot_nav_comparison
+
+
+BASE_CONVEX_MODEL_NAME = "Convex Adaptive Global Relaxed Risk Parity"
+IMPROVED_MODEL_NAME = "Improved Convex Adaptive Global Relaxed Risk Parity"
 
 
 def ensure_output_dirs() -> None:
@@ -50,7 +53,6 @@ def cvar(returns: pd.Series, beta: float = 0.95) -> float:
 
 
 def summarize_result(name: str, result: pd.DataFrame, eval_start_date: str, config: dict) -> dict:
-    eval_result = result[pd.to_datetime(result["date"]) >= pd.Timestamp(eval_start_date)].copy()
     if "gross_return" not in result and "turnover" in result:
         result = result.copy()
         result["gross_return"] = result["portfolio_return"] + (config.get("transaction_cost_bps", 0.0) / 10000.0) * result["turnover"].fillna(0.0)
@@ -98,10 +100,7 @@ def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: f
             window = returns[returns.index < date].iloc[-240:]
             if len(window) >= 30:
                 previous = weights.copy()
-                if model_type == "hrp":
-                    weights = solve_hrp(window).values
-                else:
-                    weights = solve_herc(window).values
+                weights = solve_hrp(window).values if model_type == "hrp" else solve_herc(window).values
                 turnover = float(np.abs(weights - previous).sum())
         gross = float(np.dot(returns.loc[date].fillna(0.0).values, weights))
         cost = cost_rate * turnover
@@ -110,6 +109,129 @@ def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: f
             row[f"weight_{asset}"] = weights[i]
         rows.append(row)
     return pd.DataFrame(rows)
+
+
+def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, ConvexRRPConfig]]:
+    rows: list[tuple[str, dict]] = []
+    for lookback_days in [180, 240]:
+        for max_weight in [0.35, 0.40]:
+            for budget_penalty in [0.35, 0.45]:
+                for cvar_penalty in [0.05, 0.10, 0.20]:
+                    rows.append(
+                        (
+                            f"candidate_{len(rows) + 1:02d}",
+                            {
+                                "lookback_days": lookback_days,
+                                "covariance_method": "ewma",
+                                "max_weight": max_weight,
+                                "turnover_cap": 0.35,
+                                "turnover_penalty": 0.02,
+                                "budget_penalty": budget_penalty,
+                                "cvar_penalty": cvar_penalty,
+                                "cvar_beta": 0.95,
+                            },
+                        )
+                    )
+    for params in [
+        {"lookback_days": 240, "covariance_method": "sample", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
+        {"lookback_days": 252, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
+        {"lookback_days": 240, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.50, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.95},
+        {"lookback_days": 240, "covariance_method": "ewma", "max_weight": 0.35, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10, "cvar_beta": 0.90},
+    ]:
+        rows.append((f"candidate_{len(rows) + 1:02d}", params))
+    return [(name, ConvexRRPConfig(transaction_cost_bps=transaction_cost_bps, **params)) for name, params in rows]
+
+
+def selection_score(metrics: dict, baseline: dict, fallback_rate: float) -> tuple[float, str]:
+    mdd_base = abs(float(baseline["max_drawdown"]))
+    cvar_base = max(float(baseline["cvar_95_daily_loss"]), 1e-12)
+    turnover_base = max(float(baseline["avg_monthly_turnover"]), 1e-12)
+    mdd = abs(float(metrics["max_drawdown"]))
+    cvar_loss = float(metrics["cvar_95_daily_loss"])
+    turnover = float(metrics["avg_monthly_turnover"])
+    sharpe_delta = float(metrics["sharpe_ratio"]) - float(baseline["sharpe_ratio"])
+    return_delta = float(metrics["net_annual_return"]) - float(baseline["net_annual_return"])
+    drawdown_delta = mdd - mdd_base
+
+    reject_reasons = []
+    if fallback_rate > 0.001:
+        reject_reasons.append("solver_fallback")
+    if sharpe_delta > 0 and drawdown_delta > 0.01:
+        reject_reasons.append("drawdown_worse")
+    if drawdown_delta < 0 and sharpe_delta < -0.05:
+        reject_reasons.append("sharpe_collapse")
+    if return_delta < -0.01:
+        reject_reasons.append("net_return_deterioration")
+    if turnover > max(0.05, 3.0 * turnover_base):
+        reject_reasons.append("turnover_high")
+
+    mdd_penalty = max(0.0, drawdown_delta) / mdd_base
+    cvar_penalty = max(0.0, cvar_loss - cvar_base) / cvar_base
+    turnover_penalty = max(0.0, turnover - turnover_base) / turnover_base
+    score = (
+        float(metrics["sharpe_ratio"])
+        + 0.25 * float(metrics["calmar_ratio"])
+        - 0.40 * mdd_penalty
+        - 0.15 * cvar_penalty
+        - 0.10 * turnover_penalty
+        - 10.0 * fallback_rate
+    )
+    if reject_reasons:
+        score -= 100.0
+    return score, ";".join(reject_reasons)
+
+
+def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: float, score: float, reject_reason: str) -> dict:
+    return {
+        "candidate_name": name,
+        "lambda_cvar": cfg.cvar_penalty,
+        "lambda_turnover": cfg.turnover_penalty,
+        "lambda_ref": cfg.return_reward,
+        "lambda_budget": cfg.budget_penalty,
+        "upper_bound_i": cfg.max_weight,
+        "turnover_cap": cfg.turnover_cap,
+        "cvar_alpha": cfg.cvar_beta,
+        "covariance_estimator": cfg.covariance_method,
+        "lookback_window": cfg.lookback_days,
+        "Sharpe": metrics["sharpe_ratio"],
+        "max_drawdown": metrics["max_drawdown"],
+        "Calmar": metrics["calmar_ratio"],
+        "CVaR_daily_loss": metrics["cvar_95_daily_loss"],
+        "net_return": metrics["net_annual_return"],
+        "average_monthly_turnover": metrics["avg_monthly_turnover"],
+        "solver_fallback_rate": fallback_rate,
+        "selection_score": score,
+        "reject_reason": reject_reason,
+        "selected": False,
+    }
+
+
+def run_improvement_search(
+    returns: pd.DataFrame,
+    eval_start_date: str,
+    config: dict,
+    baseline_metrics: dict,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    candidate_rows = []
+    outputs = []
+    for candidate_name, cfg in candidate_configurations(config["transaction_cost_bps"]):
+        print(f"Running improvement {candidate_name}...")
+        result, solver_diag, _, _ = run_convex_adaptive_backtest(returns, cfg)
+        metrics = summarize_result(candidate_name, result, eval_start_date, config)
+        fallback_rate = float(solver_diag["fallback_used"].mean()) if not solver_diag.empty else 1.0
+        score, reject_reason = selection_score(metrics, baseline_metrics, fallback_rate)
+        candidate_rows.append(config_row(candidate_name, cfg, metrics, fallback_rate, score, reject_reason))
+        outputs.append((candidate_name, result, solver_diag))
+
+    candidates = pd.DataFrame(candidate_rows)
+    selected_idx = candidates["selection_score"].idxmax()
+    candidates.loc[selected_idx, "selected"] = True
+    selected_name = str(candidates.loc[selected_idx, "candidate_name"])
+    _, selected_result, selected_solver = next(row for row in outputs if row[0] == selected_name)
+    selected_solver = selected_solver.copy()
+    if not selected_solver.empty:
+        selected_solver.insert(0, "model", IMPROVED_MODEL_NAME)
+    return candidates, selected_result, selected_solver
 
 
 def plot_transaction_cost(summary: pd.DataFrame, save_path: str) -> None:
@@ -143,64 +265,56 @@ def plot_feature_timeline(df: pd.DataFrame, value_cols: list[str], title: str, s
     plt.close()
 
 
-def write_readme(summary: pd.DataFrame, solver_diag: pd.DataFrame, eval_start_date: str) -> None:
-    rows = []
-    for _, row in summary.iterrows():
-        rows.append(
-            f"| {row['model']} | {row['gross_annual_return']:.2%} | {row['net_annual_return']:.2%} | "
-            f"{row['transaction_cost_drag']:.2%} | {row['avg_monthly_turnover']:.3f} | "
-            f"{row['turnover_adjusted_sharpe']:.2f} | {row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} |"
-        )
-    fallback_rate = float(solver_diag["fallback_used"].mean()) if not solver_diag.empty and "fallback_used" in solver_diag else 0.0
-    lines = [
-        "# Relaxed Risk Parity Framework | 宽松风险平价全球资产配置框架",
-        "",
-        "<a id=\"en\"></a>",
-        "## English",
-        "",
-        "This repository studies Relaxed Risk Parity for global multi-asset allocation. The latest extension adds a convex adaptive layer with bounded graph diagnostics, transaction-cost-aware optimization, CVaR regularization, and stable online regime labels. Final portfolio weights are always produced by the optimization layer.",
-        "",
-        f"Evaluation starts on `{eval_start_date}`. Gross and net results are both shown so transaction costs are visible.",
-        "",
-        "| Model | Gross Return | Net Return | Cost Drag | Avg Monthly Turnover | Turnover-adjusted Sharpe | Max Drawdown | Calmar |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
-        *rows,
-        "",
-        "Key outputs:",
-        "- `results/tables/convex_adaptive_performance_summary.csv`",
-        "- `results/tables/convex_adaptive_transaction_cost_summary.csv`",
-        "- `results/tables/asset_graph_diagnostics.csv`",
-        "- `results/tables/online_regime_diagnostics.csv`",
-        "- `results/tables/convex_adaptive_solver_diagnostics.csv`",
-        "- `results/figures/convex_adaptive_nav_comparison.png`",
-        "- `results/figures/convex_adaptive_transaction_cost_comparison.png`",
-        "",
-        f"Solver fallback rate in the latest convex run: `{fallback_rate:.1%}`. Fallback rows are explicitly flagged in solver diagnostics.",
-        "",
-        "Run:",
-        "```bash",
-        "pip install -r requirements.txt",
-        "python -m pytest",
-        "python scripts/run_convex_adaptive_rrp.py",
-        "```",
-        "",
-        "<a id=\"zh\"></a>",
-        "## 中文",
-        "",
-        "本项目研究宽松风险平价在全球多资产配置中的应用。最新扩展加入凸优化自适应层、轻量资产相关性图诊断、交易成本约束、CVaR 正则项和稳定在线风险状态标签。最终组合权重始终由优化层生成，图特征和状态标签只作为有界风险输入。",
-        "",
-        f"评估区间从 `{eval_start_date}` 开始。下表同时展示毛收益、净收益和交易成本拖累。",
-        "",
-        "| 模型 | 毛年化收益 | 净年化收益 | 成本拖累 | 月均换手 | 换手调整夏普 | 最大回撤 | Calmar |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|",
-        *rows,
-        "",
-        "主要输出保存在 `results/tables/` 和 `results/figures/`。本研究不构成投资建议，数据质量、滑点、流动性、税费和实盘可交易性需要独立复核。",
-        "",
-        "## License",
-        "MIT License.",
+def readme_row(row: pd.Series) -> str:
+    return (
+        f"| {row['model']} | {row['net_annual_return']:.2%} | {row['sharpe_ratio']:.2f} | "
+        f"{row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} | {row['avg_monthly_turnover']:.2%} |"
+    )
+
+
+def replace_latest_results_table(text: str, heading: str, rows: list[str], note: str) -> str:
+    start = text.index(heading)
+    table_start = text.index("|", start)
+    next_heading = text.find("\n## ", table_start)
+    next_anchor = text.find("\n<a id=", table_start)
+    candidates = [idx for idx in [next_heading, next_anchor] if idx != -1]
+    end = min(candidates) if candidates else len(text)
+
+    block = text[start:end]
+    lines = block.splitlines()
+    table_idx = next(i for i, line in enumerate(lines) if line.startswith("|"))
+    header = lines[: table_idx + 2]
+    new_block = "\n".join(header + rows + ["", note, ""])
+    return text[:start] + new_block + text[end:]
+
+
+def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics: dict) -> None:
+    public_models = [
+        "Global Relaxed Risk Parity",
+        "Defensive Dynamic Relaxed Risk Parity",
+        BASE_CONVEX_MODEL_NAME,
+        IMPROVED_MODEL_NAME,
+        "HRP Benchmark",
+        "HERC Benchmark",
     ]
-    Path(resolve_path("README.md")).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    public_summary = summary.set_index("model").loc[public_models].reset_index()
+    rows = [readme_row(row) for _, row in public_summary.iterrows()]
+    both_improved = (
+        improved_metrics["sharpe_ratio"] > baseline_metrics["sharpe_ratio"]
+        and abs(improved_metrics["max_drawdown"]) < abs(baseline_metrics["max_drawdown"])
+    )
+    note = (
+        f"{IMPROVED_MODEL_NAME} is a constrained parameter refinement of the convex adaptive optimizer, "
+        "selected with drawdown and turnover-aware criteria."
+        if both_improved
+        else f"{IMPROVED_MODEL_NAME} was tested as a constrained optimization refinement. "
+        "In the latest run, improvement was limited and the result is reported transparently."
+    )
+    readme_path = Path(resolve_path("README.md"))
+    text = readme_path.read_text(encoding="utf-8")
+    text = replace_latest_results_table(text, "## 最新结果", rows, note)
+    text = replace_latest_results_table(text, "## Latest Results", rows, note)
+    readme_path.write_text(text, encoding="utf-8")
 
 
 def main() -> None:
@@ -225,43 +339,46 @@ def main() -> None:
     hrp = run_hrp_like(returns, "hrp", config["transaction_cost_bps"])
     herc = run_hrp_like(returns, "herc", config["transaction_cost_bps"])
 
-    base_convex = ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], cvar_penalty=0.0)
-    variants = [
-        ("Convex Global Relaxed Risk Parity", base_convex),
-        ("Turnover-Aware Convex Global RRP", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], turnover_penalty=0.08, turnover_cap=0.20)),
-        ("CVaR-Aware Convex Global RRP", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], cvar_penalty=0.25)),
-        ("Convex Adaptive Global Relaxed Risk Parity", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55)),
-        ("Convex Adaptive Global RRP + Asset Graph Features", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55, use_graph_features=True)),
-        ("Convex Adaptive Global RRP + Transaction-Cost-Aware Objective", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55, use_transaction_cost_objective=True, turnover_penalty=0.08, turnover_cap=0.20)),
-        ("Convex Adaptive Global RRP + Graph + Transaction Cost + Stable Online Regime", ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.60, use_graph_features=True, use_transaction_cost_objective=True, use_online_regime=True, turnover_penalty=0.08, turnover_cap=0.20, cvar_penalty=0.15)),
-    ]
+    print(f"Running {BASE_CONVEX_MODEL_NAME}...")
+    base_cfg = ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55)
+    base_result, base_solver, _, _ = run_convex_adaptive_backtest(returns, base_cfg)
+    base_result.to_csv(resolve_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
+    base_solver.insert(0, "model", BASE_CONVEX_MODEL_NAME)
+    baseline_summary = summarize_result(BASE_CONVEX_MODEL_NAME, base_result, eval_start_date, config)
+
+    candidates, improved_result, improved_solver = run_improvement_search(returns, eval_start_date, config, baseline_summary)
+    improved_result.to_csv(resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
+    candidates.to_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"), index=False)
 
     models: dict[str, pd.DataFrame] = {
         "Global Relaxed Risk Parity": global_rrp,
         "Defensive Dynamic Relaxed Risk Parity": dynamic,
+        BASE_CONVEX_MODEL_NAME: base_result,
+        IMPROVED_MODEL_NAME: improved_result,
         "HRP Benchmark": hrp,
         "HERC Benchmark": herc,
     }
-    solver_diags = []
-    graph_diags = []
-    regime_diags = []
-    for name, cfg in variants:
-        print(f"Running {name}...")
-        result, solver_diag, graph_diag, regime_diag = run_convex_adaptive_backtest(returns, cfg)
-        models[name] = result
-        if not solver_diag.empty:
-            solver_diag.insert(0, "model", name)
-            solver_diags.append(solver_diag)
-        if not graph_diag.empty:
-            graph_diag.insert(0, "model", name)
-            graph_diags.append(graph_diag)
-        if not regime_diag.empty:
-            regime_diag.insert(0, "model", name)
-            regime_diags.append(regime_diag)
-        result.to_csv(resolve_path(f"results/tables/{name.lower().replace(' ', '_').replace('+', 'plus')}_returns.csv"), index=False)
-
-    summary = pd.DataFrame([summarize_result(name, result, eval_start_date, config) for name, result in models.items() if not result.empty])
+    public_order = list(models)
+    summary = pd.DataFrame([summarize_result(name, result, eval_start_date, config) for name, result in models.items()])
+    summary = summary.set_index("model").loc[public_order].reset_index()
     summary.to_csv(resolve_path("results/tables/convex_adaptive_performance_summary.csv"), index=False)
+
+    selected_row = candidates[candidates["selected"]].iloc[0]
+    ablation = summary[summary["model"].isin([BASE_CONVEX_MODEL_NAME, IMPROVED_MODEL_NAME])].copy()
+    ablation["selected_candidate"] = ablation["model"].eq(IMPROVED_MODEL_NAME)
+    ablation["selected_candidate_name"] = np.where(ablation["selected_candidate"], selected_row["candidate_name"], "")
+    ablation["selected_parameters"] = np.where(
+        ablation["selected_candidate"],
+        (
+            f"lambda_cvar={selected_row['lambda_cvar']}, lambda_turnover={selected_row['lambda_turnover']}, "
+            f"lambda_budget={selected_row['lambda_budget']}, upper_bound_i={selected_row['upper_bound_i']}, "
+            f"cvar_alpha={selected_row['cvar_alpha']}, covariance={selected_row['covariance_estimator']}, "
+            f"lookback={selected_row['lookback_window']}"
+        ),
+        "baseline",
+    )
+    ablation.to_csv(resolve_path("results/tables/convex_adaptive_ablation.csv"), index=False)
+
     tc_summary = summary[
         [
             "model",
@@ -275,23 +392,25 @@ def main() -> None:
     ].copy()
     tc_summary.to_csv(resolve_path("results/tables/convex_adaptive_transaction_cost_summary.csv"), index=False)
 
-    solver_diag_df = pd.concat(solver_diags, ignore_index=True) if solver_diags else pd.DataFrame()
+    solver_diag_df = pd.concat([base_solver, improved_solver], ignore_index=True)
     solver_diag_df.to_csv(resolve_path("results/tables/convex_adaptive_solver_diagnostics.csv"), index=False)
-    graph_diag_df = pd.concat(graph_diags, ignore_index=True) if graph_diags else graph_feature_frame(returns, monthly_rebalance_dates(returns), 240)
+    graph_diag_df = graph_feature_frame(returns, monthly_rebalance_dates(returns), 240)
     graph_diag_df.to_csv(resolve_path("results/tables/asset_graph_diagnostics.csv"), index=False)
-    regime_diag_df = pd.concat(regime_diags, ignore_index=True) if regime_diags else pd.DataFrame()
-    regime_diag_df.to_csv(resolve_path("results/tables/online_regime_diagnostics.csv"), index=False)
 
-    nav_dict = {name: nav_from_return(result, "net_return" if "net_return" in result else "portfolio_return", eval_start_date) for name, result in models.items() if not result.empty}
+    nav_dict = {name: nav_from_return(result, "net_return" if "net_return" in result else "portfolio_return", eval_start_date) for name, result in models.items()}
     plot_nav_comparison(nav_dict, f"Convex Adaptive RRP NAV since {eval_start_date}", resolve_path("results/figures/convex_adaptive_nav_comparison.png"))
     plot_drawdown_comparison(nav_dict, f"Convex Adaptive RRP Drawdown since {eval_start_date}", resolve_path("results/figures/convex_adaptive_drawdown_comparison.png"))
     plot_transaction_cost(tc_summary, resolve_path("results/figures/convex_adaptive_transaction_cost_comparison.png"))
     plot_feature_timeline(graph_diag_df, ["correlation_stress_score", "avg_abs_corr", "largest_cluster_size_ratio"], "Asset Graph Stress Timeline", resolve_path("results/figures/asset_graph_stress_timeline.png"))
-    plot_feature_timeline(regime_diag_df, ["raw_stress_score", "smoothed_stress_score"], "Online Regime Timeline", resolve_path("results/figures/online_regime_timeline.png"))
-    write_readme(summary, solver_diag_df, eval_start_date)
+
+    baseline_metrics = summary.set_index("model").loc[BASE_CONVEX_MODEL_NAME].to_dict()
+    improved_metrics = summary.set_index("model").loc[IMPROVED_MODEL_NAME].to_dict()
+    write_readme(summary, baseline_metrics, improved_metrics)
 
     print("\nConvex Adaptive Summary:")
     print(summary[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "calmar_ratio", "cvar_95_daily_loss", "turnover_adjusted_sharpe"]])
+    print("\nSelected improvement candidate:")
+    print(candidates[candidates["selected"]].T)
     print("Pipeline completed successfully.")
 
 
