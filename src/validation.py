@@ -5,6 +5,7 @@ import pandas as pd
 
 from src.dynamic_selection import monthly_rebalance_dates, score_params
 from src.metrics import calculate_metrics
+from src.public_labels import public_model_label
 
 
 def adjusted_sharpe(
@@ -134,7 +135,7 @@ def afml_diagnostics(
     if not dynamic_result.empty and "turnover_cap_bound" in dynamic_result:
         rows.append(
             {
-                "model": "Dynamic_RRP_overlay",
+                "model": public_model_label("Dynamic_RRP") + " overlay diagnostics",
                 "raw_sharpe": np.nan,
                 "adjusted_sharpe_conservative": np.nan,
                 "diagnostic_note": (

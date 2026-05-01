@@ -1,5 +1,5 @@
 model,raw_sharpe,adjusted_sharpe_conservative,diagnostic_note
-V3_Global_RRP,1.2299688408246157,1.1122278385730682,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Dynamic_RRP,0.5841798401387474,0.46643883788719986,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Dynamic_RRP_before,0.3569407232133251,0.2391997209617776,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Dynamic_RRP_overlay,,,Turnover cap bound on 0.0% of rows; simplified diagnostic.
+Global Relaxed Risk Parity,1.15334293607668,1.0356019338251325,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Defensive Dynamic Relaxed Risk Parity,0.7592845353387964,0.6415435330872489,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Defensive Dynamic RRP before overlay optimization,0.3569407232133251,0.2391997209617776,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Defensive Dynamic Relaxed Risk Parity overlay diagnostics,,,Turnover cap bound on 72.5% of rows; simplified diagnostic.

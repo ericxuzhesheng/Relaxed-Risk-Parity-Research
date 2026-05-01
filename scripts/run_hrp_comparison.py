@@ -14,6 +14,7 @@ from src.backtest import run_static_backtest
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.metrics import calculate_metrics, calculate_turnover
+from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
 from src.visualization import plot_drawdown_comparison, plot_nav_comparison, plot_weights
 
@@ -140,11 +141,11 @@ def main():
     models = {
         "Equal Weight": run_equal_weight(returns[assets_v3]),
         "Minimum Variance": run_minimum_variance(returns[assets_v3], config),
-        "Standard RP": run_static_backtest(returns[assets_v1], model_type="standard"),
-        "Relaxed RRP": run_static_backtest(returns[assets_v1], model_type="relaxed"),
-        "Global RRP": run_static_backtest(returns[assets_v3], model_type="relaxed"),
-        "HRP": run_static_backtest(returns[assets_v3], model_type="hrp"),
-        "HERC": run_static_backtest(returns[assets_v3], model_type="herc"),
+        "Standard Risk Parity": run_static_backtest(returns[assets_v1], model_type="standard"),
+        "Local Relaxed Risk Parity": run_static_backtest(returns[assets_v1], model_type="relaxed"),
+        "Global Relaxed Risk Parity": run_static_backtest(returns[assets_v3], model_type="relaxed"),
+        "HRP Benchmark": run_static_backtest(returns[assets_v3], model_type="hrp"),
+        "HERC Benchmark": run_static_backtest(returns[assets_v3], model_type="herc"),
     }
 
     dynamic_grid = [
@@ -162,7 +163,7 @@ def main():
         config_base=config,
     )
     if not dynamic.empty:
-        models["Dynamic RRP"] = dynamic
+        models["Defensive Dynamic Relaxed Risk Parity"] = dynamic
 
     summaries = []
     nav_dict = {}
@@ -173,7 +174,7 @@ def main():
     summary_df = pd.DataFrame(summaries)
     metric_cols = ["model"] + [c for c in summary_df.columns if c != "model"]
     summary_df = summary_df[metric_cols]
-    summary_df.to_csv(resolve_path("results/tables/hrp_comparison.csv"), index=False)
+    apply_public_model_labels(summary_df).to_csv(resolve_path("results/tables/hrp_comparison.csv"), index=False)
 
     plot_nav_comparison(
         nav_dict,
@@ -186,11 +187,11 @@ def main():
         resolve_path("results/figures/drawdown_comparison.png"),
     )
 
-    hrp_weights = models["HRP"][["date"] + _weight_cols(models["HRP"])].copy()
-    hrp_weights.columns = ["date"] + [c.replace("weight_", "") for c in _weight_cols(models["HRP"])]
+    hrp_weights = models["HRP Benchmark"][["date"] + _weight_cols(models["HRP Benchmark"])].copy()
+    hrp_weights.columns = ["date"] + [c.replace("weight_", "") for c in _weight_cols(models["HRP Benchmark"])]
     plot_weights(
         hrp_weights.set_index("date"),
-        "HRP Weights",
+        f"{public_model_label('HRP')} Weights",
         resolve_path("results/figures/hrp_weights_timeline.png"),
     )
 

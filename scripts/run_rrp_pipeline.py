@@ -12,6 +12,7 @@ if str(ROOT_DIR) not in sys.path:
 from src.backtest import run_static_backtest
 from src.data_loader import load_data, update_data_from_wind
 from src.metrics import add_turnover_adjusted_metrics, calculate_metrics
+from src.public_labels import apply_public_model_labels, public_model_label
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.utils import get_config, resolve_path
 from src.validation import (
@@ -93,7 +94,7 @@ def _save_weights(result: pd.DataFrame, name: str):
     plot_df.columns = [col.replace("weight_", "") for col in plot_df.columns]
     plot_weights(
         plot_df,
-        f"{name} Weights",
+        f"{public_model_label(name)} Weights",
         resolve_path(f"results/figures/{name.lower()}_weights.png"),
     )
 
@@ -172,16 +173,20 @@ def main():
         )
         summary_df = summary_df.sort_values(["rank_order", "model"]).drop(columns=["rank_order"])
         summary_df = summary_df[["model"] + [col for col in summary_df.columns if col != "model"]]
-        summary_df.to_csv(resolve_path("results/tables/performance_summary.csv"), index=False)
+        apply_public_model_labels(summary_df).to_csv(
+            resolve_path("results/tables/performance_summary.csv"),
+            index=False,
+        )
 
     if nav_dict:
+        public_nav_dict = {public_model_label(name): nav for name, nav in nav_dict.items()}
         plot_nav_comparison(
-            nav_dict,
+            public_nav_dict,
             f"NAV Comparison since {eval_start_date}",
             resolve_path("results/figures/nav_comparison.png"),
         )
         plot_drawdown_comparison(
-            nav_dict,
+            public_nav_dict,
             f"Drawdown Comparison since {eval_start_date}",
             resolve_path("results/figures/drawdown_comparison.png"),
         )
@@ -200,7 +205,7 @@ def main():
         )
         walkforward.to_csv(resolve_path("results/tables/walkforward_validation.csv"), index=False)
 
-        diagnostics = afml_diagnostics(summary_df, dynamic, param_grid)
+        diagnostics = afml_diagnostics(apply_public_model_labels(summary_df), dynamic, param_grid)
         diagnostics.to_csv(resolve_path("results/tables/afml_diagnostics.csv"), index=False)
 
         pbo = simplified_pbo_diagnostic(returns[assets_v3], param_grid, config, args.selection_metric)
@@ -224,8 +229,9 @@ def main():
         if not dynamic_no_cap.empty:
             ablation_rows.append(_summarize("Dynamic_RRP_No_Turnover_Cap", dynamic_no_cap, eval_start_date, no_turnover_config))
         ablation = pd.DataFrame(ablation_rows)
-        ablation.to_csv(resolve_path("results/tables/risk_overlay_ablation.csv"), index=False)
-        plot_risk_overlay_ablation(ablation, resolve_path("results/figures/risk_overlay_ablation.png"))
+        public_ablation = apply_public_model_labels(ablation)
+        public_ablation.to_csv(resolve_path("results/tables/risk_overlay_ablation.csv"), index=False)
+        plot_risk_overlay_ablation(public_ablation, resolve_path("results/figures/risk_overlay_ablation.png"))
 
     print("\nSummary Results:")
     print(summary_df if not summary_df.empty else "No summary rows generated.")
