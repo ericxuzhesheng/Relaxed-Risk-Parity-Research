@@ -83,6 +83,10 @@ def parameter_stability(dynamic_result: pd.DataFrame) -> pd.DataFrame:
         "avg_selected_bond_leverage_upper": "bond_leverage_upper",
         "drawdown_scalar": "drawdown_scale",
         "target_vol_scalar": "vol_scalar",
+        "trend_scalar": "trend_scalar",
+        "final_risk_scalar": "final_risk_scalar",
+        "reentry_state": "reentry_state",
+        "gross_exposure": "gross_exposure",
     }
     for col, label in mapping.items():
         if col in monthly:

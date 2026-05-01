@@ -13,6 +13,7 @@ from src.risk_overlay import (
     transaction_cost_rate,
 )
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp
+from src.utils import apply_asset_class_budget_multipliers
 
 
 def monthly_rebalance_dates(returns: pd.DataFrame) -> list[pd.Timestamp]:
@@ -56,6 +57,7 @@ def solve_rrp_window_weights(
     else:
         weights = solve_relaxed_rp(sigma.values, mu_filtered.values, theta, n_assets, r_base, cfg)
 
+    weights = apply_asset_class_budget_multipliers(weights, df_window.columns, cfg)
     state = {
         "selected_lambda": float(params.get("lambda_pen", cfg.get("lambda_pen", 0.0))),
         "selected_m": float(params.get("m", cfg.get("m", 0.0))),
@@ -119,6 +121,7 @@ def run_dynamic_rrp_selection(
     current_weights = np.ones(n_assets) / n_assets
     portfolio_navs = [1.0]
     high_water_mark = 1.0
+    risk_state = {}
     selected_state = {
         "avg_selected_lambda": np.nan,
         "avg_selected_m": np.nan,
@@ -154,7 +157,9 @@ def run_dynamic_rrp_selection(
             df_train,
             drawdown,
             overlay,
+            risk_state,
         )
+        risk_state = overlay_state.copy()
 
         selected_state = {
             "avg_selected_lambda": float(np.mean([p.get("lambda_pen", config_base.get("lambda_pen", 0.0)) for p in top_params])),

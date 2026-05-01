@@ -9,7 +9,7 @@ from src.risk_overlay import (
     apply_trend_confirmation,
     transaction_cost_rate,
 )
-from src.utils import get_config
+from src.utils import apply_asset_class_budget_multipliers, get_config
 
 
 def _monthly_rebalance_dates(returns: pd.DataFrame) -> set[pd.Timestamp]:
@@ -38,6 +38,7 @@ def run_static_backtest(
     current_weights = np.ones(n_assets) / n_assets
     portfolio_navs = [1.0]
     high_water_mark = 1.0
+    risk_state = {}
 
     for d in dates:
         current_nav = portfolio_navs[-1]
@@ -47,8 +48,13 @@ def run_static_backtest(
         overlay_state = {
             "target_vol_scalar": 1.0,
             "drawdown_scalar": 1.0,
+            "trend_scalar": 1.0,
+            "final_risk_scalar": 1.0,
             "turnover_cap_bound": False,
             "gross_exposure": float(np.abs(current_weights).sum()),
+            "risky_exposure": float(np.abs(current_weights).sum()),
+            "defensive_cash_proxy_exposure": float(max(0.0, 1.0 - np.abs(current_weights).sum())),
+            "reentry_state": 1.0,
             "trend_positive_count": n_assets,
         }
 
@@ -109,13 +115,16 @@ def run_static_backtest(
                                 config,
                             )
 
+                current_weights = apply_asset_class_budget_multipliers(current_weights, returns.columns, config)
                 current_weights, overlay_state = apply_risk_overlay(
                     current_weights,
                     previous_weights,
                     df_window,
                     drawdown,
                     overlay_config,
+                    risk_state,
                 )
+                risk_state = overlay_state.copy()
                 overlay_state["trend_positive_count"] = trend_positive_count
 
                 turnover = overlay_state["turnover"]
@@ -131,8 +140,13 @@ def run_static_backtest(
             "turnover": turnover,
             "target_vol_scalar": overlay_state["target_vol_scalar"],
             "drawdown_scalar": overlay_state["drawdown_scalar"],
+            "trend_scalar": overlay_state["trend_scalar"],
+            "final_risk_scalar": overlay_state["final_risk_scalar"],
             "turnover_cap_bound": overlay_state["turnover_cap_bound"],
             "gross_exposure": overlay_state["gross_exposure"],
+            "risky_exposure": overlay_state["risky_exposure"],
+            "defensive_cash_proxy_exposure": overlay_state["defensive_cash_proxy_exposure"],
+            "reentry_state": overlay_state["reentry_state"],
             "trend_positive_count": overlay_state["trend_positive_count"],
         }
         for j, asset in enumerate(returns.columns):

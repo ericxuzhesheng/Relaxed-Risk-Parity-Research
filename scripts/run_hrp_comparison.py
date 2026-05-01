@@ -173,7 +173,6 @@ def main():
     summary_df = pd.DataFrame(summaries)
     metric_cols = ["model"] + [c for c in summary_df.columns if c != "model"]
     summary_df = summary_df[metric_cols]
-    summary_df.to_csv(resolve_path("results/tables/performance_summary.csv"), index=False)
     summary_df.to_csv(resolve_path("results/tables/hrp_comparison.csv"), index=False)
 
     plot_nav_comparison(

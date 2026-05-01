@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import numpy as np
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,3 +35,28 @@ def get_config(overrides=None):
     if overrides:
         config.update(overrides)
     return config
+
+
+def infer_asset_class(asset_name: str) -> str:
+    name = str(asset_name)
+    if "红利" in name:
+        return "defensive"
+    if "债" in name or "信用" in name:
+        return "bond"
+    if any(token in name for token in ["黄金", "有色", "豆粕", "原油", "WTI"]):
+        return "commodity_gold"
+    return "equity"
+
+
+def apply_asset_class_budget_multipliers(weights, columns, config: dict):
+    multipliers = config.get("asset_class_budget_multipliers")
+    if not multipliers:
+        return weights
+    adjusted = np.asarray(weights, dtype=float).copy()
+    target_sum = float(adjusted.sum())
+    for i, col in enumerate(columns):
+        adjusted[i] *= float(multipliers.get(infer_asset_class(col), 1.0))
+    adjusted_sum = float(adjusted.sum())
+    if abs(adjusted_sum) > 1e-12:
+        adjusted *= target_sum / adjusted_sum
+    return adjusted
