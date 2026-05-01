@@ -42,6 +42,8 @@
 
 Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
+结果解释入口：[资产定价解释层](#资产定价解释层)、[解释报告](report/asset_pricing_interpretation.md)、[因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)、[收益归因表](results/tables/asset_pricing_return_attribution.csv)。
+
 ## 资产定价解释层
 
 资产定价解释层只用于解释现有组合结果，不新增组合模型、不改变回测逻辑、不调参，也不使用因子诊断结果生成权重。
@@ -118,11 +120,11 @@ python scripts/run_convex_adaptive_rrp.py
 
 关键输出：
 
-- `results/tables/convex_adaptive_performance_summary.csv`
-- `results/tables/convex_adaptive_transaction_cost_summary.csv`
-- `results/tables/asset_graph_diagnostics.csv`
-- `results/tables/online_regime_diagnostics.csv`
-- `results/tables/convex_adaptive_solver_diagnostics.csv`
+- [凸自适应绩效汇总表](results/tables/convex_adaptive_performance_summary.csv)
+- [交易成本汇总表](results/tables/convex_adaptive_transaction_cost_summary.csv)
+- [资产图诊断表](results/tables/asset_graph_diagnostics.csv)
+- [在线风险状态诊断表](results/tables/online_regime_diagnostics.csv)
+- [求解器诊断表](results/tables/convex_adaptive_solver_diagnostics.csv)
 
 <a id="english"></a>
 ## English
@@ -158,6 +160,8 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 | HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
 Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
+
+Result interpretation links: [Asset-Pricing Interpretation Layer](#asset-pricing-interpretation-layer), [interpretation report](report/asset_pricing_interpretation.md), [factor exposure summary table](results/tables/asset_pricing_factor_exposure_summary.csv), and [return attribution table](results/tables/asset_pricing_return_attribution.csv).
 
 ## Asset-Pricing Interpretation Layer
 
@@ -235,11 +239,11 @@ python scripts/run_convex_adaptive_rrp.py
 
 Key outputs:
 
-- `results/tables/convex_adaptive_performance_summary.csv`
-- `results/tables/convex_adaptive_transaction_cost_summary.csv`
-- `results/tables/asset_graph_diagnostics.csv`
-- `results/tables/online_regime_diagnostics.csv`
-- `results/tables/convex_adaptive_solver_diagnostics.csv`
+- [Convex adaptive performance summary](results/tables/convex_adaptive_performance_summary.csv)
+- [Transaction cost summary](results/tables/convex_adaptive_transaction_cost_summary.csv)
+- [Asset graph diagnostics](results/tables/asset_graph_diagnostics.csv)
+- [Online regime diagnostics](results/tables/online_regime_diagnostics.csv)
+- [Solver diagnostics](results/tables/convex_adaptive_solver_diagnostics.csv)
 
 ## License
 
