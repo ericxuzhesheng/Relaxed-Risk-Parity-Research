@@ -46,6 +46,20 @@ Benchmark 结果保留在公开表格中，但不作为本文的主要贡献。
 | HRP Benchmark | -0.09% | 0.37% | -5.19 | -3.84 | -0.77% | -0.12 | 0.0005 | -0.26 |
 | HERC Benchmark | -0.09% | 0.37% | -5.16 | -4.65 | -0.77% | -0.11 | 0.0005 | -0.24 |
 
+全量方案回测结果如下，包含基准配置、RRP 系列、层次化 benchmark、标准 pipeline 动态模型，以及 showcase 优化后的防御型动态模型。
+| Strategy | Source | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Total Return | Avg Turnover |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Equal Weight | `hrp_comparison.csv` | 5.11% | 9.40% | 0.35 | 0.54 | -14.36% | 0.36 | 30.17% | 0.0000 |
+| Minimum Variance | `hrp_comparison.csv` | 1.84% | 0.28% | 0.06 | 0.04 | -0.46% | 4.03 | 10.11% | 0.0007 |
+| Standard Risk Parity | `hrp_comparison.csv` | 0.78% | 1.58% | -0.66 | -0.58 | -4.86% | 0.16 | 4.17% | 0.0108 |
+| Local Relaxed Risk Parity | `hrp_comparison.csv` | 4.66% | 3.34% | 0.85 | 0.86 | -5.14% | 0.91 | 27.23% | 0.0107 |
+| Global Relaxed Risk Parity | `hrp_comparison.csv` | 5.98% | 3.61% | 1.15 | 1.35 | -4.25% | 1.41 | 35.95% | 0.0115 |
+| HRP Benchmark | `hrp_comparison.csv` | -0.09% | 0.37% | -5.19 | -3.84 | -0.77% | -0.12 | -0.50% | 0.0005 |
+| HERC Benchmark | `hrp_comparison.csv` | -0.09% | 0.37% | -5.16 | -4.65 | -0.77% | -0.11 | -0.45% | 0.0005 |
+| Defensive Dynamic Relaxed Risk Parity (standard pipeline) | `hrp_comparison.csv` | 3.31% | 3.99% | 0.37 | 0.39 | -7.12% | 0.47 | 18.24% | 0.0096 |
+| Defensive Dynamic Relaxed Risk Parity (showcase optimized) | `showcase_performance_summary.csv` | 4.58% | 3.64% | 0.76 | 0.86 | -4.37% | 1.05 | 25.89% | 0.0112 |
+| Defensive Dynamic RRP before overlay optimization | `showcase_performance_summary.csv` | 3.22% | 3.93% | 0.36 | 0.37 | -7.12% | 0.45 | 17.70% | 0.0098 |
+
 ### 图表展示
 <p align="center"><img src="results/figures/showcase_nav_comparison.png" width="820" alt="Showcase NAV Comparison"></p>
 <p align="center"><em>Showcase NAV comparison.</em></p>
@@ -129,6 +143,20 @@ Benchmark results are retained transparently.
 | Local Relaxed Risk Parity | 5.53% | 3.65% | 1.02 | 1.10 | -5.12% | 1.08 | 0.0111 | 1.49 |
 | HRP Benchmark | -0.09% | 0.37% | -5.19 | -3.84 | -0.77% | -0.12 | 0.0005 | -0.26 |
 | HERC Benchmark | -0.09% | 0.37% | -5.16 | -4.65 | -0.77% | -0.11 | 0.0005 | -0.24 |
+
+The full strategy backtest table is shown below, covering baseline allocations, RRP variants, hierarchical benchmarks, the standard pipeline dynamic model, and the showcase-optimized defensive dynamic model.
+| Strategy | Source | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Total Return | Avg Turnover |
+|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Equal Weight | `hrp_comparison.csv` | 5.11% | 9.40% | 0.35 | 0.54 | -14.36% | 0.36 | 30.17% | 0.0000 |
+| Minimum Variance | `hrp_comparison.csv` | 1.84% | 0.28% | 0.06 | 0.04 | -0.46% | 4.03 | 10.11% | 0.0007 |
+| Standard Risk Parity | `hrp_comparison.csv` | 0.78% | 1.58% | -0.66 | -0.58 | -4.86% | 0.16 | 4.17% | 0.0108 |
+| Local Relaxed Risk Parity | `hrp_comparison.csv` | 4.66% | 3.34% | 0.85 | 0.86 | -5.14% | 0.91 | 27.23% | 0.0107 |
+| Global Relaxed Risk Parity | `hrp_comparison.csv` | 5.98% | 3.61% | 1.15 | 1.35 | -4.25% | 1.41 | 35.95% | 0.0115 |
+| HRP Benchmark | `hrp_comparison.csv` | -0.09% | 0.37% | -5.19 | -3.84 | -0.77% | -0.12 | -0.50% | 0.0005 |
+| HERC Benchmark | `hrp_comparison.csv` | -0.09% | 0.37% | -5.16 | -4.65 | -0.77% | -0.11 | -0.45% | 0.0005 |
+| Defensive Dynamic Relaxed Risk Parity (standard pipeline) | `hrp_comparison.csv` | 3.31% | 3.99% | 0.37 | 0.39 | -7.12% | 0.47 | 18.24% | 0.0096 |
+| Defensive Dynamic Relaxed Risk Parity (showcase optimized) | `showcase_performance_summary.csv` | 4.58% | 3.64% | 0.76 | 0.86 | -4.37% | 1.05 | 25.89% | 0.0112 |
+| Defensive Dynamic RRP before overlay optimization | `showcase_performance_summary.csv` | 3.22% | 3.93% | 0.36 | 0.37 | -7.12% | 0.45 | 17.70% | 0.0098 |
 
 ### Figures
 <p align="center"><img src="results/figures/showcase_nav_comparison.png" width="820" alt="Showcase NAV Comparison"></p>

@@ -373,6 +373,48 @@ def _metric_table(df: pd.DataFrame, names: list[str]) -> list[str]:
     return rows
 
 
+def _all_strategy_table(showcase: pd.DataFrame) -> list[str]:
+    rows = [
+        "| Strategy | Source | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Total Return | Avg Turnover |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    table_rows = []
+    hrp_path = Path(resolve_path("results/tables/hrp_comparison.csv"))
+    if hrp_path.exists():
+        hrp = apply_public_model_labels(pd.read_csv(hrp_path))
+        for _, row in hrp.iterrows():
+            model = row["model"]
+            if model == "Defensive Dynamic Relaxed Risk Parity":
+                model = "Defensive Dynamic Relaxed Risk Parity (standard pipeline)"
+            table_rows.append((model, "hrp_comparison.csv", row))
+    public_showcase = apply_public_model_labels(showcase)
+    for label in [
+        "Defensive Dynamic Relaxed Risk Parity",
+        "Defensive Dynamic RRP before overlay optimization",
+    ]:
+        row_df = public_showcase[public_showcase["model"] == label]
+        if not row_df.empty:
+            model = label
+            if label == "Defensive Dynamic Relaxed Risk Parity":
+                model = "Defensive Dynamic Relaxed Risk Parity (showcase optimized)"
+            table_rows.append((model, "showcase_performance_summary.csv", row_df.iloc[0]))
+
+    seen = set()
+    for model, source, row in table_rows:
+        key = (model, source)
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append(
+            f"| {model} | `{source}` | {row['annualized_return']:.2%} | "
+            f"{row['annualized_volatility']:.2%} | {row['sharpe_ratio']:.2f} | "
+            f"{row.get('sortino_ratio', 0.0):.2f} | {row['max_drawdown']:.2%} | "
+            f"{row['calmar_ratio']:.2f} | {row.get('total_return', 0.0):.2%} | "
+            f"{row.get('avg_turnover', row.get('turnover', 0.0)):.4f} |"
+        )
+    return rows
+
+
 def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
     public_summary = apply_public_model_labels(summary)
     dynamic_row = public_summary[
@@ -412,6 +454,7 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
                 "HERC Benchmark",
             ],
         )
+    all_strategy_table = _all_strategy_table(summary)
     lines = [
         "# 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation",
         "",
@@ -451,6 +494,9 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
         "",
         "Benchmark 结果保留在公开表格中，但不作为本文的主要贡献。",
         *(benchmark_table if benchmark_table else ["Benchmark 表将在运行完整 pipeline 后由 `results/tables/performance_summary.csv` 更新。"]),
+        "",
+        "全量方案回测结果如下，包含基准配置、RRP 系列、层次化 benchmark、标准 pipeline 动态模型，以及 showcase 优化后的防御型动态模型。",
+        *all_strategy_table,
         "",
         "### 图表展示",
         "<p align=\"center\"><img src=\"results/figures/showcase_nav_comparison.png\" width=\"820\" alt=\"Showcase NAV Comparison\"></p>",
@@ -526,6 +572,9 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
         "",
         "Benchmark results are retained transparently.",
         *(benchmark_table if benchmark_table else ["Benchmark rows are updated after running the full pipeline."]),
+        "",
+        "The full strategy backtest table is shown below, covering baseline allocations, RRP variants, hierarchical benchmarks, the standard pipeline dynamic model, and the showcase-optimized defensive dynamic model.",
+        *all_strategy_table,
         "",
         "### Figures",
         "<p align=\"center\"><img src=\"results/figures/showcase_nav_comparison.png\" width=\"820\" alt=\"Showcase NAV Comparison\"></p>",
