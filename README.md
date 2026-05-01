@@ -109,6 +109,7 @@ python scripts/run_hrp_comparison.py
 3. Bailey, D. H., Borwein, J. M., Lopez de Prado, M., & Zhu, Q. J. (2015). The Probability of Backtest Overfitting.
 4. Bailey, D. H., & Lopez de Prado, M. (2014). The Deflated Sharpe Ratio.
 5. Lopez de Prado, M. (2016). Building Diversified Portfolios that Outperform Out-of-Sample.
+6. 浙商证券. (2026). 债市专题研究：宽松改进下的风险平价：从本土化到全球化.
 
 <a id="en"></a>
 
@@ -200,6 +201,7 @@ This is backtest research, not investment advice. Data quality, asset mappings, 
 3. Bailey, D. H., Borwein, J. M., Lopez de Prado, M., & Zhu, Q. J. (2015). The Probability of Backtest Overfitting.
 4. Bailey, D. H., & Lopez de Prado, M. (2014). The Deflated Sharpe Ratio.
 5. Lopez de Prado, M. (2016). Building Diversified Portfolios that Outperform Out-of-Sample.
+6. Zheshang Securities. (2026). Fixed Income Thematic Research: Relaxed Improvements to Risk Parity, from Localization to Globalization.
 
 ## License
 MIT License.
