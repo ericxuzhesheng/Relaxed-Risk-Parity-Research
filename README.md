@@ -42,7 +42,7 @@
 
 Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
-结果解释入口：[资产定价解释层](#资产定价解释层)、[解释报告](report/asset_pricing_interpretation.md)、[因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)、[收益归因表](results/tables/asset_pricing_return_attribution.csv)。
+最新结果输出：[绩效汇总表](results/tables/performance_summary.csv)、[凸自适应绩效汇总表](results/tables/convex_adaptive_performance_summary.csv)、[交易成本汇总表](results/tables/convex_adaptive_transaction_cost_summary.csv)、[净值对比图](results/figures/convex_adaptive_nav_comparison.png)、[回撤对比图](results/figures/convex_adaptive_drawdown_comparison.png)。
 
 ## 资产定价解释层
 
@@ -161,7 +161,7 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 
 Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
-Result interpretation links: [Asset-Pricing Interpretation Layer](#asset-pricing-interpretation-layer), [interpretation report](report/asset_pricing_interpretation.md), [factor exposure summary table](results/tables/asset_pricing_factor_exposure_summary.csv), and [return attribution table](results/tables/asset_pricing_return_attribution.csv).
+Latest result outputs: [performance summary](results/tables/performance_summary.csv), [convex adaptive performance summary](results/tables/convex_adaptive_performance_summary.csv), [transaction cost summary](results/tables/convex_adaptive_transaction_cost_summary.csv), [NAV comparison figure](results/figures/convex_adaptive_nav_comparison.png), and [drawdown comparison figure](results/figures/convex_adaptive_drawdown_comparison.png).
 
 ## Asset-Pricing Interpretation Layer
 
