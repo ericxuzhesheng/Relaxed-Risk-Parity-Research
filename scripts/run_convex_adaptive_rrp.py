@@ -303,17 +303,22 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
         improved_metrics["sharpe_ratio"] > baseline_metrics["sharpe_ratio"]
         and abs(improved_metrics["max_drawdown"]) < abs(baseline_metrics["max_drawdown"])
     )
-    note = (
+    note_en = (
         f"{IMPROVED_MODEL_NAME} is a constrained parameter refinement of the convex adaptive optimizer, "
         "selected with drawdown and turnover-aware criteria."
         if both_improved
         else f"{IMPROVED_MODEL_NAME} was tested as a constrained optimization refinement. "
         "In the latest run, improvement was limited and the result is reported transparently."
     )
+    note_zh = (
+        f"{IMPROVED_MODEL_NAME} 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。"
+        if both_improved
+        else f"{IMPROVED_MODEL_NAME} 已作为受约束优化细化版本进行测试；本次运行改进有限，结果已如实报告。"
+    )
     readme_path = Path(resolve_path("README.md"))
     text = readme_path.read_text(encoding="utf-8")
-    text = replace_latest_results_table(text, "## 最新结果", rows, note)
-    text = replace_latest_results_table(text, "## Latest Results", rows, note)
+    text = replace_latest_results_table(text, "## 最新结果", rows, note_zh)
+    text = replace_latest_results_table(text, "## Latest Results", rows, note_en)
     readme_path.write_text(text, encoding="utf-8")
 
 

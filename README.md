@@ -40,7 +40,7 @@
 | HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
 | HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
-Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
+Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
 ## 方法说明
 
