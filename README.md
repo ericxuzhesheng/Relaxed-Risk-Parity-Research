@@ -65,12 +65,31 @@ $$
 
 $$
 minimize ψ - γ over x, ζ, ψ, γ, ρ
-subject to:
+$$
+
+约束条件：
+
+$$
 ζ = Σ_t x
+$$
+
+$$
 Σ_i x_i = 1,  x_i ≥ 0
+$$
+
+$$
 x_i ζ_i ≥ γ²
+$$
+
+$$
 ρ² ≥ λ_pen · xᵀΘ_t x
+$$
+
+$$
 n(ψ² - ρ²) ≥ xᵀΣ_t x
+$$
+
+$$
 μ_tᵀx ≥ m · max(μ_bar,t, 0)
 $$
 
@@ -78,7 +97,13 @@ $$
 
 $$
 w_i = x_i · lev_i
+$$
+
+$$
 1 ≤ lev_i ≤ lev_max for i in B
+$$
+
+$$
 lev_i = 1 for i not in B
 $$
 
@@ -89,7 +114,27 @@ min_w J(w)
 $$
 
 $$
-J(w) = λ_var · wᵀΣ_t w + λ_budget · ||w - b_t||₂² + λ_turnover · ||w - w_(t-1)||₁ + λ_cvar · CVaR_α(-R_t w) - λ_return · μ_tᵀw
+J(w) = J_var + J_budget + J_turnover + J_CVaR - J_return
+$$
+
+$$
+J_var = λ_var · wᵀΣ_t w
+$$
+
+$$
+J_budget = λ_budget · ||w - b_t||₂²
+$$
+
+$$
+J_turnover = λ_turnover · ||w - w_(t-1)||₁
+$$
+
+$$
+J_CVaR = λ_cvar · CVaR_α(-R_t w)
+$$
+
+$$
+J_return = λ_return · μ_tᵀw
 $$
 
 约束条件：权重和为 1，`0≤w_i≤u_i`；组别暴露满足 `L_g≤Σ_{i∈g}w_i≤U_g`；换手满足 `||w-w_(t-1)||_1≤τ`。
@@ -98,6 +143,9 @@ $$
 
 $$
 CVaR_α(L) = min over η of [η + 1 / ((1 - α)T) · Σ_t max(L_t - η, 0)]
+$$
+
+$$
 L_t = -r_tᵀw
 $$
 
@@ -105,7 +153,13 @@ $$
 
 $$
 Σ_sample = Cov(R_t)
+$$
+
+$$
 Σ_LW = δF + (1 - δ)Σ_sample
+$$
+
+$$
 Σ_EWMA = EWCov(R_t, h),  h in {20, 60, 120}
 $$
 
@@ -336,12 +390,31 @@ Here, `H_t` is the trailing lookback window, `A_i,t` is the tradability flag, an
 
 $$
 minimize ψ - γ over x, ζ, ψ, γ, ρ
-subject to:
+$$
+
+Constraints:
+
+$$
 ζ = Σ_t x
+$$
+
+$$
 Σ_i x_i = 1,  x_i ≥ 0
+$$
+
+$$
 x_i ζ_i ≥ γ²
+$$
+
+$$
 ρ² ≥ λ_pen · xᵀΘ_t x
+$$
+
+$$
 n(ψ² - ρ²) ≥ xᵀΣ_t x
+$$
+
+$$
 μ_tᵀx ≥ m · max(μ_bar,t, 0)
 $$
 
@@ -349,7 +422,13 @@ $$
 
 $$
 w_i = x_i · lev_i
+$$
+
+$$
 1 ≤ lev_i ≤ lev_max for i in B
+$$
+
+$$
 lev_i = 1 for i not in B
 $$
 
@@ -360,7 +439,27 @@ min_w J(w)
 $$
 
 $$
-J(w) = λ_var · wᵀΣ_t w + λ_budget · ||w - b_t||₂² + λ_turnover · ||w - w_(t-1)||₁ + λ_cvar · CVaR_α(-R_t w) - λ_return · μ_tᵀw
+J(w) = J_var + J_budget + J_turnover + J_CVaR - J_return
+$$
+
+$$
+J_var = λ_var · wᵀΣ_t w
+$$
+
+$$
+J_budget = λ_budget · ||w - b_t||₂²
+$$
+
+$$
+J_turnover = λ_turnover · ||w - w_(t-1)||₁
+$$
+
+$$
+J_CVaR = λ_cvar · CVaR_α(-R_t w)
+$$
+
+$$
+J_return = λ_return · μ_tᵀw
 $$
 
 Constraints: weights sum to 1, `0≤w_i≤u_i`; group exposure satisfies `L_g≤Σ_{i∈g}w_i≤U_g`; turnover satisfies `||w-w_(t-1)||_1≤τ`.
@@ -369,6 +468,9 @@ Constraints: weights sum to 1, `0≤w_i≤u_i`; group exposure satisfies `L_g≤
 
 $$
 CVaR_α(L) = min over η of [η + 1 / ((1 - α)T) · Σ_t max(L_t - η, 0)]
+$$
+
+$$
 L_t = -r_tᵀw
 $$
 
@@ -376,7 +478,13 @@ $$
 
 $$
 Σ_sample = Cov(R_t)
+$$
+
+$$
 Σ_LW = δF + (1 - δ)Σ_sample
+$$
+
+$$
 Σ_EWMA = EWCov(R_t, h),  h in {20, 60, 120}
 $$
 
