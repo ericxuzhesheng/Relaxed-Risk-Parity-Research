@@ -1,38 +1,39 @@
-# Relaxed Risk Parity Framework | 宽松风险平价全球资产配置框架
+# 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation
 
-[![中文](https://img.shields.io/badge/readme-%E4%B8%AD%E6%96%87-blue)](#中文)
-[![English](https://img.shields.io/badge/readme-English-blue)](#english)
-[![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](requirements.txt)
-[![Assets](https://img.shields.io/badge/assets-global%20multi--asset-2E7D32)](results/tables/performance_summary.csv)
-[![Strategy](https://img.shields.io/badge/strategy-relaxed%20risk%20parity-6A1B9A)](#研究框架)
-[![Optimizer](https://img.shields.io/badge/optimizer-cvxpy%201.8.2-455A64)](results/tables/convex_adaptive_solver_diagnostics.csv)
+<p align="center">
+  <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-中文-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
+  <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
+</p>
 
-<a id="中文"></a>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/Asset-Global%20Multi--Asset-F2C94C?style=for-the-badge" alt="Global Multi-Asset">
+  <img src="https://img.shields.io/badge/Strategy-Relaxed%20Risk%20Parity-7AC943?style=for-the-badge" alt="Relaxed Risk Parity">
+  <img src="https://img.shields.io/badge/Overlay-Defensive%20Dynamic%20RRP-9B51E0?style=for-the-badge" alt="Defensive Dynamic RRP">
+</p>
+
+<a id="zh"></a>
+
 ## 中文
 
-本仓库是一个面向全球多资产配置的 Relaxed Risk Parity 研究框架。当前研究主线为：
+### 项目概览
+本项目研究宽松风险平价在全球多资产配置中的应用，重点比较传统风险平价、本土宽松风险平价、全球宽松风险平价、防御型动态风险覆盖模型，以及 HRP / HERC 层次化配置 benchmark。
 
-`Relaxed Risk Parity -> Global multi-asset extension -> convex optimization enhancement -> transaction cost and tail-risk constraints -> robustness validation`
+### 核心模型
+| 模型 | 定位 | 说明 |
+|---|---|---|
+| Standard Risk Parity | 基准模型 | 传统风险贡献均衡组合 |
+| Local Relaxed Risk Parity | 本土宽松模型 | 在风险平价约束中引入松弛项，平衡风险均衡与收益目标 |
+| Global Relaxed Risk Parity | 主展示模型 | 扩展到全球多资产配置，是当前收益效率最高的主模型 |
+| Defensive Dynamic Relaxed Risk Parity | 防御型动态模型 | 在全球宽松风险平价基础上加入风险覆盖层，管理回撤、趋势、波动率和换手 |
+| HRP Benchmark / HERC Benchmark | 横向 benchmark | 用于检验层次聚类配置是否能替代 RRP 型全球配置 |
 
-框架保留传统风险平价的风险预算思想，同时放宽严格等风险贡献要求，使组合能够在风险分散、收益效率、换手控制和尾部风险约束之间做更实际的权衡。本项目不构成投资建议；数据质量、滑点、流动性、税费和实盘可交易性需要独立复核。
+Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together with maximum drawdown, Calmar ratio, downside behavior, and turnover. In the current regenerated results, its Sharpe remains below Global Relaxed Risk Parity; the overlay prioritizes downside control and stability over pure Sharpe maximization.
 
-## 研究框架
-
-| 模型 | 定位 |
-|---|---|
-| Standard Risk Parity | 基础风险预算基准。 |
-| Local Relaxed Risk Parity | 局部放宽风险贡献约束，提升风险预算弹性。 |
-| Global Relaxed Risk Parity | 主要收益效率模型，用全局多资产约束扩展宽松风险平价。 |
-| Defensive Dynamic Relaxed Risk Parity | 防御型风险控制模型，强调回撤与风险状态响应。 |
-| Convex Adaptive Global Relaxed Risk Parity | 实用优化增强版本，加入凸优化、约束、稳健协方差和自适应预算机制。 |
-| HRP / HERC Benchmarks | 层次化组合基准，用于对照风险聚类方法。 |
-
-## 最新结果
-
-评估样本从 `2021-01-01` 开始。下表使用现有 CSV 结果四舍五入展示，详细数据见 `results/tables/`。
-
-| 模型 | 净年化收益 | Sharpe | 最大回撤 | Calmar | 月均换手 |
-|---|---:|---:|---:|---:|---:|
+### 最新结果看板
+评估区间从 `2021-01-01` 开始。下表直接来自 `results/tables/showcase_performance_summary.csv`。
+| Model | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Turnover | Turnover-adjusted Sharpe |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
@@ -42,116 +43,28 @@
 
 Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
-最新结果输出：[绩效汇总表](results/tables/performance_summary.csv)、[凸自适应绩效汇总表](results/tables/convex_adaptive_performance_summary.csv)、[交易成本汇总表](results/tables/convex_adaptive_transaction_cost_summary.csv)、[净值对比图](results/figures/convex_adaptive_nav_comparison.png)、[回撤对比图](results/figures/convex_adaptive_drawdown_comparison.png)。
+<a id="en"></a>
 
-## 资产定价解释层
-
-资产定价解释层只用于解释现有组合结果，不新增组合模型、不改变回测逻辑、不调参，也不使用因子诊断结果生成权重。
-
-- [解释报告](report/asset_pricing_interpretation.md)
-- [因子暴露汇总表](results/tables/asset_pricing_factor_exposure_summary.csv)
-- [收益归因表](results/tables/asset_pricing_return_attribution.csv)
-
-![因子暴露图](results/figures/asset_pricing_factor_exposure.png)
-
-## 方法说明
-
-Convex Adaptive Global Relaxed Risk Parity 使用的是凸化后的宽松风险预算近似，而不是把经典精确风险平价问题直接表述为全局凸优化问题。最终组合权重始终由凸优化层生成。
-
-优化层覆盖以下机制：
-
-- Long-only、fully invested 权重约束。
-- 单资产 box constraints 与资产组 group constraints。
-- 换手惩罚和换手上限。
-- 基于辅助变量的 CVaR 尾部风险惩罚。
-- 稳健协方差估计选项。
-- 根据风险状态调整的自适应风险预算。
-
-滚动资产图特征只调整有界风险状态输入、预算乘数和惩罚行为；它们不直接选择资产，也不直接生成权重。
-
-## 图表
-
-![Convex adaptive NAV comparison](results/figures/convex_adaptive_nav_comparison.png)
-
-![Convex adaptive drawdown comparison](results/figures/convex_adaptive_drawdown_comparison.png)
-
-![Asset graph stress timeline](results/figures/asset_graph_stress_timeline.png)
-
-![Online regime timeline](results/figures/online_regime_timeline.png)
-
-交易成本与换手主题的附加图表：
-
-![Convex adaptive transaction cost comparison](results/figures/convex_adaptive_transaction_cost_comparison.png)
-
-## 鲁棒性测试
-
-鲁棒性测试为验证性诊断，不新增模型、不重新调参，也不改变主结果表。运行 `python scripts/run_robustness_tests.py` 会生成 [汇总表](results/tables/robustness_overall_summary.csv)、[子区间检验](results/tables/robustness_subperiod_summary.csv)、[协方差检验](results/tables/robustness_covariance_summary.csv)、[交易成本检验](results/tables/robustness_transaction_cost_summary.csv)、[压力期检验](results/tables/robustness_stress_period_summary.csv)、[参数扰动检验](results/tables/robustness_parameter_perturbation.csv)、[无前视审计](results/tables/robustness_no_lookahead_audit.csv) 和 [求解器稳定性](results/tables/robustness_solver_stability.csv)。
-
-![Robustness subperiod Sharpe](results/figures/robustness_subperiod_sharpe.png)
-
-![Robustness subperiod drawdown](results/figures/robustness_subperiod_drawdown.png)
-
-![Robustness transaction cost sensitivity](results/figures/robustness_transaction_cost_sensitivity.png)
-
-![Robustness covariance comparison](results/figures/robustness_covariance_comparison.png)
-
-![Robustness parameter sensitivity](results/figures/robustness_parameter_sensitivity.png)
-
-![Robustness stress period performance](results/figures/robustness_stress_period_performance.png)
-
-## 诊断与复现
-
-- `cvxpy` 版本：`1.8.2`
-- `python -m pytest`：`14 passed`
-- 凸优化求解器 fallback rate：`0.0%`
-- 所有凸优化运行均使用 `cvxpy` 求解器，`fallback_used=False`
-- 稳定在线风险状态诊断：`99` 条再平衡诊断中发生 `2` 次状态切换
-
-常用命令：
-
-```bash
-pip install -r requirements.txt
-python -m pytest
-python scripts/run_rrp_pipeline.py --mode full
-python scripts/optimize_showcase_rrp.py
-python scripts/run_hrp_comparison.py
-python scripts/run_convex_adaptive_rrp.py
-```
-
-关键输出：
-
-- [凸自适应绩效汇总表](results/tables/convex_adaptive_performance_summary.csv)
-- [交易成本汇总表](results/tables/convex_adaptive_transaction_cost_summary.csv)
-- [资产图诊断表](results/tables/asset_graph_diagnostics.csv)
-- [在线风险状态诊断表](results/tables/online_regime_diagnostics.csv)
-- [求解器诊断表](results/tables/convex_adaptive_solver_diagnostics.csv)
-
-<a id="english"></a>
 ## English
 
-This repository is a Relaxed Risk Parity research framework for global multi-asset allocation. The current research line is:
+### Project Overview
+This repository studies Relaxed Risk Parity for global multi-asset allocation, comparing classical risk parity, local and global relaxed variants, a defensive dynamic overlay, and HRP / HERC hierarchical benchmarks.
 
-`Relaxed Risk Parity -> Global multi-asset extension -> convex optimization enhancement -> transaction cost and tail-risk constraints -> robustness validation`
+### Core Models
+| Model | Role | Description |
+|---|---|---|
+| Standard Risk Parity | Baseline | Classical risk-contribution balancing |
+| Local Relaxed Risk Parity | Local relaxed model | Balances risk parity with return objectives through relaxation terms |
+| Global Relaxed Risk Parity | Main showcase model | Global multi-asset extension and the main return-efficient model |
+| Defensive Dynamic Relaxed Risk Parity | Defensive overlay | Manages drawdown, trend, volatility, re-entry, and turnover controls |
+| HRP Benchmark / HERC Benchmark | Benchmarks | Hierarchical allocation references, not the main contribution |
 
-The framework keeps the risk-budgeting intuition of classical risk parity while relaxing strict equal-risk-contribution requirements, allowing a more practical trade-off among diversification, return efficiency, turnover control, and tail-risk constraints. This repository is not investment advice; data quality, slippage, liquidity, taxes, and live tradability require independent validation.
+Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together with maximum drawdown, Calmar ratio, downside behavior, and turnover. In the current regenerated results, its Sharpe remains below Global Relaxed Risk Parity; the overlay prioritizes downside control and stability over pure Sharpe maximization.
 
-## Research Framework
-
-| Model | Role |
-|---|---|
-| Standard Risk Parity | Baseline risk-budgeting model. |
-| Local Relaxed Risk Parity | Locally relaxes risk-contribution constraints for more flexible budgeting. |
-| Global Relaxed Risk Parity | Main return-efficient model with global multi-asset constraints. |
-| Defensive Dynamic Relaxed Risk Parity | Defensive risk-control model focused on drawdown and risk-state response. |
-| Convex Adaptive Global Relaxed Risk Parity | Practical optimization enhancement with convex constraints, robust covariance, and adaptive budgets. |
-| HRP / HERC Benchmarks | Hierarchical allocation benchmarks for comparison. |
-
-## Latest Results
-
-The evaluation sample starts on `2021-01-01`. The table below rounds the existing CSV outputs for readability; full values are in `results/tables/`.
-
-| Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
-|---|---:|---:|---:|---:|---:|
+### Latest Results
+Evaluation starts on `2021-01-01`. The table is generated from `results/tables/showcase_performance_summary.csv`.
+| Model | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Turnover | Turnover-adjusted Sharpe |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Global Relaxed Risk Parity | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
 | Defensive Dynamic Relaxed Risk Parity | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
 | Convex Adaptive Global Relaxed Risk Parity | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
@@ -161,90 +74,5 @@ The evaluation sample starts on `2021-01-01`. The table below rounds the existin
 
 Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
-Latest result outputs: [performance summary](results/tables/performance_summary.csv), [convex adaptive performance summary](results/tables/convex_adaptive_performance_summary.csv), [transaction cost summary](results/tables/convex_adaptive_transaction_cost_summary.csv), [NAV comparison figure](results/figures/convex_adaptive_nav_comparison.png), and [drawdown comparison figure](results/figures/convex_adaptive_drawdown_comparison.png).
-
-## Asset-Pricing Interpretation Layer
-
-The asset-pricing interpretation layer is explanatory only: it adds no portfolio model, changes no backtest logic, tunes no parameters, and never uses factor diagnostics to generate weights.
-
-- [Interpretation report](report/asset_pricing_interpretation.md)
-- [Factor exposure summary table](results/tables/asset_pricing_factor_exposure_summary.csv)
-- [Return attribution table](results/tables/asset_pricing_return_attribution.csv)
-
-![Factor exposure figure](results/figures/asset_pricing_factor_exposure.png)
-
-## Method
-
-Convex Adaptive Global Relaxed Risk Parity is a convexified relaxed risk-budgeting approximation. It is not an exact classical risk parity problem reformulated as a globally convex program. Final portfolio weights are always generated by the convex optimization layer.
-
-The optimization layer covers:
-
-- Long-only and fully invested constraints.
-- Single-asset box constraints and asset-group constraints.
-- Turnover penalties and turnover caps.
-- CVaR tail-risk penalties implemented with auxiliary variables.
-- Robust covariance options.
-- Adaptive risk budgets driven by bounded risk-state inputs.
-
-Rolling asset-graph features only adjust bounded risk-state inputs, budget multipliers, and penalty behavior. They do not directly select assets or generate weights.
-
-## Figures
-
-![Convex adaptive NAV comparison](results/figures/convex_adaptive_nav_comparison.png)
-
-![Convex adaptive drawdown comparison](results/figures/convex_adaptive_drawdown_comparison.png)
-
-![Asset graph stress timeline](results/figures/asset_graph_stress_timeline.png)
-
-![Online regime timeline](results/figures/online_regime_timeline.png)
-
-Additional transaction-cost and turnover figure:
-
-![Convex adaptive transaction cost comparison](results/figures/convex_adaptive_transaction_cost_comparison.png)
-
-## Robustness Tests
-
-Robustness tests are validation-only diagnostics. They add no models, retune no parameters, and do not change the main performance tables. Running `python scripts/run_robustness_tests.py` writes the [overall summary](results/tables/robustness_overall_summary.csv), [subperiod tests](results/tables/robustness_subperiod_summary.csv), [covariance tests](results/tables/robustness_covariance_summary.csv), [transaction-cost tests](results/tables/robustness_transaction_cost_summary.csv), [stress-period tests](results/tables/robustness_stress_period_summary.csv), [parameter perturbations](results/tables/robustness_parameter_perturbation.csv), [no-look-ahead audit](results/tables/robustness_no_lookahead_audit.csv), and [solver stability](results/tables/robustness_solver_stability.csv).
-
-![Robustness subperiod Sharpe](results/figures/robustness_subperiod_sharpe.png)
-
-![Robustness subperiod drawdown](results/figures/robustness_subperiod_drawdown.png)
-
-![Robustness transaction cost sensitivity](results/figures/robustness_transaction_cost_sensitivity.png)
-
-![Robustness covariance comparison](results/figures/robustness_covariance_comparison.png)
-
-![Robustness parameter sensitivity](results/figures/robustness_parameter_sensitivity.png)
-
-![Robustness stress period performance](results/figures/robustness_stress_period_performance.png)
-
-## Diagnostics And Reproduction
-
-- `cvxpy` version: `1.8.2`
-- `python -m pytest`: `14 passed`
-- Convex solver fallback rate: `0.0%`
-- All convex runs used `cvxpy` solvers with `fallback_used=False`
-- Stable online regime diagnostics: `2` switches across `99` rebalance diagnostics
-
-Common commands:
-
-```bash
-pip install -r requirements.txt
-python -m pytest
-python scripts/run_rrp_pipeline.py --mode full
-python scripts/optimize_showcase_rrp.py
-python scripts/run_hrp_comparison.py
-python scripts/run_convex_adaptive_rrp.py
-```
-
-Key outputs:
-
-- [Convex adaptive performance summary](results/tables/convex_adaptive_performance_summary.csv)
-- [Transaction cost summary](results/tables/convex_adaptive_transaction_cost_summary.csv)
-- [Asset graph diagnostics](results/tables/asset_graph_diagnostics.csv)
-- [Online regime diagnostics](results/tables/online_regime_diagnostics.csv)
-- [Solver diagnostics](results/tables/convex_adaptive_solver_diagnostics.csv)
-
 ## License
-
 MIT License.

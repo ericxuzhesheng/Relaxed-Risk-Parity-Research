@@ -1,10 +1,12 @@
-component,uses_future_data,lag_applied,notes
-return_universe_loading,False,input returns only,Loads cached historical prices and evaluates realized returns after each date.
-monthly_rebalance_schedule,False,rebalance at month end,Rebalance dates are calendar diagnostics; model windows still exclude the rebalance date.
-global_rrp_covariance,False,window index < rebalance date,Robustness covariance wrapper changes only the estimator.
-convex_adaptive_covariance,False,window index < rebalance date,Convex backtest estimates covariance from trailing returns only.
-adaptive_budget_target,False,trailing lookback window,Budget target is derived from past-window asset risk and bounded state inputs.
-transaction_cost_scenarios,False,cost applied on rebalance turnover,Cost levels are fixed diagnostics and are not selected from outcomes.
-parameter_perturbation,False,selected row read once,One-at-a-time perturbations around the selected public configuration; no candidate search is performed.
-stress_period_identification,True,not used for trading,Stress periods are identified ex post solely for evaluation.
-solver_diagnostics,False,per-rebalance solve record,Solver status summarizes optimization diagnostics after the fact.
+component,uses_future_data,lag_applied,validation_method,notes
+return_universe_loading,False,input returns only,code_path_review,Loads cached historical prices and evaluates realized returns after each date.
+monthly_rebalance_schedule,False,rebalance at month end,index_boundary_check,Rebalance dates are calendar diagnostics; model windows still exclude the rebalance date.
+global_rrp_covariance,False,window index < rebalance date,trailing_window_check,Robustness covariance wrapper changes only the estimator.
+convex_adaptive_covariance,False,window index < rebalance date,trailing_window_check,Convex backtest estimates covariance from trailing returns only.
+adaptive_budget_target,False,trailing lookback window,input_dependency_review,Budget target is derived from past-window asset risk and bounded state inputs.
+transaction_cost_scenarios,False,cost applied on rebalance turnover,fixed_scenario_review,Cost levels are fixed diagnostics and are not selected from outcomes.
+parameter_perturbation,False,selected row read once,one_at_a_time_validation,One-at-a-time perturbations around the selected public configuration; no candidate search is performed.
+stress_period_identification,True,not used for trading,ex_post_evaluation_only,Stress periods are identified ex post solely for evaluation.
+solver_diagnostics,False,per-rebalance solve record,diagnostic_log_review,Solver status summarizes optimization diagnostics after the fact.
+moving_block_bootstrap,False,resamples realized validation returns,distributional_resampling,Bootstrap is validation-only and does not select or retune parameters.
+simplified_overfitting_diagnostic,False,uses completed validation tables,simplified_adjusted_sharpe_pbo_style,Simplified diagnostic only flags instability; it is not a full combinatorial PBO test.

@@ -36,6 +36,8 @@ TABLES = [
     "robustness_parameter_perturbation.csv",
     "robustness_no_lookahead_audit.csv",
     "robustness_solver_stability.csv",
+    "robustness_block_bootstrap_summary.csv",
+    "robustness_overfitting_diagnostic.csv",
     "robustness_overall_summary.csv",
 ]
 
@@ -374,15 +376,17 @@ def parameter_perturbation(returns: pd.DataFrame, config: dict, baseline_cfg: Co
 def no_lookahead_audit() -> pd.DataFrame:
     return pd.DataFrame(
         [
-            {"component": "return_universe_loading", "uses_future_data": False, "lag_applied": "input returns only", "notes": "Loads cached historical prices and evaluates realized returns after each date."},
-            {"component": "monthly_rebalance_schedule", "uses_future_data": False, "lag_applied": "rebalance at month end", "notes": "Rebalance dates are calendar diagnostics; model windows still exclude the rebalance date."},
-            {"component": "global_rrp_covariance", "uses_future_data": False, "lag_applied": "window index < rebalance date", "notes": "Robustness covariance wrapper changes only the estimator."},
-            {"component": "convex_adaptive_covariance", "uses_future_data": False, "lag_applied": "window index < rebalance date", "notes": "Convex backtest estimates covariance from trailing returns only."},
-            {"component": "adaptive_budget_target", "uses_future_data": False, "lag_applied": "trailing lookback window", "notes": "Budget target is derived from past-window asset risk and bounded state inputs."},
-            {"component": "transaction_cost_scenarios", "uses_future_data": False, "lag_applied": "cost applied on rebalance turnover", "notes": "Cost levels are fixed diagnostics and are not selected from outcomes."},
-            {"component": "parameter_perturbation", "uses_future_data": False, "lag_applied": "selected row read once", "notes": "One-at-a-time perturbations around the selected public configuration; no candidate search is performed."},
-            {"component": "stress_period_identification", "uses_future_data": True, "lag_applied": "not used for trading", "notes": "Stress periods are identified ex post solely for evaluation."},
-            {"component": "solver_diagnostics", "uses_future_data": False, "lag_applied": "per-rebalance solve record", "notes": "Solver status summarizes optimization diagnostics after the fact."},
+            {"component": "return_universe_loading", "uses_future_data": False, "lag_applied": "input returns only", "validation_method": "code_path_review", "notes": "Loads cached historical prices and evaluates realized returns after each date."},
+            {"component": "monthly_rebalance_schedule", "uses_future_data": False, "lag_applied": "rebalance at month end", "validation_method": "index_boundary_check", "notes": "Rebalance dates are calendar diagnostics; model windows still exclude the rebalance date."},
+            {"component": "global_rrp_covariance", "uses_future_data": False, "lag_applied": "window index < rebalance date", "validation_method": "trailing_window_check", "notes": "Robustness covariance wrapper changes only the estimator."},
+            {"component": "convex_adaptive_covariance", "uses_future_data": False, "lag_applied": "window index < rebalance date", "validation_method": "trailing_window_check", "notes": "Convex backtest estimates covariance from trailing returns only."},
+            {"component": "adaptive_budget_target", "uses_future_data": False, "lag_applied": "trailing lookback window", "validation_method": "input_dependency_review", "notes": "Budget target is derived from past-window asset risk and bounded state inputs."},
+            {"component": "transaction_cost_scenarios", "uses_future_data": False, "lag_applied": "cost applied on rebalance turnover", "validation_method": "fixed_scenario_review", "notes": "Cost levels are fixed diagnostics and are not selected from outcomes."},
+            {"component": "parameter_perturbation", "uses_future_data": False, "lag_applied": "selected row read once", "validation_method": "one_at_a_time_validation", "notes": "One-at-a-time perturbations around the selected public configuration; no candidate search is performed."},
+            {"component": "stress_period_identification", "uses_future_data": True, "lag_applied": "not used for trading", "validation_method": "ex_post_evaluation_only", "notes": "Stress periods are identified ex post solely for evaluation."},
+            {"component": "solver_diagnostics", "uses_future_data": False, "lag_applied": "per-rebalance solve record", "validation_method": "diagnostic_log_review", "notes": "Solver status summarizes optimization diagnostics after the fact."},
+            {"component": "moving_block_bootstrap", "uses_future_data": False, "lag_applied": "resamples realized validation returns", "validation_method": "distributional_resampling", "notes": "Bootstrap is validation-only and does not select or retune parameters."},
+            {"component": "simplified_overfitting_diagnostic", "uses_future_data": False, "lag_applied": "uses completed validation tables", "validation_method": "simplified_adjusted_sharpe_pbo_style", "notes": "Simplified diagnostic only flags instability; it is not a full combinatorial PBO test."},
         ]
     )
 
@@ -412,7 +416,27 @@ def solver_stability(solver_diag: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=columns)
 
 
-def overall_summary(subperiod: pd.DataFrame, costs: pd.DataFrame, covariance: pd.DataFrame, stress: pd.DataFrame, perturb: pd.DataFrame) -> pd.DataFrame:
+def _rating_from_bootstrap(row: pd.Series | None) -> str:
+    if row is None:
+        return "Weak"
+    sharpe_p05 = float(row.get("bootstrap_sharpe_p05", np.nan))
+    dd_p05 = float(row.get("bootstrap_max_drawdown_p05", np.nan))
+    if pd.notna(sharpe_p05) and sharpe_p05 > 0 and pd.notna(dd_p05) and dd_p05 > -0.12:
+        return "Strong"
+    if pd.notna(sharpe_p05) and sharpe_p05 > -0.5:
+        return "Moderate"
+    return "Weak"
+
+
+def overall_summary(
+    subperiod: pd.DataFrame,
+    costs: pd.DataFrame,
+    covariance: pd.DataFrame,
+    stress: pd.DataFrame,
+    perturb: pd.DataFrame,
+    bootstrap: pd.DataFrame,
+    overfit: pd.DataFrame,
+) -> pd.DataFrame:
     models = sorted(set(subperiod["model"]) | set(costs["model"]) | set(covariance["model"]) | set(stress["model"]))
     rows = []
     for model in models:
@@ -421,6 +445,8 @@ def overall_summary(subperiod: pd.DataFrame, costs: pd.DataFrame, covariance: pd
         cov = covariance[covariance["model"].eq(model)]
         st = stress[stress["model"].eq(model)]
         par = perturb if model == IMPROVED_DISPLAY else pd.DataFrame()
+        boot_row = bootstrap[bootstrap["model"].eq(model)].iloc[0] if not bootstrap[bootstrap["model"].eq(model)].empty else None
+        overfit_row = overfit[overfit["model"].eq(model)].iloc[0] if not overfit[overfit["model"].eq(model)].empty else None
         sub_rating = "Strong" if not sub.empty and (sub["sharpe_ratio"] > 0).mean() >= 0.75 else "Moderate" if not sub.empty else "Weak"
         cost_rating = "Strong" if not cost.empty and cost.groupby("transaction_cost_bps")["annualized_return"].mean().is_monotonic_decreasing else "Moderate"
         cov_rating = "Strong" if not cov.empty and cov["sharpe_ratio"].std(ddof=0) < 0.35 else "Moderate" if not cov.empty else "Weak"
@@ -428,18 +454,109 @@ def overall_summary(subperiod: pd.DataFrame, costs: pd.DataFrame, covariance: pd
         param_rating = "Not applicable"
         if not par.empty:
             param_rating = "Strong" if par["sharpe_ratio"].std(ddof=0) < 0.25 and (par["max_drawdown"] > -0.10).all() else "Moderate"
-        ratings = [r for r in [sub_rating, cost_rating, cov_rating, stress_rating, param_rating] if r != "Not applicable"]
+        bootstrap_rating = _rating_from_bootstrap(boot_row)
+        overfitting_rating = str(overfit_row.get("overfitting_rating", "Weak")) if overfit_row is not None else "Weak"
+        ratings = [r for r in [sub_rating, cost_rating, cov_rating, stress_rating, param_rating, bootstrap_rating, overfitting_rating] if r != "Not applicable"]
         overall = "Strong" if ratings.count("Strong") >= max(3, len(ratings) - 1) else "Weak" if ratings.count("Weak") >= 2 else "Moderate"
         rows.append(
             {
                 "model": model,
+                "worst_subperiod_sharpe": float(sub["sharpe_ratio"].min()) if not sub.empty else np.nan,
+                "worst_subperiod_max_drawdown": float(sub["max_drawdown"].min()) if not sub.empty else np.nan,
+                "bootstrap_sharpe_p05": float(boot_row.get("bootstrap_sharpe_p05", np.nan)) if boot_row is not None else np.nan,
+                "bootstrap_max_drawdown_p05": float(boot_row.get("bootstrap_max_drawdown_p05", np.nan)) if boot_row is not None else np.nan,
                 "subperiod_rating": sub_rating,
                 "transaction_cost_rating": cost_rating,
                 "covariance_rating": cov_rating,
                 "stress_rating": stress_rating,
                 "parameter_stability_rating": param_rating,
+                "bootstrap_rating": bootstrap_rating,
+                "overfitting_rating": overfitting_rating,
+                "simplified_overfit_score": float(overfit_row.get("simplified_overfit_score", np.nan)) if overfit_row is not None else np.nan,
                 "overall_assessment": overall,
                 "notes": "Validation-only robustness diagnostics; ratings are qualitative and do not select or retune models.",
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def _daily_returns(result: pd.DataFrame) -> pd.Series:
+    data = result.copy()
+    data["date"] = pd.to_datetime(data["date"])
+    ret_col = "net_return" if "net_return" in data else "portfolio_return"
+    out = pd.to_numeric(data[ret_col], errors="coerce").fillna(0.0)
+    out.index = data["date"]
+    return out
+
+
+def moving_block_bootstrap(models: dict[str, pd.DataFrame], config: dict, n_bootstrap: int = 200, block_size: int = 21, seed: int = 19) -> tuple[pd.DataFrame, pd.DataFrame]:
+    rng = np.random.default_rng(seed)
+    rows = []
+    draws = []
+    for name, result in models.items():
+        returns = _daily_returns(result).values
+        n = len(returns)
+        if n < 30:
+            continue
+        starts = np.arange(0, max(n - block_size + 1, 1))
+        model_sharpes = []
+        model_drawdowns = []
+        for sample_id in range(n_bootstrap):
+            pieces = []
+            while sum(len(piece) for piece in pieces) < n:
+                start = int(rng.choice(starts))
+                pieces.append(returns[start : min(start + block_size, n)])
+            sample = np.concatenate(pieces)[:n]
+            sample_nav = pd.Series((1.0 + sample).cumprod())
+            metrics = calculate_metrics(sample_nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
+            model_sharpes.append(metrics["sharpe_ratio"])
+            model_drawdowns.append(metrics["max_drawdown"])
+            draws.append({"model": name, "sample_id": sample_id, "bootstrap_sharpe": metrics["sharpe_ratio"], "bootstrap_max_drawdown": metrics["max_drawdown"]})
+        sharpe_s = pd.Series(model_sharpes)
+        dd_s = pd.Series(model_drawdowns)
+        rows.append(
+            {
+                "model": name,
+                "n_bootstrap": n_bootstrap,
+                "block_size": block_size,
+                "bootstrap_sharpe_mean": float(sharpe_s.mean()),
+                "bootstrap_sharpe_p05": float(sharpe_s.quantile(0.05)),
+                "bootstrap_sharpe_p50": float(sharpe_s.quantile(0.50)),
+                "bootstrap_sharpe_p95": float(sharpe_s.quantile(0.95)),
+                "bootstrap_max_drawdown_mean": float(dd_s.mean()),
+                "bootstrap_max_drawdown_p05": float(dd_s.quantile(0.05)),
+                "bootstrap_max_drawdown_p50": float(dd_s.quantile(0.50)),
+                "bootstrap_max_drawdown_p95": float(dd_s.quantile(0.95)),
+                "validation_role": "moving_block_bootstrap_validation_only",
+            }
+        )
+    return pd.DataFrame(rows), pd.DataFrame(draws)
+
+
+def simplified_overfitting_diagnostic(subperiod: pd.DataFrame, bootstrap: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for model in sorted(set(subperiod["model"])):
+        sub = subperiod[subperiod["model"].eq(model)]
+        fixed = sub[~sub["window"].astype(str).str.startswith("rolling_36m")]
+        sharpe_mean = float(fixed["sharpe_ratio"].mean()) if not fixed.empty else np.nan
+        sharpe_std = float(fixed["sharpe_ratio"].std(ddof=0)) if not fixed.empty else np.nan
+        worst_rank_share = float((fixed["sharpe_ratio"] <= 0).mean()) if not fixed.empty else np.nan
+        boot = bootstrap[bootstrap["model"].eq(model)]
+        boot_p05 = float(boot["bootstrap_sharpe_p05"].iloc[0]) if not boot.empty else np.nan
+        adjusted = sharpe_mean - 0.5 * sharpe_std if pd.notna(sharpe_mean) and pd.notna(sharpe_std) else np.nan
+        score = adjusted + min(boot_p05, 0.0) - worst_rank_share if pd.notna(adjusted) and pd.notna(boot_p05) else np.nan
+        rating = "Strong" if pd.notna(score) and score > 0.3 else "Moderate" if pd.notna(score) and score > -0.5 else "Weak"
+        rows.append(
+            {
+                "model": model,
+                "diagnostic_type": "simplified_adjusted_sharpe_pbo_style",
+                "mean_fixed_subperiod_sharpe": sharpe_mean,
+                "subperiod_sharpe_std": sharpe_std,
+                "negative_sharpe_window_share": worst_rank_share,
+                "bootstrap_sharpe_p05": boot_p05,
+                "simplified_overfit_score": score,
+                "overfitting_rating": rating,
+                "notes": "Simplified validation flag only; not a full combinatorial PBO test and not used for model selection.",
             }
         )
     return pd.DataFrame(rows)
@@ -462,7 +579,42 @@ def plot_metric(df: pd.DataFrame, x: str, y: str, hue: str, title: str, path: Pa
     plt.close()
 
 
-def write_figures(figures: Path, sub: pd.DataFrame, costs: pd.DataFrame, cov: pd.DataFrame, perturb: pd.DataFrame, stress: pd.DataFrame) -> None:
+def write_bootstrap_hist(draws: pd.DataFrame, value: str, title: str, path: Path) -> None:
+    plt.figure(figsize=(11, 5))
+    if draws.empty:
+        plt.text(0.5, 0.5, "No bootstrap draws", ha="center", va="center")
+        plt.axis("off")
+    else:
+        for model, group in draws.groupby("model"):
+            plt.hist(group[value].dropna(), bins=30, alpha=0.35, label=model)
+        plt.title(title)
+        plt.xlabel(value.replace("_", " "))
+        plt.ylabel("Frequency")
+        plt.legend(fontsize=8)
+        plt.grid(axis="y", alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close()
+
+
+def plot_overfit(overfit: pd.DataFrame, path: Path) -> None:
+    plt.figure(figsize=(11, 5))
+    if overfit.empty:
+        plt.text(0.5, 0.5, "No diagnostic", ha="center", va="center")
+        plt.axis("off")
+    else:
+        data = overfit.set_index("model")["simplified_overfit_score"]
+        data.plot(kind="bar", ax=plt.gca())
+        plt.title("Simplified Overfitting Diagnostic")
+        plt.ylabel("Adjusted score")
+        plt.xticks(rotation=25, ha="right")
+        plt.grid(axis="y", alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(path)
+    plt.close()
+
+
+def write_figures(figures: Path, sub: pd.DataFrame, costs: pd.DataFrame, cov: pd.DataFrame, perturb: pd.DataFrame, stress: pd.DataFrame, bootstrap_draws: pd.DataFrame, overfit: pd.DataFrame) -> None:
     fixed = sub[~sub["window"].str.startswith("rolling_36m", na=False)]
     plot_metric(fixed, "window", "sharpe_ratio", "model", "Robustness Subperiod Sharpe", figures / "robustness_subperiod_sharpe.png")
     plot_metric(fixed, "window", "max_drawdown", "model", "Robustness Subperiod Drawdown", figures / "robustness_subperiod_drawdown.png")
@@ -470,6 +622,9 @@ def write_figures(figures: Path, sub: pd.DataFrame, costs: pd.DataFrame, cov: pd
     plot_metric(cov, "covariance_estimator", "sharpe_ratio", "model", "Covariance Estimator Comparison", figures / "robustness_covariance_comparison.png")
     plot_metric(perturb, "case", "sharpe_ratio", "model", "Parameter Sensitivity", figures / "robustness_parameter_sensitivity.png")
     plot_metric(stress, "stress_period", "cumulative_return", "model", "Stress Period Performance", figures / "robustness_stress_period_performance.png")
+    write_bootstrap_hist(bootstrap_draws, "bootstrap_sharpe", "Moving Block Bootstrap Sharpe Distribution", figures / "robustness_bootstrap_sharpe_distribution.png")
+    write_bootstrap_hist(bootstrap_draws, "bootstrap_max_drawdown", "Moving Block Bootstrap Drawdown Distribution", figures / "robustness_bootstrap_drawdown_distribution.png")
+    plot_overfit(overfit, figures / "robustness_overfitting_diagnostic.png")
 
 
 def main() -> None:
@@ -500,9 +655,12 @@ def main() -> None:
     print("Writing stress and parameter diagnostics...")
     stress = stress_summary(returns, models, base_config)
     perturb = parameter_perturbation(returns, base_config, improved_cfg, args.smoke)
+    print("Writing bootstrap and simplified overfitting diagnostics...")
+    bootstrap, bootstrap_draws = moving_block_bootstrap(models, base_config, n_bootstrap=50 if args.smoke else 200)
+    overfit = simplified_overfitting_diagnostic(sub, bootstrap)
     audit = no_lookahead_audit()
     solver = solver_stability(solver_diag)
-    overall = overall_summary(sub, costs, cov, stress, perturb)
+    overall = overall_summary(sub, costs, cov, stress, perturb, bootstrap, overfit)
 
     frames = {
         "robustness_subperiod_summary.csv": sub,
@@ -512,11 +670,13 @@ def main() -> None:
         "robustness_parameter_perturbation.csv": perturb,
         "robustness_no_lookahead_audit.csv": audit,
         "robustness_solver_stability.csv": solver,
+        "robustness_block_bootstrap_summary.csv": bootstrap,
+        "robustness_overfitting_diagnostic.csv": overfit,
         "robustness_overall_summary.csv": overall,
     }
     for name, frame in frames.items():
         frame.to_csv(tables / name, index=False)
-    write_figures(figures, sub, costs, cov, perturb, stress)
+    write_figures(figures, sub, costs, cov, perturb, stress, bootstrap_draws, overfit)
     print(f"Robustness diagnostics written to {args.output_root}")
 
 

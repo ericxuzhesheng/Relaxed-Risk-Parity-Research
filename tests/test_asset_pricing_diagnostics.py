@@ -78,6 +78,7 @@ def test_asset_pricing_smoke_runner_creates_outputs(tmp_path):
         tmp_path / "results/tables/asset_pricing_risk_attribution.csv",
         tmp_path / "results/tables/asset_pricing_rolling_beta_summary.csv",
         tmp_path / "report/asset_pricing_interpretation.md",
+        tmp_path / "results/figures/asset_pricing_risk_attribution.png",
     ]
     for path in required:
         assert path.exists()
