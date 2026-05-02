@@ -82,14 +82,14 @@ $$
 
 **Convex Adaptive Global RRP。** 该层是凸化的宽松风险预算近似，可同时纳入换手、CVaR、资产上限和组别约束。
 
-$$
+```text
 minimize over w:
 λ_var · wᵀΣ_t w
 + λ_budget · ||w - b_t||₂²
 + λ_turnover · ||w - w_(t-1)||₁
 + λ_cvar · CVaR_α(-R_t w)
 - λ_return · μ_tᵀw
-$$
+```
 
 约束条件：权重和为 1，`0≤w_i≤u_i`；组别暴露满足 `L_g≤Σ_{i∈g}w_i≤U_g`；换手满足 `||w-w_(t-1)||_1≤τ`。
 
@@ -342,14 +342,14 @@ $$
 
 **Convex Adaptive Global RRP.** This layer is a convexified relaxed risk-budgeting approximation with turnover, CVaR, asset-cap, and group constraints.
 
-$$
+```text
 minimize over w:
 λ_var · wᵀΣ_t w
 + λ_budget · ||w - b_t||₂²
 + λ_turnover · ||w - w_(t-1)||₁
 + λ_cvar · CVaR_α(-R_t w)
 - λ_return · μ_tᵀw
-$$
+```
 
 Constraints: weights sum to 1, `0≤w_i≤u_i`; group exposure satisfies `L_g≤Σ_{i∈g}w_i≤U_g`; turnover satisfies `||w-w_(t-1)||_1≤τ`.
 
