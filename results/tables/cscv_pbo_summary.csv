@@ -1,2 +1,2 @@
-num_splits,pbo,median_logit_rank,mean_relative_rank,validation_status,notes
-2,0.0,13.815509557935018,0.5,validation_only_no_reselection_from_test,"PBO is a diagnostic estimate, not proof."
+num_splits,pbo,median_logit_rank,mean_relative_rank,validation_status,notes,validation_method,validation_kind,requested_eval_start,eval_start,eval_end,candidate_count,num_blocks,num_combinations,selection_rule,limitations
+6,0.3333333333333333,0.6931471805599457,0.5833333333333334,validation_only_no_reselection_from_test,"PBO is a diagnostic estimate, not proof.",cscv_pbo,intermediate,2021-01-01,2021-01-01,2026-04-30,4,6,6,candidate with highest IS score under the current block split,"PBO is a diagnostic, not proof; reduced candidates or combinations make this intermediate validation evidence."

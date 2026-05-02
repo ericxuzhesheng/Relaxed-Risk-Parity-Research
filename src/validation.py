@@ -236,12 +236,11 @@ def validation_score(metrics: dict, fallback_rate: float = 0.0) -> float:
 
 
 def candidate_params(cfg) -> dict:
-    params = asdict(cfg) if hasattr(cfg, "__dataclass_fields__") else dict(cfg)
-    return {key: value for key, value in params.items() if isinstance(value, (str, int, float, bool)) or value is None}
+    return asdict(cfg) if hasattr(cfg, "__dataclass_fields__") else dict(cfg)
 
 
 def candidate_params_json(cfg) -> str:
-    return json.dumps(candidate_params(cfg), sort_keys=True, ensure_ascii=False)
+    return json.dumps(candidate_params(cfg), sort_keys=True, ensure_ascii=False, default=str)
 
 
 def config_fields(candidate_id: str, cfg) -> dict:
@@ -249,6 +248,7 @@ def config_fields(candidate_id: str, cfg) -> dict:
     fields = {
         "selected_candidate_id": candidate_id,
         "selected_params_json": candidate_params_json(cfg),
+        "group_bounds_json": json.dumps(params.get("group_bounds", {}), sort_keys=True, ensure_ascii=False, default=str),
     }
     for key in [
         "lookback_days",
@@ -264,6 +264,10 @@ def config_fields(candidate_id: str, cfg) -> dict:
     ]:
         fields[key] = params.get(key)
     return fields
+
+
+def metadata_columns(metadata: dict) -> dict:
+    return {key: value for key, value in metadata.items() if value is not None}
 
 
 def evaluate_candidate_window(
@@ -337,6 +341,46 @@ def summarize_validation_rows(rows: pd.DataFrame, prefix: str = "test") -> pd.Da
             }
         )
     return pd.DataFrame(summary_rows)
+
+
+def validation_run_metadata(
+    *,
+    validation_method: str,
+    validation_kind: str,
+    eval_start: pd.Timestamp | str | None,
+    eval_end: pd.Timestamp | str | None,
+    selection_rule: str,
+    limitations: str,
+    candidate_count: int | None = None,
+    num_splits: int | None = None,
+    num_blocks: int | None = None,
+    num_combinations: int | None = None,
+    requested_eval_start: pd.Timestamp | str | None = None,
+    requested_frozen_start: pd.Timestamp | str | None = None,
+    **extra: object,
+) -> dict:
+    def iso_date(value: pd.Timestamp | str | None) -> str | None:
+        if value is None:
+            return None
+        return pd.Timestamp(value).date().isoformat()
+
+    metadata = {
+        "validation_method": validation_method,
+        "validation_kind": validation_kind,
+        "requested_eval_start": iso_date(requested_eval_start),
+        "eval_start": iso_date(eval_start),
+        "eval_end": iso_date(eval_end),
+        "candidate_count": candidate_count,
+        "num_splits": num_splits,
+        "num_blocks": num_blocks,
+        "num_combinations": num_combinations,
+        "selection_rule": selection_rule,
+        "limitations": limitations,
+    }
+    if requested_frozen_start is not None:
+        metadata["requested_frozen_start"] = iso_date(requested_frozen_start)
+    metadata.update(extra)
+    return metadata
 
 
 def pbo_from_cscv(score_rows: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:

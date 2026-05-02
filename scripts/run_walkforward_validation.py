@@ -22,6 +22,7 @@ from src.validation import (
     generate_walkforward_splits,
     select_candidate,
     summarize_validation_rows,
+    validation_run_metadata,
 )
 
 
@@ -47,7 +48,13 @@ def metric_columns(prefix: str, metrics: dict) -> dict:
     return {f"{prefix}_{key}": value for key, value in metrics.items()}
 
 
-def run_split(returns: pd.DataFrame, split: dict, candidates: list[tuple[str, object]], config: dict) -> dict:
+def run_split(
+    returns: pd.DataFrame,
+    split: dict,
+    candidates: list[tuple[str, object]],
+    config: dict,
+    run_metadata: dict,
+) -> dict:
     (selected_id, selected_cfg), validation_metrics, validation_fallback, selection_score, _ = select_candidate(
         returns,
         candidates,
@@ -67,6 +74,7 @@ def run_split(returns: pd.DataFrame, split: dict, candidates: list[tuple[str, ob
         config,
     )
     return {
+        **run_metadata,
         "split_id": split["split_id"],
         "validation_status": VALIDATION_STATUS,
         "uses_future_data": False,
@@ -99,12 +107,51 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
 
+    validation_kind = "formal"
     if args.smoke:
+        validation_kind = "smoke"
         args.max_candidates = args.max_candidates or 2
         args.max_splits = args.max_splits or 1
+    elif args.max_candidates is not None or args.max_splits is not None or args.eval_start or args.train_years != 2.0 or args.validation_years != 0.5 or args.test_years != 0.25 or args.step_months != 3:
+        validation_kind = "intermediate"
+
+    requested_eval_start = args.eval_start
+    requested_frozen_start = None
 
     config = get_config({"transaction_cost_bps": 3.0})
+    base_candidate_count = len(candidate_configurations(config["transaction_cost_bps"]))
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
+    if args.eval_start:
+        returns = returns[returns.index >= pd.Timestamp(args.eval_start)]
+    run_metadata = validation_run_metadata(
+        validation_method="walkforward",
+        validation_kind=validation_kind,
+        eval_start=args.eval_start or returns.index.min(),
+        eval_end=returns.index.max(),
+        selection_rule="highest validation-window score within each split",
+        limitations="Validation-window selection is followed by test reporting; bounded runs are intermediate validation evidence.",
+        candidate_count=len(candidate_configurations(config["transaction_cost_bps"])),
+        num_splits=None,
+        num_blocks=None,
+        num_combinations=None,
+        requested_eval_start=requested_eval_start,
+        requested_frozen_start=requested_frozen_start,
+        train_years=args.train_years,
+        validation_years=args.validation_years,
+        test_years=args.test_years,
+        step_months=args.step_months,
+        base_candidate_count=base_candidate_count,
+    )
+    if args.eval_start:
+        run_metadata["eval_start"] = pd.Timestamp(args.eval_start).date().isoformat()
+    run_metadata["candidate_count"] = len(candidate_configurations(config["transaction_cost_bps"]))
+    run_metadata["base_candidate_count"] = base_candidate_count
+    run_metadata["validation_method"] = "walkforward"
+    run_metadata["validation_kind"] = validation_kind
+    run_metadata["selection_rule"] = "highest validation-window score within each split"
+    run_metadata["limitations"] = "Validation-window selection is followed by test reporting; bounded runs are intermediate validation evidence."
+
+    candidates = candidate_configurations(config["transaction_cost_bps"])
     if args.eval_start:
         returns = returns[returns.index >= pd.Timestamp(args.eval_start)]
     candidates = candidate_configurations(config["transaction_cost_bps"])
@@ -124,7 +171,7 @@ def main() -> None:
     rows = []
     for i, split in enumerate(splits, start=1):
         print(f"Running walk-forward split {i}/{len(splits)}: {split['test_start'].date()} to {split['test_end'].date()}")
-        rows.append(run_split(returns, split, candidates, config))
+        rows.append(run_split(returns, split, candidates, config, run_metadata))
 
     output_dir = Path(resolve_path(args.output_dir))
     output_dir.mkdir(parents=True, exist_ok=True)

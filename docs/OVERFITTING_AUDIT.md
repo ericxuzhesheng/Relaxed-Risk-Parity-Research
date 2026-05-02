@@ -149,6 +149,43 @@ The recommended public wording is: "Improved Convex Adaptive Global RRP is repor
 4. Frozen OOS period: predefine a final out-of-sample period and run it only once after the candidate-selection rule is frozen.
 5. Sensitivity tests: test whether conclusions are stable under weight-lag execution, transaction-cost stress, parameter perturbation, covariance-estimator changes, and sample-window changes.
 
+## Executed Validation Status
+## 已执行验证状态
+
+### English
+
+- Executed script: `scripts/run_cscv_pbo.py`
+- Command used: `python scripts/run_cscv_pbo.py --max-candidates 4 --num-blocks 6 --max-combinations 6`
+- Output files: `results/tables/cscv_pbo_results.csv`, `results/tables/cscv_pbo_summary.csv`
+- Validation type: intermediate
+- Key summary metrics: PBO `0.3333333333333333`, median logit rank `0.6931471805599457`, mean relative rank `0.5833333333333334`, candidate count `4`, block count `6`, split count `6`
+- Interpretation: this is intermediate validation evidence, not proof. Candidate-selection overfitting risk remains, and the result should not be read as “no overfitting.”
+- Limitation: the run used a reduced candidate set and capped combinations, so it is not formal full validation.
+
+- Executed script: `scripts/run_frozen_oos_validation.py`
+- Command used: `python scripts/run_frozen_oos_validation.py`
+- Output files: `results/tables/frozen_oos_validation.csv`, `results/tables/frozen_oos_validation_notes.csv`
+- Validation type: formal in script terms, but the interpretation is pseudo-frozen if the 2025+ period was already inspected during development.
+- Key metrics: test net annual return `0.10742083764605925`, test Sharpe `1.8084233975252448`, test max drawdown `-0.04273908753805111`, test total return `0.1438107163246971`, requested frozen start `2025-01-01`, actual test start `2025-01-02`
+- Interpretation: frozen OOS is preliminary if the period was already inspected during development; it should not be treated as conclusive proof of untouched out-of-sample generalization.
+
+### 中文
+
+- 已执行脚本：`scripts/run_cscv_pbo.py`
+- 使用命令：`python scripts/run_cscv_pbo.py --max-candidates 4 --num-blocks 6 --max-combinations 6`
+- 输出文件：`results/tables/cscv_pbo_results.csv`、`results/tables/cscv_pbo_summary.csv`
+- 验证类型：intermediate
+- 关键汇总指标：PBO `0.3333333333333333`、median logit rank `0.6931471805599457`、mean relative rank `0.5833333333333334`、候选数 `4`、块数 `6`、分割数 `6`
+- 解释：这是 intermediate validation evidence，不是证明。candidate-selection overfitting risk remains，不能据此声称 “no overfitting”。
+- 限制：本次运行使用了缩减候选集和上限分割组合，因此不能视为 formal full validation。
+
+- 已执行脚本：`scripts/run_frozen_oos_validation.py`
+- 使用命令：`python scripts/run_frozen_oos_validation.py`
+- 输出文件：`results/tables/frozen_oos_validation.csv`、`results/tables/frozen_oos_validation_notes.csv`
+- 验证类型：脚本语义上为 formal，但如果 2025+ 区间在开发期间已被检查过，则应解释为 pseudo-frozen
+- 关键指标：test net annual return `0.10742083764605925`、test Sharpe `1.8084233975252448`、test max drawdown `-0.04273908753805111`、test total return `0.1438107163246971`、requested frozen start `2025-01-01`、actual test start `2025-01-02`
+- 解释：如果该冻结区间在开发过程中已被观察过，则 frozen OOS 只是 preliminary / pseudo-frozen evidence，不能当作已经完全未见的样本外证明。
+
 ## Implemented Validation Scripts
 
 The validation roadmap now has reproducible scripts and CSV outputs. These scripts are an additive validation layer around the existing Convex Adaptive Global RRP stack; they do not replace the existing model code and should not be used to rewrite the public performance table without an explicit regeneration step.

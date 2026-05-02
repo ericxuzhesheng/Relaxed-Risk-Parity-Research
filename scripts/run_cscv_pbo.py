@@ -20,6 +20,7 @@ from src.validation import (
     generate_cscv_splits,
     pbo_from_cscv,
     result_window_metrics,
+    validation_run_metadata,
     validation_score,
 )
 from src.convex_adaptive_rrp import run_convex_adaptive_backtest
@@ -42,9 +43,16 @@ def main() -> None:
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
 
+    validation_kind = "formal"
     if args.smoke:
+        validation_kind = "smoke"
         args.max_candidates = args.max_candidates or 2
         args.max_combinations = args.max_combinations or 2
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2021-01-01":
+        validation_kind = "intermediate"
+
+    requested_eval_start = args.eval_start
+    requested_frozen_start = None
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
@@ -56,6 +64,28 @@ def main() -> None:
         raise ValueError("CSCV/PBO requires at least two candidates.")
 
     blocks, combos = generate_cscv_splits(returns, args.num_blocks, args.max_combinations)
+    validation_kind = "formal"
+    if args.smoke:
+        validation_kind = "smoke"
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2021-01-01":
+        validation_kind = "intermediate"
+    elif len(candidates) < len(candidate_configurations(config["transaction_cost_bps"])):
+        validation_kind = "intermediate"
+
+    metadata = validation_run_metadata(
+        validation_method="cscv_pbo",
+        validation_kind=validation_kind,
+        eval_start=args.eval_start,
+        eval_end=returns.index.max(),
+        selection_rule="candidate with highest IS score under the current block split",
+        limitations="PBO is a diagnostic, not proof; reduced candidates or combinations make this intermediate validation evidence.",
+        candidate_count=len(candidates),
+        num_splits=len(combos),
+        num_blocks=len(blocks),
+        num_combinations=len(combos),
+        requested_eval_start=requested_eval_start,
+        requested_frozen_start=requested_frozen_start,
+    )
     candidate_block_metrics: dict[str, dict[int, dict]] = {}
     for i, (candidate_id, cfg) in enumerate(candidates, start=1):
         print(f"Running candidate {i}/{len(candidates)} for CSCV/PBO: {candidate_id}")
@@ -82,12 +112,16 @@ def main() -> None:
             )
     score_table = pd.DataFrame(score_rows)
     detail, summary = pbo_from_cscv(score_table)
+    detail = score_table.copy()
+    detail = detail.assign(**metadata)
+    summary = summary.assign(**metadata)
 
     output_dir = Path(resolve_path(args.output_dir))
     output_dir.mkdir(parents=True, exist_ok=True)
     detail.to_csv(output_dir / "cscv_pbo_results.csv", index=False)
     summary.to_csv(output_dir / "cscv_pbo_summary.csv", index=False)
     print(f"Saved CSCV/PBO diagnostics for {len(combos)} splits to {output_dir}")
+    print(f"Validation kind: {validation_kind}")
 
 
 def json_tuple(values: tuple[int, ...]) -> str:

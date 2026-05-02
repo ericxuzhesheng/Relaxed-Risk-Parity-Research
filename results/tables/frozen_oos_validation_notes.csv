@@ -1,3 +1,3 @@
-item,note
-interpretation,Frozen OOS reports the pre-declared selected Improved Convex Adaptive Global RRP candidate on the frozen period only.
-limitation,This should be treated as pseudo-frozen if the 2025+ period was already visible during earlier research iterations.
+validation_method,validation_kind,eval_start,eval_end,candidate_count,num_splits,selection_rule,limitations,requested_frozen_start,item,note
+frozen_oos,formal,2025-01-02,2026-04-30,1,1,pre-declared candidate only,Frozen OOS is preliminary if the period was already inspected during development.,2025-01-01,interpretation,Frozen OOS reports the pre-declared selected Improved Convex Adaptive Global RRP candidate on the frozen period only.
+frozen_oos,formal,2025-01-02,2026-04-30,1,1,pre-declared candidate only,Frozen OOS is preliminary if the period was already inspected during development.,2025-01-01,limitation,This should be treated as pseudo-frozen if the 2025+ period was already visible during earlier research iterations.

@@ -657,6 +657,8 @@ python -m pytest
 
 该验证层围绕现有 Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 研究线展开，只做样本外诊断与参数敏感性检查，不替换主模型、不使用测试窗口重新调参。Walk-forward 与 nested split 将候选参数选择限制在训练 / 验证窗口，随后才报告未见测试窗口表现；CSCV/PBO 用于估计候选选择偏差；Frozen OOS 默认从 `2025-01-01` 后第一个可交易日开始，若该时期已在前期研究中被观察过，则应解释为 pseudo-frozen；参数敏感性只做单因素扰动诊断。
 
+已实现脚本：
+
 ```bash
 python scripts/run_walkforward_validation.py
 python scripts/run_nested_validation.py
@@ -665,22 +667,36 @@ python scripts/run_frozen_oos_validation.py --frozen-start 2025-01-01
 python scripts/run_parameter_sensitivity.py
 ```
 
+已执行验证运行：
+
+- `python scripts/run_cscv_pbo.py --max-candidates 4 --num-blocks 6 --max-combinations 6`
+  - 运行类型：intermediate validation
+  - 输出目录：`results/tables/`
+  - 结果解读：这是一个有意义的 CSCV/PBO 诊断运行，但由于候选数与组合数被限制，它只提供 intermediate validation evidence，不能当作 formal full validation。
+  - 仍需保留的表述：candidate-selection overfitting risk remains；PBO is a diagnostic, not proof；不能声称 “no overfitting” 或 “fully validated”。
+- `python scripts/run_frozen_oos_validation.py`
+  - 运行类型：formal（但如果 2025+ 区间在开发时已被观察过，则应按 pseudo-frozen 解读）
+  - 输出目录：`results/tables/`
+  - 结果解读：这是一个冻结样本外区间报告，但其结论强度取决于该时期是否真正未被开发过程接触过。
+
+对 Improved Convex Adaptive Global RRP 的定位：除非后续 formal validation 结果足够强，否则仍应披露为受约束的研究细化版本，而不是已经完成冻结样本外验证的最终结论。
+
 | 输出文件 | 说明 |
 |---|---|
-| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Walk-forward 分割层级测试结果 |
-| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | Walk-forward 指标汇总 |
-| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | Nested train/validation/test 结果 |
-| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | Nested 验证到测试衰减汇总 |
-| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | CSCV/PBO 分割诊断 |
-| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | PBO 诊断估计汇总 |
-| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | Frozen OOS 区间表现 |
-| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | Frozen OOS 解释限制 |
-| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | 单因素参数扰动明细 |
-| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | 参数稳健性 / 脆弱性汇总 |
+| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | 本次执行的 CSCV/PBO split-level 结果，包含运行类型与范围元数据 |
+| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | 本次执行的 CSCV/PBO 汇总，包含 PBO、块数、分割数、候选数、选择规则与限制说明 |
+| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | 本次执行的 frozen OOS 区间表现，包含运行类型、冻结起点与候选元数据 |
+| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | 本次执行的 frozen OOS 解释限制 |
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | 已实现的 walk-forward 分割级结果 |
+| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | 已实现的 walk-forward 指标汇总 |
+| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | 已实现的 nested train/validation/test 结果 |
+| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | 已实现的 nested 验证到测试衰减汇总 |
+| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | 已实现的单因素参数扰动明细 |
+| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | 已实现的参数稳健性 / 脆弱性汇总 |
 
 ## Validation Framework: Walk-Forward, Nested Split, CSCV/PBO, and Frozen OOS
 
-This validation layer is additive to the existing Convex Adaptive Global RRP stack. It does not replace the main models and does not use test-window results for candidate selection. Walk-forward and nested validation select candidates only on declared training/validation windows before reporting unseen test windows. CSCV/PBO is a diagnostic estimate of selection bias, not proof of future performance. Frozen OOS defaults to the first trading day on or after `2025-01-01`; if 2025+ data was already visible in prior research, it should be read as pseudo-frozen. Parameter sensitivity is one-at-a-time validation, not retuning.
+This validation layer is additive to the existing Convex Adaptive Global RRP stack. It does not replace the main models and does not use test-window results for candidate selection. Walk-forward and nested validation select candidates only on declared training/validation windows before reporting unseen test windows. CSCV/PBO is a diagnostic estimate of selection bias, not proof of future performance. The executed validation run in this repository is an intermediate CSCV/PBO pass with a reduced candidate set and capped combination count; it is useful evidence, but not formal full validation. Frozen OOS defaults to the first trading day on or after `2025-01-01`; if 2025+ data was already visible in prior research, it should be read as pseudo-frozen. Parameter sensitivity is one-at-a-time validation, not retuning.
 
 ```bash
 python scripts/run_walkforward_validation.py
@@ -692,16 +708,24 @@ python scripts/run_parameter_sensitivity.py
 
 | Output | Description |
 |---|---|
-| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Walk-forward split-level test results |
-| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | Walk-forward metric summary |
-| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | Nested train/validation/test results |
-| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | Nested validation-to-test decay summary |
-| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | CSCV/PBO split diagnostics |
-| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | PBO diagnostic estimate summary |
-| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | Frozen OOS period metrics |
-| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | Frozen OOS interpretation limits |
-| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | One-at-a-time perturbation details |
-| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | Parameter robustness / fragility summary |
+| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | Executed CSCV/PBO split diagnostics with run metadata |
+| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | Executed CSCV/PBO summary with PBO, block count, split count, candidate count, selection rule, and limitations |
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Implemented walk-forward split-level test results |
+| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | Implemented walk-forward metric summary |
+| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | Implemented nested train/validation/test results |
+| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | Implemented nested validation-to-test decay summary |
+| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | Implemented frozen OOS period metrics |
+| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | Implemented frozen OOS interpretation limits |
+| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | Implemented one-at-a-time perturbation details |
+| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | Implemented parameter robustness / fragility summary |
+
+### Interpretation
+
+- `PBO is a diagnostic, not proof.`
+- `candidate-selection overfitting risk remains.`
+- The executed CSCV/PBO result should be read as intermediate validation evidence, not as proof that the framework is overfitting-free.
+- A frozen OOS pass is only strong if the period was genuinely untouched during development; otherwise it remains pseudo-frozen evidence.
+- Improved Convex Adaptive Global RRP should continue to be disclosed as a constrained research refinement unless a future formal validation package supports a stronger public claim.
 
 ## License
 

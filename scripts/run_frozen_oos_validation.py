@@ -20,6 +20,8 @@ from src.validation import (
     ensure_datetime_index,
     evaluate_candidate_window,
     generate_frozen_oos_split,
+    metadata_columns,
+    validation_run_metadata,
 )
 
 
@@ -70,6 +72,21 @@ def main() -> None:
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
     split = generate_frozen_oos_split(returns, args.frozen_start)
     candidate_id, cfg = selected_candidate(config["transaction_cost_bps"])
+    validation_kind = "formal"
+    if args.smoke:
+        validation_kind = "smoke"
+    metadata = validation_run_metadata(
+        validation_method="frozen_oos",
+        validation_kind=validation_kind,
+        eval_start=split["test_start"],
+        eval_end=split["test_end"],
+        selection_rule="pre-declared candidate only",
+        limitations="Frozen OOS is preliminary if the period was already inspected during development.",
+        candidate_count=1,
+        num_splits=1,
+        requested_frozen_start=split["requested_frozen_start"],
+        requested_eval_start=None,
+    )
     metrics, fallback_rate, _ = evaluate_candidate_window(
         returns,
         cfg,
@@ -80,6 +97,7 @@ def main() -> None:
         config,
     )
     row = {
+        **metadata_columns(metadata),
         "split_id": split["split_id"],
         "validation_status": VALIDATION_STATUS,
         "requested_frozen_start": split["requested_frozen_start"].date().isoformat(),
@@ -95,10 +113,12 @@ def main() -> None:
     notes = pd.DataFrame(
         [
             {
+                **metadata_columns(metadata),
                 "item": "interpretation",
                 "note": "Frozen OOS reports the pre-declared selected Improved Convex Adaptive Global RRP candidate on the frozen period only.",
             },
             {
+                **metadata_columns(metadata),
                 "item": "limitation",
                 "note": "This should be treated as pseudo-frozen if the 2025+ period was already visible during earlier research iterations.",
             },
