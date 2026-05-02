@@ -10,73 +10,80 @@
 ## 中文
 
 ### 项目概览
-本仓库是一个面向论文研究的全球多资产配置回测框架，核心问题是宽松风险平价在真实可交易 ETF 资产池中的应用。最终组合权重由透明优化流程生成；ML、图特征和状态识别模块只作为诊断或约束输入，不直接生成组合权重。
 
-研究定位保持如下：
+本仓库是一个面向论文研究的全球多资产配置框架，围绕宽松风险平价、全球资产扩展、凸优化近似、CVaR 尾部风险控制、换手约束和稳健性验证展开。项目目标不是短期交易信号，而是构建可解释、可复现、可实施的长期机构型资产配置研究流程。
 
-| 模型 | 定位 |
+最终组合权重由透明优化流程生成。机器学习、图特征和状态识别模块仅作为诊断信息或约束输入，不直接生成组合权重。
+
+### 研究框架
+
+| 模型 / 模块 | 公开标签 | 研究定位 |
+|---|---|---|
+| 传统风险平价 | Standard Risk Parity | 基础风险预算参照 |
+| 本地宽松风险平价 | Local Relaxed Risk Parity | 本地资产池中的宽松风险平价模型 |
+| 全球宽松风险平价 | Global RRP | 主要的收益效率展示模型 |
+| 防御型动态宽松风险平价 | Defensive Dynamic RRP | 防御型风险覆盖实验，不是主要收益最大化模型 |
+| 凸自适应全球宽松风险平价 | Convex Adaptive Global RRP | 凸化的宽松风险预算近似 |
+| 改进凸自适应全球宽松风险平价 | Improved Convex Adaptive Global RRP | 强调低换手、CVaR 尾部风险控制和可实施性的凸优化改进 |
+| 层次风险平价基准 | HRP Benchmark | 层次化风险配置基准 |
+| 层次等风险贡献基准 | HERC Benchmark | 层次化风险配置基准 |
+
+### 数据与方法
+
+| 项目 | 说明 |
 |---|---|
-| Standard Risk Parity | 传统风险平价基准 |
-| Local Relaxed Risk Parity | 本地资产池宽松风险平价 |
-| Global RRP | 主要的收益效率展示模型 |
-| Defensive Dynamic RRP | 防御型风险覆盖实验，不是主收益最大化模型 |
-| Convex Adaptive Global RRP | 凸化的宽松风险预算近似 |
-| Improved Convex Adaptive Global RRP | 低换手、CVaR 感知、可实施的凸优化改进 |
-| HRP Benchmark / HERC Benchmark | 层次化风险配置基准 |
+| 价格数据 | `data/processed/etf_prices_updated.csv` |
+| 资产映射 | `data/processed/etf_asset_mapping.csv` |
+| 数据区间 | `2018-01-02` 至 `2026-04-30` |
+| 评估起点 | `2021-01-01` |
+| 再平衡频率 | 月度再平衡 |
+| 交易成本 | 默认 3 bps，并区分 gross return 与 net return |
 
-### ETF 资产池
+每个再平衡日只使用当时已具备足够历史观测的 ETF 估计信号、协方差和权重；尚未上市或历史不足的 ETF 不参与优化。历史结果不代表未来表现。
 
-| ETF 名称 | 代码 | 资产类别 | 经济暴露 | 替换原资产 | 替换原因 |
-|---|---|---|---|---|---|
-| 短融ETF | 511360.SH | 债券 | 短久期信用债 | 0-5中高信用票 | 用可交易 ETF 替代信用债指数 |
-| 可转债ETF | 511380.SH | 债券 | 可转债 | 中证转债 | 用可交易 ETF 替代转债指数 |
-| 沪深300ETF | 510300.SH | 股票 | A 股大盘 | 沪深300ETF | 保留可交易 ETF |
-| 中证1000ETF | 512100.SH | 股票 | A 股小盘 | 中证1000ETF | 保留可交易 ETF |
-| 科创50ETF | 588000.SH | 股票 | 科创板 | 科创50ETF | 保留可交易 ETF |
-| 红利ETF | 510880.SH | 股票 | 高股息 | 红利ETF | 保留可交易 ETF |
-| 上证指数ETF | 510210.SH | 股票 | 上证综指 | 上证指数ETF | 保留可交易 ETF |
-| 恒生ETF | 159920.SZ | 股票 | 香港股票 | 恒生ETF | 保留可交易 ETF |
-| 恒生科技ETF | 513180.SH | 股票 | 香港科技 | 恒生科技ETF | 保留可交易 ETF |
-| 纳指ETF | 159941.SZ | 股票 | 纳斯达克 | 纳指ETF | 保留可交易 ETF |
-| 标普500ETF | 513500.SH | 股票 | 标普500 | 标普500ETF | 保留可交易 ETF |
-| 日经225ETF | 513880.SH | 股票 | 日本股票 | 日经225ETF | 保留可交易 ETF |
-| 黄金ETF | 518880.SH | 商品 | 黄金 | 黄金ETF | 保留可交易 ETF |
-| 有色ETF | 159980.SZ | 商品/资源 | 有色金属 | 有色ETF | 保留可交易 ETF |
-| 豆粕ETF | 159985.SZ | 商品 | 豆粕 | 豆粕连续 | 用可交易 ETF 替代期货连续合约 |
+### 最新绩效看板
 
-### 数据更新
-最新 ETF 价格文件为 `data/processed/etf_prices_updated.csv`，映射文件为 `data/processed/etf_asset_mapping.csv`。本次数据区间为 `2018-01-02` 至 `2026-04-30`。
-
-数据更新脚本优先支持 Tushare `fund_daily` 与 `fund_adj`，通过环境变量 `TUSHARE_TOKEN` 读取授权，不提交任何真实 token。本次执行环境未设置 `TUSHARE_TOKEN`，因此使用 `yfinance` 作为无凭证 ETF 数据回退源完成刷新。价格在上市后才前向填充，不进行上市前 backward-fill；不可投资资产在再平衡时权重为 0。
-
-### 回测方法
-回测采用月度再平衡。每个再平衡日只使用当时已有足够历史观测的 ETF 估计信号、协方差和权重；尚未上市或历史不足的 ETF 不参与优化。交易成本默认为 3 bps，结果区分 gross 与 net return。历史结果不代表未来表现。
-
-### 最新结果
-以下结果来自重新生成的 `results/tables/convex_adaptive_performance_summary.csv`，评估起点为 `2021-01-01`。
+核心模型结果：
 
 | Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| Global RRP | 4.74% | 0.63 | -4.49% | 1.05 | 21.33% |
-| Defensive Dynamic RRP | 4.06% | 0.47 | -7.22% | 0.56 | 17.53% |
-| Convex Adaptive Global RRP | 6.26% | 0.75 | -5.04% | 1.24 | 0.90% |
-| Improved Convex Adaptive Global RRP | 6.11% | 0.89 | -3.62% | 1.69 | 1.63% |
+| Global RRP | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
+| Defensive Dynamic RRP | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
+| Convex Adaptive Global RRP | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
+| Improved Convex Adaptive Global RRP | 6.45% | 0.96 | -4.98% | 1.30 | 0.52% |
+
+基准结果：
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| HRP Benchmark | 2.22% | 1.54 | -0.25% | 8.79 | 0.09% |
-| HERC Benchmark | 2.77% | 1.38 | -0.66% | 4.19 | 1.61% |
+| HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
+| HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
 
-Global RRP remains the main return-efficient RRP showcase. Improved Convex Adaptive Global RRP emphasizes implementability, low turnover, CVaR tail-risk control, and stable allocation.
+Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在保持有竞争力风险收益特征的同时，将平均月度换手率降至 0.52%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置基准；在当前资产池中，相关性聚类和递归配置本身不足以替代 Global RRP 与 Convex Adaptive RRP 框架。
 
 ### 图表
+
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
 
 ![Convex Adaptive Drawdown Comparison](results/figures/convex_adaptive_drawdown_comparison.png)
 
-![Benchmark NAV Comparison](results/figures/benchmark_nav_comparison.png)
+### 输出与报告
 
-### 复现
+| 文件 | 内容 |
+|---|---|
+| `results/tables/convex_adaptive_performance_summary.csv` | 凸自适应模型绩效汇总 |
+| `results/tables/showcase_performance_summary.csv` | 展示模型绩效汇总 |
+| `results/tables/convex_adaptive_transaction_cost_summary.csv` | 交易成本敏感性结果 |
+| `results/tables/convex_adaptive_solver_diagnostics.csv` | 凸优化求解诊断 |
+| `results/tables/asset_graph_diagnostics.csv` | 资产图诊断 |
+| `results/tables/online_regime_diagnostics.csv` | 在线状态识别诊断 |
+| `report/asset_pricing_interpretation.md` | 资产定价解释 |
+| `report/methodology_notes.md` | 方法论说明 |
+| `report/insurance_allocation_perspective.md` | 保险资金配置视角 |
+| `report/thesis_figures_and_tables.md` | 论文图表索引 |
+
+### 复现命令
+
 ```bash
 python scripts/update_etf_data.py
 python scripts/run_rrp_pipeline.py --mode full
@@ -88,44 +95,85 @@ python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
 
-### 变更记录
-- 将 `0-5中高信用票`、`中证转债`、`豆粕连续` 替换为可交易 ETF。
-- 新增 ETF 资产映射与数据刷新脚本。
-- 修正上市前缺失值处理和再平衡时的可投资资产筛选。
-- 重新生成核心结果、benchmark 结果和主要图表。
-
 <a id="en"></a>
 
 ## English
 
 ### Project Overview
-This repository is a thesis-oriented global multi-asset allocation backtest for Relaxed Risk Parity on tradable ETFs. Final portfolio weights are generated by transparent optimization. ML, graph, and regime modules are diagnostic or constraint inputs; they do not directly generate portfolio weights.
+
+This repository is a thesis-oriented global multi-asset allocation research project built around Relaxed Risk Parity, global asset extension, convex approximation, CVaR tail-risk control, turnover constraints, and robustness validation. It is not a short-term trading strategy repository; the emphasis is long-term institutional and insurance-style allocation interpretation.
+
+Final portfolio weights are generated by transparent optimization. Machine learning, graph, and regime modules are used as diagnostics or constraint inputs; they do not directly generate portfolio weights.
+
+### Research Framework
+
+| Model / Module | Public Label | Research Role |
+|---|---|---|
+| Classical risk parity | Standard Risk Parity | Baseline risk-budgeting reference |
+| Local relaxed risk parity | Local Relaxed Risk Parity | Relaxed risk parity in the local asset universe |
+| Global relaxed risk parity | Global RRP | Main return-efficient showcase model |
+| Defensive dynamic relaxed risk parity | Defensive Dynamic RRP | Defensive risk-overlay experiment, not the main return-maximizing model |
+| Convex adaptive global relaxed risk parity | Convex Adaptive Global RRP | Convexified relaxed risk-budgeting approximation |
+| Improved convex adaptive global relaxed risk parity | Improved Convex Adaptive Global RRP | Implementable convex refinement emphasizing low turnover, CVaR control, and stable allocation |
+| Hierarchical risk parity | HRP Benchmark | Hierarchical risk-allocation benchmark |
+| Hierarchical equal risk contribution | HERC Benchmark | Hierarchical risk-allocation benchmark |
 
 ### Data And Method
-The current ETF price cache is `data/processed/etf_prices_updated.csv`; the asset map is `data/processed/etf_asset_mapping.csv`. The refreshed data run covers `2018-01-02` to `2026-04-30`.
 
-The update script supports Tushare `fund_daily` plus `fund_adj` through the `TUSHARE_TOKEN` environment variable. Because no token was available in this execution environment, the refreshed cache was generated with the script's `yfinance` fallback. Prices are forward-filled only after listing, never backward-filled before listing. At each monthly rebalance, optimization uses only ETFs with sufficient point-in-time history; non-investable ETFs receive zero weight.
+| Item | Description |
+|---|---|
+| Price cache | `data/processed/etf_prices_updated.csv` |
+| Asset map | `data/processed/etf_asset_mapping.csv` |
+| Data range | `2018-01-02` to `2026-04-30` |
+| Evaluation start | `2021-01-01` |
+| Rebalancing | Monthly |
+| Transaction cost | Default 3 bps, with gross and net return separated |
 
-### Latest Results
-Generated from `results/tables/convex_adaptive_performance_summary.csv`, evaluated from `2021-01-01`.
+At each monthly rebalance, the optimizer uses only ETFs with sufficient point-in-time history. Not-yet-listed or history-insufficient ETFs are excluded from optimization. Historical results do not imply future performance.
+
+### Latest Performance Dashboard
+
+Core model results:
 
 | Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| Global RRP | 4.74% | 0.63 | -4.49% | 1.05 | 21.33% |
-| Defensive Dynamic RRP | 4.06% | 0.47 | -7.22% | 0.56 | 17.53% |
-| Convex Adaptive Global RRP | 6.26% | 0.75 | -5.04% | 1.24 | 0.90% |
-| Improved Convex Adaptive Global RRP | 6.11% | 0.89 | -3.62% | 1.69 | 1.63% |
-| HRP Benchmark | 2.22% | 1.54 | -0.25% | 8.79 | 0.09% |
-| HERC Benchmark | 2.77% | 1.38 | -0.66% | 4.19 | 1.61% |
+| Global RRP | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
+| Defensive Dynamic RRP | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
+| Convex Adaptive Global RRP | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
+| Improved Convex Adaptive Global RRP | 6.45% | 0.96 | -4.98% | 1.30 | 0.52% |
+
+Benchmark results:
+
+| Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
+|---|---:|---:|---:|---:|---:|
+| HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
+| HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
+
+Global RRP remains the main return-efficient global multi-asset model. Improved Convex Adaptive Global RRP achieves a competitive risk-return profile while reducing average monthly turnover to 0.52%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. HRP/HERC are included only as hierarchical risk-allocation benchmarks; in the current asset universe, correlation clustering and recursive allocation alone are insufficient to replace the Global RRP and Convex Adaptive RRP framework.
 
 ### Figures
+
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
 
 ![Convex Adaptive Drawdown Comparison](results/figures/convex_adaptive_drawdown_comparison.png)
 
-![Benchmark NAV Comparison](results/figures/benchmark_nav_comparison.png)
+### Outputs And Reports
 
-### Reproducibility
+| File | Content |
+|---|---|
+| `results/tables/convex_adaptive_performance_summary.csv` | Convex adaptive model performance summary |
+| `results/tables/showcase_performance_summary.csv` | Showcase model performance summary |
+| `results/tables/convex_adaptive_transaction_cost_summary.csv` | Transaction-cost sensitivity results |
+| `results/tables/convex_adaptive_solver_diagnostics.csv` | Convex solver diagnostics |
+| `results/tables/asset_graph_diagnostics.csv` | Asset graph diagnostics |
+| `results/tables/online_regime_diagnostics.csv` | Online regime diagnostics |
+| `report/asset_pricing_interpretation.md` | Asset-pricing interpretation |
+| `report/methodology_notes.md` | Methodology notes |
+| `report/insurance_allocation_perspective.md` | Insurance allocation perspective |
+| `report/thesis_figures_and_tables.md` | Thesis figures and tables index |
+
+### Reproduction Commands
+
 ```bash
 python scripts/update_etf_data.py
 python scripts/run_rrp_pipeline.py --mode full
@@ -138,4 +186,5 @@ python -m pytest
 ```
 
 ## License
+
 MIT License.
