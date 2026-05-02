@@ -402,7 +402,7 @@ CVaR 衡量超过损失分位点后的平均损失，能够补充最大回撤和
 \section{Walk-Forward 与 Nested 验证}
 除 CSCV/PBO 外，本文还实现了 Walk-Forward 滚动验证与 Nested Train/Validation/Test 分离验证。Walk-Forward 验证将候选参数选择限制在滚动的训练/验证窗口内，随后仅在被选中规则下报告未见测试窗口表现。Nested 验证严格区分模型设计、参数选择和最终测试三层，避免同一样本同时用于筛选和最终结论。
 
-这两类验证脚本已实现并可复现运行（\verb|scripts/run_walkforward_validation.py|、\verb|scripts/run_nested_validation.py|），对应的 split-level 结果与汇总指标输出至 \verb|results/tables/| 目录。受限于当前论文范围，详细分割级结果未在正文中逐一列出，但其证明了验证框架的可操作性和可复现性。
+这两类验证脚本已实现并可复现运行，对应的分割级结果与汇总指标输出至 \verb|results/tables/| 目录。受限于当前论文范围，详细分割级结果未在正文中逐一列出，但其证明了验证框架的可操作性和可复现性。
 
 \section{Frozen OOS 验证}
 为进一步评估模型在未见样本上的表现，本文实现了 Frozen OOS 区间验证（\verb|scripts/run_frozen_oos_validation.py|）。该验证以 2025-01-01 为请求冻结起点，在 2025-01-02 至 2026-04-30 的测试区间内对预声明候选（candidate\_07）进行评估。
