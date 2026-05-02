@@ -115,17 +115,17 @@ Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Globa
 
 CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 
-### 协方差估计稳健性
+### 鲁棒性测试
 
-协方差稳健性检验覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。该模块只用于敏感性诊断，不改变 Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的官方定位或主结果表。
+本仓库的鲁棒性测试不是单一检验，而是一组诊断层：子区间表现、交易成本敏感性、压力期表现、参数扰动、无前视审计、求解器稳定性、block bootstrap、过拟合诊断，以及协方差估计敏感性。它们共同用于验证结论是否依赖特定样本、成本假设、参数设定、求解器状态或风险估计方法；不用于重新调参、重新排序或替换主绩效表。
 
-输出文件包括 `results/tables/covariance_robustness_summary.csv`、`results/tables/covariance_estimator_diagnostics.csv` 和下列图表。
+协方差估计稳健性是其中的一个子项，覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。它回答的是“模型结果是否过度依赖某一种协方差估计方法”。
+
+主要鲁棒性输出包括 `results/tables/robustness_overall_summary.csv`、`results/tables/robustness_subperiod_summary.csv`、`results/tables/robustness_transaction_cost_summary.csv`、`results/tables/robustness_stress_period_summary.csv`、`results/tables/robustness_parameter_perturbation.csv`、`results/tables/robustness_no_lookahead_audit.csv`、`results/tables/robustness_solver_stability.csv`、`results/tables/robustness_block_bootstrap_summary.csv`、`results/tables/robustness_overfitting_diagnostic.csv`，以及新增的 `results/tables/covariance_robustness_summary.csv` 和 `results/tables/covariance_estimator_diagnostics.csv`。
 
 ![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
 ![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
 ![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
-
-该部分属于鲁棒性测试中的协方差估计敏感性检验。它回答的是“模型结果是否过度依赖某一种协方差估计方法”，而不是重新调参或替换主绩效排名。
 
 ### 输出与报告
 
@@ -137,6 +137,15 @@ CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 | `results/tables/convex_adaptive_solver_diagnostics.csv` | 凸优化求解诊断 |
 | `results/tables/asset_graph_diagnostics.csv` | 资产图诊断 |
 | `results/tables/online_regime_diagnostics.csv` | 在线状态识别诊断 |
+| `results/tables/robustness_overall_summary.csv` | 综合鲁棒性结论 |
+| `results/tables/robustness_subperiod_summary.csv` | 子区间鲁棒性 |
+| `results/tables/robustness_transaction_cost_summary.csv` | 交易成本敏感性 |
+| `results/tables/robustness_stress_period_summary.csv` | 压力期表现 |
+| `results/tables/robustness_parameter_perturbation.csv` | 参数扰动测试 |
+| `results/tables/robustness_no_lookahead_audit.csv` | 无前视审计 |
+| `results/tables/robustness_solver_stability.csv` | 求解器稳定性 |
+| `results/tables/robustness_block_bootstrap_summary.csv` | Block bootstrap 稳健性 |
+| `results/tables/robustness_overfitting_diagnostic.csv` | 过拟合诊断 |
 | `results/tables/covariance_robustness_summary.csv` | 协方差估计鲁棒性汇总 |
 | `results/tables/covariance_estimator_diagnostics.csv` | 协方差估计诊断 |
 | `report/asset_pricing_interpretation.md` | 资产定价解释 |
@@ -268,15 +277,15 @@ The turnover chart shows how convex optimization constraints affect implementabi
 
 The CVaR chart helps compare tail-risk control across models.
 
-### Covariance Robustness
+### Robustness Tests
 
-The covariance robustness layer tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives. These outputs are sensitivity diagnostics only; they do not retune, rerank, or replace the official Global RRP, Convex Adaptive Global RRP, or Improved Convex Adaptive Global RRP results.
+Robustness testing in this repository is a diagnostic stack, not a single check. It includes subperiod performance, transaction-cost sensitivity, stress-period performance, parameter perturbation, no-lookahead audit, solver stability, block bootstrap, overfitting diagnostics, and covariance-estimator sensitivity. These tests validate whether conclusions depend on a specific sample, cost assumption, parameter setting, solver state, or risk-estimation method; they do not retune, rerank, or replace the main performance table.
+
+Covariance robustness is one subtest within that stack. It tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives to check whether conclusions are overly dependent on one covariance estimator.
 
 ![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
 ![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
 ![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
-
-This section is a robustness test in the narrower sense of covariance-estimator sensitivity. It checks whether conclusions are overly dependent on one covariance estimator; it is not used to retune parameters or replace the main performance ranking.
 
 ### Outputs And Reports
 
@@ -288,6 +297,15 @@ This section is a robustness test in the narrower sense of covariance-estimator 
 | `results/tables/convex_adaptive_solver_diagnostics.csv` | Convex solver diagnostics |
 | `results/tables/asset_graph_diagnostics.csv` | Asset graph diagnostics |
 | `results/tables/online_regime_diagnostics.csv` | Online regime diagnostics |
+| `results/tables/robustness_overall_summary.csv` | Overall robustness summary |
+| `results/tables/robustness_subperiod_summary.csv` | Subperiod robustness |
+| `results/tables/robustness_transaction_cost_summary.csv` | Transaction-cost sensitivity |
+| `results/tables/robustness_stress_period_summary.csv` | Stress-period performance |
+| `results/tables/robustness_parameter_perturbation.csv` | Parameter perturbation |
+| `results/tables/robustness_no_lookahead_audit.csv` | No-lookahead audit |
+| `results/tables/robustness_solver_stability.csv` | Solver stability |
+| `results/tables/robustness_block_bootstrap_summary.csv` | Block-bootstrap robustness |
+| `results/tables/robustness_overfitting_diagnostic.csv` | Overfitting diagnostics |
 | `results/tables/covariance_robustness_summary.csv` | Covariance-estimator robustness summary, with annualized volatility and daily CVaR clearly separated |
 | `results/tables/covariance_estimator_diagnostics.csv` | Covariance diagnostics covering PSD repair, condition number, fallback, and point-in-time flags |
 | `report/asset_pricing_interpretation.md` | Asset-pricing interpretation |
