@@ -123,6 +123,29 @@ CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 
 主要鲁棒性输出包括 `results/tables/robustness_overall_summary.csv`、`results/tables/robustness_subperiod_summary.csv`、`results/tables/robustness_transaction_cost_summary.csv`、`results/tables/robustness_stress_period_summary.csv`、`results/tables/robustness_parameter_perturbation.csv`、`results/tables/robustness_no_lookahead_audit.csv`、`results/tables/robustness_solver_stability.csv`、`results/tables/robustness_block_bootstrap_summary.csv`、`results/tables/robustness_overfitting_diagnostic.csv`，以及新增的 `results/tables/covariance_robustness_summary.csv` 和 `results/tables/covariance_estimator_diagnostics.csv`。
 
+#### 子区间与交易成本
+
+子区间图用于观察模型在不同市场阶段的 Sharpe 和回撤稳定性；交易成本图用于检验净收益对成本假设的敏感性。
+
+![Robustness Subperiod Sharpe](results/figures/robustness_subperiod_sharpe.png)
+![Robustness Subperiod Drawdown](results/figures/robustness_subperiod_drawdown.png)
+![Robustness Transaction Cost Sensitivity](results/figures/robustness_transaction_cost_sensitivity.png)
+
+#### 压力期、参数与协方差
+
+压力期图用于比较极端市场阶段的表现；参数敏感性和协方差对比用于检查模型是否过度依赖单一参数或单一风险估计设定。
+
+![Robustness Stress Period Performance](results/figures/robustness_stress_period_performance.png)
+![Robustness Parameter Sensitivity](results/figures/robustness_parameter_sensitivity.png)
+![Robustness Covariance Comparison](results/figures/robustness_covariance_comparison.png)
+
+#### Bootstrap、过拟合与协方差估计器
+
+Bootstrap 和过拟合诊断用于评估样本不确定性与选择偏误；新增协方差估计器图进一步比较样本协方差、Ledoit-Wolf 和不同 EWMA 半衰期下的 Sharpe、回撤与换手。
+
+![Robustness Bootstrap Sharpe Distribution](results/figures/robustness_bootstrap_sharpe_distribution.png)
+![Robustness Bootstrap Drawdown Distribution](results/figures/robustness_bootstrap_drawdown_distribution.png)
+![Robustness Overfitting Diagnostic](results/figures/robustness_overfitting_diagnostic.png)
 ![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
 ![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
 ![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
@@ -283,6 +306,29 @@ Robustness testing in this repository is a diagnostic stack, not a single check.
 
 Covariance robustness is one subtest within that stack. It tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives to check whether conclusions are overly dependent on one covariance estimator.
 
+#### Subperiods And Transaction Costs
+
+Subperiod figures show Sharpe and drawdown stability across market windows. The transaction-cost chart checks whether net performance is sensitive to cost assumptions.
+
+![Robustness Subperiod Sharpe](results/figures/robustness_subperiod_sharpe.png)
+![Robustness Subperiod Drawdown](results/figures/robustness_subperiod_drawdown.png)
+![Robustness Transaction Cost Sensitivity](results/figures/robustness_transaction_cost_sensitivity.png)
+
+#### Stress, Parameters, And Covariance
+
+Stress-period results compare behavior in difficult market windows. Parameter sensitivity and covariance comparison figures check whether conclusions rely on one parameter or one risk-estimation setup.
+
+![Robustness Stress Period Performance](results/figures/robustness_stress_period_performance.png)
+![Robustness Parameter Sensitivity](results/figures/robustness_parameter_sensitivity.png)
+![Robustness Covariance Comparison](results/figures/robustness_covariance_comparison.png)
+
+#### Bootstrap, Overfitting, And Estimators
+
+Bootstrap and overfitting diagnostics assess sample uncertainty and selection bias. The added covariance-estimator figures compare sample covariance, Ledoit-Wolf, and EWMA halflife variants on Sharpe, drawdown, and turnover.
+
+![Robustness Bootstrap Sharpe Distribution](results/figures/robustness_bootstrap_sharpe_distribution.png)
+![Robustness Bootstrap Drawdown Distribution](results/figures/robustness_bootstrap_drawdown_distribution.png)
+![Robustness Overfitting Diagnostic](results/figures/robustness_overfitting_diagnostic.png)
 ![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
 ![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
 ![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
