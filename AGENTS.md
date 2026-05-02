@@ -150,3 +150,14 @@ README title must be Chinese first:
 ```markdown
 # 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation
 ```
+
+## README Math Rendering Requirements
+
+When adding optimization problems or formulas to README.md:
+
+- Use rendered display math with `$$ ... $$` for formulas the reader is expected to view as equations.
+- Do not replace requested rendered formulas with fenced code blocks.
+- Avoid restricted LaTeX macros in README formulas, especially `\operatorname`, `\text`, `\begin`, `\end`, `\lVert`, and `\rVert`.
+- Prefer macro-free or near macro-free math using Unicode symbols and plain identifiers, for example `Σ_t`, `λ_var`, `CVaR_α`, `wᵀΣ_t w`, and `||w-b_t||₂²`.
+- Keep long optimization problems split into multiple rendered display equations if needed, rather than using unsupported alignment macros.
+- Put explanatory text outside the math block using normal Markdown or backticks, not inline `$...$`, if renderer compatibility is uncertain.
