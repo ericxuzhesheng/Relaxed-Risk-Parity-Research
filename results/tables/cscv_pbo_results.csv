@@ -1,0 +1,3 @@
+split_id,selected_candidate_id,is_score,oos_score,oos_rank,candidate_count,relative_rank,logit_rank,pbo_event,notes
+cscv_001,candidate_02,1.4901995633298528,2.5017196761514016,1,2,0.5,13.815509557935018,False,CSCV/PBO diagnostic estimate; not proof of future generalization.
+cscv_002,candidate_02,0.8954144872594172,3.096504752221837,1,2,0.5,13.815509557935018,False,CSCV/PBO diagnostic estimate; not proof of future generalization.

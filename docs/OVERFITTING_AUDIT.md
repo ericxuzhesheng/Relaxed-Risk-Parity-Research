@@ -149,6 +149,20 @@ The recommended public wording is: "Improved Convex Adaptive Global RRP is repor
 4. Frozen OOS period: predefine a final out-of-sample period and run it only once after the candidate-selection rule is frozen.
 5. Sensitivity tests: test whether conclusions are stable under weight-lag execution, transaction-cost stress, parameter perturbation, covariance-estimator changes, and sample-window changes.
 
+## Implemented Validation Scripts
+
+The validation roadmap now has reproducible scripts and CSV outputs. These scripts are an additive validation layer around the existing Convex Adaptive Global RRP stack; they do not replace the existing model code and should not be used to rewrite the public performance table without an explicit regeneration step.
+
+| Script | Main output | Status | Limitation |
+|---|---|---|---|
+| `scripts/run_walkforward_validation.py` | `results/tables/walkforward_validation.csv`, `results/tables/walkforward_validation_summary.csv` | Implemented validation script | Test-window metrics are reported after validation-window selection and should not be recycled into candidate choice. |
+| `scripts/run_nested_validation.py` | `results/tables/nested_validation.csv`, `results/tables/nested_validation_summary.csv` | Implemented validation script | Reports validation-to-test Sharpe and Calmar decay; it does not prove future generalization. |
+| `scripts/run_cscv_pbo.py` | `results/tables/cscv_pbo_results.csv`, `results/tables/cscv_pbo_summary.csv` | Implemented diagnostic script | PBO is a diagnostic estimate of selection bias, not proof that a strategy will or will not generalize. |
+| `scripts/run_frozen_oos_validation.py` | `results/tables/frozen_oos_validation.csv`, `results/tables/frozen_oos_validation_notes.csv` | Implemented reporting script | Default `2025-01-01` frozen start is pseudo-frozen if 2025+ data was already visible during earlier candidate development. |
+| `scripts/run_parameter_sensitivity.py` | `results/tables/parameter_sensitivity.csv`, `results/tables/parameter_sensitivity_summary.csv` | Implemented diagnostic script | One-at-a-time perturbations test robustness around the selected candidate; they are not a new tuning pass. |
+
+Preliminary outputs may be produced with `--smoke`, `--max-candidates`, or capped split counts. Such bounded runs are useful for reproducibility checks, but they should be labeled preliminary and should not be cited as final validation evidence.
+
 ## 后续验证路线
 
 1. Walk-forward parameter selection：只在滚动训练 / 验证窗口中选择候选参数，并把入选规则应用到下一段未见测试窗口。

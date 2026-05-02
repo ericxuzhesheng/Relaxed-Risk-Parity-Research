@@ -19,31 +19,13 @@ from src.validation import (
     config_fields,
     ensure_datetime_index,
     evaluate_candidate_window,
-    generate_walkforward_splits,
+    generate_nested_splits,
     select_candidate,
     summarize_validation_rows,
 )
 
 
-def split_windows(
-    returns: pd.DataFrame,
-    train_months: int,
-    validation_months: int,
-    test_months: int,
-    step_months: int,
-    max_splits: int | None,
-) -> list[dict[str, pd.Timestamp]]:
-    return generate_walkforward_splits(
-        returns,
-        train_months=train_months,
-        validation_months=validation_months,
-        test_months=test_months,
-        step_months=step_months,
-        max_splits=max_splits,
-    )
-
-
-def metric_columns(prefix: str, metrics: dict) -> dict:
+def _metrics(prefix: str, metrics: dict) -> dict:
     return {f"{prefix}_{key}": value for key, value in metrics.items()}
 
 
@@ -80,14 +62,16 @@ def run_split(returns: pd.DataFrame, split: dict, candidates: list[tuple[str, ob
         "selection_score": selection_score,
         "validation_solver_fallback_rate": validation_fallback,
         "test_solver_fallback_rate": test_fallback,
-        **metric_columns("validation", validation_metrics),
-        **metric_columns("test", test_metrics),
+        "sharpe_decay_validation_to_test": validation_metrics["sharpe"] - test_metrics["sharpe"],
+        "calmar_decay_validation_to_test": validation_metrics["calmar"] - test_metrics["calmar"],
+        **_metrics("validation", validation_metrics),
+        **_metrics("test", test_metrics),
         "notes": VALIDATION_NOTE,
     }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run walk-forward validation for Convex Adaptive Global RRP candidates.")
+    parser = argparse.ArgumentParser(description="Run nested train/validation/test validation.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None)
     parser.add_argument("--eval-start", default=None)
@@ -110,10 +94,8 @@ def main() -> None:
     candidates = candidate_configurations(config["transaction_cost_bps"])
     if args.max_candidates is not None:
         candidates = candidates[: args.max_candidates]
-    if not candidates:
-        raise ValueError("Candidate configurations are unavailable.")
 
-    splits = generate_walkforward_splits(
+    splits = generate_nested_splits(
         returns,
         train_months=int(round(args.train_years * 12)),
         validation_months=int(round(args.validation_years * 12)),
@@ -123,16 +105,26 @@ def main() -> None:
     )
     rows = []
     for i, split in enumerate(splits, start=1):
-        print(f"Running walk-forward split {i}/{len(splits)}: {split['test_start'].date()} to {split['test_end'].date()}")
+        print(f"Running nested split {i}/{len(splits)}: test starts {split['test_start'].date()}")
         rows.append(run_split(returns, split, candidates, config))
 
     output_dir = Path(resolve_path(args.output_dir))
     output_dir.mkdir(parents=True, exist_ok=True)
     detail = pd.DataFrame(rows)
     summary = summarize_validation_rows(detail, "test")
-    detail.to_csv(output_dir / "walkforward_validation.csv", index=False)
-    summary.to_csv(output_dir / "walkforward_validation_summary.csv", index=False)
-    print(f"Saved {len(detail)} walk-forward rows and {len(summary)} summary rows to {output_dir}")
+    decay_summary = summarize_validation_rows(
+        detail.rename(
+            columns={
+                "sharpe_decay_validation_to_test": "test_sharpe_decay_validation_to_test",
+                "calmar_decay_validation_to_test": "test_calmar_decay_validation_to_test",
+            }
+        ),
+        "test",
+    )
+    summary = pd.concat([summary, decay_summary[decay_summary["metric"].str.contains("decay")]], ignore_index=True)
+    summary.to_csv(output_dir / "nested_validation_summary.csv", index=False)
+    detail.to_csv(output_dir / "nested_validation.csv", index=False)
+    print(f"Saved {len(detail)} nested validation rows to {output_dir}")
 
 
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ __pycache__/
 .env
 .DS_Store
 *.log
+tmp_pytest*/
 data/raw/*
 !data/raw/.gitkeep
 results/figures/*
@@ -47,6 +48,15 @@ results/quick/
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
+!results/tables/walkforward_validation_summary.csv
+!results/tables/nested_validation.csv
+!results/tables/nested_validation_summary.csv
+!results/tables/cscv_pbo_results.csv
+!results/tables/cscv_pbo_summary.csv
+!results/tables/frozen_oos_validation.csv
+!results/tables/frozen_oos_validation_notes.csv
+!results/tables/parameter_sensitivity.csv
+!results/tables/parameter_sensitivity_summary.csv
 !results/tables/parameter_stability.csv
 !results/tables/afml_diagnostics.csv
 !results/tables/pbo_diagnostic.csv

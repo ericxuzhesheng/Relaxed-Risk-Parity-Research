@@ -653,6 +653,56 @@ python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
 
+## 验证框架：Walk-Forward、Nested Split、CSCV/PBO 与 Frozen OOS
+
+该验证层围绕现有 Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 研究线展开，只做样本外诊断与参数敏感性检查，不替换主模型、不使用测试窗口重新调参。Walk-forward 与 nested split 将候选参数选择限制在训练 / 验证窗口，随后才报告未见测试窗口表现；CSCV/PBO 用于估计候选选择偏差；Frozen OOS 默认从 `2025-01-01` 后第一个可交易日开始，若该时期已在前期研究中被观察过，则应解释为 pseudo-frozen；参数敏感性只做单因素扰动诊断。
+
+```bash
+python scripts/run_walkforward_validation.py
+python scripts/run_nested_validation.py
+python scripts/run_cscv_pbo.py
+python scripts/run_frozen_oos_validation.py --frozen-start 2025-01-01
+python scripts/run_parameter_sensitivity.py
+```
+
+| 输出文件 | 说明 |
+|---|---|
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Walk-forward 分割层级测试结果 |
+| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | Walk-forward 指标汇总 |
+| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | Nested train/validation/test 结果 |
+| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | Nested 验证到测试衰减汇总 |
+| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | CSCV/PBO 分割诊断 |
+| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | PBO 诊断估计汇总 |
+| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | Frozen OOS 区间表现 |
+| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | Frozen OOS 解释限制 |
+| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | 单因素参数扰动明细 |
+| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | 参数稳健性 / 脆弱性汇总 |
+
+## Validation Framework: Walk-Forward, Nested Split, CSCV/PBO, and Frozen OOS
+
+This validation layer is additive to the existing Convex Adaptive Global RRP stack. It does not replace the main models and does not use test-window results for candidate selection. Walk-forward and nested validation select candidates only on declared training/validation windows before reporting unseen test windows. CSCV/PBO is a diagnostic estimate of selection bias, not proof of future performance. Frozen OOS defaults to the first trading day on or after `2025-01-01`; if 2025+ data was already visible in prior research, it should be read as pseudo-frozen. Parameter sensitivity is one-at-a-time validation, not retuning.
+
+```bash
+python scripts/run_walkforward_validation.py
+python scripts/run_nested_validation.py
+python scripts/run_cscv_pbo.py
+python scripts/run_frozen_oos_validation.py --frozen-start 2025-01-01
+python scripts/run_parameter_sensitivity.py
+```
+
+| Output | Description |
+|---|---|
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Walk-forward split-level test results |
+| [`results/tables/walkforward_validation_summary.csv`](results/tables/walkforward_validation_summary.csv) | Walk-forward metric summary |
+| [`results/tables/nested_validation.csv`](results/tables/nested_validation.csv) | Nested train/validation/test results |
+| [`results/tables/nested_validation_summary.csv`](results/tables/nested_validation_summary.csv) | Nested validation-to-test decay summary |
+| [`results/tables/cscv_pbo_results.csv`](results/tables/cscv_pbo_results.csv) | CSCV/PBO split diagnostics |
+| [`results/tables/cscv_pbo_summary.csv`](results/tables/cscv_pbo_summary.csv) | PBO diagnostic estimate summary |
+| [`results/tables/frozen_oos_validation.csv`](results/tables/frozen_oos_validation.csv) | Frozen OOS period metrics |
+| [`results/tables/frozen_oos_validation_notes.csv`](results/tables/frozen_oos_validation_notes.csv) | Frozen OOS interpretation limits |
+| [`results/tables/parameter_sensitivity.csv`](results/tables/parameter_sensitivity.csv) | One-at-a-time perturbation details |
+| [`results/tables/parameter_sensitivity_summary.csv`](results/tables/parameter_sensitivity_summary.csv) | Parameter robustness / fragility summary |
+
 ## License
 
 MIT License.
