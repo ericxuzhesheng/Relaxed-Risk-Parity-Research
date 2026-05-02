@@ -137,6 +137,16 @@ python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
 
+### 协方差估计稳健性
+
+协方差稳健性检验覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。该模块只用于敏感性诊断，不改变 Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的官方定位或主结果表。
+
+输出文件包括 `results/tables/covariance_robustness_summary.csv`、`results/tables/covariance_estimator_diagnostics.csv` 和下列图表。
+
+![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
+![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
+![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
+
 <a id="en"></a>
 
 ## English
@@ -251,10 +261,20 @@ The CVaR chart helps compare tail-risk control across models.
 | `results/tables/convex_adaptive_solver_diagnostics.csv` | Convex solver diagnostics |
 | `results/tables/asset_graph_diagnostics.csv` | Asset graph diagnostics |
 | `results/tables/online_regime_diagnostics.csv` | Online regime diagnostics |
+| `results/tables/covariance_robustness_summary.csv` | Covariance-estimator robustness summary, with annualized volatility and daily CVaR clearly separated |
+| `results/tables/covariance_estimator_diagnostics.csv` | Covariance diagnostics covering PSD repair, condition number, fallback, and point-in-time flags |
 | `report/asset_pricing_interpretation.md` | Asset-pricing interpretation |
 | `report/methodology_notes.md` | Methodology notes |
 | `report/insurance_allocation_perspective.md` | Insurance allocation perspective |
 | `report/thesis_figures_and_tables.md` | Thesis figures and tables index |
+
+### Covariance Robustness
+
+The covariance robustness layer tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives. These outputs are sensitivity diagnostics only; they do not retune, rerank, or replace the official Global RRP, Convex Adaptive Global RRP, or Improved Convex Adaptive Global RRP results.
+
+![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
+![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
+![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
 
 ### Reproduction Commands
 
@@ -265,6 +285,7 @@ python scripts/optimize_showcase_rrp.py
 python scripts/run_hrp_comparison.py
 python scripts/run_convex_adaptive_rrp.py
 python scripts/run_benchmark_suite.py
+python scripts/run_covariance_robustness.py --quick
 python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```

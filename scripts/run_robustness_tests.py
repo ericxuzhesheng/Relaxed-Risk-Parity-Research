@@ -14,7 +14,8 @@ if str(ROOT_DIR) not in sys.path:
 
 from scripts.run_convex_adaptive_rrp import monthly_rebalance_dates
 from src.backtest import run_static_backtest
-from src.convex_adaptive_rrp import ConvexRRPConfig, estimate_covariance, run_convex_adaptive_backtest
+from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from src.covariance_estimators import estimate_covariance
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
@@ -170,7 +171,7 @@ def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config:
             if len(window) > 20 and len(active_cols) > 1:
                 previous = weights.copy()
                 mu = window.mean() * config["trading_days_per_year"]
-                sigma = estimate_covariance(window, method, config["trading_days_per_year"])
+                sigma = estimate_covariance(window, method, trading_days=config["trading_days_per_year"], annualize=True, allow_fallback=True)
                 theta = np.diag(np.diag(sigma))
                 mu_filtered, trend_count = apply_trend_confirmation(mu, window, overlay_config)
                 bond_indices = [i for i, col in enumerate(active_cols) if infer_asset_class(col) == "bond"]

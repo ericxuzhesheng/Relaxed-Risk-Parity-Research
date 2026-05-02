@@ -17,6 +17,11 @@ REQUIRED_TABLES = [
     "robustness_overall_summary.csv",
 ]
 
+COVARIANCE_TABLES = [
+    "covariance_robustness_summary.csv",
+    "covariance_estimator_diagnostics.csv",
+]
+
 
 def test_robustness_smoke_outputs_required_tables(tmp_path):
     subprocess.run(
@@ -62,3 +67,33 @@ def test_readme_uses_public_model_labels_only():
     text = open("README.md", encoding="utf-8").read()
     forbidden = ["V1", "V2", "V3", "V3_Global_RRP", "Dynamic_RRP_before"]
     assert not any(token in text for token in forbidden)
+
+
+def test_covariance_robustness_quick_outputs_required_tables_and_figures(tmp_path):
+    subprocess.run(
+        [sys.executable, "scripts/run_covariance_robustness.py", "--quick", "--output-root", str(tmp_path)],
+        check=True,
+    )
+
+    for name in COVARIANCE_TABLES:
+        path = tmp_path / "tables" / name
+        assert path.exists(), name
+        assert not pd.read_csv(path).empty, name
+
+    summary = pd.read_csv(tmp_path / "tables" / "covariance_robustness_summary.csv")
+    assert {
+        "sample",
+        "ledoit_wolf",
+        "ewma_halflife_20",
+        "ewma_halflife_60",
+        "ewma_halflife_120",
+    }.issubset(set(summary["covariance_estimator"]))
+    assert "annualized_volatility" in summary.columns
+    assert "cvar_95_daily_loss" in summary.columns
+
+    for name in [
+        "covariance_robustness_sharpe.png",
+        "covariance_robustness_drawdown.png",
+        "covariance_robustness_turnover.png",
+    ]:
+        assert (tmp_path / "figures" / name).exists(), name

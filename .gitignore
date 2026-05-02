@@ -41,6 +41,9 @@ results/quick/
 !results/figures/robustness_bootstrap_sharpe_distribution.png
 !results/figures/robustness_bootstrap_drawdown_distribution.png
 !results/figures/robustness_overfitting_diagnostic.png
+!results/figures/covariance_robustness_sharpe.png
+!results/figures/covariance_robustness_drawdown.png
+!results/figures/covariance_robustness_turnover.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -81,6 +84,8 @@ results/quick/
 !results/tables/benchmark_turnover_summary.csv
 !results/tables/benchmark_drawdown_summary.csv
 !results/tables/full_pipeline_checklist.csv
+!results/tables/covariance_robustness_summary.csv
+!results/tables/covariance_estimator_diagnostics.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

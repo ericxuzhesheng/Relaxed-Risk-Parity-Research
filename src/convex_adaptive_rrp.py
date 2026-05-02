@@ -8,6 +8,7 @@ from scipy.optimize import minimize
 
 from src.adaptive_risk_budget import adaptive_budget_target, online_regime_state
 from src.asset_graph_features import rolling_correlation_graph_features
+from src.covariance_estimators import estimate_covariance
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.utils import infer_asset_class
 
@@ -22,6 +23,7 @@ class ConvexRRPConfig:
     trading_days_per_year: int = 243
     lookback_days: int = 240
     covariance_method: str = "ewma"
+    covariance_allow_fallback: bool = True
     ewma_halflife: float = 60.0
     max_weight: float = 0.35
     turnover_cap: float | None = 0.35
@@ -49,40 +51,6 @@ def _clean_weights(weights: np.ndarray) -> np.ndarray:
     return w / total
 
 
-def estimate_covariance(
-    returns_window: pd.DataFrame,
-    method: str = "ewma",
-    trading_days: int = 243,
-    ewma_halflife: float = 60.0,
-) -> pd.DataFrame:
-    data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    data = data.dropna(axis=1, how="all").dropna(how="any")
-    if data.empty:
-        data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
-    method = method.lower()
-    if method == "ledoit_wolf":
-        try:
-            from sklearn.covariance import LedoitWolf
-
-            cov = LedoitWolf().fit(data.values).covariance_
-            return pd.DataFrame(cov * trading_days, index=data.columns, columns=data.columns)
-        except Exception:
-            method = "sample"
-    if method == "ewma":
-        cov = data.ewm(halflife=ewma_halflife, adjust=False).cov().dropna()
-        if isinstance(cov.index, pd.MultiIndex) and len(cov) >= len(data.columns):
-            cov = cov.loc[cov.index.get_level_values(0).max()]
-            return cov.reindex(index=data.columns, columns=data.columns).fillna(0.0) * trading_days
-    return data.cov().fillna(0.0) * trading_days
-
-
-def _nearest_psd(cov: pd.DataFrame) -> np.ndarray:
-    values = (cov.values + cov.values.T) / 2.0
-    eigvals, eigvecs = np.linalg.eigh(values)
-    eigvals = np.clip(eigvals, 1e-8, None)
-    return eigvecs @ np.diag(eigvals) @ eigvecs.T
-
-
 def _group_constraints(columns: pd.Index, group_bounds: dict[str, tuple[float, float]]):
     groups: dict[str, list[int]] = {}
     for i, col in enumerate(columns):
@@ -102,8 +70,18 @@ def solve_convex_rrp(
     n_assets = len(returns_window.columns)
     previous = _clean_weights(previous_weights) if previous_weights is not None else np.ones(n_assets) / n_assets
     graph_features = graph_features or {}
-    cov = estimate_covariance(returns_window, cfg.covariance_method, cfg.trading_days_per_year, cfg.ewma_halflife)
-    sigma = _nearest_psd(cov)
+    cov_result = estimate_covariance(
+        returns_window,
+        cfg.covariance_method,
+        trading_days=cfg.trading_days_per_year,
+        ewma_halflife=cfg.ewma_halflife,
+        annualize=True,
+        allow_fallback=cfg.covariance_allow_fallback,
+        return_diagnostics=True,
+        point_in_time=True,
+    )
+    cov = cov_result.covariance
+    sigma = cov.values
     mu = returns_window.mean().fillna(0.0).values * cfg.trading_days_per_year
     if budget_target is None:
         target = adaptive_budget_target(returns_window, graph_features, regime_label).values
@@ -117,6 +95,7 @@ def solve_convex_rrp(
         "objective_value": np.nan,
         "failure_reason": "",
         "fallback_used": False,
+        **cov_result.diagnostics,
     }
 
     if cp is not None:

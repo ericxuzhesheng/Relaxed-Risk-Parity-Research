@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
+from src.covariance_estimators import estimate_covariance
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp, solve_standard_rp
 from src.risk_overlay import (
@@ -75,7 +76,14 @@ def run_static_backtest(
                     active_weights = solve_herc(df_window).values
                 else:
                     mu = df_window.mean() * config["trading_days_per_year"]
-                    sigma = df_window.cov() * config["trading_days_per_year"]
+                    sigma = estimate_covariance(
+                        df_window,
+                        method=config.get("covariance_method", "sample"),
+                        trading_days=config["trading_days_per_year"],
+                        annualize=True,
+                        allow_fallback=True,
+                        point_in_time=True,
+                    )
                     theta = np.diag(np.diag(sigma))
                     active_bond_indices = [i for i, col in enumerate(active_cols) if any(k in col for k in keywords)]
 
