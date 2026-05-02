@@ -1,0 +1,487 @@
+\documentclass[UTF8,zihao=-4,openany]{ctexrep}
+
+\usepackage[a4paper,left=2.8cm,right=2.6cm,top=2.8cm,bottom=2.8cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage[backend=biber,style=gb7714-2015,gbnamefmt=lowercase]{biblatex}
+
+\addbibresource{references.bib}
+
+\graphicspath{{../../results/figures/}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black,
+  pdftitle={宽松风险平价在全球多资产配置中的改进与实证研究},
+  pdfauthor={Relaxed Risk Parity Research}
+}
+
+\ctexset{
+  chapter = {
+    format = \centering\heiti\zihao{3},
+    name = {第,章},
+    number = \chinese{chapter},
+    aftername = \quad,
+    beforeskip = 18pt,
+    afterskip = 18pt
+  },
+  section = {
+    format = \heiti\zihao{4},
+    beforeskip = 12pt,
+    afterskip = 6pt
+  },
+  subsection = {
+    format = \heiti\zihao{-4},
+    beforeskip = 10pt,
+    afterskip = 4pt
+  }
+}
+
+\setlength{\parindent}{2em}
+\setlength{\parskip}{0.2em}
+\linespread{1.35}
+\setlist{nosep,leftmargin=2em}
+\captionsetup{font=small,labelfont=bf}
+\renewcommand{\arraystretch}{1.18}
+
+\newcommand{\figmaybe}[3]{
+  \IfFileExists{../../results/figures/#1}{
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.92\textwidth]{#1}
+      \caption{#2}
+      \label{#3}
+    \end{figure}
+  }{
+    \begin{figure}[H]
+      \centering
+      \fbox{\parbox{0.86\textwidth}{\centering 图文件未找到：#1}}
+      \caption{#2}
+      \label{#3}
+    \end{figure}
+  }
+}
+
+\begin{document}
+
+\begin{center}
+  {\heiti\zihao{2} 宽松风险平价在全球多资产配置中的改进与实证研究\par}
+  \vspace{1.2em}
+  {\zihao{4} Improvement and Empirical Study of Relaxed Risk Parity in Global Multi-Asset Allocation\par}
+\end{center}
+
+\vspace{1em}
+
+\chapter*{摘要}
+\addcontentsline{toc}{chapter}{摘要}
+风险平价方法以风险预算为核心，将组合配置问题从单纯追求收益预测转向风险贡献的可解释分配。对于以长期稳健增值、回撤控制和负债匹配为目标的机构资金而言，这类方法具有较强的研究价值。然而，经典风险平价在实际应用中仍面临若干限制：一是资产池扩展到全球多资产后，相关结构和波动状态会随市场环境变化而显著漂移；二是严格等风险贡献约束可能带来求解非凸性和配置僵化；三是如果忽视换手率、交易成本和尾部损失，回测表现与真实可实施性之间可能存在偏差。
+
+本文围绕“宽松风险平价”这一主线，构建并比较 Standard Risk Parity、Local Relaxed Risk Parity、Global RRP、Defensive Dynamic RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 等模型。研究将原始指数和连续期货序列替换为可交易 ETF，形成覆盖债券、中国权益、港股、全球权益和商品的多资产池。实证评价自 2021 年 1 月 1 日开始，采用逐期滚动估计、月度调仓、交易成本扣减和无前视约束，重点考察净年化收益、夏普比率、最大回撤、Calmar 比率、平均月度换手率和 CVaR 尾部风险等指标。
+
+实证结果表明，Global RRP 仍是主要的收益效率展示模型，净年化收益为 5.90\%，夏普比率为 1.15，最大回撤为 -4.38\%。Improved Convex Adaptive Global RRP 在保留竞争性风险收益特征的同时，将平均月度换手率降低至 0.52\%，并通过 CVaR、换手约束和组合稳定性约束强调可实施性。Defensive Dynamic RRP 更适合作为防御型风险覆盖实验，而非主要收益最大化模型。HRP Benchmark 与 HERC Benchmark 作为层次化风险配置基准，在当前资产池中表现较弱，说明仅依赖相关性聚类和递归分配不足以替代 Global RRP 与 Convex Adaptive RRP 框架。
+
+本文的贡献在于：第一，将宽松风险预算思想扩展到可交易全球多资产 ETF 池；第二，将凸化风险预算近似、CVaR 控制、换手惩罚和组别约束纳入统一的可实施优化框架；第三，通过子区间、压力期、交易成本、参数扰动、协方差估计、block bootstrap 和过拟合诊断等多维稳健性检验，对模型的有效性和边界进行审慎评估。本文不声称策略保证未来收益，也不声称任何图特征、交易成本目标或状态模块必然改善收益；最终权重由透明优化过程生成，研究结论应理解为基于样本内外滚动验证的实证证据。
+
+\noindent\textbf{关键词：} 宽松风险平价；全球多资产配置；CVaR；换手约束；凸优化；ETF
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+Risk parity reallocates the portfolio construction problem from pure return forecasting to interpretable risk budgeting. This feature is particularly relevant for long-horizon institutional investors that care about stable compounding, drawdown control and implementation discipline. Nevertheless, classical risk parity faces practical limitations when the universe is extended to global multi-asset allocation. Correlation and volatility structures change over time, strict equal-risk-contribution conditions may be non-convex and rigid, and ignoring turnover, transaction costs and tail losses may create a gap between backtest performance and implementable allocation.
+
+This thesis studies an improved Relaxed Risk Parity framework. It compares Standard Risk Parity, Local Relaxed Risk Parity, Global RRP, Defensive Dynamic RRP, Convex Adaptive Global RRP and Improved Convex Adaptive Global RRP. The empirical universe replaces selected original indices and continuous futures series with tradable ETFs, covering bonds, China equities, Hong Kong equities, global equities and commodities. The evaluation starts from 2021-01-01 and uses rolling estimation, monthly rebalancing, transaction cost deduction and point-in-time design. The main metrics include net annual return, Sharpe ratio, maximum drawdown, Calmar ratio, average monthly turnover and CVaR tail-risk measures.
+
+The results show that Global RRP remains the main return-efficient showcase model, with a 5.90\% net annual return, a Sharpe ratio of 1.15 and a maximum drawdown of -4.38\%. Improved Convex Adaptive Global RRP achieves a competitive risk-return profile while reducing average monthly turnover to 0.52\%, highlighting the role of convex constraints in implementable and stable portfolio construction. Defensive Dynamic RRP should be interpreted as a defensive risk-overlay experiment rather than the main return-maximizing model. HRP Benchmark and HERC Benchmark are included only as hierarchical risk-allocation benchmarks; their weak performance in the current universe suggests that correlation clustering and recursive allocation alone are insufficient to replace the Global RRP and Convex Adaptive RRP framework.
+
+The contribution of this thesis is threefold. First, it extends relaxed risk budgeting to a tradable global multi-asset ETF universe. Second, it integrates convexified risk-budgeting approximation, CVaR control, turnover penalty and group constraints into a transparent optimization framework. Third, it evaluates robustness through subperiod analysis, stress periods, transaction cost sensitivity, parameter perturbation, covariance sensitivity, block bootstrap and overfitting diagnostics. The thesis does not claim guaranteed future performance, nor does it claim that graph features, transaction-cost-aware objectives or regime modules necessarily improve returns. Final portfolio weights are generated by transparent optimization, and the conclusions should be interpreted as empirical evidence under the stated backtesting design.
+
+\noindent\textbf{Keywords:} Relaxed Risk Parity; Global Multi-Asset Allocation; CVaR; Turnover Constraint; Convex Optimization; ETF
+
+\tableofcontents
+
+\chapter{绪论}
+
+\section{研究背景}
+资产配置是组合管理中最重要的决策之一。对于养老、保险、银行理财、FOF 和长期财富管理账户而言，组合的长期表现通常并非由短期择时决定，而是由风险资产、利率资产、商品资产和海外资产之间的结构性配置共同决定。传统均值-方差框架以预期收益、协方差和风险偏好为核心，理论上能够给出有效前沿上的最优组合\cite{markowitz1959portfolio,sharpe1964capital}。但在实践中，预期收益估计误差往往远大于风险估计误差，均值输入的小幅变化可能导致权重剧烈摆动\cite{chopra1993effect,jorion1986bayes}。因此，面向长期资金的配置研究更强调风险分散、回撤控制、换手约束和可解释性。
+
+风险平价正是在这一背景下受到关注。其核心思想不是让资本权重平均，而是让各资产对组合总风险的贡献更加均衡\cite{qian2005risk,maillard2010properties,roncalli2013introduction}。在股票与债券风险差异显著的组合中，资本等权通常意味着权益风险主导；而风险平价通过提高低波动资产配置、降低高波动资产配置，使组合风险来源更加分散。该方法不依赖强收益预测，适合构造透明、稳健、可审计的资产配置框架。
+
+但是，标准风险平价并非天然适用于所有场景。第一，全球多资产 ETF 池中同时包含境内权益、港股、海外权益、债券和商品，资产波动率、交易时区、汇率敏感性和宏观驱动因素差异较大。第二，严格风险贡献等式带有非凸特征，实际求解通常依赖数值近似，不能简单声称能够用通用凸优化器精确全局求解经典风险平价。第三，长期机构资金不仅关心名义收益，还关心组合换手率、交易成本、尾部损失、监管资本占用和可执行边界。由此，宽松风险平价与凸化近似成为更具实践意义的研究方向。
+
+\section{研究意义}
+本文的理论意义在于，将风险平价从严格等风险贡献条件扩展为更具弹性的风险预算框架。宽松风险平价允许各资产风险贡献围绕目标预算在一定范围内偏离，从而缓解经典模型在多资产、强相关和约束较多环境下的僵化问题。进一步地，Convex Adaptive Global RRP 将风险预算思想转化为凸化的惩罚项与约束项，使得模型可以在 CVaR、换手率、组别边界和权重稳定性之间形成统一权衡。这种处理并不等价于经典风险平价的精确全局解，而是面向可实施配置的凸化近似。
+
+本文的实践意义在于，研究对象从抽象指数组合转向可交易 ETF 池。传统资产配置研究常使用指数或连续期货序列作为代表资产，但实际交易中会遇到产品可得性、流动性、费用、调仓成本和跟踪误差等问题。本文使用短融 ETF、可转债 ETF、权益 ETF、港股 ETF、海外权益 ETF、黄金 ETF 和商品相关 ETF 构建多资产池，使回测结果与真实组合构建更接近。对于保险资金和长期机构账户而言，低换手、尾部风险控制和稳定资产组暴露往往比短期收益排名更重要。
+
+\section{国内外研究现状}
+国外研究中，均值-方差理论奠定了现代投资组合理论基础\cite{markowitz1959portfolio}，资本资产定价模型进一步解释了系统风险与预期收益之间的关系\cite{sharpe1964capital}。但大量实证研究表明，均值估计不稳定会削弱优化组合的样本外效果，简单分散策略在若干场景中反而具有竞争力\cite{demiguel2009optimal}。风险平价和风险预算方法因此成为连接理论模型与实践配置的重要工具\cite{maillard2010properties,roncalli2013introduction}。
+
+尾部风险方面，Rockafellar 和 Uryasev 提出的 CVaR 优化框架使尾部损失可以进入凸优化问题\cite{rockafellar2000optimization}。相较 VaR，CVaR 关注超过分位点后的平均损失，更适合描述压力情境下的组合脆弱性。协方差估计方面，Ledoit-Wolf 收缩估计降低了高维协方差矩阵噪声，对多资产组合优化具有重要意义\cite{ledoit2004well}。层次化配置方面，HRP 和 HERC 利用相关矩阵聚类与递归分配降低协方差矩阵求逆依赖\cite{lopezdeprado2016building,raffinot2018hierarchical}，但其效果依赖资产池结构和样本区间，并不必然优于风险预算模型。
+
+国内研究更多结合银行理财、保险资金和公募 FOF 的应用场景，强调资产配置对长期收益和净值稳定性的影响。风险平价策略在国内多资产组合中常被用作低预测依赖的基准方法，但实际落地仍需考虑 ETF 可交易性、跨市场交易日、境内外产品溢折价、税费和换手限制。本文在这些研究基础上，将重点放在“宽松风险预算 + 全球多资产 ETF + 凸化约束 + 稳健性验证”的统一框架中。
+
+\section{研究内容与创新点}
+本文围绕宽松风险平价在全球多资产配置中的改进展开，主要研究内容包括：
+
+\begin{enumerate}
+  \item 构建可交易 ETF 资产池，将部分原始指数或连续期货序列替换为 ETF，以增强回测的可实施性。
+  \item 比较 Standard Risk Parity、Local Relaxed Risk Parity、Global RRP、Defensive Dynamic RRP、Convex Adaptive Global RRP 和 Improved Convex Adaptive Global RRP 的机制差异。
+  \item 将 CVaR 尾部风险、换手惩罚、组别约束和权重稳定性纳入 Improved Convex Adaptive Global RRP。
+  \item 使用 HRP Benchmark 和 HERC Benchmark 作为层次化风险配置基准，检验聚类递归分配方法在当前资产池中的表现。
+  \item 通过多维稳健性检验识别模型边界，避免把单一区间回测结果解释为稳定规律。
+\end{enumerate}
+
+本文的创新点主要体现在三个方面。第一，在公开呈现上统一模型标签和定位，区分收益效率展示模型、防御型风险覆盖实验、凸优化可实施改进和层次化基准。第二，在方法上将宽松风险预算从静态本地配置扩展到全球多资产与自适应凸优化框架。第三，在验证上强调无前视、交易成本、压力期、协方差估计和过拟合诊断，避免过度依赖单一净值曲线。
+
+\chapter{理论基础与模型方法}
+
+\section{标准风险平价}
+设组合权重为 $w$，协方差矩阵为 $\Sigma$，组合波动率为 $\sigma_p=(w^\top\Sigma w)^{1/2}$。第 $i$ 个资产的边际风险贡献为 $(\Sigma w)_i / \sigma_p$，总风险贡献为：
+
+\[
+RC_i = w_i \frac{(\Sigma w)_i}{\sigma_p}
+\]
+
+标准风险平价要求各资产风险贡献与目标预算 $b_i$ 相匹配：
+
+\[
+RC_i = b_i \sigma_p,\quad i=1,\ldots,n
+\]
+
+在等风险贡献情形下，$b_i=1/n$。该模型的优点是直观、透明、对收益预测依赖较低；缺点是严格风险贡献约束在存在长仓、权重上下限、组别约束和交易成本时会变得难以处理。本文将 Standard Risk Parity 作为基础参照，但不把它视为可解决所有现实约束的最终模型。
+
+\section{宽松风险平价}
+宽松风险平价放弃严格等式，允许风险贡献在目标预算附近偏离。其基本思想可以写为：
+
+\[
+\min_w \sum_i (RC_i / \sigma_p - b_i)^2 + \lambda_{reg} ||w-w_0||_2^2
+\]
+
+\[
+\sum_i w_i = 1,\quad l_i \leq w_i \leq u_i
+\]
+
+其中，$w_0$ 可表示参考权重或上一期权重，$\lambda_{reg}$ 控制偏离惩罚。宽松处理使模型在多资产环境中更容易与其他约束结合。本文使用 Local Relaxed Risk Parity 表示本地宽松风险预算模型，使用 Global RRP 表示扩展到全球多资产 ETF 池后的主要收益效率展示模型。
+
+\section{Global RRP}
+Global RRP 的定位是主要收益效率展示模型。它不是简单扩大资产数量，而是将债券、可转债、中国权益、港股、全球权益和商品统一纳入风险预算框架。其核心思想包括：第一，使用滚动窗口估计协方差矩阵，避免使用未来信息；第二，在宽松风险预算目标下处理跨资产相关性；第三，保留透明优化生成最终权重的机制；第四，在评价层面扣除交易成本并报告换手率。
+
+Global RRP 的目标函数可概括为：
+
+\[
+\min_w L_{rrp}(w,\Sigma_t,b_t) + \lambda_w ||w-w_{t-1}||_2^2
+\]
+
+\[
+\sum_i w_i = 1,\quad 0 \leq w_i \leq u_i
+\]
+
+其中，$L_{rrp}$ 表示宽松风险预算偏离损失，$\Sigma_t$ 是截至调仓日前可获得的历史收益估计，$b_t$ 是风险预算目标。该模型强调收益效率和跨资产分散，但其较高换手意味着在真实管理中需要进一步考虑交易成本、执行容量和组合稳定性。
+
+\section{Defensive Dynamic RRP}
+Defensive Dynamic RRP 是防御型风险覆盖实验。它通过状态或风险覆盖机制调整预算或风险暴露，目标是在压力环境中降低组合脆弱性。本文将其作为扩展实验，而不是主要收益最大化模型。原因在于，防御型覆盖通常牺牲一部分上行参与度，适合用于讨论风险控制边界，却不应被解释为长期收益效率的唯一代表。
+
+需要强调的是，状态模块、图结构特征或宏观信号并不直接生成最终权重。它们最多影响风险预算、约束或惩罚参数，最终权重仍由透明优化过程生成。本文不声称此类特征总能改善收益，也不将单一区间表现外推为一般规律。
+
+\section{Convex Adaptive Global RRP}
+Convex Adaptive Global RRP 将风险预算思想转化为凸化近似，使其能够更自然地纳入多类现实约束。其核心不是精确求解经典风险平价，而是在组合方差、预算跟踪、换手控制和权重边界之间形成可解释权衡。一个简化表达为：
+
+\[
+\min_w w^\top \Sigma_t w + \lambda_b ||w-b_t||_2^2 + \lambda_{to} ||w-w_{t-1}||_1
+\]
+
+\[
+\sum_i w_i = 1,\quad l_i \leq w_i \leq u_i,\quad A_g w \leq h_g
+\]
+
+其中，$A_g w \leq h_g$ 表示资产组约束。该模型牺牲了部分经典风险贡献等式的精确性，换来凸优化框架下的稳定求解和更强的约束兼容性。对于本科论文研究而言，这种“风险预算思想的可实施近似”比宣称复杂非凸问题被完全解决更审慎。
+
+\section{Improved Convex Adaptive Global RRP}
+Improved Convex Adaptive Global RRP 是本文强调的低换手、CVaR-aware、可实施凸优化改进。相较基础凸化版本，它进一步考虑尾部损失、交易成本敏感性、资产组暴露和权重路径稳定性。可概括为：
+
+\[
+\min_w w^\top \Sigma_t w + \lambda_b ||w-b_t||_2^2 + \lambda_{to} ||w-w_{t-1}||_1 + \lambda_{cvar} CVaR_\alpha(w)
+\]
+
+\[
+\sum_i w_i = 1,\quad l_i \leq w_i \leq u_i,\quad g_{min} \leq G w \leq g_{max}
+\]
+
+CVaR 项来自历史情景收益的尾部损失近似。若历史情景矩阵为 $R_t$，组合损失为 $-R_t w$，则 CVaR 可通过辅助变量线性化处理\cite{rockafellar2000optimization,boyd2004convex}。在实际实现中，模型重点不是追求每一期最激进的风险收益点，而是控制路径依赖风险和再平衡成本。
+
+\section{HRP 与 HERC Benchmark}
+HRP Benchmark 与 HERC Benchmark 是层次化风险配置基准。HRP 先基于相关矩阵构造距离度量，再进行层次聚类和准对角化，最后通过递归二分分配权重\cite{lopezdeprado2016building}。HERC Benchmark 在层次结构中引入风险贡献均衡思想，使簇内和簇间风险分配更接近风险预算逻辑\cite{raffinot2018hierarchical}。
+
+本文只把 HRP/HERC 作为 benchmark，而不是提出的主要模型。它们的优点是降低对协方差矩阵求逆的依赖，并提供直观的相关性分组解释；但缺点是对聚类稳定性和资产池结构敏感，且难以直接表达 CVaR、换手、交易成本和长期机构约束。当前实证中二者表现较弱，说明相关性聚类和递归分配不能单独替代 Global RRP 与 Convex Adaptive RRP 框架。
+
+\chapter{数据与研究设计}
+
+\section{ETF 资产池}
+本文使用可交易 ETF 构建全球多资产池。资产池覆盖短久期信用、可转债、中国宽基与风格权益、港股、海外权益、黄金和商品相关资产。部分原始指数或连续期货序列被替换为可交易 ETF，以使回测更接近可实施组合构建。资产池如表 \ref{tab:etf_pool} 所示。
+
+\begin{longtable}{p{3.2cm}p{3.2cm}p{5.0cm}}
+\caption{ETF 资产池}\label{tab:etf_pool}\\
+\toprule
+ETF & Ticker & Asset Class \\
+\midrule
+\endfirsthead
+\toprule
+ETF & Ticker & Asset Class \\
+\midrule
+\endhead
+短融ETF & 511360.SH & short-duration credit \\
+可转债ETF & 511380.SH & convertible bond \\
+沪深300ETF & 510300.SH & china equity \\
+中证1000ETF & 512100.SH & china equity \\
+科创50ETF & 588000.SH & china equity \\
+红利ETF & 510880.SH & china equity dividend \\
+上证指数ETF & 510210.SH & china equity \\
+恒生ETF & 159920.SZ & hong kong equity \\
+恒生科技ETF & 513180.SH & hong kong equity \\
+纳指ETF & 159941.SZ & global equity \\
+标普500ETF & 513500.SH & global equity \\
+日经225ETF & 513880.SH & global equity \\
+黄金ETF & 518880.SH & commodity \\
+有色ETF & 159980.SZ & commodity equity \\
+豆粕ETF & 159985.SZ & commodity \\
+\bottomrule
+\end{longtable}
+
+该资产池具有三个特点。第一，它包含境内外权益、固定收益和商品资产，能够检验全球多资产风险预算框架。第二，它以 ETF 为交易载体，便于引入换手和交易成本约束。第三，它既包含低波动资产，也包含高弹性权益和商品资产，适合观察风险预算模型在不同风险来源之间的分配行为。
+
+\section{数据区间与滚动设计}
+本文评价区间从 2021 年 1 月 1 日开始。各模型在每个调仓点仅使用该日期之前的历史数据估计协方差、风险状态和预算输入。月度调仓日采用日历边界诊断，模型窗口仍排除调仓日及其之后的收益，避免前视偏差。组合收益在权重确定后向后滚动计算，交易成本根据调仓换手扣减。
+
+这种 point-in-time 设计的意义在于，将模型选择、参数设定和绩效评价分离。本文的稳健性检验属于验证性诊断，不用于重新选择模型或回溯调参。压力期识别可以使用事后信息，但只用于解释已经完成的收益路径，不参与交易决策。
+
+\section{交易成本与换手率}
+设第 $t$ 期调仓前权重为 $w_{t-1}^{+}$，目标权重为 $w_t$，单边交易成本率为 $c$，则组合换手率可写为：
+
+\[
+TO_t = \sum_i |w_{i,t} - w_{i,t-1}^{+}|
+\]
+
+交易成本扣减为：
+
+\[
+Cost_t = c \cdot TO_t
+\]
+
+本文关注平均月度换手率，因为它直接影响执行成本、冲击成本、管理复杂度和税费敏感性。对于保险资金等长期账户，高换手策略即使账面收益较高，也可能因执行约束而难以落地。Improved Convex Adaptive Global RRP 的关键价值之一正是将平均月度换手率控制在较低水平。
+
+\section{评价指标}
+本文使用以下指标评价组合表现：
+
+\begin{enumerate}
+  \item 净年化收益：扣除交易成本后的年化收益率。
+  \item 夏普比率：单位波动承担获得的超额收益近似度量。
+  \item 最大回撤：净值路径从高点到低点的最大跌幅。
+  \item Calmar 比率：年化收益与最大回撤绝对值之比。
+  \item 平均月度换手率：组合再平衡强度和交易成本敏感性的代理变量。
+  \item CVaR：给定置信水平下尾部损失的条件均值。
+\end{enumerate}
+
+这些指标分别覆盖收益效率、波动调整收益、路径风险、资金占用效率、可实施性和尾部风险。本文不以单一指标决定模型优劣，而是结合模型定位进行解释。
+
+\chapter{实证结果分析}
+
+\section{主模型绩效}
+表 \ref{tab:core_perf} 展示核心模型在评价区间内的主要结果。Global RRP 的净年化收益为 5.90\%，夏普比率为 1.15，最大回撤为 -4.38\%，是本文主要收益效率展示模型。Improved Convex Adaptive Global RRP 的净年化收益为 6.45\%，夏普比率为 0.96，最大回撤为 -4.98\%，平均月度换手率仅为 0.52\%。这一结果表明，凸约束与 CVaR-aware 设计在当前样本中提供了更低换手和较稳定的风险收益特征。
+
+\begin{table}[H]
+\centering
+\caption{核心模型绩效结果}
+\label{tab:core_perf}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Net Annual Return & Sharpe & Max Drawdown & Calmar & Avg Monthly Turnover \\
+\midrule
+Global RRP & 5.90\% & 1.15 & -4.38\% & 1.35 & 22.45\% \\
+Defensive Dynamic RRP & 3.88\% & 0.48 & -6.51\% & 0.60 & 20.22\% \\
+Convex Adaptive Global RRP & 5.36\% & 0.58 & -8.15\% & 0.66 & 1.03\% \\
+Improved Convex Adaptive Global RRP & 6.45\% & 0.96 & -4.98\% & 1.30 & 0.52\% \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+需要注意的是，Global RRP 与 Improved Convex Adaptive Global RRP 的优势维度并不完全相同。前者更适合作为收益效率和全球多资产扩展的展示模型，后者更强调低换手、尾部风险控制和可实施性。Defensive Dynamic RRP 的净年化收益和夏普比率较低，符合其防御型风险覆盖实验定位。Convex Adaptive Global RRP 的换手率显著低于 Global RRP，但风险收益表现弱于改进版本，说明仅有凸化预算跟踪仍不足以形成完整的可实施改进。
+
+\section{Benchmark 对比}
+表 \ref{tab:benchmark_perf} 展示 HRP Benchmark 和 HERC Benchmark 的结果。二者在当前资产池中净年化收益为负，夏普比率显著偏低，最大回撤较小但并未转化为有效收益。这一结果说明层次化风险配置在某些市场环境中可以提供风险分组参考，但相关性聚类和递归分配本身并不能替代宽松风险预算与凸优化约束框架。
+
+\begin{table}[H]
+\centering
+\caption{层次化风险配置 Benchmark 结果}
+\label{tab:benchmark_perf}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lrrrrr}
+\toprule
+Benchmark & Net Annual Return & Sharpe & Max Drawdown & Calmar & Avg Monthly Turnover \\
+\midrule
+HRP Benchmark & -0.12\% & -6.36 & -0.73\% & -0.16 & 1.56\% \\
+HERC Benchmark & -0.10\% & -6.30 & -0.73\% & -0.14 & 1.60\% \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+HRP/HERC 的弱表现不意味着层次化方法没有研究价值。它们可以作为相关结构可视化、风险簇识别和组合稳健性比较工具。但在本文的研究目标下，主模型必须同时处理风险预算、交易成本、CVaR、组别边界和权重稳定性，因此 HRP/HERC 仅作为 benchmark。
+
+\section{净值表现}
+\figmaybe{convex_adaptive_nav_comparison.png}{Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的净值比较}{fig:nav}
+
+图 \ref{fig:nav} 比较三类核心模型的累计净值路径。Global RRP 在收益效率方面表现突出，体现了全球多资产扩展后宽松风险预算的配置价值。Convex Adaptive Global RRP 的曲线更强调约束兼容性和低换手，但在部分阶段上行参与不足。Improved Convex Adaptive Global RRP 在净值路径上兼顾收益和稳定性，是本文面向可实施配置重点讨论的改进模型。
+
+\section{回撤表现}
+\figmaybe{convex_adaptive_drawdown_comparison.png}{核心模型回撤比较}{fig:drawdown}
+
+图 \ref{fig:drawdown} 展示不同模型在压力阶段的回撤差异。对于长期资金而言，回撤不仅影响净值体验，也影响风险资本、客户赎回压力和再平衡空间。Improved Convex Adaptive Global RRP 的最大回撤为 -4.98\%，与 Global RRP 的 -4.38\% 接近，明显优于 Convex Adaptive Global RRP 的 -8.15\%。这说明改进版本在加入低换手和 CVaR-aware 机制后，并未简单牺牲回撤控制。
+
+\section{换手率表现}
+\figmaybe{convex_adaptive_turnover_comparison.png}{核心模型换手率比较}{fig:turnover}
+
+图 \ref{fig:turnover} 是本文实证中最能体现可实施性差异的图之一。Global RRP 的平均月度换手率为 22.45\%，表明其在捕捉风险结构变化时更积极；Improved Convex Adaptive Global RRP 的平均月度换手率仅为 0.52\%，说明组合权重路径更稳定。对于保险资金、长期机构组合或低频调仓账户而言，后者在执行成本、交易冲击和运营管理方面更具实践吸引力。
+
+\section{CVaR 尾部风险}
+\figmaybe{convex_adaptive_cvar_comparison.png}{核心模型 CVaR 比较}{fig:cvar}
+
+CVaR 衡量超过损失分位点后的平均损失，能够补充最大回撤和波动率的不足。图 \ref{fig:cvar} 显示，CVaR-aware 约束有助于把尾部风险纳入组合生成过程。需要强调的是，CVaR 项并不保证每个未来压力期都获得更好表现，它只是使优化目标显式关注尾部损失，从而提高模型在长期资金场景中的可解释性。
+
+\chapter{稳健性检验}
+
+\section{子区间稳健性}
+\figmaybe{robustness_subperiod_sharpe.png}{子区间夏普比率稳健性}{fig:sub_sharpe}
+\figmaybe{robustness_subperiod_drawdown.png}{子区间最大回撤稳健性}{fig:sub_drawdown}
+
+子区间检验用于判断模型表现是否高度依赖某一阶段市场环境。当前结果显示，多个模型在不同子区间中均存在收益和回撤波动，说明全球多资产配置并不能消除市场状态变化带来的影响。Global RRP 在收益效率上具有优势，但其换手和阶段表现仍需关注；Improved Convex Adaptive Global RRP 的定位则更接近低换手、可执行和风险控制均衡。
+
+\section{交易成本敏感性}
+\figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
+
+交易成本敏感性检验直接关系到策略能否从研究回测走向实际组合管理。高换手模型对成本假设更敏感，低换手模型对成本上升的承受能力更强。本文不声称交易成本目标必然提高净收益，而是认为换手惩罚可以降低实施不确定性，并使组合更符合长期资金的管理约束。
+
+\section{压力期检验}
+\figmaybe{robustness_stress_period_performance.png}{压力期表现检验}{fig:stress}
+
+压力期检验用于观察组合在极端或不利市场环境下的行为。需要区分的是，压力期识别属于事后评价，不参与模型调仓，也不构成前视信息。本文关注的是不同模型在已发生压力阶段中的净值、回撤和尾部损失差异，从而评估模型结构是否具有合理的风险控制特征。
+
+\section{参数扰动与求解器稳定性}
+\figmaybe{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
+
+参数扰动检验用于观察模型是否对单一参数设定过度敏感。若模型仅在极窄参数区间内有效，则其实际部署风险较高。当前验证显示，改进凸优化模型在参数稳定性方面具有较强表现，但 bootstrap 和过拟合诊断仍提示需要谨慎解读。求解器稳定性检查则关注每期优化是否出现不可行、未收敛或异常权重。本文使用这些诊断识别实现风险，而不是据此反向调参。
+
+\section{协方差估计敏感性}
+\figmaybe{robustness_covariance_comparison.png}{协方差估计稳健性比较}{fig:cov_old}
+\figmaybe{covariance_robustness_sharpe.png}{不同协方差估计下的夏普比率}{fig:cov_sharpe}
+\figmaybe{covariance_robustness_drawdown.png}{不同协方差估计下的回撤表现}{fig:cov_drawdown}
+
+协方差矩阵是风险预算模型的关键输入。样本协方差容易受极端值和短样本噪声影响，收缩估计可以提高矩阵条件数和样本外稳定性\cite{ledoit2004well}。本文通过不同协方差估计方法比较夏普比率、回撤和换手率，检验结论是否依赖单一风险估计方式。结果支持将协方差估计作为模型风险来源之一进行持续监控。
+
+\section{Block Bootstrap 与过拟合诊断}
+\figmaybe{robustness_bootstrap_sharpe_distribution.png}{Block bootstrap 夏普比率分布}{fig:boot_sharpe}
+\figmaybe{robustness_bootstrap_drawdown_distribution.png}{Block bootstrap 最大回撤分布}{fig:boot_drawdown}
+\figmaybe{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
+
+金融时间序列存在自相关、波动聚集和状态切换，简单独立重采样可能破坏收益序列结构。Block bootstrap 通过保留局部时间块缓解这一问题，用于评估指标分布的不确定性。过拟合诊断参考 PBO 思想\cite{bailey2014probability,bailey2017pbo}，但本文使用的是简化诊断，目的在于提示样本选择和参数搜索风险，并非完整组合式 PBO 检验。
+
+\section{无前视审计}
+无前视审计是本文可信度的重要基础。回测过程遵循以下原则：收益数据加载仅作为历史输入；月度调仓窗口排除调仓日及未来收益；Global RRP 和凸优化模型均使用 trailing window 估计协方差；预算目标由过去窗口的资产风险和有界状态输入生成；交易成本场景是固定诊断，不从结果中选择；压力期识别仅用于事后评价；bootstrap 和过拟合诊断不参与模型选择。
+
+这些设计不能保证未来表现，但能降低研究过程中常见的前视偏差和结果污染。对于论文研究而言，明确哪些信息用于交易、哪些信息仅用于评价，比单纯展示更高收益更重要。
+
+\chapter{机构配置与保险资金视角}
+
+\section{长期资金的配置需求}
+保险资金、养老金和长期机构组合通常具有久期长、风险承受边界明确、监管约束强和执行纪律要求高的特征。它们并不适合频繁追逐短期交易信号，而更需要一个能够解释风险来源、控制回撤、稳定调仓并兼顾资产负债管理的配置框架\cite{campbell2002strategic,刘海龙2021fof}。风险平价和宽松风险预算方法的价值，正在于以风险贡献为中心组织组合，而不是完全依赖难以稳定预测的短期收益。
+
+在保险资金视角下，组合不仅要考虑净值收益，还要考虑偿付能力、流动性、久期缺口和权益风险资本占用。债券与短久期信用资产提供底仓稳定性，可转债兼具债性与权益弹性，黄金和商品资产提供部分通胀或压力对冲，境内外权益提供长期增长来源。Global RRP 和 Improved Convex Adaptive Global RRP 分别代表两种取向：前者突出收益效率和全球资产分散，后者突出低换手和实施稳定性。
+
+\section{低换手与执行约束}
+低换手是 Improved Convex Adaptive Global RRP 的核心优势之一。平均月度换手率 0.52\% 表明组合在多数月份只进行较小幅度再平衡，有助于降低显性手续费、冲击成本和运营复杂度。对于规模较大的机构资金，交易冲击可能远高于简单费率假设，因此低换手不仅是成本指标，也是容量指标和治理指标。
+
+不过，低换手也存在边界。当市场结构发生快速变化时，过强的稳定性约束可能降低组合对新风险的响应速度。因此，低换手不应被绝对化。更合理的做法是在风险预算、CVaR 和换手惩罚之间设定可解释权衡，并通过压力测试评估其后果。
+
+\section{尾部风险与监管解释}
+CVaR-aware 设计使模型能够直接关注尾部损失。对于保险资金而言，极端损失不仅影响当期净值，还可能触发资本占用上升、风险限额调整和治理层面的再评估。相比只报告波动率，CVaR 更接近“压力损失平均水平”的概念，便于与风控语言连接\cite{rockafellar2000optimization,basel2019cvar}。
+
+同时，CVaR 约束不能被误读为尾部风险消除机制。它依赖历史情景、窗口长度和置信水平，无法覆盖所有未来极端事件。本文对其定位是风险控制工具和解释框架，而非收益增强承诺。
+
+\section{适用边界}
+本文框架适用于中低频再平衡、资产池相对稳定、约束可明确表达的长期配置场景。若用于高频交易、单资产择时或强杠杆组合，则需要重新评估交易成本、流动性和模型假设。若资产池发生重大变化，例如新增另类资产、场外衍生品或不可日频估值资产，也需要重新设计收益频率、估值口径和风险模型。
+
+此外，样本区间从 2021 年开始，覆盖了部分权益调整、海外市场波动和商品变化，但仍不是完整经济周期。本文结论应被理解为当前资产池和当前样本下的实证发现，而不是对所有未来市场的保证。
+
+\chapter{结论与展望}
+
+\section{主要结论}
+本文围绕宽松风险平价在全球多资产配置中的改进展开研究，构建了可交易 ETF 资产池，并比较了多类风险预算与层次化 benchmark。主要结论如下：
+
+\begin{enumerate}
+  \item Global RRP 是本文主要收益效率展示模型，在评价区间内取得 5.90\% 的净年化收益、1.15 的夏普比率和 -4.38\% 的最大回撤，体现了全球多资产宽松风险预算框架的配置价值。
+  \item Improved Convex Adaptive Global RRP 是低换手、CVaR-aware、可实施凸优化改进。其净年化收益为 6.45\%，夏普比率为 0.96，最大回撤为 -4.98\%，平均月度换手率降至 0.52\%，适合从长期机构配置角度重点讨论。
+  \item Defensive Dynamic RRP 应定位为防御型风险覆盖实验，而非主要收益最大化模型。其价值在于展示风险覆盖机制的可能性和边界。
+  \item HRP Benchmark 与 HERC Benchmark 在当前资产池中表现较弱，仅应作为层次化风险配置 benchmark，而不是本文提出的主模型。
+  \item 稳健性检验显示，模型表现仍受子区间、交易成本、协方差估计和尾部事件影响，因此研究结论需要与验证边界一起解读。
+\end{enumerate}
+
+\section{研究不足}
+本文仍存在若干不足。第一，样本区间较短，尚不足以覆盖完整经济周期和多轮利率周期。第二，ETF 数据虽然提高了可交易性，但仍未完全纳入申赎机制、流动性深度、冲击成本和税费差异。第三，CVaR 估计依赖历史窗口，面对未出现过的极端事件仍可能低估风险。第四，过拟合诊断采用简化方法，尚未进行完整组合式 PBO 检验。第五，本文没有引入负债端现金流，因此保险资金视角仍属于配置解释，而非完整资产负债管理模型。
+
+\section{后续研究方向}
+未来研究可以从以下方向展开：一是延长样本并纳入更多市场周期，检验模型在不同宏观状态下的稳定性；二是引入更精细的交易成本模型，包括冲击成本、买卖价差和规模容量；三是将资产负债匹配纳入优化目标，使组合更贴近保险资金实际约束；四是比较不同 CVaR 置信水平和情景生成方法；五是进一步研究协方差收缩、稳健优化和贝叶斯先验对风险预算稳定性的影响；六是建立完整的模型治理流程，包括参数变更记录、异常权重审计和定期压力测试。
+
+总之，宽松风险平价并不是对未来收益的保证，而是一种以风险贡献、约束透明和可实施性为核心的组合构建思想。本文的实证结果支持在全球多资产 ETF 池中继续研究 Global RRP 与 Improved Convex Adaptive Global RRP，并将低换手、CVaR 和稳健性验证作为长期机构配置的重要评价维度。
+
+\printbibliography[heading=bibintoc,title={参考文献}]
+
+\appendix
+
+\chapter{ETF 资产池补充说明}
+本文 ETF 资产池来自仓库文件 \verb|data/processed/etf_asset_mapping.csv|。其中，短融 ETF 替代非 ETF 信用指数，可转债 ETF 替代可转债指数，豆粕 ETF 替代商品连续期货序列，其余资产为已有可交易 ETF。该替换处理的目标是使回测与可实施组合构建保持一致，而不是追求对原始指数的完全复制。
+
+\chapter{复现命令}
+论文 LaTeX 项目位于 \verb|report/thesis_latex/|。在安装 TeX Live 且包含中文字体支持、\verb|biber| 和 \verb|biblatex-gb7714-2015| 的环境中，可使用以下命令编译：
+
+\begin{verbatim}
+cd report/thesis_latex
+latexmk -xelatex -interaction=nonstopmode main.tex
+\end{verbatim}
+
+若需要清理辅助文件，可在确认 PDF 已生成后执行：
+
+\begin{verbatim}
+latexmk -c
+\end{verbatim}
+
+\chapter{主要结果文件索引}
+本文引用的主要图表来自仓库结果目录：
+
+\begin{itemize}
+  \item \verb|results/figures/convex_adaptive_nav_comparison.png|
+  \item \verb|results/figures/convex_adaptive_drawdown_comparison.png|
+  \item \verb|results/figures/convex_adaptive_turnover_comparison.png|
+  \item \verb|results/figures/convex_adaptive_cvar_comparison.png|
+  \item \verb|results/figures/robustness_subperiod_sharpe.png|
+  \item \verb|results/figures/robustness_subperiod_drawdown.png|
+  \item \verb|results/figures/robustness_transaction_cost_sensitivity.png|
+  \item \verb|results/figures/robustness_stress_period_performance.png|
+  \item \verb|results/figures/robustness_parameter_sensitivity.png|
+  \item \verb|results/figures/robustness_bootstrap_sharpe_distribution.png|
+  \item \verb|results/figures/robustness_bootstrap_drawdown_distribution.png|
+  \item \verb|results/figures/robustness_overfitting_diagnostic.png|
+\end{itemize}
+
+\end{document}
