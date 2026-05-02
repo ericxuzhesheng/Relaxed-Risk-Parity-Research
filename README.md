@@ -3,17 +3,24 @@
 <p align="center">
   <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-%E4%B8%AD%E6%96%87-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
   <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-6B8E23?style=for-the-badge&labelColor=3B3F47" alt="LICENSE MIT"></a>
+  <a href="src/convex_adaptive_rrp.py"><img src="https://img.shields.io/badge/PYTHON-RESEARCH-9B59B6?style=for-the-badge&labelColor=3B3F47" alt="PYTHON RESEARCH"></a>
 </p>
 
 <a id="zh"></a>
 
 ## 中文
 
+### 目录
+
+- [项目概览](#项目概览) · [研究框架](#研究框架) · [数据与方法](#数据与方法) · [核心算法](#核心算法与优化形式) · [ETF 资产池](#etf-资产池) · [绩效看板](#最新绩效看板) · [图表展示](#图表展示) · [鲁棒性测试](#鲁棒性测试) · [验证框架与结果](#验证框架与结果) · [输出与报告](#输出与报告) · [复现命令](#复现命令)
+- [English](#en) · [Overview](#project-overview) · [Research Framework](#research-framework) · [Data](#data-and-method) · [Core Optimization](#core-optimization-forms) · [ETF Pool](#etf-asset-pool) · [Performance](#latest-performance-dashboard) · [Figures](#figures) · [Robustness](#robustness-tests) · [Validation](#validation-framework-and-results) · [Outputs](#outputs-and-reports) · [Reproduction](#reproduction-commands)
+
 ### 项目概览
 
 本仓库是一个面向论文研究的全球多资产配置框架，围绕宽松风险平价、全球资产扩展、凸优化近似、CVaR 尾部风险控制、换手约束和稳健性验证展开。项目目标不是短期交易信号，而是构建可解释、可复现、可实施的长期机构型资产配置研究流程。
 
-最终组合权重由透明优化流程生成。机器学习、图特征和状态识别模块仅作为诊断信息或约束输入，不直接生成组合权重。
+最终组合权重由透明优化流程生成（核心优化器：[`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py)、[`src/backtest.py`](src/backtest.py)）。机器学习、图特征和状态识别模块仅作为诊断信息或约束输入，不直接生成组合权重。
 
 ### 研究框架
 
@@ -30,12 +37,14 @@
 
 模型层级上，Global RRP、Defensive Dynamic RRP 和 Convex Adaptive Global RRP 构成当前基线 / 主模型组；Improved Convex Adaptive Global RRP 是在此基础上的研究扩展，用于展示受约束参数细化后的可实施低换手方案。
 
+核心源码：[`src/backtest.py`](src/backtest.py)（RRP 优化器与回测引擎）· [`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py)（凸自适应优化器）· [`src/validation.py`](src/validation.py)（验证库）· [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py)（改进候选搜索）· [`scripts/run_hrp_comparison.py`](scripts/run_hrp_comparison.py)（HRP/HERC 基准）
+
 ### 数据与方法
 
 | 项目 | 说明 |
 |---|---|
-| 价格数据 | `data/processed/etf_prices_updated.csv` |
-| 资产映射 | `data/processed/etf_asset_mapping.csv` |
+| 价格数据 | [`data/processed/etf_prices_updated.csv`](data/processed/etf_prices_updated.csv) |
+| 资产映射 | [`data/processed/etf_asset_mapping.csv`](data/processed/etf_asset_mapping.csv) |
 | 数据区间 | `2018-01-02` 至 `2026-04-30` |
 | 评估起点 | `2021-01-01` |
 | 再平衡频率 | 月度再平衡 |
@@ -253,7 +262,7 @@ CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 
 协方差估计稳健性是其中的一个子项，覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。它回答的是“模型结果是否过度依赖某一种协方差估计方法”。
 
-主要鲁棒性输出包括 `results/tables/robustness_overall_summary.csv`、`results/tables/robustness_subperiod_summary.csv`、`results/tables/robustness_transaction_cost_summary.csv`、`results/tables/robustness_stress_period_summary.csv`、`results/tables/robustness_parameter_perturbation.csv`、`results/tables/robustness_no_lookahead_audit.csv`、`results/tables/robustness_solver_stability.csv`、`results/tables/robustness_block_bootstrap_summary.csv`、`results/tables/robustness_overfitting_diagnostic.csv`，以及新增的 `results/tables/covariance_robustness_summary.csv` 和 `results/tables/covariance_estimator_diagnostics.csv`。
+主要鲁棒性输出包括 [`results/tables/robustness_overall_summary.csv`](results/tables/robustness_overall_summary.csv)、[`results/tables/robustness_subperiod_summary.csv`](results/tables/robustness_subperiod_summary.csv)、[`results/tables/robustness_transaction_cost_summary.csv`](results/tables/robustness_transaction_cost_summary.csv)、[`results/tables/robustness_stress_period_summary.csv`](results/tables/robustness_stress_period_summary.csv)、[`results/tables/robustness_parameter_perturbation.csv`](results/tables/robustness_parameter_perturbation.csv)、[`results/tables/robustness_no_lookahead_audit.csv`](results/tables/robustness_no_lookahead_audit.csv)、[`results/tables/robustness_solver_stability.csv`](results/tables/robustness_solver_stability.csv)、[`results/tables/robustness_block_bootstrap_summary.csv`](results/tables/robustness_block_bootstrap_summary.csv)、[`results/tables/robustness_overfitting_diagnostic.csv`](results/tables/robustness_overfitting_diagnostic.csv)，以及新增的 [`results/tables/covariance_robustness_summary.csv`](results/tables/covariance_robustness_summary.csv) 和 [`results/tables/covariance_estimator_diagnostics.csv`](results/tables/covariance_estimator_diagnostics.csv)。
 
 #### 子区间与交易成本
 
@@ -290,13 +299,13 @@ Bootstrap 和过拟合诊断用于评估样本不确定性与选择偏误；新�
 
 已实现脚本：
 
-```bash
-python scripts/run_walkforward_validation.py
-python scripts/run_nested_validation.py
-python scripts/run_cscv_pbo.py
-python scripts/run_frozen_oos_validation.py --frozen-start 2025-01-01
-python scripts/run_parameter_sensitivity.py
-```
+| 脚本 | 说明 |
+|---|---|
+| [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) | Walk-forward 滚动验证 |
+| [`scripts/run_nested_validation.py`](scripts/run_nested_validation.py) | Nested train/validation/test |
+| [`scripts/run_cscv_pbo.py`](scripts/run_cscv_pbo.py) | CSCV/PBO 过拟合概率诊断 |
+| [`scripts/run_frozen_oos_validation.py`](scripts/run_frozen_oos_validation.py) | Frozen OOS 区间验证 |
+| [`scripts/run_parameter_sensitivity.py`](scripts/run_parameter_sensitivity.py) | 单因素参数敏感性 |
 
 已执行验证运行：
 
@@ -359,30 +368,30 @@ python scripts/run_parameter_sensitivity.py
 
 | 文件 | 内容 |
 |---|---|
-| `results/tables/convex_adaptive_performance_summary.csv` | 凸自适应模型绩效汇总 |
-| `results/tables/convex_adaptive_improvement_candidates.csv` | 改进候选参数审计 |
-| `results/tables/walkforward_validation.csv` | 初步 walk-forward 验证输出 |
-| `results/tables/showcase_performance_summary.csv` | 展示模型绩效汇总 |
-| `results/tables/convex_adaptive_transaction_cost_summary.csv` | 交易成本敏感性结果 |
-| `results/tables/convex_adaptive_solver_diagnostics.csv` | 凸优化求解诊断 |
-| `results/tables/asset_graph_diagnostics.csv` | 资产图诊断 |
-| `results/tables/online_regime_diagnostics.csv` | 在线状态识别诊断 |
-| `results/tables/robustness_overall_summary.csv` | 综合鲁棒性结论 |
-| `results/tables/robustness_subperiod_summary.csv` | 子区间鲁棒性 |
-| `results/tables/robustness_transaction_cost_summary.csv` | 交易成本敏感性 |
-| `results/tables/robustness_stress_period_summary.csv` | 压力期表现 |
-| `results/tables/robustness_parameter_perturbation.csv` | 参数扰动测试 |
-| `results/tables/robustness_no_lookahead_audit.csv` | 无前视审计 |
-| `results/tables/robustness_solver_stability.csv` | 求解器稳定性 |
-| `results/tables/robustness_block_bootstrap_summary.csv` | Block bootstrap 稳健性 |
-| `results/tables/robustness_overfitting_diagnostic.csv` | 过拟合诊断 |
-| `results/tables/covariance_robustness_summary.csv` | 协方差估计鲁棒性汇总 |
-| `results/tables/covariance_estimator_diagnostics.csv` | 协方差估计诊断 |
-| `report/asset_pricing_interpretation.md` | 资产定价解释 |
-| `report/methodology_notes.md` | 方法论说明 |
-| `report/insurance_allocation_perspective.md` | 保险资金配置视角 |
-| `report/thesis_figures_and_tables.md` | 论文图表索引 |
-| `docs/OVERFITTING_AUDIT.md` | 过拟合审计与验证路线 |
+| [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) | 凸自适应模型绩效汇总 |
+| [`results/tables/convex_adaptive_improvement_candidates.csv`](results/tables/convex_adaptive_improvement_candidates.csv) | 改进候选参数审计 |
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | 初步 walk-forward 验证输出 |
+| [`results/tables/showcase_performance_summary.csv`](results/tables/showcase_performance_summary.csv) | 展示模型绩效汇总 |
+| [`results/tables/convex_adaptive_transaction_cost_summary.csv`](results/tables/convex_adaptive_transaction_cost_summary.csv) | 交易成本敏感性结果 |
+| [`results/tables/convex_adaptive_solver_diagnostics.csv`](results/tables/convex_adaptive_solver_diagnostics.csv) | 凸优化求解诊断 |
+| [`results/tables/asset_graph_diagnostics.csv`](results/tables/asset_graph_diagnostics.csv) | 资产图诊断 |
+| [`results/tables/online_regime_diagnostics.csv`](results/tables/online_regime_diagnostics.csv) | 在线状态识别诊断 |
+| [`results/tables/robustness_overall_summary.csv`](results/tables/robustness_overall_summary.csv) | 综合鲁棒性结论 |
+| [`results/tables/robustness_subperiod_summary.csv`](results/tables/robustness_subperiod_summary.csv) | 子区间鲁棒性 |
+| [`results/tables/robustness_transaction_cost_summary.csv`](results/tables/robustness_transaction_cost_summary.csv) | 交易成本敏感性 |
+| [`results/tables/robustness_stress_period_summary.csv`](results/tables/robustness_stress_period_summary.csv) | 压力期表现 |
+| [`results/tables/robustness_parameter_perturbation.csv`](results/tables/robustness_parameter_perturbation.csv) | 参数扰动测试 |
+| [`results/tables/robustness_no_lookahead_audit.csv`](results/tables/robustness_no_lookahead_audit.csv) | 无前视审计 |
+| [`results/tables/robustness_solver_stability.csv`](results/tables/robustness_solver_stability.csv) | 求解器稳定性 |
+| [`results/tables/robustness_block_bootstrap_summary.csv`](results/tables/robustness_block_bootstrap_summary.csv) | Block bootstrap 稳健性 |
+| [`results/tables/robustness_overfitting_diagnostic.csv`](results/tables/robustness_overfitting_diagnostic.csv) | 过拟合诊断 |
+| [`results/tables/covariance_robustness_summary.csv`](results/tables/covariance_robustness_summary.csv) | 协方差估计鲁棒性汇总 |
+| [`results/tables/covariance_estimator_diagnostics.csv`](results/tables/covariance_estimator_diagnostics.csv) | 协方差估计诊断 |
+| [`report/asset_pricing_interpretation.md`](report/asset_pricing_interpretation.md) | 资产定价解释 |
+| [`report/methodology_notes.md`](report/methodology_notes.md) | 方法论说明 |
+| [`report/insurance_allocation_perspective.md`](report/insurance_allocation_perspective.md) | 保险资金配置视角 |
+| [`report/thesis_figures_and_tables.md`](report/thesis_figures_and_tables.md) | 论文图表索引 |
+| [`docs/OVERFITTING_AUDIT.md`](docs/OVERFITTING_AUDIT.md) | 过拟合审计与验证路线 |
 
 ### 复现命令
 
@@ -399,6 +408,8 @@ python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
 
+> 脚本源码：[`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
+
 <a id="en"></a>
 
 ## English
@@ -407,7 +418,7 @@ python -m pytest
 
 This repository is a thesis-oriented global multi-asset allocation research project built around Relaxed Risk Parity, global asset extension, convex approximation, CVaR tail-risk control, turnover constraints, and robustness validation. It is not a short-term trading strategy repository; the emphasis is long-term institutional and insurance-style allocation interpretation.
 
-Final portfolio weights are generated by transparent optimization. Machine learning, graph, and regime modules are used as diagnostics or constraint inputs; they do not directly generate portfolio weights.
+Final portfolio weights are generated by transparent optimization (core optimizers: [`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py), [`src/backtest.py`](src/backtest.py)). Machine learning, graph, and regime modules are used as diagnostics or constraint inputs; they do not directly generate portfolio weights.
 
 ### Research Framework
 
@@ -424,12 +435,14 @@ Final portfolio weights are generated by transparent optimization. Machine learn
 
 In model hierarchy, Global RRP, Defensive Dynamic RRP, and Convex Adaptive Global RRP are the current baseline / primary model group. Improved Convex Adaptive Global RRP is a research extension that illustrates a constrained parameter refinement toward implementable low-turnover allocation.
 
+Core source: [`src/backtest.py`](src/backtest.py) (RRP optimizer & backtest engine) · [`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py) (convex adaptive optimizer) · [`src/validation.py`](src/validation.py) (validation library) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) (improvement candidate search) · [`scripts/run_hrp_comparison.py`](scripts/run_hrp_comparison.py) (HRP/HERC benchmarks)
+
 ### Data And Method
 
 | Item | Description |
 |---|---|
-| Price cache | `data/processed/etf_prices_updated.csv` |
-| Asset map | `data/processed/etf_asset_mapping.csv` |
+| Price cache | [`data/processed/etf_prices_updated.csv`](data/processed/etf_prices_updated.csv) |
+| Asset map | [`data/processed/etf_asset_mapping.csv`](data/processed/etf_asset_mapping.csv) |
 | Data range | `2018-01-02` to `2026-04-30` |
 | Evaluation start | `2021-01-01` |
 | Rebalancing | Monthly |
@@ -682,13 +695,13 @@ This validation layer is additive to the existing Convex Adaptive Global RRP sta
 
 Implemented scripts:
 
-```bash
-python scripts/run_walkforward_validation.py
-python scripts/run_nested_validation.py
-python scripts/run_cscv_pbo.py
-python scripts/run_frozen_oos_validation.py --frozen-start 2025-01-01
-python scripts/run_parameter_sensitivity.py
-```
+| Script | Description |
+|---|---|
+| [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) | Walk-forward rolling validation |
+| [`scripts/run_nested_validation.py`](scripts/run_nested_validation.py) | Nested train/validation/test |
+| [`scripts/run_cscv_pbo.py`](scripts/run_cscv_pbo.py) | CSCV/PBO overfitting probability diagnostic |
+| [`scripts/run_frozen_oos_validation.py`](scripts/run_frozen_oos_validation.py) | Frozen OOS period validation |
+| [`scripts/run_parameter_sensitivity.py`](scripts/run_parameter_sensitivity.py) | One-at-a-time parameter sensitivity |
 
 Executed validation runs:
 
@@ -751,30 +764,30 @@ Improved Convex Adaptive Global RRP should continue to be disclosed as a constra
 
 | File | Content |
 |---|---|
-| `results/tables/convex_adaptive_performance_summary.csv` | Convex adaptive model performance summary |
-| `results/tables/convex_adaptive_improvement_candidates.csv` | Improved candidate-parameter audit |
-| `results/tables/walkforward_validation.csv` | Preliminary walk-forward validation output |
-| `results/tables/showcase_performance_summary.csv` | Showcase model performance summary |
-| `results/tables/convex_adaptive_transaction_cost_summary.csv` | Transaction-cost sensitivity results |
-| `results/tables/convex_adaptive_solver_diagnostics.csv` | Convex solver diagnostics |
-| `results/tables/asset_graph_diagnostics.csv` | Asset graph diagnostics |
-| `results/tables/online_regime_diagnostics.csv` | Online regime diagnostics |
-| `results/tables/robustness_overall_summary.csv` | Overall robustness summary |
-| `results/tables/robustness_subperiod_summary.csv` | Subperiod robustness |
-| `results/tables/robustness_transaction_cost_summary.csv` | Transaction-cost sensitivity |
-| `results/tables/robustness_stress_period_summary.csv` | Stress-period performance |
-| `results/tables/robustness_parameter_perturbation.csv` | Parameter perturbation |
-| `results/tables/robustness_no_lookahead_audit.csv` | No-lookahead audit |
-| `results/tables/robustness_solver_stability.csv` | Solver stability |
-| `results/tables/robustness_block_bootstrap_summary.csv` | Block-bootstrap robustness |
-| `results/tables/robustness_overfitting_diagnostic.csv` | Overfitting diagnostics |
-| `results/tables/covariance_robustness_summary.csv` | Covariance-estimator robustness summary, with annualized volatility and daily CVaR clearly separated |
-| `results/tables/covariance_estimator_diagnostics.csv` | Covariance diagnostics covering PSD repair, condition number, fallback, and point-in-time flags |
-| `report/asset_pricing_interpretation.md` | Asset-pricing interpretation |
-| `report/methodology_notes.md` | Methodology notes |
-| `report/insurance_allocation_perspective.md` | Insurance allocation perspective |
-| `report/thesis_figures_and_tables.md` | Thesis figures and tables index |
-| `docs/OVERFITTING_AUDIT.md` | Overfitting audit and validation roadmap |
+| [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) | Convex adaptive model performance summary |
+| [`results/tables/convex_adaptive_improvement_candidates.csv`](results/tables/convex_adaptive_improvement_candidates.csv) | Improved candidate-parameter audit |
+| [`results/tables/walkforward_validation.csv`](results/tables/walkforward_validation.csv) | Preliminary walk-forward validation output |
+| [`results/tables/showcase_performance_summary.csv`](results/tables/showcase_performance_summary.csv) | Showcase model performance summary |
+| [`results/tables/convex_adaptive_transaction_cost_summary.csv`](results/tables/convex_adaptive_transaction_cost_summary.csv) | Transaction-cost sensitivity results |
+| [`results/tables/convex_adaptive_solver_diagnostics.csv`](results/tables/convex_adaptive_solver_diagnostics.csv) | Convex solver diagnostics |
+| [`results/tables/asset_graph_diagnostics.csv`](results/tables/asset_graph_diagnostics.csv) | Asset graph diagnostics |
+| [`results/tables/online_regime_diagnostics.csv`](results/tables/online_regime_diagnostics.csv) | Online regime diagnostics |
+| [`results/tables/robustness_overall_summary.csv`](results/tables/robustness_overall_summary.csv) | Overall robustness summary |
+| [`results/tables/robustness_subperiod_summary.csv`](results/tables/robustness_subperiod_summary.csv) | Subperiod robustness |
+| [`results/tables/robustness_transaction_cost_summary.csv`](results/tables/robustness_transaction_cost_summary.csv) | Transaction-cost sensitivity |
+| [`results/tables/robustness_stress_period_summary.csv`](results/tables/robustness_stress_period_summary.csv) | Stress-period performance |
+| [`results/tables/robustness_parameter_perturbation.csv`](results/tables/robustness_parameter_perturbation.csv) | Parameter perturbation |
+| [`results/tables/robustness_no_lookahead_audit.csv`](results/tables/robustness_no_lookahead_audit.csv) | No-lookahead audit |
+| [`results/tables/robustness_solver_stability.csv`](results/tables/robustness_solver_stability.csv) | Solver stability |
+| [`results/tables/robustness_block_bootstrap_summary.csv`](results/tables/robustness_block_bootstrap_summary.csv) | Block-bootstrap robustness |
+| [`results/tables/robustness_overfitting_diagnostic.csv`](results/tables/robustness_overfitting_diagnostic.csv) | Overfitting diagnostics |
+| [`results/tables/covariance_robustness_summary.csv`](results/tables/covariance_robustness_summary.csv) | Covariance-estimator robustness summary, with annualized volatility and daily CVaR clearly separated |
+| [`results/tables/covariance_estimator_diagnostics.csv`](results/tables/covariance_estimator_diagnostics.csv) | Covariance diagnostics covering PSD repair, condition number, fallback, and point-in-time flags |
+| [`report/asset_pricing_interpretation.md`](report/asset_pricing_interpretation.md) | Asset-pricing interpretation |
+| [`report/methodology_notes.md`](report/methodology_notes.md) | Methodology notes |
+| [`report/insurance_allocation_perspective.md`](report/insurance_allocation_perspective.md) | Insurance allocation perspective |
+| [`report/thesis_figures_and_tables.md`](report/thesis_figures_and_tables.md) | Thesis figures and tables index |
+| [`docs/OVERFITTING_AUDIT.md`](docs/OVERFITTING_AUDIT.md) | Overfitting audit and validation roadmap |
 
 ### Reproduction Commands
 
@@ -790,6 +803,8 @@ python scripts/run_covariance_robustness.py --quick
 python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
+
+> Script sources: [`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
 
 ## License
 
