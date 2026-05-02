@@ -83,6 +83,12 @@
 
 Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在保持有竞争力风险收益特征的同时，将平均月度换手率降至 0.52%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置基准；在当前资产池中，相关性聚类和递归配置本身不足以替代 Global RRP 与 Convex Adaptive RRP 框架。
 
+### 代码与实证结论
+
+本仓库的核心结论是：最终组合权重应由透明优化流程生成，而不是由机器学习、图特征或状态识别模块直接给出。Global RRP 是主要的收益效率展示模型；Improved Convex Adaptive Global RRP 是低换手、CVaR 感知和可实施约束下的凸优化改进；Defensive Dynamic RRP 更适合作为防御型风险覆盖实验，而不是主收益模型。
+
+从现有回测看，凸约束、换手约束和 CVaR 惩罚能够把研究重点从单纯收益展示推进到可实施组合构建。HRP/HERC 在当前 ETF 资产池中作为基准有比较价值，但不能单独替代 Global RRP 与 Convex Adaptive RRP 框架。稳健性、交易成本、子区间和协方差估计测试均作为验证层，不用于重新选择官方主模型。
+
 ### 图表展示
 
 #### 净值曲线
@@ -109,6 +115,18 @@ Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Globa
 
 CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 
+### 协方差估计稳健性
+
+协方差稳健性检验覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。该模块只用于敏感性诊断，不改变 Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的官方定位或主结果表。
+
+输出文件包括 `results/tables/covariance_robustness_summary.csv`、`results/tables/covariance_estimator_diagnostics.csv` 和下列图表。
+
+![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
+![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
+![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
+
+该部分属于鲁棒性测试中的协方差估计敏感性检验。它回答的是“模型结果是否过度依赖某一种协方差估计方法”，而不是重新调参或替换主绩效排名。
+
 ### 输出与报告
 
 | 文件 | 内容 |
@@ -119,6 +137,8 @@ CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 | `results/tables/convex_adaptive_solver_diagnostics.csv` | 凸优化求解诊断 |
 | `results/tables/asset_graph_diagnostics.csv` | 资产图诊断 |
 | `results/tables/online_regime_diagnostics.csv` | 在线状态识别诊断 |
+| `results/tables/covariance_robustness_summary.csv` | 协方差估计鲁棒性汇总 |
+| `results/tables/covariance_estimator_diagnostics.csv` | 协方差估计诊断 |
 | `report/asset_pricing_interpretation.md` | 资产定价解释 |
 | `report/methodology_notes.md` | 方法论说明 |
 | `report/insurance_allocation_perspective.md` | 保险资金配置视角 |
@@ -133,19 +153,10 @@ python scripts/optimize_showcase_rrp.py
 python scripts/run_hrp_comparison.py
 python scripts/run_convex_adaptive_rrp.py
 python scripts/run_benchmark_suite.py
+python scripts/run_covariance_robustness.py --quick
 python scripts/run_full_research_pipeline.py --quick
 python -m pytest
 ```
-
-### 协方差估计稳健性
-
-协方差稳健性检验覆盖样本协方差、Ledoit-Wolf 收缩估计，以及 20、60、120 日半衰期的 EWMA 估计。该模块只用于敏感性诊断，不改变 Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的官方定位或主结果表。
-
-输出文件包括 `results/tables/covariance_robustness_summary.csv`、`results/tables/covariance_estimator_diagnostics.csv` 和下列图表。
-
-![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
-![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
-![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
 
 <a id="en"></a>
 
@@ -225,6 +236,12 @@ Benchmark results:
 
 Global RRP remains the main return-efficient global multi-asset model. Improved Convex Adaptive Global RRP achieves a competitive risk-return profile while reducing average monthly turnover to 0.52%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. HRP/HERC are included only as hierarchical risk-allocation benchmarks; in the current asset universe, correlation clustering and recursive allocation alone are insufficient to replace the Global RRP and Convex Adaptive RRP framework.
 
+### Key Findings
+
+The central implementation conclusion is that final portfolio weights should come from transparent optimization rather than directly from machine-learning, graph-feature, or regime modules. Global RRP is the main return-efficient showcase model; Improved Convex Adaptive Global RRP is the implementable convex refinement emphasizing low turnover, CVaR-aware tail-risk control, and stable allocation; Defensive Dynamic RRP is best interpreted as a defensive risk-overlay experiment.
+
+The current evidence suggests that convex constraints, turnover control, and CVaR penalties move the framework from return demonstration toward implementable portfolio construction. HRP/HERC remain useful hierarchical benchmarks, but in the current ETF universe they do not replace the Global RRP and Convex Adaptive RRP framework. Robustness, transaction-cost, subperiod, and covariance-estimation tests are validation layers only, not model-selection or ranking engines.
+
 ### Figures
 
 #### NAV Curve
@@ -251,6 +268,16 @@ The turnover chart shows how convex optimization constraints affect implementabi
 
 The CVaR chart helps compare tail-risk control across models.
 
+### Covariance Robustness
+
+The covariance robustness layer tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives. These outputs are sensitivity diagnostics only; they do not retune, rerank, or replace the official Global RRP, Convex Adaptive Global RRP, or Improved Convex Adaptive Global RRP results.
+
+![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
+![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
+![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
+
+This section is a robustness test in the narrower sense of covariance-estimator sensitivity. It checks whether conclusions are overly dependent on one covariance estimator; it is not used to retune parameters or replace the main performance ranking.
+
 ### Outputs And Reports
 
 | File | Content |
@@ -267,14 +294,6 @@ The CVaR chart helps compare tail-risk control across models.
 | `report/methodology_notes.md` | Methodology notes |
 | `report/insurance_allocation_perspective.md` | Insurance allocation perspective |
 | `report/thesis_figures_and_tables.md` | Thesis figures and tables index |
-
-### Covariance Robustness
-
-The covariance robustness layer tests sample covariance, Ledoit-Wolf shrinkage, and EWMA estimates with 20-, 60-, and 120-day halflives. These outputs are sensitivity diagnostics only; they do not retune, rerank, or replace the official Global RRP, Convex Adaptive Global RRP, or Improved Convex Adaptive Global RRP results.
-
-![Covariance Robustness Sharpe](results/figures/covariance_robustness_sharpe.png)
-![Covariance Robustness Drawdown](results/figures/covariance_robustness_drawdown.png)
-![Covariance Robustness Turnover](results/figures/covariance_robustness_turnover.png)
 
 ### Reproduction Commands
 
