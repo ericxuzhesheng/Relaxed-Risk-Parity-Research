@@ -43,73 +43,85 @@
 
 ### 核心算法与优化形式
 
-所有再平衡输入均采用 point-in-time 窗口：
+**Point-in-time 再平衡输入。** 每个再平衡日只使用该日期之前的历史窗口，避免未来信息泄露。
 
-```text
-R_t = {r_s : s < t, s in trailing lookback window}
-I_t = {i : asset i is tradable and has enough observations before t}
-mu_t = mean(R_t) * trading_days
-Sigma_t = Cov(R_t) * trading_days
-```
+$$
+\begin{aligned}
+R_t &= \{r_s: s < t,\ s \in \text{lookback window}\}, \\
+I_t &= \{i: i \text{ is tradable and has enough observations before } t\}, \\
+\mu_t &= \operatorname{mean}(R_t)\times N_{\text{trading}}, \\
+\Sigma_t &= \operatorname{Cov}(R_t)\times N_{\text{trading}}.
+\end{aligned}
+$$
 
-Global RRP 的宽松风险平价核心形式：
+**Global RRP。** 该模型保留风险预算思想，同时加入收益目标和宽松风险平价约束，是主要的收益效率展示模型。
 
-```text
-min_x, zeta, psi, gamma, rho    psi - gamma
+$$
+\begin{aligned}
+\min_{x,\zeta,\psi,\gamma,\rho}\quad & \psi-\gamma \\
+\text{s.t.}\quad
+& \zeta=\Sigma_t x, \\
+& \sum_i x_i = 1,\quad x_i \ge 0, \\
+& x_i\zeta_i \ge \gamma^2,\quad \forall i, \\
+& \rho^2 \ge \lambda_{\text{pen}} x^\top \Theta_t x, \\
+& n(\psi^2-\rho^2) \ge x^\top \Sigma_t x, \\
+& \mu_t^\top x \ge m\cdot \max(\bar{\mu}_t,0).
+\end{aligned}
+$$
 
-s.t.  zeta = Sigma_t x
-      sum_i x_i = 1
-      x_i >= 0
-      x_i * zeta_i >= gamma^2
-      rho^2 >= lambda_pen * x' Theta_t x
-      n * (psi^2 - rho^2) >= x' Sigma_t x
-      mu_t' x >= m * max(mean(mu_t), 0)
-```
+**债券受限杠杆。** 债券类资产可使用受限杠杆，非债券资产保持 1 倍暴露。
 
-债券资产允许受限杠杆：
+$$
+w_i=x_i\ell_i,\qquad
+1\le \ell_i \le \ell_{\max}\ \text{for bond assets},\qquad
+\ell_i=1\ \text{otherwise}.
+$$
 
-```text
-w_i = x_i * lev_i
-1 <= lev_i <= bond_leverage_upper,  i in bond assets
-lev_i = 1,                           otherwise
-```
+**Convex Adaptive Global RRP。** 该层是凸化的宽松风险预算近似，可同时纳入换手、CVaR、资产上限和组别约束。
 
-Convex Adaptive Global RRP 的凸近似优化形式：
+$$
+\begin{aligned}
+\min_w\quad
+& \lambda_{\text{var}} w^\top \Sigma_t w
++ \lambda_{\text{budget}}\lVert w-b_t\rVert_2^2
++ \lambda_{\text{turnover}}\lVert w-w_{t-1}\rVert_1 \\
+& + \lambda_{\text{cvar}}\operatorname{CVaR}_{\alpha}(-R_t w)
+- \lambda_{\text{return}}\mu_t^\top w \\
+\text{s.t.}\quad
+& \sum_i w_i = 1,\quad 0\le w_i\le u_i, \\
+& L_g \le \sum_{i\in g}w_i \le U_g,\quad \forall g, \\
+& \lVert w-w_{t-1}\rVert_1 \le \tau.
+\end{aligned}
+$$
 
-```text
-min_w  lambda_var      * w' Sigma_t w
-     + lambda_budget   * ||w - b_t||_2^2
-     + lambda_turnover * ||w - w_{t-1}||_1
-     + lambda_cvar     * CVaR_alpha(-R_t w)
-     - lambda_return   * mu_t' w
+**CVaR 尾部损失。** CVaR 惩罚控制历史窗口中的组合尾部损失，不用于预测未来收益。
 
-s.t.  sum_i w_i = 1
-      0 <= w_i <= upper_bound_i
-      group_lower_g <= sum_{i in group g} w_i <= group_upper_g
-      ||w - w_{t-1}||_1 <= turnover_cap
-```
+$$
+\operatorname{CVaR}_{\alpha}(L)
+= \min_{\eta}\left[
+\eta + \frac{1}{(1-\alpha)T}\sum_{t=1}^{T}\max(L_t-\eta,0)
+\right],
+\qquad L_t=-r_t^\top w.
+$$
 
-CVaR 尾部损失项：
+**协方差估计稳健性。** 协方差层只做敏感性诊断，不改变主模型排序。
 
-```text
-CVaR_alpha(L) = min_eta eta + 1 / ((1 - alpha) * T) * sum_t max(L_t - eta, 0)
-L_t = -r_t' w
-```
+$$
+\begin{aligned}
+\Sigma_{\text{sample}} &= \operatorname{Cov}(R_t), \\
+\Sigma_{\text{LW}} &= \delta F + (1-\delta)\Sigma_{\text{sample}}, \\
+\Sigma_{\text{EWMA}} &= \operatorname{EWCov}(R_t;\ h),\quad h\in\{20,60,120\}.
+\end{aligned}
+$$
 
-协方差估计稳健性层：
+**HRP/HERC 基准。** 层次化模型只作为 benchmark，使用相关结构和递归分配生成对照权重。
 
-```text
-Sigma_sample = sample covariance(R_t)
-Sigma_LW     = delta * F + (1 - delta) * Sigma_sample
-Sigma_EWMA   = exponentially weighted covariance(R_t, halflife in {20, 60, 120})
-```
-
-HRP/HERC 仅作为层次化基准：
-
-```text
-returns -> covariance/correlation -> hierarchical clustering
-        -> recursive allocation -> benchmark weights
-```
+$$
+R_t \rightarrow (\Sigma_t,\operatorname{Corr}_t)
+\rightarrow \text{hierarchical clustering}
+\rightarrow \text{recursive allocation}
+\rightarrow w_{\text{benchmark}}.
+$$
 
 ### ETF 资产池
 
@@ -298,73 +310,85 @@ At each monthly rebalance, the optimizer uses only ETFs with sufficient point-in
 
 ### Core Optimization Forms
 
-All rebalance inputs use a point-in-time window:
+**Point-in-time rebalance inputs.** Each rebalance uses only observations available before the rebalance date.
 
-```text
-R_t = {r_s : s < t, s in trailing lookback window}
-I_t = {i : asset i is tradable and has enough observations before t}
-mu_t = mean(R_t) * trading_days
-Sigma_t = Cov(R_t) * trading_days
-```
+$$
+\begin{aligned}
+R_t &= \{r_s: s < t,\ s \in \text{lookback window}\}, \\
+I_t &= \{i: i \text{ is tradable and has enough observations before } t\}, \\
+\mu_t &= \operatorname{mean}(R_t)\times N_{\text{trading}}, \\
+\Sigma_t &= \operatorname{Cov}(R_t)\times N_{\text{trading}}.
+\end{aligned}
+$$
 
-Global RRP relaxed risk-parity form:
+**Global RRP.** This model keeps the risk-budgeting structure while adding a return target and relaxed risk-parity constraints.
 
-```text
-min_x, zeta, psi, gamma, rho    psi - gamma
+$$
+\begin{aligned}
+\min_{x,\zeta,\psi,\gamma,\rho}\quad & \psi-\gamma \\
+\text{s.t.}\quad
+& \zeta=\Sigma_t x, \\
+& \sum_i x_i = 1,\quad x_i \ge 0, \\
+& x_i\zeta_i \ge \gamma^2,\quad \forall i, \\
+& \rho^2 \ge \lambda_{\text{pen}} x^\top \Theta_t x, \\
+& n(\psi^2-\rho^2) \ge x^\top \Sigma_t x, \\
+& \mu_t^\top x \ge m\cdot \max(\bar{\mu}_t,0).
+\end{aligned}
+$$
 
-s.t.  zeta = Sigma_t x
-      sum_i x_i = 1
-      x_i >= 0
-      x_i * zeta_i >= gamma^2
-      rho^2 >= lambda_pen * x' Theta_t x
-      n * (psi^2 - rho^2) >= x' Sigma_t x
-      mu_t' x >= m * max(mean(mu_t), 0)
-```
+**Bounded bond leverage.** Bond assets may use bounded leverage, while non-bond assets remain at one-times exposure.
 
-Bond leverage is bounded:
+$$
+w_i=x_i\ell_i,\qquad
+1\le \ell_i \le \ell_{\max}\ \text{for bond assets},\qquad
+\ell_i=1\ \text{otherwise}.
+$$
 
-```text
-w_i = x_i * lev_i
-1 <= lev_i <= bond_leverage_upper,  i in bond assets
-lev_i = 1,                           otherwise
-```
+**Convex Adaptive Global RRP.** This layer is a convexified relaxed risk-budgeting approximation with turnover, CVaR, asset-cap, and group constraints.
 
-Convex Adaptive Global RRP approximation:
+$$
+\begin{aligned}
+\min_w\quad
+& \lambda_{\text{var}} w^\top \Sigma_t w
++ \lambda_{\text{budget}}\lVert w-b_t\rVert_2^2
++ \lambda_{\text{turnover}}\lVert w-w_{t-1}\rVert_1 \\
+& + \lambda_{\text{cvar}}\operatorname{CVaR}_{\alpha}(-R_t w)
+- \lambda_{\text{return}}\mu_t^\top w \\
+\text{s.t.}\quad
+& \sum_i w_i = 1,\quad 0\le w_i\le u_i, \\
+& L_g \le \sum_{i\in g}w_i \le U_g,\quad \forall g, \\
+& \lVert w-w_{t-1}\rVert_1 \le \tau.
+\end{aligned}
+$$
 
-```text
-min_w  lambda_var      * w' Sigma_t w
-     + lambda_budget   * ||w - b_t||_2^2
-     + lambda_turnover * ||w - w_{t-1}||_1
-     + lambda_cvar     * CVaR_alpha(-R_t w)
-     - lambda_return   * mu_t' w
+**CVaR tail loss.** The CVaR term penalizes historical tail losses in the trailing window; it is not a future-return forecast.
 
-s.t.  sum_i w_i = 1
-      0 <= w_i <= upper_bound_i
-      group_lower_g <= sum_{i in group g} w_i <= group_upper_g
-      ||w - w_{t-1}||_1 <= turnover_cap
-```
+$$
+\operatorname{CVaR}_{\alpha}(L)
+= \min_{\eta}\left[
+\eta + \frac{1}{(1-\alpha)T}\sum_{t=1}^{T}\max(L_t-\eta,0)
+\right],
+\qquad L_t=-r_t^\top w.
+$$
 
-CVaR tail-loss term:
+**Covariance-estimator robustness.** This layer is a sensitivity diagnostic and does not change the main model ranking.
 
-```text
-CVaR_alpha(L) = min_eta eta + 1 / ((1 - alpha) * T) * sum_t max(L_t - eta, 0)
-L_t = -r_t' w
-```
+$$
+\begin{aligned}
+\Sigma_{\text{sample}} &= \operatorname{Cov}(R_t), \\
+\Sigma_{\text{LW}} &= \delta F + (1-\delta)\Sigma_{\text{sample}}, \\
+\Sigma_{\text{EWMA}} &= \operatorname{EWCov}(R_t;\ h),\quad h\in\{20,60,120\}.
+\end{aligned}
+$$
 
-Covariance-estimator robustness layer:
+**HRP/HERC benchmarks.** Hierarchical models are benchmark allocations based on correlation clustering and recursive allocation.
 
-```text
-Sigma_sample = sample covariance(R_t)
-Sigma_LW     = delta * F + (1 - delta) * Sigma_sample
-Sigma_EWMA   = exponentially weighted covariance(R_t, halflife in {20, 60, 120})
-```
-
-HRP/HERC benchmark pipeline:
-
-```text
-returns -> covariance/correlation -> hierarchical clustering
-        -> recursive allocation -> benchmark weights
-```
+$$
+R_t \rightarrow (\Sigma_t,\operatorname{Corr}_t)
+\rightarrow \text{hierarchical clustering}
+\rightarrow \text{recursive allocation}
+\rightarrow w_{\text{benchmark}}.
+$$
 
 ### ETF Asset Pool
 
