@@ -22,16 +22,16 @@
 研究目标不是单一追求样本内收益，而是在收益效率、下行控制、换手约束、交易成本和可复现性之间建立清晰的实证比较框架。
 
 ### 研究框架
-| Model | Role | Description |
+| 模型 | 定位 | 说明 |
 |---|---|---|
-| Standard Risk Parity | Baseline model | Classical risk-contribution balancing portfolio used as the starting reference. |
-| Local RRP | Local relaxed model | Introduces relaxation terms into the risk-parity constraint while retaining a local asset-universe setting. |
-| Global RRP | Main global model | Extends relaxed risk parity to global multi-asset allocation and serves as the main RRP reference. |
-| Defensive Dynamic RRP | Defensive overlay model | Adds drawdown, trend, volatility, re-entry, and turnover-aware controls on top of the global RRP framework. |
-| Convex Adaptive Global RRP | Adaptive convex model | Uses a convex adaptive optimizer to adjust portfolio construction under global allocation constraints. |
-| Improved Convex Adaptive Global RRP | Refined adaptive model | Applies a more constrained parameter refinement selected with drawdown and turnover-aware criteria. |
-| HRP Benchmark | Hierarchical benchmark | Hierarchical Risk Parity benchmark for cross-method comparison. |
-| HERC Benchmark | Hierarchical benchmark | Hierarchical Equal Risk Contribution benchmark for cross-method comparison. |
+| Standard Risk Parity | 基准模型 | 传统风险贡献均衡组合，作为研究的起点参照。 |
+| Local RRP | 本地宽松模型 | 在本地资产池中引入风险平价松弛项，平衡风险预算约束与收益目标。 |
+| Global RRP | 全球主模型 | 将宽松风险平价扩展到全球多资产配置，是核心 RRP 参照模型。 |
+| Defensive Dynamic RRP | 防御型覆盖模型 | 在 Global RRP 上加入回撤、趋势、波动率、再入场和换手约束感知控制。 |
+| Convex Adaptive Global RRP | 凸自适应模型 | 在全球配置约束下使用凸自适应优化器调整组合构建。 |
+| Improved Convex Adaptive Global RRP | 改进凸自适应模型 | 对凸自适应优化器进行更严格的参数细化，并采用回撤与换手约束感知标准筛选。 |
+| HRP Benchmark | 层次化基准 | 用于横向比较的 Hierarchical Risk Parity 基准。 |
+| HERC Benchmark | 层次化基准 | 用于横向比较的 Hierarchical Equal Risk Contribution 基准。 |
 
 Defensive Dynamic RRP 并非被设计为机械地最大化 Sharpe。它的定位是提高不利市场环境下的风险暴露管理能力，因此需要结合最大回撤、Calmar、下行表现和换手成本一起评价。
 
