@@ -22,6 +22,7 @@
 研究目标不是单一追求样本内收益，而是在收益效率、下行控制、换手约束、交易成本和可复现性之间建立清晰的实证比较框架。
 
 ### 研究框架
+
 | 模型 | 定位 | 说明 |
 |---|---|---|
 | Standard Risk Parity | 基准模型 | 传统风险贡献均衡组合，作为研究的起点参照。 |
@@ -36,21 +37,23 @@
 Defensive Dynamic RRP 并非被设计为机械地最大化 Sharpe。它的定位是提高不利市场环境下的风险暴露管理能力，因此需要结合最大回撤、Calmar、下行表现和换手成本一起评价。
 
 ### 最新绩效看板
-以下结果来自 [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv)，按展示需要四舍五入。年化收益使用 net annual return，回撤以绝对值展示。
+以下结果来自 [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv)，按展示需要四舍五入。年化收益使用 net annual return，回撤以负值展示。
 
 #### 核心模型结果
+
 | Model | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.90% | 3.56% | 1.15 | 1.30 | 4.38% | 1.35 | 22.45% | 1.66 |
-| Defensive Dynamic RRP | 3.88% | 4.25% | 0.48 | 0.54 | 6.51% | 0.60 | 20.22% | 0.91 |
-| Convex Adaptive Global RRP | 5.36% | 6.15% | 0.58 | 0.89 | 8.15% | 0.66 | 1.03% | 0.87 |
-| Improved Convex Adaptive Global RRP | 6.45% | 4.85% | 0.96 | 1.44 | 4.98% | 1.30 | 0.52% | 1.33 |
+| Global RRP | 5.90% | 3.56% | 1.15 | 1.30 | -4.38% | 1.35 | 22.45% | 1.66 |
+| Defensive Dynamic RRP | 3.88% | 4.25% | 0.48 | 0.54 | -6.51% | 0.60 | 20.22% | 0.91 |
+| Convex Adaptive Global RRP | 5.36% | 6.15% | 0.58 | 0.89 | -8.15% | 0.66 | 1.03% | 0.87 |
+| Improved Convex Adaptive Global RRP | 6.45% | 4.85% | 0.96 | 1.44 | -4.98% | 1.30 | 0.52% | 1.33 |
 
 #### Benchmark 结果
-| Model | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
+
+| Benchmark | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| HRP Benchmark | -0.12% | 0.30% | -6.36 | -3.04 | 0.73% | -0.16 | 1.56% | -0.39 |
-| HERC Benchmark | -0.10% | 0.30% | -6.30 | -3.80 | 0.73% | -0.14 | 1.60% | -0.33 |
+| HRP Benchmark | -0.12% | 0.30% | -6.36 | -3.04 | -0.73% | -0.16 | 1.56% | -0.39 |
+| HERC Benchmark | -0.10% | 0.30% | -6.30 | -3.80 | -0.73% | -0.14 | 1.60% | -0.33 |
 
 ### 图表
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
@@ -67,6 +70,7 @@ Defensive Dynamic RRP 并非被设计为机械地最大化 Sharpe。它的定位
 资产定价诊断从因子暴露、收益归因、风险归因和市场状态角度解释组合表现，帮助区分策略收益、风险预算变化和宏观环境暴露。
 
 ### 输出与报告
+
 | Type | Link |
 |---|---|
 | Performance summary | [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) |
@@ -113,6 +117,7 @@ This repository studies Relaxed Risk Parity for global multi-asset allocation. I
 The research objective is not to maximize in-sample return in isolation. The repository presents a reproducible empirical framework for comparing return efficiency, downside control, turnover, transaction costs, and robustness.
 
 ### Research Framework
+
 | Model | Role | Description |
 |---|---|---|
 | Standard Risk Parity | Baseline model | Classical risk-contribution balancing portfolio used as the starting reference. |
@@ -127,21 +132,23 @@ The research objective is not to maximize in-sample return in isolation. The rep
 Defensive Dynamic RRP is not designed to mechanically maximize Sharpe. Its role is to manage risk exposure during adverse regimes, so it should be evaluated together with maximum drawdown, Calmar ratio, downside behavior, and turnover.
 
 ### Latest Performance Dashboard
-The results below come from [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) and are rounded for display. Annual return uses net annual return, and drawdown is shown as an absolute value.
+The results below come from [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) and are rounded for display. Annual return uses net annual return, and drawdown is shown as a negative value.
 
 #### Core Model Results
+
 | Model | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.90% | 3.56% | 1.15 | 1.30 | 4.38% | 1.35 | 22.45% | 1.66 |
-| Defensive Dynamic RRP | 3.88% | 4.25% | 0.48 | 0.54 | 6.51% | 0.60 | 20.22% | 0.91 |
-| Convex Adaptive Global RRP | 5.36% | 6.15% | 0.58 | 0.89 | 8.15% | 0.66 | 1.03% | 0.87 |
-| Improved Convex Adaptive Global RRP | 6.45% | 4.85% | 0.96 | 1.44 | 4.98% | 1.30 | 0.52% | 1.33 |
+| Global RRP | 5.90% | 3.56% | 1.15 | 1.30 | -4.38% | 1.35 | 22.45% | 1.66 |
+| Defensive Dynamic RRP | 3.88% | 4.25% | 0.48 | 0.54 | -6.51% | 0.60 | 20.22% | 0.91 |
+| Convex Adaptive Global RRP | 5.36% | 6.15% | 0.58 | 0.89 | -8.15% | 0.66 | 1.03% | 0.87 |
+| Improved Convex Adaptive Global RRP | 6.45% | 4.85% | 0.96 | 1.44 | -4.98% | 1.30 | 0.52% | 1.33 |
 
 #### Benchmark Results
-| Model | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
+
+| Benchmark | Net Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adjusted Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| HRP Benchmark | -0.12% | 0.30% | -6.36 | -3.04 | 0.73% | -0.16 | 1.56% | -0.39 |
-| HERC Benchmark | -0.10% | 0.30% | -6.30 | -3.80 | 0.73% | -0.14 | 1.60% | -0.33 |
+| HRP Benchmark | -0.12% | 0.30% | -6.36 | -3.04 | -0.73% | -0.16 | 1.56% | -0.39 |
+| HERC Benchmark | -0.10% | 0.30% | -6.30 | -3.80 | -0.73% | -0.14 | 1.60% | -0.33 |
 
 ### Figures
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
@@ -158,6 +165,7 @@ The repository includes diagnostics for transaction-cost sensitivity, stress per
 Asset-pricing diagnostics explain portfolio behavior through factor exposures, return attribution, risk attribution, and market-regime context, helping separate strategy effects from changing macro and factor exposures.
 
 ### Outputs and Reports
+
 | Type | Link |
 |---|---|
 | Performance summary | [`results/tables/convex_adaptive_performance_summary.csv`](results/tables/convex_adaptive_performance_summary.csv) |
