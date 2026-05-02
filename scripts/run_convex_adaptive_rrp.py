@@ -227,8 +227,27 @@ def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tup
 
 
 def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: float, score: float, reject_reason: str) -> dict:
+    audit_note = "Selected using historical evaluation metrics; research-extension candidate, not frozen OOS."
     return {
+        "candidate_id": name,
         "candidate_name": name,
+        "selected": False,
+        "selection_score": score,
+        "sharpe": metrics["sharpe_ratio"],
+        "calmar": metrics["calmar_ratio"],
+        "max_drawdown": metrics["max_drawdown"],
+        "cvar": metrics["cvar_95_daily_loss"],
+        "annual_turnover": metrics["annualized_turnover"],
+        "avg_monthly_turnover": metrics["avg_monthly_turnover"],
+        "turnover_penalty": cfg.turnover_penalty,
+        "cvar_penalty": cfg.cvar_penalty,
+        "budget_penalty": cfg.budget_penalty,
+        "max_weight": cfg.max_weight,
+        "lookback_days": cfg.lookback_days,
+        "covariance_method": cfg.covariance_method,
+        "reject_reason": reject_reason,
+        "notes": audit_note,
+        # Legacy aliases retained for downstream robustness and covariance scripts.
         "lambda_cvar": cfg.cvar_penalty,
         "lambda_turnover": cfg.turnover_penalty,
         "return_reward": cfg.return_reward,
@@ -246,9 +265,6 @@ def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: fl
         "net_return": metrics["net_annual_return"],
         "average_monthly_turnover": metrics["avg_monthly_turnover"],
         "solver_fallback_rate": fallback_rate,
-        "selection_score": score,
-        "reject_reason": reject_reason,
-        "selected": False,
     }
 
 
