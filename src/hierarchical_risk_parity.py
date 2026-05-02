@@ -16,7 +16,9 @@ def _clean_weights(weights: np.ndarray) -> np.ndarray:
 
 def estimate_cov_corr(returns: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     clean = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    clean = clean.ffill().bfill().fillna(0.0)
+    clean = clean.dropna(how="any")
+    if clean.empty:
+        clean = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     cov = clean.cov()
     diag = np.diag(cov.values).copy()
     positive = diag[diag > 0]

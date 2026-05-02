@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp, solve_standard_rp
 from src.risk_overlay import (
     RiskOverlayConfig,
@@ -35,7 +36,7 @@ def run_static_backtest(
     cost_rate = transaction_cost_rate(overlay_config)
 
     results = []
-    current_weights = np.ones(n_assets) / n_assets
+    current_weights = np.zeros(n_assets)
     portfolio_navs = [1.0]
     high_water_mark = 1.0
     risk_state = {}
@@ -60,19 +61,23 @@ def run_static_backtest(
 
         if d in rebalance_dates:
             lookback = config["lookback_weeks"] * 5
-            df_window = returns[returns.index < d].iloc[-lookback:]
-            if len(df_window) > 20:
+            df_window_full = returns[returns.index < d].iloc[-lookback:]
+            active_cols = investable_columns(df_window_full, min_observations=min(60, lookback))
+            df_window = df_window_full[active_cols]
+            if len(df_window) >= 20 and len(active_cols) > 1:
                 previous_weights = current_weights.copy()
-                trend_positive_count = n_assets
+                previous_active = pd.Series(previous_weights, index=returns.columns).reindex(active_cols).fillna(0.0).values
+                trend_positive_count = len(active_cols)
 
                 if model_type == "hrp":
-                    current_weights = solve_hrp(df_window).values
+                    active_weights = solve_hrp(df_window).values
                 elif model_type == "herc":
-                    current_weights = solve_herc(df_window).values
+                    active_weights = solve_herc(df_window).values
                 else:
                     mu = df_window.mean() * config["trading_days_per_year"]
                     sigma = df_window.cov() * config["trading_days_per_year"]
                     theta = np.diag(np.diag(sigma))
+                    active_bond_indices = [i for i, col in enumerate(active_cols) if any(k in col for k in keywords)]
 
                     mu_filtered, trend_positive_count = apply_trend_confirmation(
                         mu,
@@ -82,54 +87,58 @@ def run_static_backtest(
                     r_base = mu.mean()
 
                     if model_type == "standard":
-                        if bond_indices:
+                        if active_bond_indices:
                             w, lev = optimize_with_leverage(
                                 sigma.values,
-                                n_assets,
-                                bond_indices,
+                                len(active_cols),
+                                active_bond_indices,
                                 config=config,
                             )
-                            current_weights = w * lev
+                            active_weights = w * lev
                         else:
-                            current_weights = solve_standard_rp(sigma.values, n_assets, config)
+                            active_weights = solve_standard_rp(sigma.values, len(active_cols), config)
                     else:
-                        if bond_indices:
+                        if active_bond_indices:
                             w, lev = optimize_with_leverage(
                                 sigma.values,
-                                n_assets,
-                                bond_indices,
+                                len(active_cols),
+                                active_bond_indices,
                                 mu_filtered.values,
                                 theta,
                                 r_base,
                                 is_relaxed=True,
                                 config=config,
                             )
-                            current_weights = w * lev
+                            active_weights = w * lev
                         else:
-                            current_weights = solve_relaxed_rp(
+                            active_weights = solve_relaxed_rp(
                                 sigma.values,
                                 mu_filtered.values,
                                 theta,
-                                n_assets,
+                                len(active_cols),
                                 r_base,
                                 config,
                             )
 
-                current_weights = apply_asset_class_budget_multipliers(current_weights, returns.columns, config)
-                current_weights, overlay_state = apply_risk_overlay(
-                    current_weights,
-                    previous_weights,
-                    df_window,
-                    drawdown,
-                    overlay_config,
-                    risk_state,
-                )
-                risk_state = overlay_state.copy()
-                overlay_state["trend_positive_count"] = trend_positive_count
+                active_weights = apply_asset_class_budget_multipliers(active_weights, active_cols, config)
+                current_weights = expand_weights(active_weights, active_cols, returns.columns)
+                if model_type in {"standard", "relaxed"}:
+                    current_weights, overlay_state = apply_risk_overlay(
+                        current_weights,
+                        previous_weights,
+                        df_window_full,
+                        drawdown,
+                        overlay_config,
+                        risk_state,
+                    )
+                    risk_state = overlay_state.copy()
+                    overlay_state["trend_positive_count"] = trend_positive_count
+                    turnover = overlay_state["turnover"]
+                else:
+                    turnover = float(np.abs(current_weights - previous_weights).sum())
+                    overlay_state["turnover"] = turnover
 
-                turnover = overlay_state["turnover"]
-
-        ret = float(np.dot(returns.fillna(0.0).loc[d], current_weights))
+        ret = portfolio_return_for_available(returns.loc[d], current_weights)
         if turnover > 0.0 and cost_rate > 0.0:
             ret -= cost_rate * turnover
 

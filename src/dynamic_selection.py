@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.metrics import calculate_metrics
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_overlay import (
     RiskOverlayConfig,
     apply_risk_overlay,
@@ -78,7 +79,10 @@ def score_params(
     try:
         overlay = RiskOverlayConfig.from_config(config_base)
         weights, _ = solve_rrp_window_weights(df_train, params, config_base, overlay)
-        port_ret = df_train.fillna(0.0) @ weights
+        aligned = df_train.dropna(how="any")
+        if aligned.empty:
+            return -999.0
+        port_ret = aligned @ weights
         scalar = min(1.0, overlay.target_vol / (port_ret.std() * np.sqrt(overlay.trading_days_per_year) + 1e-12))
         port_ret = port_ret * scalar
         nav = (1.0 + port_ret).cumprod()
@@ -118,7 +122,7 @@ def run_dynamic_rrp_selection(
     rebalance_dates = monthly_rebalance_dates(returns)
     results = []
     n_assets = len(returns.columns)
-    current_weights = np.ones(n_assets) / n_assets
+    current_weights = np.zeros(n_assets)
     portfolio_navs = [1.0]
     high_water_mark = 1.0
     risk_state = {}
@@ -132,8 +136,10 @@ def run_dynamic_rrp_selection(
 
     for i, curr_date in enumerate(rebalance_dates):
         train_start = curr_date - pd.DateOffset(months=train_window_months)
-        df_train = returns[(returns.index >= train_start) & (returns.index < curr_date)]
-        if len(df_train) < max(40, overlay.momentum_lookback):
+        df_train_full = returns[(returns.index >= train_start) & (returns.index < curr_date)]
+        active_cols = investable_columns(df_train_full, min_observations=max(40, overlay.momentum_lookback))
+        df_train = df_train_full[active_cols]
+        if len(df_train) < max(40, overlay.momentum_lookback) or len(active_cols) < 2:
             continue
 
         scores = [(score_params(df_train, params, config_base, selection_metric), params) for params in param_grid]
@@ -141,12 +147,13 @@ def run_dynamic_rrp_selection(
         top = scores[: max(1, top_k)]
         top_params = [params for _, params in top]
 
-        proposed = np.zeros(n_assets)
+        proposed_active = np.zeros(len(active_cols))
         trend_counts = []
         for params in top_params:
             weights, state = solve_rrp_window_weights(df_train, params, config_base, overlay)
-            proposed += weights / len(top_params)
+            proposed_active += weights / len(top_params)
             trend_counts.append(state["trend_positive_count"])
+        proposed = expand_weights(proposed_active, active_cols, returns.columns)
 
         current_nav = portfolio_navs[-1]
         high_water_mark = max(high_water_mark, current_nav)
@@ -154,7 +161,7 @@ def run_dynamic_rrp_selection(
         current_weights, overlay_state = apply_risk_overlay(
             proposed,
             current_weights,
-            df_train,
+            df_train_full,
             drawdown,
             overlay,
             risk_state,
@@ -182,7 +189,7 @@ def run_dynamic_rrp_selection(
         rebalance_turnover = selected_state["turnover"]
         for j, date in enumerate(df_test.index):
             turnover = rebalance_turnover if j == 0 else 0.0
-            ret = float(np.dot(df_test.fillna(0.0).loc[date], current_weights))
+            ret = portfolio_return_for_available(df_test.loc[date], current_weights)
             if turnover > 0.0 and cost_rate > 0.0:
                 ret -= cost_rate * turnover
             portfolio_navs.append(portfolio_navs[-1] * (1.0 + ret))

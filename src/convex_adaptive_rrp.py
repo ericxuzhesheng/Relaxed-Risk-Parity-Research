@@ -8,6 +8,7 @@ from scipy.optimize import minimize
 
 from src.adaptive_risk_budget import adaptive_budget_target, online_regime_state
 from src.asset_graph_features import rolling_correlation_graph_features
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.utils import infer_asset_class
 
 try:
@@ -55,7 +56,9 @@ def estimate_covariance(
     ewma_halflife: float = 60.0,
 ) -> pd.DataFrame:
     data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    data = data.ffill().bfill().fillna(0.0)
+    data = data.dropna(axis=1, how="all").dropna(how="any")
+    if data.empty:
+        data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     method = method.lower()
     if method == "ledoit_wolf":
         try:
@@ -134,12 +137,13 @@ def solve_convex_rrp(
         for idxs, (lower, upper) in _group_constraints(returns_window.columns, cfg.group_bounds):
             exposure = cp.sum(w[idxs])
             constraints.extend([exposure >= lower, exposure <= upper])
-        if cfg.cvar_penalty > 0.0 and len(returns_window) > 0:
+        cvar_window = returns_window.dropna(how="any")
+        if cfg.cvar_penalty > 0.0 and len(cvar_window) > 0:
             alpha = cp.Variable()
-            u = cp.Variable(len(returns_window))
-            losses = -returns_window.fillna(0.0).values @ w
+            u = cp.Variable(len(cvar_window))
+            losses = -cvar_window.values @ w
             constraints.extend([u >= 0.0, u >= losses - alpha])
-            cvar = alpha + cp.sum(u) / ((1.0 - cfg.cvar_beta) * len(returns_window))
+            cvar = alpha + cp.sum(u) / ((1.0 - cfg.cvar_beta) * len(cvar_window))
             objective += cfg.cvar_penalty * cvar
         problem = cp.Problem(cp.Minimize(objective), constraints)
         solvers = [cfg.solver] if cfg.solver else ["CLARABEL", "ECOS", "OSQP", "SCS"]
@@ -213,7 +217,7 @@ def run_convex_adaptive_backtest(
     returns.index = dates
     rebalance_dates = _monthly_rebalance_dates(returns)
     n_assets = len(returns.columns)
-    weights = np.ones(n_assets) / n_assets
+    weights = np.zeros(n_assets)
     nav_gross = 1.0
     nav_net = 1.0
     regime_state: dict = {}
@@ -226,9 +230,12 @@ def run_convex_adaptive_backtest(
     for date in returns.index:
         turnover = 0.0
         if date in rebalance_dates:
-            window = returns[returns.index < date].iloc[-cfg.lookback_days:]
-            if len(window) >= 30:
+            window_full = returns[returns.index < date].iloc[-cfg.lookback_days:]
+            active_cols = investable_columns(window_full, min_observations=min(60, cfg.lookback_days))
+            window = window_full[active_cols]
+            if len(window) >= 30 and len(active_cols) > 1:
                 previous = weights.copy()
+                previous_active = pd.Series(previous, index=returns.columns).reindex(active_cols).fillna(0.0).values
                 graph = rolling_correlation_graph_features(window) if cfg.use_graph_features else {}
                 if cfg.use_graph_features:
                     graph_rows.append({"date": date, **graph})
@@ -237,12 +244,13 @@ def run_convex_adaptive_backtest(
                 else:
                     regime_state = {"regime_label": "medium_risk", "raw_stress_score": 0.0, "smoothed_stress_score": 0.0}
                 budget = adaptive_budget_target(window, graph, regime_state["regime_label"])
-                weights, diag = solve_convex_rrp(window, previous, cfg, budget, graph, regime_state["regime_label"])
+                active_weights, diag = solve_convex_rrp(window, previous_active, cfg, budget, graph, regime_state["regime_label"])
+                weights = expand_weights(active_weights, active_cols, returns.columns)
                 turnover = float(np.abs(weights - previous).sum())
                 solver_rows.append({"date": date, **diag})
                 regime_rows.append({"date": date, **regime_state})
 
-        daily_return = float(np.dot(returns.loc[date].fillna(0.0).values, weights))
+        daily_return = portfolio_return_for_available(returns.loc[date], weights)
         cost = cost_rate * turnover
         gross_return = daily_return
         net_return = daily_return - cost

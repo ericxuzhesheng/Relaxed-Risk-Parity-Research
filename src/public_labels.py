@@ -8,11 +8,13 @@ PUBLIC_MODEL_LABELS = {
     "V2_Relaxed": "Local Relaxed Risk Parity",
     "V2 Relaxed RRP": "Local Relaxed Risk Parity",
     "Relaxed RRP": "Local Relaxed Risk Parity",
-    "V3_Global_RRP": "Global Relaxed Risk Parity",
-    "V3 Global RRP": "Global Relaxed Risk Parity",
-    "Global RRP": "Global Relaxed Risk Parity",
-    "Dynamic_RRP": "Defensive Dynamic Relaxed Risk Parity",
-    "Dynamic RRP": "Defensive Dynamic Relaxed Risk Parity",
+    "V3_Global_RRP": "Global RRP",
+    "V3 Global RRP": "Global RRP",
+    "Global Relaxed Risk Parity": "Global RRP",
+    "Global RRP": "Global RRP",
+    "Dynamic_RRP": "Defensive Dynamic RRP",
+    "Dynamic RRP": "Defensive Dynamic RRP",
+    "Defensive Dynamic Relaxed Risk Parity": "Defensive Dynamic RRP",
     "Dynamic_RRP_before": "Defensive Dynamic RRP before overlay optimization",
     "Current_Dynamic_RRP": "Defensive Dynamic RRP before overlay optimization",
     "HRP": "HRP Benchmark",
@@ -26,9 +28,9 @@ def public_model_label(name: object) -> str:
     text = str(name)
     if text in PUBLIC_MODEL_LABELS:
         return PUBLIC_MODEL_LABELS[text]
-    text = text.replace("V3_Global_RRP", "Global Relaxed Risk Parity")
+    text = text.replace("V3_Global_RRP", "Global RRP")
     text = text.replace("Dynamic_RRP_before", "Defensive Dynamic RRP before overlay optimization")
-    text = text.replace("Dynamic_RRP", "Defensive Dynamic Relaxed Risk Parity")
+    text = text.replace("Dynamic_RRP", "Defensive Dynamic RRP")
     text = text.replace("V1_Standard", "Standard Risk Parity")
     text = text.replace("V2_Relaxed", "Local Relaxed Risk Parity")
     text = text.replace("HRP_Benchmark", "HRP Benchmark")

@@ -21,7 +21,7 @@ DEFAULT_CONFIG = {
     "gross_exposure_cap": 1.50,
     "turnover_cap": 0.25,
     "transaction_cost_bps": 3.0,
-    "tushare_token": "ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53",
+    "tushare_token": os.environ.get("TUSHARE_TOKEN", ""),
 }
 
 def resolve_path(path_like):

@@ -13,6 +13,7 @@ if str(ROOT_DIR) not in sys.path:
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.metrics import calculate_metrics, calculate_turnover
 from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
@@ -70,7 +71,7 @@ def _make_weight_result(returns: pd.DataFrame, weights_by_date: pd.DataFrame) ->
         weights = weights_by_date.loc[date].values
         row = {
             "date": date,
-            "portfolio_return": float(np.dot(returns.fillna(0.0).loc[date], weights)),
+            "portfolio_return": portfolio_return_for_available(returns.loc[date], weights),
             "turnover": float(np.abs(weights_by_date.diff().fillna(0.0).loc[date]).sum()),
         }
         for asset, weight in zip(returns.columns, weights):
@@ -80,16 +81,21 @@ def _make_weight_result(returns: pd.DataFrame, weights_by_date: pd.DataFrame) ->
 
 
 def run_equal_weight(returns: pd.DataFrame) -> pd.DataFrame:
-    weights = pd.DataFrame(
-        np.ones((len(returns), len(returns.columns))) / len(returns.columns),
-        index=returns.index,
-        columns=returns.columns,
-    )
+    rows = []
+    for date in returns.index:
+        history = returns[returns.index < date]
+        active = investable_columns(history, min_observations=30)
+        weights = pd.Series(0.0, index=returns.columns)
+        if active:
+            weights.loc[active] = 1.0 / len(active)
+        rows.append(weights)
+    weights = pd.DataFrame(rows, index=returns.index, columns=returns.columns)
     return _make_weight_result(returns, weights)
 
 
 def _min_variance_weights(window: pd.DataFrame) -> np.ndarray:
-    cov = window.ffill().bfill().fillna(0.0).cov().fillna(0.0).values * 10000.0
+    clean = window.dropna(how="any")
+    cov = (clean if not clean.empty else window.fillna(0.0)).cov().fillna(0.0).values * 10000.0
     n_assets = cov.shape[0]
     diag = np.diag(cov).copy()
     positive = diag[diag > 0]
@@ -115,13 +121,15 @@ def _min_variance_weights(window: pd.DataFrame) -> np.ndarray:
 def run_minimum_variance(returns: pd.DataFrame, config: dict) -> pd.DataFrame:
     rebalance_dates = set(returns.groupby(returns.index.to_period("M")).tail(1).index)
     lookback = config["lookback_weeks"] * 5
-    current_weights = np.ones(len(returns.columns)) / len(returns.columns)
+    current_weights = np.zeros(len(returns.columns))
     weights = []
     for date in returns.index:
         if date in rebalance_dates:
-            window = returns[returns.index < date].iloc[-lookback:]
-            if len(window) > 20:
-                current_weights = _min_variance_weights(window)
+            window_full = returns[returns.index < date].iloc[-lookback:]
+            active_cols = investable_columns(window_full, min_observations=min(60, lookback))
+            window = window_full[active_cols]
+            if len(window) > 20 and len(active_cols) > 1:
+                current_weights = expand_weights(_min_variance_weights(window), active_cols, returns.columns)
         weights.append(current_weights.copy())
     weights_df = pd.DataFrame(weights, index=returns.index, columns=returns.columns)
     return _make_weight_result(returns, weights_df)

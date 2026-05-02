@@ -19,6 +19,7 @@ from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.metrics import calculate_metrics
+from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
 from src.visualization import plot_drawdown_comparison, plot_nav_comparison
 
@@ -89,20 +90,25 @@ def summarize_result(name: str, result: pd.DataFrame, eval_start_date: str, conf
 
 
 def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: float) -> pd.DataFrame:
+    from src.investable import expand_weights, investable_columns, portfolio_return_for_available
+
     dates = returns.index
     rebalance_dates = monthly_rebalance_dates(returns)
-    weights = np.ones(len(returns.columns)) / len(returns.columns)
+    weights = np.zeros(len(returns.columns))
     rows = []
     cost_rate = transaction_cost_bps / 10000.0
     for date in dates:
         turnover = 0.0
         if date in rebalance_dates:
-            window = returns[returns.index < date].iloc[-240:]
-            if len(window) >= 30:
+            window_full = returns[returns.index < date].iloc[-240:]
+            active_cols = investable_columns(window_full, min_observations=60)
+            window = window_full[active_cols]
+            if len(window) >= 30 and len(active_cols) > 1:
                 previous = weights.copy()
-                weights = solve_hrp(window).values if model_type == "hrp" else solve_herc(window).values
+                active_weights = solve_hrp(window).values if model_type == "hrp" else solve_herc(window).values
+                weights = expand_weights(active_weights, active_cols, returns.columns)
                 turnover = float(np.abs(weights - previous).sum())
-        gross = float(np.dot(returns.loc[date].fillna(0.0).values, weights))
+        gross = portfolio_return_for_available(returns.loc[date], weights)
         cost = cost_rate * turnover
         row = {"date": date, "gross_return": gross, "net_return": gross - cost, "portfolio_return": gross - cost, "turnover": turnover}
         for i, asset in enumerate(returns.columns):
@@ -318,12 +324,14 @@ def plot_feature_timeline(df: pd.DataFrame, value_cols: list[str], title: str, s
 
 def readme_row(row: pd.Series) -> str:
     return (
-        f"| {row['model']} | {row['net_annual_return']:.2%} | {row['sharpe_ratio']:.2f} | "
+        f"| {public_model_label(row['model'])} | {row['net_annual_return']:.2%} | {row['sharpe_ratio']:.2f} | "
         f"{row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} | {row['avg_monthly_turnover']:.2%} |"
     )
 
 
 def replace_latest_results_table(text: str, heading: str, rows: list[str], note: str) -> str:
+    if heading not in text:
+        return text
     start = text.index(heading)
     table_start = text.index("|", start)
     next_heading = text.find("\n## ", table_start)
@@ -344,7 +352,7 @@ def previous_improved_metrics() -> dict | None:
     if not path.exists():
         return None
     previous = pd.read_csv(path)
-    previous = previous[previous["model"].eq(IMPROVED_MODEL_NAME)]
+    previous = previous[previous["model"].map(public_model_label).eq(public_model_label(IMPROVED_MODEL_NAME))]
     if previous.empty:
         return None
     return previous.iloc[0].to_dict()
@@ -359,7 +367,7 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
         "HRP Benchmark",
         "HERC Benchmark",
     ]
-    public_summary = summary.set_index("model").loc[public_models].reset_index()
+    public_summary = apply_public_model_labels(summary.set_index("model").loc[public_models].reset_index())
     rows = [readme_row(row) for _, row in public_summary.iterrows()]
     both_improved = (
         improved_metrics["sharpe_ratio"] > baseline_metrics["sharpe_ratio"]
@@ -389,7 +397,6 @@ def main() -> None:
     eval_start_date = config.get("plot_start_date", "2021-01-01")
     incumbent_metrics = previous_improved_metrics()
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
-    returns = returns.loc[:, returns.notna().mean() > 0.95].fillna(0.0)
 
     print("Running baseline Global Relaxed Risk Parity...")
     global_rrp = run_static_backtest(returns, model_type="relaxed", config_overrides=config)
@@ -430,11 +437,12 @@ def main() -> None:
     public_order = list(models)
     summary = pd.DataFrame([summarize_result(name, result, eval_start_date, config) for name, result in models.items()])
     summary = summary.set_index("model").loc[public_order].reset_index()
-    summary.to_csv(resolve_path("results/tables/convex_adaptive_performance_summary.csv"), index=False)
+    summary_public = apply_public_model_labels(summary)
+    summary_public.to_csv(resolve_path("results/tables/convex_adaptive_performance_summary.csv"), index=False)
 
     selected_row = candidates[candidates["selected"]].iloc[0]
-    ablation = summary[summary["model"].isin([BASE_CONVEX_MODEL_NAME, IMPROVED_MODEL_NAME])].copy()
-    ablation["selected_candidate"] = ablation["model"].eq(IMPROVED_MODEL_NAME)
+    ablation = summary_public[summary_public["model"].isin([public_model_label(BASE_CONVEX_MODEL_NAME), public_model_label(IMPROVED_MODEL_NAME)])].copy()
+    ablation["selected_candidate"] = ablation["model"].eq(public_model_label(IMPROVED_MODEL_NAME))
     ablation["selected_candidate_name"] = np.where(ablation["selected_candidate"], selected_row["candidate_name"], "")
     ablation["selected_parameters"] = np.where(
         ablation["selected_candidate"],
@@ -448,7 +456,7 @@ def main() -> None:
     )
     ablation.to_csv(resolve_path("results/tables/convex_adaptive_ablation.csv"), index=False)
 
-    tc_summary = summary[
+    tc_summary = summary_public[
         [
             "model",
             "gross_annual_return",
@@ -462,6 +470,7 @@ def main() -> None:
     tc_summary.to_csv(resolve_path("results/tables/convex_adaptive_transaction_cost_summary.csv"), index=False)
 
     solver_diag_df = pd.concat([base_solver, improved_solver], ignore_index=True)
+    solver_diag_df = apply_public_model_labels(solver_diag_df)
     solver_diag_df.to_csv(resolve_path("results/tables/convex_adaptive_solver_diagnostics.csv"), index=False)
     graph_diag_df = graph_feature_frame(returns, monthly_rebalance_dates(returns), 240)
     graph_diag_df.to_csv(resolve_path("results/tables/asset_graph_diagnostics.csv"), index=False)

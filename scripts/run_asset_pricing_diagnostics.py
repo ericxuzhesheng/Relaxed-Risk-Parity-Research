@@ -37,7 +37,6 @@ def _read_cached_convex(path: Path) -> pd.DataFrame | None:
 
 def _load_returns(smoke: bool) -> pd.DataFrame:
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
-    returns = returns.loc[:, returns.notna().mean() > 0.95].fillna(0.0)
     if smoke:
         returns = returns.iloc[: min(320, len(returns)), : min(6, len(returns.columns))]
     return returns

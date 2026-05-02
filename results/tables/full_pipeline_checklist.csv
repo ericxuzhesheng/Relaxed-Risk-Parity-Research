@@ -1,11 +1,5 @@
 step,critical,return_code,status,command
-rrp_pipeline,True,0,quick_cached,D:\anaconda3\python.exe scripts/run_rrp_pipeline.py --mode full --fast-mode
-showcase_optimization,False,0,quick_cached,D:\anaconda3\python.exe scripts/optimize_showcase_rrp.py
-hrp_comparison,False,0,quick_cached,D:\anaconda3\python.exe scripts/run_hrp_comparison.py
-convex_adaptive_rrp,True,0,quick_cached,D:\anaconda3\python.exe scripts/run_convex_adaptive_rrp.py
-benchmark_suite,True,0,passed,D:\anaconda3\python.exe scripts/run_benchmark_suite.py --smoke --output-root D:\Github Repository\Relaxed-Risk-Parity-Research\results\quick\benchmark
-robustness_tests,False,0,passed,D:\anaconda3\python.exe scripts/run_robustness_tests.py --smoke --output-root D:\Github Repository\Relaxed-Risk-Parity-Research\results\quick\robustness
-asset_pricing_diagnostics,False,0,passed,D:\anaconda3\python.exe scripts/run_asset_pricing_diagnostics.py --smoke --output-root D:\Github Repository\Relaxed-Risk-Parity-Research\results\quick\asset_pricing
+unit_smoke,True,0,passed,pytest
 expected_output,True,0,present,results\tables\performance_summary.csv
 expected_output,True,0,present,results\tables\convex_adaptive_performance_summary.csv
 expected_output,True,0,present,results\tables\benchmark_performance_summary.csv

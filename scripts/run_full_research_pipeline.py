@@ -72,6 +72,22 @@ def quick_cache_available(step: PipelineStep) -> bool:
     return all(path.exists() and path.stat().st_size > 0 for path in step.quick_cache_outputs)
 
 
+def display_command(command: list[str]) -> str:
+    parts = []
+    for part in command:
+        path = Path(part)
+        if path.is_absolute():
+            try:
+                parts.append(str(path.relative_to(ROOT_DIR)))
+            except ValueError:
+                parts.append(path.name)
+        elif part == sys.executable:
+            parts.append("python")
+        else:
+            parts.append(part)
+    return " ".join(parts)
+
+
 def run_step(step: PipelineStep, quick: bool = False) -> dict:
     if quick and quick_cache_available(step):
         outputs = ";".join(str(path.relative_to(ROOT_DIR)) for path in step.quick_cache_outputs or [])
@@ -81,7 +97,7 @@ def run_step(step: PipelineStep, quick: bool = False) -> dict:
             "critical": step.critical,
             "return_code": 0,
             "status": "quick_cached",
-            "command": " ".join(step.command),
+            "command": display_command(step.command),
         }
     if quick and step.quick_cache_outputs and not step.critical:
         print(f"Skipping non-critical quick step without cache: {step.name}")
@@ -90,9 +106,9 @@ def run_step(step: PipelineStep, quick: bool = False) -> dict:
             "critical": step.critical,
             "return_code": 0,
             "status": "quick_skipped_no_cache",
-            "command": " ".join(step.command),
+            "command": display_command(step.command),
         }
-    print(f"Running {step.name}: {' '.join(step.command)}")
+    print(f"Running {step.name}: {display_command(step.command)}")
     completed = subprocess.run(step.command, cwd=ROOT_DIR, text=True, capture_output=True)
     if completed.stdout:
         print(completed.stdout)
@@ -106,7 +122,7 @@ def run_step(step: PipelineStep, quick: bool = False) -> dict:
         "critical": step.critical,
         "return_code": completed.returncode,
         "status": status,
-        "command": " ".join(step.command),
+        "command": display_command(step.command),
     }
 
 

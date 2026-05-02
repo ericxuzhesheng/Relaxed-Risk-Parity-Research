@@ -27,7 +27,9 @@ def adaptive_budget_target(
 ) -> pd.Series:
     """Return a bounded risk-budget target derived from point-in-time inputs."""
     data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    data = data.ffill().bfill().fillna(0.0)
+    data = data.dropna(how="any")
+    if data.empty:
+        data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     vol = data.std().replace(0.0, np.nan)
     inv_vol = (1.0 / vol).replace([np.inf, -np.inf], np.nan).fillna(0.0).values
     base = _normalize(inv_vol)
@@ -55,7 +57,7 @@ def online_regime_state(
     """Stable ordered online regime labels from lagged data only."""
     previous_state = previous_state or {}
     data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    data = data.ffill().bfill().fillna(0.0)
+    data = data.dropna(how="any")
     if data.empty:
         raw_stress = 0.0
     else:

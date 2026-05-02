@@ -1,9 +1,9 @@
 split_date,best_train_param_index,test_rank_percentile,pbo_event,label
-2020-01-23,0,1.0,True,Simplified PBO-style diagnostic; not full CSCV.
-2020-10-30,1,0.5,False,Simplified PBO-style diagnostic; not full CSCV.
-2021-07-30,2,0.75,True,Simplified PBO-style diagnostic; not full CSCV.
+2020-01-23,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
+2020-10-30,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
+2021-07-30,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
 2022-04-29,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
-2023-01-31,2,0.5,False,Simplified PBO-style diagnostic; not full CSCV.
-2023-10-31,3,0.75,True,Simplified PBO-style diagnostic; not full CSCV.
-2024-07-31,3,0.75,True,Simplified PBO-style diagnostic; not full CSCV.
-2025-04-30,3,0.75,True,Simplified PBO-style diagnostic; not full CSCV.
+2023-01-31,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
+2023-10-31,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
+2024-07-31,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.
+2025-04-30,0,0.25,False,Simplified PBO-style diagnostic; not full CSCV.

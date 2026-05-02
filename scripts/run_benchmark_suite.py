@@ -16,6 +16,7 @@ from scripts.run_robustness_tests import build_models, selected_improved_config
 from src.benchmarks import BENCHMARK_BUILDERS, run_benchmark_backtest
 from src.data_loader import load_data
 from src.metrics import calculate_metrics, drawdown_series
+from src.public_labels import apply_public_model_labels
 from src.utils import get_config
 
 MODEL_ORDER = [
@@ -44,7 +45,7 @@ def load_returns(smoke: bool) -> pd.DataFrame:
         data[:, 2:4] = rng.normal(0.00008, 0.003, size=(len(dates), 2))
         return pd.DataFrame(data, index=dates, columns=columns)
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
-    return returns.loc[:, returns.notna().mean() > 0.95].fillna(0.0)
+    return returns
 
 
 def return_col(result: pd.DataFrame) -> str:
@@ -173,9 +174,9 @@ def main() -> None:
         )
 
     ordered = {name: models[name] for name in MODEL_ORDER if name in models}
-    performance = pd.DataFrame([summarize(name, result, config) for name, result in ordered.items()])
+    performance = apply_public_model_labels(pd.DataFrame([summarize(name, result, config) for name, result in ordered.items()]))
     turnover = performance[["model", "avg_monthly_turnover", "annualized_turnover", "transaction_cost_drag", "turnover_adjusted_sharpe"]].copy()
-    drawdowns = drawdown_table(ordered)
+    drawdowns = apply_public_model_labels(drawdown_table(ordered))
     performance.to_csv(tables / "benchmark_performance_summary.csv", index=False)
     turnover.to_csv(tables / "benchmark_turnover_summary.csv", index=False)
     drawdowns.to_csv(tables / "benchmark_drawdown_summary.csv", index=False)

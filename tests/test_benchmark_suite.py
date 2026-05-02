@@ -23,4 +23,4 @@ def test_benchmark_suite_smoke_outputs(tmp_path):
 
     summary = pd.read_csv(tmp_path / "tables/benchmark_performance_summary.csv")
     assert "Equal Weight Benchmark" in set(summary["model"])
-    assert "Global Relaxed Risk Parity" in set(summary["model"])
+    assert "Global RRP" in set(summary["model"])

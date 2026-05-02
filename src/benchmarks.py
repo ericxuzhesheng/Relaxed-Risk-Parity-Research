@@ -5,6 +5,7 @@ import pandas as pd
 from scipy.optimize import minimize
 
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_parity import solve_standard_rp
 from src.utils import get_config, infer_asset_class
 
@@ -27,7 +28,8 @@ def equal_weight(returns_window: pd.DataFrame) -> pd.Series:
 
 
 def minimum_variance(returns_window: pd.DataFrame) -> pd.Series:
-    cov = returns_window.fillna(0.0).cov().values
+    clean = returns_window.dropna(how="any")
+    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values
     n_assets = len(returns_window.columns)
 
     def objective(w: np.ndarray) -> float:
@@ -46,7 +48,8 @@ def minimum_variance(returns_window: pd.DataFrame) -> pd.Series:
 
 
 def maximum_diversification(returns_window: pd.DataFrame) -> pd.Series:
-    cov = returns_window.fillna(0.0).cov().values
+    clean = returns_window.dropna(how="any")
+    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values
     vols = np.sqrt(np.clip(np.diag(cov), 1e-12, None))
     n_assets = len(returns_window.columns)
 
@@ -68,7 +71,8 @@ def maximum_diversification(returns_window: pd.DataFrame) -> pd.Series:
 
 
 def classical_risk_parity(returns_window: pd.DataFrame) -> pd.Series:
-    cov = returns_window.fillna(0.0).cov().values * 243
+    clean = returns_window.dropna(how="any")
+    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values * 243
     weights = solve_standard_rp(cov, len(returns_window.columns), config=get_config({"optim_maxiter": 500}))
     return pd.Series(clean_weights(weights), index=returns_window.columns)
 
@@ -112,7 +116,7 @@ def run_benchmark_backtest(
     returns.index = pd.to_datetime(returns.index)
     dates = returns.index
     n_assets = len(returns.columns)
-    weights = np.ones(n_assets) / n_assets
+    weights = np.zeros(n_assets)
     rows = []
     cost_rate = transaction_cost_bps / 10000.0
     skipped = False
@@ -120,18 +124,20 @@ def run_benchmark_backtest(
     for date in dates:
         turnover = 0.0
         if date in monthly_rebalance_dates(returns):
-            window = returns[returns.index < date].iloc[-lookback_days:]
-            if len(window) >= 30:
+            window_full = returns[returns.index < date].iloc[-lookback_days:]
+            active_cols = investable_columns(window_full, min_observations=min(60, lookback_days))
+            window = window_full[active_cols]
+            if len(window) >= 30 and len(active_cols) > 1:
                 previous = weights.copy()
                 candidate = builder(window)
                 if candidate is None:
                     skipped = True
                     skip_reason = "Skipped because both equity and bond groups were not identifiable from infer_asset_class."
                 else:
-                    weights = candidate.reindex(returns.columns).fillna(0.0).values
-                    weights = clean_weights(weights, n_assets)
+                    active_weights = clean_weights(candidate.reindex(active_cols).fillna(0.0).values, len(active_cols))
+                    weights = expand_weights(active_weights, active_cols, returns.columns)
                     turnover = float(np.abs(weights - previous).sum())
-        gross = float(np.dot(returns.loc[date].fillna(0.0).values, weights))
+        gross = portfolio_return_for_available(returns.loc[date], weights)
         net = gross - cost_rate * turnover
         row = {
             "date": date,

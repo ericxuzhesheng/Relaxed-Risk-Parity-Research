@@ -8,7 +8,8 @@ from scipy.spatial.distance import squareform
 
 def _clean_returns(returns: pd.DataFrame) -> pd.DataFrame:
     data = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    return data.ffill().bfill().fillna(0.0)
+    clean = data.dropna(how="any")
+    return clean if not clean.empty else data.fillna(0.0)
 
 
 def rolling_correlation_graph_features(

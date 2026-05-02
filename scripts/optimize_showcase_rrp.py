@@ -417,12 +417,8 @@ def _all_strategy_table(showcase: pd.DataFrame) -> list[str]:
 
 def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
     public_summary = apply_public_model_labels(summary)
-    dynamic_row = public_summary[
-        public_summary["model"] == "Defensive Dynamic Relaxed Risk Parity"
-    ].iloc[0]
-    global_row = public_summary[
-        public_summary["model"] == "Global Relaxed Risk Parity"
-    ].iloc[0]
+    dynamic_row = public_summary[public_summary["model"].isin(["Defensive Dynamic RRP", "Defensive Dynamic Relaxed Risk Parity"])].iloc[0]
+    global_row = public_summary[public_summary["model"].isin(["Global RRP", "Global Relaxed Risk Parity"])].iloc[0]
     dynamic_positioning = (
         "Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. "
         "Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together "
@@ -437,7 +433,9 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
         summary,
         [
             "Global Relaxed Risk Parity",
+            "Global RRP",
             "Defensive Dynamic Relaxed Risk Parity",
+            "Defensive Dynamic RRP",
             "Defensive Dynamic RRP before overlay optimization",
         ],
     )

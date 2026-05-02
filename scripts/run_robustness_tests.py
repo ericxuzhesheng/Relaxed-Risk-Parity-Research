@@ -17,6 +17,7 @@ from src.backtest import run_static_backtest
 from src.convex_adaptive_rrp import ConvexRRPConfig, estimate_covariance, run_convex_adaptive_backtest
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
+from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.metrics import calculate_metrics, drawdown_series
 from src.risk_overlay import RiskOverlayConfig, apply_risk_overlay, apply_trend_confirmation, transaction_cost_rate
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp
@@ -58,7 +59,7 @@ def load_return_universe(smoke: bool = False) -> pd.DataFrame:
         data[:, 0] += 0.00015
         return pd.DataFrame(data, index=dates, columns=[f"asset_{i}" for i in range(6)])
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
-    return returns.loc[:, returns.notna().mean() > 0.95].fillna(0.0)
+    return returns
 
 
 def cvar(returns: pd.Series, beta: float = 0.95) -> float:
@@ -149,11 +150,10 @@ def selected_improved_config(transaction_cost_bps: float, candidates_path: Path,
 
 def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config: dict) -> pd.DataFrame:
     n_assets = len(returns.columns)
-    weights = np.ones(n_assets) / n_assets
+    weights = np.zeros(n_assets)
     rebalance_dates = monthly_rebalance_dates(returns)
     overlay_config = RiskOverlayConfig.from_config(config)
     cost_rate = transaction_cost_rate(overlay_config)
-    bond_indices = [i for i, col in enumerate(returns.columns) if infer_asset_class(col) == "bond"]
     rows = []
     nav = 1.0
     high = 1.0
@@ -163,17 +163,21 @@ def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config:
         drawdown = nav / high - 1.0
         turnover = 0.0
         if date in rebalance_dates:
-            window = returns[returns.index < date].iloc[-config["lookback_weeks"] * 5 :]
-            if len(window) > 20:
+            lookback = config["lookback_weeks"] * 5
+            window_full = returns[returns.index < date].iloc[-lookback:]
+            active_cols = investable_columns(window_full, min_observations=min(60, lookback))
+            window = window_full[active_cols]
+            if len(window) > 20 and len(active_cols) > 1:
                 previous = weights.copy()
                 mu = window.mean() * config["trading_days_per_year"]
                 sigma = estimate_covariance(window, method, config["trading_days_per_year"])
                 theta = np.diag(np.diag(sigma))
                 mu_filtered, trend_count = apply_trend_confirmation(mu, window, overlay_config)
+                bond_indices = [i for i, col in enumerate(active_cols) if infer_asset_class(col) == "bond"]
                 if bond_indices:
                     base_w, lev = optimize_with_leverage(
                         sigma.values,
-                        n_assets,
+                        len(active_cols),
                         bond_indices,
                         mu_filtered.values,
                         theta,
@@ -181,14 +185,15 @@ def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config:
                         is_relaxed=True,
                         config=config,
                     )
-                    weights = base_w * lev
+                    active_weights = base_w * lev
                 else:
-                    weights = solve_relaxed_rp(sigma.values, mu_filtered.values, theta, n_assets, float(mu.mean()), config)
-                weights = apply_asset_class_budget_multipliers(weights, returns.columns, config)
-                weights, state = apply_risk_overlay(weights, previous, window, drawdown, overlay_config, risk_state)
+                    active_weights = solve_relaxed_rp(sigma.values, mu_filtered.values, theta, len(active_cols), float(mu.mean()), config)
+                active_weights = apply_asset_class_budget_multipliers(active_weights, active_cols, config)
+                weights = expand_weights(active_weights, active_cols, returns.columns)
+                weights, state = apply_risk_overlay(weights, previous, window_full, drawdown, overlay_config, risk_state)
                 risk_state = state.copy()
                 turnover = float(state["turnover"])
-        gross = float(np.dot(returns.loc[date].fillna(0.0).values, weights))
+        gross = portfolio_return_for_available(returns.loc[date], weights)
         net = gross - cost_rate * turnover
         nav *= 1.0 + net
         row = {"date": date, "portfolio_return": net, "gross_return": gross, "net_return": net, "turnover": turnover}

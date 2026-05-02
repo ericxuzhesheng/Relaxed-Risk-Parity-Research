@@ -1,0 +1,16 @@
+﻿old_name,new_name,ticker,asset_class,reason,data_source_field
+0-5中高信用票,短融ETF,511360.SH,short-duration credit,Replace non-ETF credit index with a tradable short-duration bond ETF.,adj_close
+中证转债,可转债ETF,511380.SH,convertible bond,Replace convertible-bond index with a tradable convertible-bond ETF.,adj_close
+沪深300ETF,沪深300ETF,510300.SH,china equity,Existing tradable broad China equity ETF.,adj_close
+中证1000ETF,中证1000ETF,512100.SH,china equity,Existing tradable small-cap China equity ETF.,adj_close
+科创50ETF,科创50ETF,588000.SH,china equity,Existing tradable STAR 50 ETF.,adj_close
+红利ETF,红利ETF,510880.SH,china equity dividend,Existing tradable dividend equity ETF.,adj_close
+上证指数ETF,上证指数ETF,510210.SH,china equity,Existing tradable Shanghai Composite ETF.,adj_close
+恒生ETF,恒生ETF,159920.SZ,hong kong equity,Existing tradable Hong Kong equity ETF.,adj_close
+恒生科技ETF,恒生科技ETF,513180.SH,hong kong equity,Existing tradable Hang Seng Tech ETF.,adj_close
+纳指ETF,纳指ETF,159941.SZ,global equity,Existing tradable Nasdaq ETF.,adj_close
+标普500ETF,标普500ETF,513500.SH,global equity,Existing tradable S&P 500 ETF.,adj_close
+日经225ETF,日经225ETF,513880.SH,global equity,Existing tradable Nikkei 225 ETF.,adj_close
+黄金ETF,黄金ETF,518880.SH,commodity,Existing tradable gold ETF.,adj_close
+有色ETF,有色ETF,159980.SZ,commodity equity,Existing tradable non-ferrous metals ETF.,adj_close
+豆粕连续,豆粕ETF,159985.SZ,commodity,Replace commodity futures series with a tradable soybean meal ETF.,adj_close
