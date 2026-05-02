@@ -83,11 +83,31 @@
 
 Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在保持有竞争力风险收益特征的同时，将平均月度换手率降至 0.52%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置基准；在当前资产池中，相关性聚类和递归配置本身不足以替代 Global RRP 与 Convex Adaptive RRP 框架。
 
-### 图表
+### 图表展示
+
+#### 净值曲线
 
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
 
+净值曲线展示 Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的累计表现差异。
+
+#### 回撤曲线
+
 ![Convex Adaptive Drawdown Comparison](results/figures/convex_adaptive_drawdown_comparison.png)
+
+回撤曲线用于比较不同模型在压力阶段的风险控制能力。
+
+#### 换手率比较
+
+![Convex Adaptive Turnover Comparison](results/figures/convex_adaptive_turnover_comparison.png)
+
+换手率图展示凸优化约束对组合可实施性和交易成本敏感性的影响。
+
+#### CVaR / 尾部风险比较
+
+![Convex Adaptive CVaR Comparison](results/figures/convex_adaptive_cvar_comparison.png)
+
+CVaR 图用于观察不同模型在尾部风险控制方面的差异。
 
 ### 输出与报告
 
@@ -197,9 +217,29 @@ Global RRP remains the main return-efficient global multi-asset model. Improved 
 
 ### Figures
 
+#### NAV Curve
+
 ![Convex Adaptive NAV Comparison](results/figures/convex_adaptive_nav_comparison.png)
 
+The NAV curve compares the cumulative performance of Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP.
+
+#### Drawdown Curve
+
 ![Convex Adaptive Drawdown Comparison](results/figures/convex_adaptive_drawdown_comparison.png)
+
+The drawdown curve compares model risk control during stressed periods.
+
+#### Turnover Comparison
+
+![Convex Adaptive Turnover Comparison](results/figures/convex_adaptive_turnover_comparison.png)
+
+The turnover chart shows how convex optimization constraints affect implementability and transaction-cost sensitivity.
+
+#### CVaR / Tail-Risk Comparison
+
+![Convex Adaptive CVaR Comparison](results/figures/convex_adaptive_cvar_comparison.png)
+
+The CVaR chart helps compare tail-risk control across models.
 
 ### Outputs And Reports
 

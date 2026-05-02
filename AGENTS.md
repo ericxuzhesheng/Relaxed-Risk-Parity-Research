@@ -117,6 +117,19 @@ Use the current tradable ETF universe from `data/processed/etf_asset_mapping.csv
 
 Position the ETF universe as a tradable multi-asset pool covering bonds, China equities, Hong Kong equities, global equities, and commodities. Where appropriate, state that selected original indices or continuous futures series are replaced by tradable ETFs to keep the backtest aligned with implementable portfolio construction.
 
+## README Figure Section
+
+README.md should include a concise bilingual figure display section with explanatory text for each figure.
+
+Use these public figure embeds when the files exist:
+
+- `results/figures/convex_adaptive_nav_comparison.png`
+- `results/figures/convex_adaptive_drawdown_comparison.png`
+- `results/figures/convex_adaptive_turnover_comparison.png`
+- `results/figures/convex_adaptive_cvar_comparison.png`
+
+The NAV explanation should compare cumulative performance across Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP. The drawdown explanation should focus on stress-period risk control. The turnover explanation should focus on implementability and transaction-cost sensitivity. The CVaR explanation should focus on tail-risk control.
+
 ## README Style Requirements
 
 README.md is the public-facing GitHub landing page.
