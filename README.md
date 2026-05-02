@@ -57,7 +57,7 @@ $$
 μ_t = mean(R_t) × N_trading,    Σ_t = Cov(R_t) × N_trading
 $$
 
-其中，$H_t$ 为回看窗口，$A_i,t$ 表示资产在 $t$ 时点可交易，$O_i,t$ 为可用历史观测数。
+其中，`H_t` 为回看窗口，`A_i,t` 表示资产在 `t` 时点可交易，`O_i,t` 为可用历史观测数。
 
 **Global RRP。** 该模型保留风险预算思想，同时加入收益目标和宽松风险平价约束，是主要的收益效率展示模型。
 
@@ -91,7 +91,7 @@ minimize over w:
 - λ_return · μ_tᵀw
 $$
 
-约束条件：权重和为 1，$0≤w_i≤u_i$；组别暴露满足 $L_g≤Σ_{i∈g}w_i≤U_g$；换手满足 $||w-w_{t-1}||_1≤τ$。
+约束条件：权重和为 1，`0≤w_i≤u_i`；组别暴露满足 `L_g≤Σ_{i∈g}w_i≤U_g`；换手满足 `||w-w_(t-1)||_1≤τ`。
 
 **CVaR 尾部损失。** CVaR 惩罚控制历史窗口中的组合尾部损失，不用于预测未来收益。
 
@@ -114,7 +114,7 @@ $$
 R_t → (Σ_t, Corr_t) → C_t → q_t → w_benchmark
 $$
 
-其中，$C_t$ 为层次聚类树，$q_t$ 为递归分配过程。
+其中，`C_t` 为层次聚类树，`q_t` 为递归分配过程。
 
 ### ETF 资产池
 
@@ -317,7 +317,7 @@ $$
 μ_t = mean(R_t) × N_trading,    Σ_t = Cov(R_t) × N_trading
 $$
 
-Here, $H_t$ is the trailing lookback window, $A_i,t$ is the tradability flag, and $O_i,t$ is the available observation count.
+Here, `H_t` is the trailing lookback window, `A_i,t` is the tradability flag, and `O_i,t` is the available observation count.
 
 **Global RRP.** This model keeps the risk-budgeting structure while adding a return target and relaxed risk-parity constraints.
 
@@ -351,7 +351,7 @@ minimize over w:
 - λ_return · μ_tᵀw
 $$
 
-Constraints: weights sum to 1, $0≤w_i≤u_i$; group exposure satisfies $L_g≤Σ_{i∈g}w_i≤U_g$; turnover satisfies $||w-w_{t-1}||_1≤τ$.
+Constraints: weights sum to 1, `0≤w_i≤u_i`; group exposure satisfies `L_g≤Σ_{i∈g}w_i≤U_g`; turnover satisfies `||w-w_(t-1)||_1≤τ`.
 
 **CVaR tail loss.** The CVaR term penalizes historical tail losses in the trailing window; it is not a future-return forecast.
 
@@ -374,7 +374,7 @@ $$
 R_t → (Σ_t, Corr_t) → C_t → q_t → w_benchmark
 $$
 
-Here, $C_t$ denotes the hierarchical clustering tree and $q_t$ denotes recursive allocation.
+Here, `C_t` denotes the hierarchical clustering tree and `q_t` denotes recursive allocation.
 
 ### ETF Asset Pool
 
