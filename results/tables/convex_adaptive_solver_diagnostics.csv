@@ -1,195 +1,195 @@
-model,date,solver_name,solver_status,objective_value,failure_reason,fallback_used
-Convex Adaptive Global RRP,2018-04-27,CLARABEL,optimal,0.012025540286302507,,False
-Convex Adaptive Global RRP,2018-05-31,CLARABEL,optimal,0.005685384805354917,,False
-Convex Adaptive Global RRP,2018-06-29,CLARABEL,optimal,0.00864048871029904,,False
-Convex Adaptive Global RRP,2018-07-31,CLARABEL,optimal,0.005043434839891018,,False
-Convex Adaptive Global RRP,2018-08-31,CLARABEL,optimal,0.005141186126561159,,False
-Convex Adaptive Global RRP,2018-09-28,CLARABEL,optimal,0.004713500757348155,,False
-Convex Adaptive Global RRP,2018-10-31,CLARABEL,optimal,0.006486035042958855,,False
-Convex Adaptive Global RRP,2018-11-30,CLARABEL,optimal,0.005851366802664883,,False
-Convex Adaptive Global RRP,2018-12-28,CLARABEL,optimal,0.007873140018828904,,False
-Convex Adaptive Global RRP,2019-01-31,CLARABEL,optimal,0.008664064322460557,,False
-Convex Adaptive Global RRP,2019-02-28,CLARABEL,optimal,0.004207414666537764,,False
-Convex Adaptive Global RRP,2019-03-29,CLARABEL,optimal,0.0027395800600808493,,False
-Convex Adaptive Global RRP,2019-04-26,CLARABEL,optimal,0.0014142522651617324,,False
-Convex Adaptive Global RRP,2019-05-31,CLARABEL,optimal,0.002786507387150648,,False
-Convex Adaptive Global RRP,2019-06-28,CLARABEL,optimal,0.003013341516748312,,False
-Convex Adaptive Global RRP,2019-07-31,CLARABEL,optimal,0.003084973156439512,,False
-Convex Adaptive Global RRP,2019-08-30,CLARABEL,optimal,0.0035967666731344453,,False
-Convex Adaptive Global RRP,2019-09-30,CLARABEL,optimal,0.006086954881977216,,False
-Convex Adaptive Global RRP,2019-10-31,CLARABEL,optimal,-0.0022359255846622654,,False
-Convex Adaptive Global RRP,2019-11-29,CLARABEL,optimal,-0.0029192787086099407,,False
-Convex Adaptive Global RRP,2019-12-31,CLARABEL,optimal,0.002267957267891132,,False
-Convex Adaptive Global RRP,2020-01-23,CLARABEL,optimal,0.003565133538756339,,False
-Convex Adaptive Global RRP,2020-02-28,CLARABEL,optimal,-0.0006446894558715735,,False
-Convex Adaptive Global RRP,2020-03-31,CLARABEL,optimal,0.00795733220618267,,False
-Convex Adaptive Global RRP,2020-04-30,CLARABEL,optimal,0.006376574877132922,,False
-Convex Adaptive Global RRP,2020-05-29,CLARABEL,optimal,0.0035092172651307258,,False
-Convex Adaptive Global RRP,2020-06-30,CLARABEL,optimal,0.01738052853286876,,False
-Convex Adaptive Global RRP,2020-07-31,CLARABEL,optimal,0.004043010836034938,,False
-Convex Adaptive Global RRP,2020-08-31,CLARABEL,optimal,0.0020073096264798963,,False
-Convex Adaptive Global RRP,2020-09-30,CLARABEL,optimal,0.004644004427702885,,False
-Convex Adaptive Global RRP,2020-10-30,CLARABEL,optimal,0.004194304093799423,,False
-Convex Adaptive Global RRP,2020-11-30,CLARABEL,optimal,0.0011196760304092515,,False
-Convex Adaptive Global RRP,2020-12-31,CLARABEL,optimal,0.15412179020706057,,False
-Convex Adaptive Global RRP,2021-01-29,CLARABEL,optimal,0.07680876941661074,,False
-Convex Adaptive Global RRP,2021-02-26,CLARABEL,optimal,0.07336798030986807,,False
-Convex Adaptive Global RRP,2021-03-31,CLARABEL,optimal,0.08160465084587186,,False
-Convex Adaptive Global RRP,2021-04-30,CLARABEL,optimal,0.08294951294737905,,False
-Convex Adaptive Global RRP,2021-05-31,CLARABEL,optimal,0.08871306849814868,,False
-Convex Adaptive Global RRP,2021-06-30,CLARABEL,optimal,0.09287482992487806,,False
-Convex Adaptive Global RRP,2021-07-30,CLARABEL,optimal,0.09757147139668212,,False
-Convex Adaptive Global RRP,2021-08-31,CLARABEL,optimal,0.15486423795379337,,False
-Convex Adaptive Global RRP,2021-09-30,CLARABEL,optimal,0.15871180679367947,,False
-Convex Adaptive Global RRP,2021-10-29,CLARABEL,optimal,0.15434822289739555,,False
-Convex Adaptive Global RRP,2021-11-30,CLARABEL,optimal,0.1570665004802568,,False
-Convex Adaptive Global RRP,2021-12-31,CLARABEL,optimal,0.15640285286575947,,False
-Convex Adaptive Global RRP,2022-01-28,CLARABEL,optimal,0.15558342173562104,,False
-Convex Adaptive Global RRP,2022-02-28,CLARABEL,optimal,0.154946516053167,,False
-Convex Adaptive Global RRP,2022-03-31,CLARABEL,optimal,0.15555847623266084,,False
-Convex Adaptive Global RRP,2022-04-29,CLARABEL,optimal,0.15630498581527238,,False
-Convex Adaptive Global RRP,2022-05-31,CLARABEL,optimal,0.15744622807284098,,False
-Convex Adaptive Global RRP,2022-06-30,CLARABEL,optimal,0.1566702850927598,,False
-Convex Adaptive Global RRP,2022-07-29,CLARABEL,optimal,0.15618647674746394,,False
-Convex Adaptive Global RRP,2022-08-31,CLARABEL,optimal,0.15357032182180638,,False
-Convex Adaptive Global RRP,2022-09-30,CLARABEL,optimal,0.15145716274492976,,False
-Convex Adaptive Global RRP,2022-10-31,CLARABEL,optimal,0.14417344308892324,,False
-Convex Adaptive Global RRP,2022-11-30,CLARABEL,optimal,0.1251981318013658,,False
-Convex Adaptive Global RRP,2022-12-30,CLARABEL,optimal,0.11974911072950302,,False
-Convex Adaptive Global RRP,2023-01-31,CLARABEL,optimal,0.11434957079309414,,False
-Convex Adaptive Global RRP,2023-02-28,CLARABEL,optimal,0.11279264335593336,,False
-Convex Adaptive Global RRP,2023-03-31,CLARABEL,optimal,0.11325417518780295,,False
-Convex Adaptive Global RRP,2023-04-28,CLARABEL,optimal,0.10829164068158127,,False
-Convex Adaptive Global RRP,2023-05-31,CLARABEL,optimal,0.10767936733168272,,False
-Convex Adaptive Global RRP,2023-06-30,CLARABEL,optimal,0.10648783449265953,,False
-Convex Adaptive Global RRP,2023-07-31,CLARABEL,optimal,0.09942766348794044,,False
-Convex Adaptive Global RRP,2023-08-31,CLARABEL,optimal,0.09778224920322517,,False
-Convex Adaptive Global RRP,2023-09-28,CLARABEL,optimal,0.10033915501218804,,False
-Convex Adaptive Global RRP,2023-10-31,CLARABEL,optimal,0.09843779041906338,,False
-Convex Adaptive Global RRP,2023-11-30,CLARABEL,optimal,0.11759531072778286,,False
-Convex Adaptive Global RRP,2023-12-29,CLARABEL,optimal,0.11996191018123811,,False
-Convex Adaptive Global RRP,2024-01-31,CLARABEL,optimal,0.12225184907421774,,False
-Convex Adaptive Global RRP,2024-02-29,CLARABEL,optimal,0.12021879180463496,,False
-Convex Adaptive Global RRP,2024-03-29,CLARABEL,optimal,0.12028243963467755,,False
-Convex Adaptive Global RRP,2024-04-30,CLARABEL,optimal,0.11648673106838102,,False
-Convex Adaptive Global RRP,2024-05-31,CLARABEL,optimal,0.1120111497384897,,False
-Convex Adaptive Global RRP,2024-06-28,CLARABEL,optimal,0.11833866709769855,,False
-Convex Adaptive Global RRP,2024-07-31,CLARABEL,optimal,0.1270882788921188,,False
-Convex Adaptive Global RRP,2024-08-30,CLARABEL,optimal,0.12892541163247836,,False
-Convex Adaptive Global RRP,2024-09-30,CLARABEL,optimal,0.13095897096468387,,False
-Convex Adaptive Global RRP,2024-10-31,CLARABEL,optimal,0.13094778671061666,,False
-Convex Adaptive Global RRP,2024-11-29,CLARABEL,optimal,0.13823719886098645,,False
-Convex Adaptive Global RRP,2024-12-31,CLARABEL,optimal,0.1422657282522809,,False
-Convex Adaptive Global RRP,2025-01-27,CLARABEL,optimal,0.1346612902598645,,False
-Convex Adaptive Global RRP,2025-02-28,CLARABEL,optimal,0.13213664922365556,,False
-Convex Adaptive Global RRP,2025-03-31,CLARABEL,optimal,0.13318502991741232,,False
-Convex Adaptive Global RRP,2025-04-30,CLARABEL,optimal,0.14420000540377376,,False
-Convex Adaptive Global RRP,2025-05-30,CLARABEL,optimal,0.14131285664168014,,False
-Convex Adaptive Global RRP,2025-06-30,CLARABEL,optimal,0.13964215694610693,,False
-Convex Adaptive Global RRP,2025-07-31,CLARABEL,optimal,0.13438156632182527,,False
-Convex Adaptive Global RRP,2025-08-29,CLARABEL,optimal,0.13366958129741285,,False
-Convex Adaptive Global RRP,2025-09-30,CLARABEL,optimal,0.134486640761025,,False
-Convex Adaptive Global RRP,2025-10-31,CLARABEL,optimal,0.13285737506443757,,False
-Convex Adaptive Global RRP,2025-11-28,CLARABEL,optimal,0.13211086927959817,,False
-Convex Adaptive Global RRP,2025-12-31,CLARABEL,optimal,0.13263184247004345,,False
-Convex Adaptive Global RRP,2026-01-30,CLARABEL,optimal,0.1555482860702453,,False
-Convex Adaptive Global RRP,2026-02-27,CLARABEL,optimal,0.15178696455883345,,False
-Convex Adaptive Global RRP,2026-03-31,CLARABEL,optimal,0.15600610723513403,,False
-Convex Adaptive Global RRP,2026-04-30,CLARABEL,optimal,0.15591513806548515,,False
-Improved Convex Adaptive Global RRP,2018-04-27,CLARABEL,optimal,0.010543521795013923,,False
-Improved Convex Adaptive Global RRP,2018-05-31,CLARABEL,optimal,0.005696829643970201,,False
-Improved Convex Adaptive Global RRP,2018-06-29,CLARABEL,optimal,0.008469353366420337,,False
-Improved Convex Adaptive Global RRP,2018-07-31,CLARABEL,optimal,0.004162922781169301,,False
-Improved Convex Adaptive Global RRP,2018-08-31,CLARABEL,optimal,0.004248856164864999,,False
-Improved Convex Adaptive Global RRP,2018-09-28,CLARABEL,optimal,0.0037733050968012383,,False
-Improved Convex Adaptive Global RRP,2018-10-31,CLARABEL,optimal,0.00600829862611871,,False
-Improved Convex Adaptive Global RRP,2018-11-30,CLARABEL,optimal,0.005309382395098407,,False
-Improved Convex Adaptive Global RRP,2018-12-28,CLARABEL,optimal,0.007486490419458185,,False
-Improved Convex Adaptive Global RRP,2019-01-31,CLARABEL,optimal,0.005548993429755119,,False
-Improved Convex Adaptive Global RRP,2019-02-28,CLARABEL,optimal,0.0029473343203728613,,False
-Improved Convex Adaptive Global RRP,2019-03-29,CLARABEL,optimal,0.0036688490900807767,,False
-Improved Convex Adaptive Global RRP,2019-04-26,CLARABEL,optimal,0.001754107868633518,,False
-Improved Convex Adaptive Global RRP,2019-05-31,CLARABEL,optimal,0.002878638664013782,,False
-Improved Convex Adaptive Global RRP,2019-06-28,CLARABEL,optimal,0.0005788012824577051,,False
-Improved Convex Adaptive Global RRP,2019-07-31,CLARABEL,optimal,9.822997370936295e-05,,False
-Improved Convex Adaptive Global RRP,2019-08-30,CLARABEL,optimal,0.003728266838133507,,False
-Improved Convex Adaptive Global RRP,2019-09-30,CLARABEL,optimal,0.001787784375490797,,False
-Improved Convex Adaptive Global RRP,2019-10-31,CLARABEL,optimal,-0.0002323048525667414,,False
-Improved Convex Adaptive Global RRP,2019-11-29,CLARABEL,optimal,-0.0012369784368999976,,False
-Improved Convex Adaptive Global RRP,2019-12-31,CLARABEL,optimal,-0.00018765667927766463,,False
-Improved Convex Adaptive Global RRP,2020-01-23,CLARABEL,optimal,-0.0021102593073072185,,False
-Improved Convex Adaptive Global RRP,2020-02-28,CLARABEL,optimal,-0.0010463602966998022,,False
-Improved Convex Adaptive Global RRP,2020-03-31,CLARABEL,optimal,0.0068908841647454516,,False
-Improved Convex Adaptive Global RRP,2020-04-30,CLARABEL,optimal,0.005646293651028011,,False
-Improved Convex Adaptive Global RRP,2020-05-29,CLARABEL,optimal,0.003087961050005613,,False
-Improved Convex Adaptive Global RRP,2020-06-30,CLARABEL,optimal,0.0053889798837535394,,False
-Improved Convex Adaptive Global RRP,2020-07-31,CLARABEL,optimal,-0.00039728206007375337,,False
-Improved Convex Adaptive Global RRP,2020-08-31,CLARABEL,optimal,-0.0011219945576205277,,False
-Improved Convex Adaptive Global RRP,2020-09-30,CLARABEL,optimal,0.002610008819346386,,False
-Improved Convex Adaptive Global RRP,2020-10-30,CLARABEL,optimal,0.002061644579685605,,False
-Improved Convex Adaptive Global RRP,2020-11-30,CLARABEL,optimal,0.000263466496006519,,False
-Improved Convex Adaptive Global RRP,2020-12-31,CLARABEL,optimal,0.008232654930399244,,False
-Improved Convex Adaptive Global RRP,2021-01-29,CLARABEL,optimal,0.0011236496359553943,,False
-Improved Convex Adaptive Global RRP,2021-02-26,CLARABEL,optimal,0.00041991310300753485,,False
-Improved Convex Adaptive Global RRP,2021-03-31,CLARABEL,optimal,0.0011575095420889505,,False
-Improved Convex Adaptive Global RRP,2021-04-30,CLARABEL,optimal,0.0013391373531869716,,False
-Improved Convex Adaptive Global RRP,2021-05-31,CLARABEL,optimal,0.001669143940573285,,False
-Improved Convex Adaptive Global RRP,2021-06-30,CLARABEL,optimal,0.0028249860098457286,,False
-Improved Convex Adaptive Global RRP,2021-07-30,CLARABEL,optimal,0.004135783296279839,,False
-Improved Convex Adaptive Global RRP,2021-08-31,CLARABEL,optimal,0.008091069934319378,,False
-Improved Convex Adaptive Global RRP,2021-09-30,CLARABEL,optimal,0.008246852967790803,,False
-Improved Convex Adaptive Global RRP,2021-10-29,CLARABEL,optimal,0.007970550660528758,,False
-Improved Convex Adaptive Global RRP,2021-11-30,CLARABEL,optimal,0.008766209739282448,,False
-Improved Convex Adaptive Global RRP,2021-12-31,CLARABEL,optimal,0.009193604969512994,,False
-Improved Convex Adaptive Global RRP,2022-01-28,CLARABEL,optimal,0.011504646653011664,,False
-Improved Convex Adaptive Global RRP,2022-02-28,CLARABEL,optimal,0.010258317860540773,,False
-Improved Convex Adaptive Global RRP,2022-03-31,CLARABEL,optimal,0.009077166943826587,,False
-Improved Convex Adaptive Global RRP,2022-04-29,CLARABEL,optimal,0.009421501733686737,,False
-Improved Convex Adaptive Global RRP,2022-05-31,CLARABEL,optimal,0.009925756173197894,,False
-Improved Convex Adaptive Global RRP,2022-06-30,CLARABEL,optimal,0.011061874170765547,,False
-Improved Convex Adaptive Global RRP,2022-07-29,CLARABEL,optimal,0.01086794653122504,,False
-Improved Convex Adaptive Global RRP,2022-08-31,CLARABEL,optimal,0.010338682334893693,,False
-Improved Convex Adaptive Global RRP,2022-09-30,CLARABEL,optimal,0.011607879403309412,,False
-Improved Convex Adaptive Global RRP,2022-10-31,CLARABEL,optimal,0.010689418244943743,,False
-Improved Convex Adaptive Global RRP,2022-11-30,CLARABEL,optimal,0.00730525813376171,,False
-Improved Convex Adaptive Global RRP,2022-12-30,CLARABEL,optimal,0.007274241583891843,,False
-Improved Convex Adaptive Global RRP,2023-01-31,CLARABEL,optimal,0.005971328559943638,,False
-Improved Convex Adaptive Global RRP,2023-02-28,CLARABEL,optimal,0.006298577592697733,,False
-Improved Convex Adaptive Global RRP,2023-03-31,CLARABEL,optimal,0.00728595195483532,,False
-Improved Convex Adaptive Global RRP,2023-04-28,CLARABEL,optimal,0.006666000922104129,,False
-Improved Convex Adaptive Global RRP,2023-05-31,CLARABEL,optimal,0.006576374992111725,,False
-Improved Convex Adaptive Global RRP,2023-06-30,CLARABEL,optimal,0.005549938703638184,,False
-Improved Convex Adaptive Global RRP,2023-07-31,CLARABEL,optimal,0.003522441821291332,,False
-Improved Convex Adaptive Global RRP,2023-08-31,CLARABEL,optimal,0.004353779488765926,,False
-Improved Convex Adaptive Global RRP,2023-09-28,CLARABEL,optimal,0.004440230833309588,,False
-Improved Convex Adaptive Global RRP,2023-10-31,CLARABEL,optimal,0.0040382906034323535,,False
-Improved Convex Adaptive Global RRP,2023-11-30,CLARABEL,optimal,0.004678628973192137,,False
-Improved Convex Adaptive Global RRP,2023-12-29,CLARABEL,optimal,0.005750548736479736,,False
-Improved Convex Adaptive Global RRP,2024-01-31,CLARABEL,optimal,0.006252105270502914,,False
-Improved Convex Adaptive Global RRP,2024-02-29,CLARABEL,optimal,0.004959780455698913,,False
-Improved Convex Adaptive Global RRP,2024-03-29,CLARABEL,optimal,0.003695210246436604,,False
-Improved Convex Adaptive Global RRP,2024-04-30,CLARABEL,optimal,0.0038654827054074915,,False
-Improved Convex Adaptive Global RRP,2024-05-31,CLARABEL,optimal,0.0033163793299009004,,False
-Improved Convex Adaptive Global RRP,2024-06-28,CLARABEL,optimal,0.0042259994758824075,,False
-Improved Convex Adaptive Global RRP,2024-07-31,CLARABEL,optimal,0.006562742388438154,,False
-Improved Convex Adaptive Global RRP,2024-08-30,CLARABEL,optimal,0.00648027460797042,,False
-Improved Convex Adaptive Global RRP,2024-09-30,CLARABEL,optimal,0.006608293993801227,,False
-Improved Convex Adaptive Global RRP,2024-10-31,CLARABEL,optimal,0.005373480012202507,,False
-Improved Convex Adaptive Global RRP,2024-11-29,CLARABEL,optimal,0.005914688299960928,,False
-Improved Convex Adaptive Global RRP,2024-12-31,CLARABEL,optimal,0.005174798733010587,,False
-Improved Convex Adaptive Global RRP,2025-01-27,CLARABEL,optimal,0.004682258071379212,,False
-Improved Convex Adaptive Global RRP,2025-02-28,CLARABEL,optimal,0.0044920409976425945,,False
-Improved Convex Adaptive Global RRP,2025-03-31,CLARABEL,optimal,0.006114024173647021,,False
-Improved Convex Adaptive Global RRP,2025-04-30,CLARABEL,optimal,0.006074756640857661,,False
-Improved Convex Adaptive Global RRP,2025-05-30,CLARABEL,optimal,0.006402394311059868,,False
-Improved Convex Adaptive Global RRP,2025-06-30,CLARABEL,optimal,0.005420774132876577,,False
-Improved Convex Adaptive Global RRP,2025-07-31,CLARABEL,optimal,0.0048704256988197385,,False
-Improved Convex Adaptive Global RRP,2025-08-29,CLARABEL,optimal,0.0031546270297261748,,False
-Improved Convex Adaptive Global RRP,2025-09-30,CLARABEL,optimal,0.0020381313698848743,,False
-Improved Convex Adaptive Global RRP,2025-10-31,CLARABEL,optimal,0.002513673029254329,,False
-Improved Convex Adaptive Global RRP,2025-11-28,CLARABEL,optimal,0.003414704410104873,,False
-Improved Convex Adaptive Global RRP,2025-12-31,CLARABEL,optimal,0.0033053795639228704,,False
-Improved Convex Adaptive Global RRP,2026-01-30,CLARABEL,optimal,0.004888321982974545,,False
-Improved Convex Adaptive Global RRP,2026-02-27,CLARABEL,optimal,0.004822664907935201,,False
-Improved Convex Adaptive Global RRP,2026-03-31,CLARABEL,optimal,0.006024227154622806,,False
-Improved Convex Adaptive Global RRP,2026-04-30,CLARABEL,optimal,0.006149399859607836,,False
+model,date,solver_name,solver_status,objective_value,failure_reason,fallback_used,covariance_method,covariance_annualized,covariance_trading_days,covariance_fallback_used,covariance_fallback_method,covariance_failure_note,covariance_min_eigenvalue,covariance_max_eigenvalue,covariance_condition_number,covariance_point_in_time,covariance_psd_repaired,covariance_jitter_added,covariance_psd_notes,covariance_observations,covariance_assets,covariance_ewma_halflife
+Convex Adaptive Global Relaxed Risk Parity,2018-04-27,CLARABEL,optimal,0.011793310569956457,,False,ewma,True,243,False,,,0.002124815467516152,0.06783711220837811,31.92611934799107,True,False,0.0,symmetrized,69,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-05-31,CLARABEL,optimal,0.005410128712606674,,False,ewma,True,243,False,,,0.0019229912748505026,0.06261969480526886,32.56369159040362,True,False,0.0,symmetrized,91,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-06-29,CLARABEL,optimal,0.008283794265826882,,False,ewma,True,243,False,,,0.0018346348941537505,0.07428646574855521,40.49114403376745,True,False,0.0,symmetrized,111,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-07-31,CLARABEL,optimal,0.005170710669993578,,False,ewma,True,243,False,,,0.0020379009922063505,0.08521055288248708,41.8129012196187,True,False,0.0,symmetrized,132,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-08-31,CLARABEL,optimal,0.005432489021312702,,False,ewma,True,243,False,,,0.002010131575958387,0.08363075576805977,41.604617711746776,True,False,0.0,symmetrized,154,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-09-28,CLARABEL,optimal,0.00486276952133639,,False,ewma,True,243,False,,,0.001778354285228442,0.08352450212233876,46.96730163169341,True,False,0.0,symmetrized,173,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-10-31,CLARABEL,optimal,0.006552552677652643,,False,ewma,True,243,False,,,0.001988460771119207,0.09345784101890095,47.00009292428641,True,False,0.0,symmetrized,185,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-11-30,CLARABEL,optimal,0.005865844948399729,,False,ewma,True,243,False,,,0.0018103462580758808,0.09347210802525732,51.63217125358315,True,False,0.0,symmetrized,206,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2018-12-28,CLARABEL,optimal,0.008276130210552079,,False,ewma,True,243,False,,,0.0018300931345917998,0.10561729828977112,57.71143352949026,True,False,0.0,symmetrized,221,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-01-31,CLARABEL,optimal,0.007118203571148433,,False,ewma,True,243,False,,,0.0017882404786331695,0.10351161215003127,57.88461528907439,True,False,0.0,symmetrized,221,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-02-28,CLARABEL,optimal,0.004778701642192603,,False,ewma,True,243,False,,,0.002009522264960308,0.10699346734259738,53.24323557306328,True,False,0.0,symmetrized,225,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-03-29,CLARABEL,optimal,0.0030520935593606885,,False,ewma,True,243,False,,,0.0022243853586964685,0.10498811078578435,47.19870609439245,True,False,0.0,symmetrized,224,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-04-26,CLARABEL,optimal,0.0018025226624584258,,False,ewma,True,243,False,,,0.002527068112540838,0.10119212409242673,40.043291112831625,True,False,0.0,symmetrized,223,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-05-31,CLARABEL,optimal,0.003216232198840545,,False,ewma,True,243,False,,,0.0024069807582804055,0.10609740886573113,44.07904321658525,True,False,0.0,symmetrized,222,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-06-28,CLARABEL,optimal,0.0007805944529814274,,False,ewma,True,243,False,,,0.002156704508295738,0.10668451609764315,49.46645017306842,True,False,0.0,symmetrized,222,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-07-31,CLARABEL,optimal,0.0031878891006773703,,False,ewma,True,243,False,,,0.001933281710607596,0.09833794961346057,50.86581488558887,True,False,0.0,symmetrized,223,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-08-30,CLARABEL,optimal,0.003858182472455383,,False,ewma,True,243,False,,,0.0019676840798832844,0.10179257425815998,51.73217352259003,True,False,0.0,symmetrized,222,7,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-09-30,CLARABEL,optimal,0.007996706130591672,,False,ewma,True,243,False,,,0.0011776567862792269,0.07984256701149867,67.79782356093662,True,False,0.0,symmetrized,73,8,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-10-31,CLARABEL,optimal,-0.0008767464281768033,,False,ewma,True,243,False,,,0.001236874548772743,0.06768210025597586,54.7202627163213,True,False,0.0,symmetrized,91,8,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-11-29,CLARABEL,optimal,-0.001841043847240824,,False,ewma,True,243,False,,,0.0010797015226466633,0.06219217547971059,57.601266808681935,True,False,0.0,symmetrized,112,8,60.0
+Convex Adaptive Global Relaxed Risk Parity,2019-12-31,CLARABEL,optimal,-0.00040939224492716683,,False,ewma,True,243,False,,,0.0006452609819728686,0.045834865654542555,71.0330655890639,True,False,0.0,symmetrized,64,9,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-01-23,CLARABEL,optimal,0.0036187566285018373,,False,ewma,True,243,False,,,0.0006629812139033351,0.058039766651707875,87.54360671850087,True,False,0.0,symmetrized,62,10,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-02-28,CLARABEL,optimal,0.00019445145712409986,,False,ewma,True,243,False,,,0.001113001488146132,0.1048820762192054,94.23354536021506,True,False,0.0,symmetrized,79,10,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-03-31,CLARABEL,optimal,0.009445891580325909,,False,ewma,True,243,False,,,0.0011919277763351133,0.16179615978244477,135.74325810237298,True,False,0.0,symmetrized,89,10,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-04-30,CLARABEL,optimal,0.007874975637908076,,False,ewma,True,243,False,,,0.001145537890850733,0.16612565276616936,145.01977987196585,True,False,0.0,symmetrized,109,10,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-05-29,CLARABEL,optimal,0.004781786241866367,,False,ewma,True,243,False,,,0.0009575916719524517,0.15980677161050652,166.88404493396803,True,False,0.0,symmetrized,126,10,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-06-30,CLARABEL,optimal,0.012003664565242347,,False,ewma,True,243,False,,,0.0006517362792042624,0.1860078841112143,285.4036057933136,True,False,0.0,symmetrized,61,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-07-31,CLARABEL,optimal,0.00048284326184025624,,False,ewma,True,243,False,,,0.0007802557017387799,0.15785234449010466,202.30847930791757,True,False,0.0,symmetrized,79,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-08-31,CLARABEL,optimal,-0.0009331058833183248,,False,ewma,True,243,False,,,0.0008387699860609918,0.1331211435157264,158.70995115226546,True,False,0.0,symmetrized,99,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-09-30,CLARABEL,optimal,0.0021083621895092346,,False,ewma,True,243,False,,,0.0008505126980388113,0.15479387296966413,182.0006606916061,True,False,0.0,symmetrized,117,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-10-30,CLARABEL,optimal,0.0016248068816858748,,False,ewma,True,243,False,,,0.0009604515679486199,0.14332301133061623,149.22461070757856,True,False,0.0,symmetrized,132,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-11-30,CLARABEL,optimal,-0.0007510419466154675,,False,ewma,True,243,False,,,0.0010844566842078912,0.13643017517162823,125.80509407001308,True,False,0.0,symmetrized,153,11,60.0
+Convex Adaptive Global Relaxed Risk Parity,2020-12-31,CLARABEL,optimal,0.153733468999253,,False,ewma,True,243,False,,,2.1693428935004174e-05,0.0839130875085226,3868.1338833033337,True,False,0.0,symmetrized,58,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-01-29,CLARABEL,optimal,0.07679200076288178,,False,ewma,True,243,False,,,2.2074852807335142e-05,0.10413653444303705,4717.428258839128,True,False,0.0,symmetrized,77,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-02-26,CLARABEL,optimal,0.07333780033479315,,False,ewma,True,243,False,,,2.331464145121627e-05,0.11893942502790883,5101.49063526362,True,False,0.0,symmetrized,90,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-03-31,CLARABEL,optimal,0.08132506252127723,,False,ewma,True,243,False,,,1.895206921638766e-05,0.14552912803044124,7678.7988883347725,True,False,0.0,symmetrized,111,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-04-30,CLARABEL,optimal,0.08270546532766863,,False,ewma,True,243,False,,,1.5777948944806897e-05,0.12399781941817038,7858.931465168837,True,False,0.0,symmetrized,131,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-05-31,CLARABEL,optimal,0.0885073440987667,,False,ewma,True,243,False,,,1.2932151467770464e-05,0.12238714458832181,9463.788364475571,True,False,0.0,symmetrized,149,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-06-30,CLARABEL,optimal,0.09247136891102149,,False,ewma,True,243,False,,,1.0140604424482074e-05,0.10810666414652424,10660.771253982302,True,False,0.0,symmetrized,169,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-07-30,CLARABEL,optimal,0.09703751224364027,,False,ewma,True,243,False,,,8.476768130372434e-06,0.11287098430538266,13315.332278697539,True,False,0.0,symmetrized,188,13,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-08-31,CLARABEL,optimal,0.15507916050244328,,False,ewma,True,243,False,,,1.6245366572123822e-06,0.14882888099118902,91613.12570599139,True,False,0.0,symmetrized,63,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-09-30,CLARABEL,optimal,0.15886075970712338,,False,ewma,True,243,False,,,1.4021852565753175e-06,0.14701672732259682,104848.29064717806,True,False,0.0,symmetrized,82,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-10-29,CLARABEL,optimal,0.15436979109642693,,False,ewma,True,243,False,,,1.993897314970287e-06,0.14849030031161647,74472.39092843117,True,False,0.0,symmetrized,94,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-11-30,CLARABEL,optimal,0.15701654454340166,,False,ewma,True,243,False,,,1.8040763441974571e-06,0.12676025197659446,70263.2415664115,True,False,0.0,symmetrized,116,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2021-12-31,CLARABEL,optimal,0.156422285795766,,False,ewma,True,243,False,,,2.346276397826569e-06,0.1360447754274651,57983.26895905688,True,False,0.0,symmetrized,139,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-01-28,CLARABEL,optimal,0.15577191594993783,,False,ewma,True,243,False,,,2.9759287297141797e-06,0.17651149485926979,59313.07866913287,True,False,0.0,symmetrized,158,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-02-28,CLARABEL,optimal,0.15516427961250473,,False,ewma,True,243,False,,,3.1785402255389415e-06,0.1816571644279401,57151.129618672356,True,False,0.0,symmetrized,170,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-03-31,CLARABEL,optimal,0.15570260090464477,,False,ewma,True,243,False,,,3.036010428502319e-06,0.20440207251459774,67325.87958053571,True,False,0.0,symmetrized,184,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-04-29,CLARABEL,optimal,0.15647719043864206,,False,ewma,True,243,False,,,3.637328189330629e-06,0.2083966190265295,57293.87291414041,True,False,0.0,symmetrized,201,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-05-31,CLARABEL,optimal,0.15757099147495696,,False,ewma,True,243,False,,,3.6364227772381242e-06,0.2613351415384641,71865.99511318347,True,False,0.0,symmetrized,213,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-06-30,CLARABEL,optimal,0.15676599815440578,,False,ewma,True,243,False,,,3.642563925573199e-06,0.26183599879332875,71882.33457073121,True,False,0.0,symmetrized,213,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-07-29,CLARABEL,optimal,0.15597312545960038,,False,ewma,True,243,False,,,3.6827185304193575e-06,0.24139933600572155,65549.22240506743,True,False,0.0,symmetrized,210,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-08-31,CLARABEL,optimal,0.15363116708110153,,False,ewma,True,243,False,,,4.2544265834719505e-06,0.23514229858748276,55270.033216929536,True,False,0.0,symmetrized,208,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-09-30,CLARABEL,optimal,0.15104714680467893,,False,ewma,True,243,False,,,5.38095263340586e-06,0.2221446503887626,41283.517161933596,True,False,0.0,symmetrized,208,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-10-31,CLARABEL,optimal,0.14458255428946146,,False,ewma,True,243,False,,,7.293044702987105e-06,0.24798829913959597,34003.39765338669,True,False,0.0,symmetrized,210,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-11-30,CLARABEL,optimal,0.1252499206913379,,False,ewma,True,243,False,,,1.398231708541781e-05,0.2441824267579586,17463.659654279832,True,False,0.0,symmetrized,206,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2022-12-30,CLARABEL,optimal,0.12020874053198542,,False,ewma,True,243,False,,,1.4169939659167168e-05,0.23665988711441738,16701.545158755245,True,False,0.0,symmetrized,205,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-01-31,CLARABEL,optimal,0.1133855596093738,,False,ewma,True,243,False,,,1.4559608260030555e-05,0.21102694327338956,14493.998705494476,True,False,0.0,symmetrized,205,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-02-28,CLARABEL,optimal,0.11299835039981522,,False,ewma,True,243,False,,,1.2201552179417164e-05,0.20368657802721313,16693.4972724874,True,False,0.0,symmetrized,209,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-03-31,CLARABEL,optimal,0.1124249581033355,,False,ewma,True,243,False,,,1.024087185050561e-05,0.2125904455089127,20759.01823714518,True,False,0.0,symmetrized,218,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-04-28,CLARABEL,optimal,0.1079339277910292,,False,ewma,True,243,False,,,9.6233429871662e-06,0.19006850321042812,19750.77719498366,True,False,0.0,symmetrized,220,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-05-31,CLARABEL,optimal,0.10768823748175939,,False,ewma,True,243,False,,,8.37965266431743e-06,0.1672723597645115,19961.729497070603,True,False,0.0,symmetrized,221,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-06-30,CLARABEL,optimal,0.10537630004053461,,False,ewma,True,243,False,,,7.936913427811353e-06,0.16728777580630358,21077.18287818519,True,False,0.0,symmetrized,224,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-07-31,CLARABEL,optimal,0.09932760137311335,,False,ewma,True,243,False,,,8.840932027184448e-06,0.16089019114571856,18198.32916382651,True,False,0.0,symmetrized,227,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-08-31,CLARABEL,optimal,0.09770923033181658,,False,ewma,True,243,False,,,8.020597794570961e-06,0.16719504922113615,20845.709198173274,True,False,0.0,symmetrized,229,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-09-28,CLARABEL,optimal,0.10036528781236333,,False,ewma,True,243,False,,,6.990524857946111e-06,0.15814375060570718,22622.58611754246,True,False,0.0,symmetrized,229,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-10-31,CLARABEL,optimal,0.09817239663741426,,False,ewma,True,243,False,,,7.226984708258437e-06,0.15999895183633192,22139.10203151496,True,False,0.0,symmetrized,231,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-11-30,CLARABEL,optimal,0.11733087156889278,,False,ewma,True,243,False,,,5.8335509386460355e-06,0.15339395548840193,26295.125747887032,True,False,0.0,symmetrized,234,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2023-12-29,CLARABEL,optimal,0.11983585230934843,,False,ewma,True,243,False,,,5.867318393531239e-06,0.1492588722503411,25439.027207880874,True,False,0.0,symmetrized,234,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-01-31,CLARABEL,optimal,0.12193850153558221,,False,ewma,True,243,False,,,5.836788926880709e-06,0.18213630823497268,31204.881745194405,True,False,0.0,symmetrized,234,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-02-29,CLARABEL,optimal,0.11990570349150129,,False,ewma,True,243,False,,,5.558911375535639e-06,0.18211728037977892,32761.321071111823,True,False,0.0,symmetrized,233,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-03-29,CLARABEL,optimal,0.11997729610884875,,False,ewma,True,243,False,,,4.859737173732772e-06,0.17540477877960234,36093.470183465426,True,False,0.0,symmetrized,234,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-04-30,CLARABEL,optimal,0.11656475896346838,,False,ewma,True,243,False,,,6.863261580862396e-06,0.1731112570689634,25222.884925684455,True,False,0.0,symmetrized,233,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-05-31,CLARABEL,optimal,0.11177112107108986,,False,ewma,True,243,False,,,7.463844547261935e-06,0.1661228628446724,22257.010015785167,True,False,0.0,symmetrized,232,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-06-28,CLARABEL,optimal,0.11828283457118956,,False,ewma,True,243,False,,,6.362808899474098e-06,0.15078330102429138,23697.600133292388,True,False,0.0,symmetrized,232,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-07-31,CLARABEL,optimal,0.12711733429915356,,False,ewma,True,243,False,,,4.999839418547857e-06,0.14003042782431152,28006.98504532805,True,False,0.0,symmetrized,233,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-08-30,CLARABEL,optimal,0.12880826986807165,,False,ewma,True,243,False,,,4.688847326383778e-06,0.1307273500115444,27880.487657585225,True,False,0.0,symmetrized,230,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-09-30,CLARABEL,optimal,0.13080400957973903,,False,ewma,True,243,False,,,4.223032955274487e-06,0.12927218319028225,30611.21818356254,True,False,0.0,symmetrized,228,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-10-31,CLARABEL,optimal,0.1309486134726556,,False,ewma,True,243,False,,,4.241780330640737e-06,0.1354512117675825,31932.632340515876,True,False,0.0,symmetrized,222,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-11-29,CLARABEL,optimal,0.13836752715608516,,False,ewma,True,243,False,,,3.515110179093121e-06,0.1641682765667014,46703.593401745355,True,False,0.0,symmetrized,222,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2024-12-31,CLARABEL,optimal,0.14236536010831477,,False,ewma,True,243,False,,,2.9781806577983753e-06,0.15189113672506,51001.31730670286,True,False,0.0,symmetrized,223,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-01-27,CLARABEL,optimal,0.1347768023832592,,False,ewma,True,243,False,,,4.9775098531287925e-06,0.15246499128501717,30630.776388956783,True,False,0.0,symmetrized,223,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-02-28,CLARABEL,optimal,0.13191467772950471,,False,ewma,True,243,False,,,5.761268684569175e-06,0.159241560505453,27640.016326952646,True,False,0.0,symmetrized,222,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-03-31,CLARABEL,optimal,0.1332104017183411,,False,ewma,True,243,False,,,5.776890566616855e-06,0.1894731844963778,32798.47217312614,True,False,0.0,symmetrized,222,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-04-30,CLARABEL,optimal,0.14437317950547587,,False,ewma,True,243,False,,,4.672846458133691e-06,0.1757753142378882,37616.32568344475,True,False,0.0,symmetrized,219,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-05-30,CLARABEL,optimal,0.1414851968406745,,False,ewma,True,243,False,,,4.304036731207263e-06,0.16514394554133033,38369.54836930682,True,False,0.0,symmetrized,217,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-06-30,CLARABEL,optimal,0.1398420521433866,,False,ewma,True,243,False,,,3.544311628376585e-06,0.15662696128674092,44191.08072573217,True,False,0.0,symmetrized,218,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-07-31,CLARABEL,optimal,0.13451254630221757,,False,ewma,True,243,False,,,3.0690094311749735e-06,0.12827621400943087,41797.269407647334,True,False,0.0,symmetrized,217,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-08-29,CLARABEL,optimal,0.13326125320074206,,False,ewma,True,243,False,,,3.2376230283850885e-06,0.12829451225419472,39626.14273786761,True,False,0.0,symmetrized,217,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-09-30,CLARABEL,optimal,0.13348756576416612,,False,ewma,True,243,False,,,2.8705209776747435e-06,0.125479401421356,43713.11075489864,True,False,0.0,symmetrized,223,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-10-31,CLARABEL,optimal,0.13265437548589878,,False,ewma,True,243,False,,,3.2049391044950806e-06,0.15324201304428534,47814.32908642666,True,False,0.0,symmetrized,219,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-11-28,CLARABEL,optimal,0.1321155517302711,,False,ewma,True,243,False,,,2.8736053602812466e-06,0.16496557613034357,57407.17859539279,True,False,0.0,symmetrized,217,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2025-12-31,CLARABEL,optimal,0.13287042709631652,,False,ewma,True,243,False,,,2.256821747752365e-06,0.15617237388127644,69200.13689021434,True,False,0.0,symmetrized,217,14,60.0
+Convex Adaptive Global Relaxed Risk Parity,2026-01-30,CLARABEL,optimal,0.15305609470761394,,False,ewma,True,243,False,,,9.620244869318393e-07,0.21667804127577492,225231.31606225617,True,False,0.0,symmetrized,68,15,60.0
+Convex Adaptive Global Relaxed Risk Parity,2026-02-27,CLARABEL,optimal,0.14963792480279312,,False,ewma,True,243,False,,,1.199267323080812e-06,0.2010075245685402,167608.6062715105,True,False,0.0,symmetrized,74,15,60.0
+Convex Adaptive Global Relaxed Risk Parity,2026-03-31,CLARABEL,optimal,0.1543024040696776,,False,ewma,True,243,False,,,1.0661815031385098e-06,0.2037169008506844,191071.50166365167,True,False,0.0,symmetrized,88,15,60.0
+Convex Adaptive Global Relaxed Risk Parity,2026-04-30,CLARABEL,optimal,0.154385297954252,,False,ewma,True,243,False,,,1.240611237218531e-06,0.20300229873074765,163630.87213838386,True,False,0.0,symmetrized,107,15,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-04-27,CLARABEL,optimal,0.011665757690681974,,False,ewma,True,243,False,,,0.002124815467516152,0.06783711220837811,31.92611934799107,True,False,0.0,symmetrized,69,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-05-31,CLARABEL,optimal,0.007036479820017127,,False,ewma,True,243,False,,,0.0019229912748505026,0.06261969480526886,32.56369159040362,True,False,0.0,symmetrized,91,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-06-29,CLARABEL,optimal,0.010288697640134816,,False,ewma,True,243,False,,,0.0018346348941537505,0.07428646574855521,40.49114403376745,True,False,0.0,symmetrized,111,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-07-31,CLARABEL,optimal,0.006550582592026993,,False,ewma,True,243,False,,,0.0020379009922063505,0.08521055288248708,41.8129012196187,True,False,0.0,symmetrized,132,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-08-31,CLARABEL,optimal,0.006675149830902813,,False,ewma,True,243,False,,,0.002010131575958387,0.08363075576805977,41.604617711746776,True,False,0.0,symmetrized,154,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-09-28,CLARABEL,optimal,0.0062794876377009765,,False,ewma,True,243,False,,,0.001778354285228442,0.08352450212233876,46.96730163169341,True,False,0.0,symmetrized,173,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-10-31,CLARABEL,optimal,0.008749615646941149,,False,ewma,True,243,False,,,0.001988460771119207,0.09345784101890095,47.00009292428641,True,False,0.0,symmetrized,185,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-11-30,CLARABEL,optimal,0.007739111573626899,,False,ewma,True,243,False,,,0.0018103462580758808,0.09347210802525732,51.63217125358315,True,False,0.0,symmetrized,206,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2018-12-28,CLARABEL,optimal,0.010108375146953308,,False,ewma,True,243,False,,,0.0018283633775256305,0.10555000484127777,57.729227208718875,True,False,0.0,symmetrized,222,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-01-31,CLARABEL,optimal,0.008528533447944454,,False,ewma,True,243,False,,,0.0017980370848465978,0.10296183830643363,57.26346757481811,True,False,0.0,symmetrized,233,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-02-28,CLARABEL,optimal,0.005903403885247992,,False,ewma,True,243,False,,,0.002030701346614768,0.10695342757014828,52.668221128844195,True,False,0.0,symmetrized,234,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-03-29,CLARABEL,optimal,0.00625408029070232,,False,ewma,True,243,False,,,0.0022512340281984813,0.1045084452793004,46.42273702789213,True,False,0.0,symmetrized,235,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-04-26,CLARABEL,optimal,0.003883969534896708,,False,ewma,True,243,False,,,0.002550732616998239,0.10081686299712528,39.52466923631098,True,False,0.0,symmetrized,235,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-05-31,CLARABEL,optimal,0.005203971814416867,,False,ewma,True,243,False,,,0.0023973177697401886,0.10561144021898433,44.054001331008386,True,False,0.0,symmetrized,234,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-06-28,CLARABEL,optimal,0.002579496390289234,,False,ewma,True,243,False,,,0.002157371027236112,0.10663810400943102,49.429654270479865,True,False,0.0,symmetrized,234,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-07-31,CLARABEL,optimal,0.001334503568402152,,False,ewma,True,243,False,,,0.001959899384735228,0.09793991384012299,49.97190906989042,True,False,0.0,symmetrized,235,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-08-30,CLARABEL,optimal,0.0025531034307648194,,False,ewma,True,243,False,,,0.001958369578246756,0.10125953523265083,51.70603973704704,True,False,0.0,symmetrized,233,7,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-09-30,CLARABEL,optimal,0.005608843320950826,,False,ewma,True,243,False,,,0.0011776567862792269,0.07984256701149867,67.79782356093662,True,False,0.0,symmetrized,73,8,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-10-31,CLARABEL,optimal,0.002783799864065036,,False,ewma,True,243,False,,,0.001236874548772743,0.06768210025597586,54.7202627163213,True,False,0.0,symmetrized,91,8,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-11-29,CLARABEL,optimal,0.0013134705129874335,,False,ewma,True,243,False,,,0.0010797015226466633,0.06219217547971059,57.601266808681935,True,False,0.0,symmetrized,112,8,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2019-12-31,CLARABEL,optimal,0.00047402443151782405,,False,ewma,True,243,False,,,0.0006452609819728686,0.045834865654542555,71.0330655890639,True,False,0.0,symmetrized,64,9,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-01-23,CLARABEL,optimal,0.0016018778871210951,,False,ewma,True,243,False,,,0.0006629812139033351,0.058039766651707875,87.54360671850087,True,False,0.0,symmetrized,62,10,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-02-28,CLARABEL,optimal,0.002368342150088621,,False,ewma,True,243,False,,,0.001113001488146132,0.1048820762192054,94.23354536021506,True,False,0.0,symmetrized,79,10,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-03-31,CLARABEL,optimal,0.010703090759135891,,False,ewma,True,243,False,,,0.0011919277763351133,0.16179615978244477,135.74325810237298,True,False,0.0,symmetrized,89,10,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-04-30,CLARABEL,optimal,0.008458223783653037,,False,ewma,True,243,False,,,0.001145537890850733,0.16612565276616936,145.01977987196585,True,False,0.0,symmetrized,109,10,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-05-29,CLARABEL,optimal,0.0066958967226342534,,False,ewma,True,243,False,,,0.0009575916719524517,0.15980677161050652,166.88404493396803,True,False,0.0,symmetrized,126,10,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-06-30,CLARABEL,optimal,0.008786203442588045,,False,ewma,True,243,False,,,0.0006517362792042624,0.1860078841112143,285.4036057933136,True,False,0.0,symmetrized,61,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-07-31,CLARABEL,optimal,0.0023334027294453176,,False,ewma,True,243,False,,,0.0007802557017387799,0.15785234449010466,202.30847930791757,True,False,0.0,symmetrized,79,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-08-31,CLARABEL,optimal,9.007163635677234e-05,,False,ewma,True,243,False,,,0.0008387699860609918,0.1331211435157264,158.70995115226546,True,False,0.0,symmetrized,99,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-09-30,CLARABEL,optimal,0.0043379455785062405,,False,ewma,True,243,False,,,0.0008505126980388113,0.15479387296966413,182.0006606916061,True,False,0.0,symmetrized,117,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-10-30,CLARABEL,optimal,0.0035138171755472636,,False,ewma,True,243,False,,,0.0009604515679486199,0.14332301133061623,149.22461070757856,True,False,0.0,symmetrized,132,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-11-30,CLARABEL,optimal,0.0012705081913800182,,False,ewma,True,243,False,,,0.0010844566842078912,0.13643017517162823,125.80509407001308,True,False,0.0,symmetrized,153,11,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2020-12-31,CLARABEL,optimal,0.020427030953574298,,False,ewma,True,243,False,,,2.1693428935004174e-05,0.0839130875085226,3868.1338833033337,True,False,0.0,symmetrized,58,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-01-29,CLARABEL,optimal,0.0057745030519137696,,False,ewma,True,243,False,,,2.2074852807335142e-05,0.10413653444303705,4717.428258839128,True,False,0.0,symmetrized,77,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-02-26,CLARABEL,optimal,0.004775041035282045,,False,ewma,True,243,False,,,2.331464145121627e-05,0.11893942502790883,5101.49063526362,True,False,0.0,symmetrized,90,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-03-31,CLARABEL,optimal,0.005037662795510053,,False,ewma,True,243,False,,,1.895206921638766e-05,0.14552912803044124,7678.7988883347725,True,False,0.0,symmetrized,111,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-04-30,CLARABEL,optimal,0.005129127422994646,,False,ewma,True,243,False,,,1.5777948944806897e-05,0.12399781941817038,7858.931465168837,True,False,0.0,symmetrized,131,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-05-31,CLARABEL,optimal,0.006241003947050776,,False,ewma,True,243,False,,,1.2932151467770464e-05,0.12238714458832181,9463.788364475571,True,False,0.0,symmetrized,149,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-06-30,CLARABEL,optimal,0.00714234300826205,,False,ewma,True,243,False,,,1.0140604424482074e-05,0.10810666414652424,10660.771253982302,True,False,0.0,symmetrized,169,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-07-30,CLARABEL,optimal,0.00870828965998836,,False,ewma,True,243,False,,,8.476768130372434e-06,0.11287098430538266,13315.332278697539,True,False,0.0,symmetrized,188,13,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-08-31,CLARABEL,optimal,0.01745003965919755,,False,ewma,True,243,False,,,1.6245366572123822e-06,0.14882888099118902,91613.12570599139,True,False,0.0,symmetrized,63,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-09-30,CLARABEL,optimal,0.01851557509937926,,False,ewma,True,243,False,,,1.4021852565753175e-06,0.14701672732259682,104848.29064717806,True,False,0.0,symmetrized,82,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-10-29,CLARABEL,optimal,0.017782969730919994,,False,ewma,True,243,False,,,1.993897314970287e-06,0.14849030031161647,74472.39092843117,True,False,0.0,symmetrized,94,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-11-30,CLARABEL,optimal,0.018154609508468134,,False,ewma,True,243,False,,,1.8040763441974571e-06,0.12676025197659446,70263.2415664115,True,False,0.0,symmetrized,116,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2021-12-31,CLARABEL,optimal,0.018357289619485698,,False,ewma,True,243,False,,,2.346276397826569e-06,0.1360447754274651,57983.26895905688,True,False,0.0,symmetrized,139,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-01-28,CLARABEL,optimal,0.020506584825889122,,False,ewma,True,243,False,,,2.9759287297141797e-06,0.17651149485926979,59313.07866913287,True,False,0.0,symmetrized,158,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-02-28,CLARABEL,optimal,0.019784920903500914,,False,ewma,True,243,False,,,3.1785402255389415e-06,0.1816571644279401,57151.129618672356,True,False,0.0,symmetrized,170,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-03-31,CLARABEL,optimal,0.01914475885954302,,False,ewma,True,243,False,,,3.036010428502319e-06,0.20440207251459774,67325.87958053571,True,False,0.0,symmetrized,184,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-04-29,CLARABEL,optimal,0.01981177045827188,,False,ewma,True,243,False,,,3.637328189330629e-06,0.2083966190265295,57293.87291414041,True,False,0.0,symmetrized,201,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-05-31,CLARABEL,optimal,0.020339625575652616,,False,ewma,True,243,False,,,3.6243384918753397e-06,0.26031254139281224,71823.4629509229,True,False,0.0,symmetrized,218,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-06-30,CLARABEL,optimal,0.021063309085059753,,False,ewma,True,243,False,,,3.6128212239259963e-06,0.2603266849048209,72056.34288815652,True,False,0.0,symmetrized,223,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-07-29,CLARABEL,optimal,0.0213019892533189,,False,ewma,True,243,False,,,3.6607079245819518e-06,0.24074318140837717,65764.10529552688,True,False,0.0,symmetrized,220,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-08-31,CLARABEL,optimal,0.02095394782110605,,False,ewma,True,243,False,,,4.218778696265153e-06,0.2351459851190582,55737.92845005851,True,False,0.0,symmetrized,220,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-09-30,CLARABEL,optimal,0.02216476048158785,,False,ewma,True,243,False,,,5.434551420027366e-06,0.2212136019537776,40705.034299346764,True,False,0.0,symmetrized,218,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-10-31,CLARABEL,optimal,0.021529354753865346,,False,ewma,True,243,False,,,7.234709553414446e-06,0.24644532914274864,34064.30172810986,True,False,0.0,symmetrized,220,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-11-30,CLARABEL,optimal,0.017250418392911922,,False,ewma,True,243,False,,,1.3843913001959094e-05,0.24228069338732777,17500.882398859478,True,False,0.0,symmetrized,218,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2022-12-30,CLARABEL,optimal,0.016445812126530346,,False,ewma,True,243,False,,,1.4122260477022895e-05,0.2354544899008557,16672.57803975102,True,False,0.0,symmetrized,217,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-01-31,CLARABEL,optimal,0.014344748712563212,,False,ewma,True,243,False,,,1.4438765238563264e-05,0.21178130470047957,14667.54955852118,True,False,0.0,symmetrized,217,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-02-28,CLARABEL,optimal,0.01439907843790313,,False,ewma,True,243,False,,,1.214052333071932e-05,0.2039920914629196,16802.578101946878,True,False,0.0,symmetrized,219,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-03-31,CLARABEL,optimal,0.013809881865663773,,False,ewma,True,243,False,,,1.0189409841908477e-05,0.21364279883300907,20967.141585993344,True,False,0.0,symmetrized,227,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-04-28,CLARABEL,optimal,0.01353191610429612,,False,ewma,True,243,False,,,9.562346891572797e-06,0.19098327982288574,19972.427479199425,True,False,0.0,symmetrized,230,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-05-31,CLARABEL,optimal,0.01266360385729515,,False,ewma,True,243,False,,,8.328143031792077e-06,0.16919401021920413,20315.934725582687,True,False,0.0,symmetrized,232,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-06-30,CLARABEL,optimal,0.01169115503573122,,False,ewma,True,243,False,,,7.957970548830204e-06,0.16811538547931357,21125.409355030344,True,False,0.0,symmetrized,233,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-07-31,CLARABEL,optimal,0.00925210428890795,,False,ewma,True,243,False,,,8.786738740549124e-06,0.1612461532905552,18351.080879010882,True,False,0.0,symmetrized,237,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-08-31,CLARABEL,optimal,0.01045521483397616,,False,ewma,True,243,False,,,8.007135018547927e-06,0.16707175625542703,20865.36019043239,True,False,0.0,symmetrized,240,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-09-28,CLARABEL,optimal,0.009877271394731721,,False,ewma,True,243,False,,,7.239979747814182e-06,0.1589678095508607,21956.941191562666,True,False,0.0,symmetrized,241,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-10-31,CLARABEL,optimal,0.010062451880399647,,False,ewma,True,243,False,,,7.1860152227119785e-06,0.16108222068849326,22416.07006055038,True,False,0.0,symmetrized,241,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-11-30,CLARABEL,optimal,0.010658302699019222,,False,ewma,True,243,False,,,6.372139509423268e-06,0.15431619838412286,24217.32891376852,True,False,0.0,symmetrized,246,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2023-12-29,CLARABEL,optimal,0.012688688870449988,,False,ewma,True,243,False,,,5.982893991398643e-06,0.14935654007448576,24963.92887609398,True,False,0.0,symmetrized,246,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-01-31,CLARABEL,optimal,0.01407937119867756,,False,ewma,True,243,False,,,5.838042208912846e-06,0.18245844952197124,31253.362513106676,True,False,0.0,symmetrized,246,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-02-29,CLARABEL,optimal,0.013635989392929645,,False,ewma,True,243,False,,,5.5479707939466266e-06,0.18183992642858962,32775.93433386394,True,False,0.0,symmetrized,245,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-03-29,CLARABEL,optimal,0.012043143634386506,,False,ewma,True,243,False,,,4.904419881338817e-06,0.17545788653601055,35775.46188563972,True,False,0.0,symmetrized,245,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-04-30,CLARABEL,optimal,0.011740433084408466,,False,ewma,True,243,False,,,6.83492280441086e-06,0.1732724601122833,25351.048588356167,True,False,0.0,symmetrized,245,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-05-31,CLARABEL,optimal,0.010955033032088527,,False,ewma,True,243,False,,,7.4246967422317386e-06,0.16540590794467133,22277.799846536644,True,False,0.0,symmetrized,244,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-06-28,CLARABEL,optimal,0.011724890936335178,,False,ewma,True,243,False,,,6.4489889712781e-06,0.1507586310372575,23377.09549647117,True,False,0.0,symmetrized,243,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-07-31,CLARABEL,optimal,0.014887206376161252,,False,ewma,True,243,False,,,4.98341624477012e-06,0.14026839923040357,28147.036559029,True,False,0.0,symmetrized,245,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-08-30,CLARABEL,optimal,0.014738556057512326,,False,ewma,True,243,False,,,4.684455366873119e-06,0.13181366623492616,28138.525380574174,True,False,0.0,symmetrized,242,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-09-30,CLARABEL,optimal,0.014640888539935741,,False,ewma,True,243,False,,,4.28970647693599e-06,0.1292348651825382,30126.738479050164,True,False,0.0,symmetrized,240,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-10-31,CLARABEL,optimal,0.014132998487140145,,False,ewma,True,243,False,,,4.249951470579019e-06,0.13554439139035573,31893.16215224664,True,False,0.0,symmetrized,234,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-11-29,CLARABEL,optimal,0.014996778662970086,,False,ewma,True,243,False,,,3.5994011444869187e-06,0.1633323595002715,45377.64837643677,True,False,0.0,symmetrized,234,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2024-12-31,CLARABEL,optimal,0.014664851807953261,,False,ewma,True,243,False,,,3.1265467302154517e-06,0.15161801861805527,48493.76379146817,True,False,0.0,symmetrized,234,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-01-27,CLARABEL,optimal,0.0140798219178645,,False,ewma,True,243,False,,,4.956036834023819e-06,0.15508245729320258,31291.62725921283,True,False,0.0,symmetrized,235,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-02-28,CLARABEL,optimal,0.012852242453818961,,False,ewma,True,243,False,,,5.786937985643362e-06,0.1595714156223615,27574.412585418635,True,False,0.0,symmetrized,233,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-03-31,CLARABEL,optimal,0.014914629211418036,,False,ewma,True,243,False,,,5.7784145666034925e-06,0.1890036747212774,32708.569546676244,True,False,0.0,symmetrized,234,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-04-30,CLARABEL,optimal,0.014855157124332797,,False,ewma,True,243,False,,,5.006731020437487e-06,0.17620945226857987,35194.51145853302,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-05-30,CLARABEL,optimal,0.016179662816144077,,False,ewma,True,243,False,,,4.262801618621991e-06,0.16516015385141802,38744.50857152679,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-06-30,CLARABEL,optimal,0.015111815945509668,,False,ewma,True,243,False,,,3.5272048496390783e-06,0.15616682289653697,44274.951286857286,True,False,0.0,symmetrized,230,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-07-31,CLARABEL,optimal,0.014295435041141405,,False,ewma,True,243,False,,,3.045265061608294e-06,0.12909757146514586,42392.88497171594,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-08-29,CLARABEL,optimal,0.011972679358260472,,False,ewma,True,243,False,,,3.2330408778958785e-06,0.12786403678621616,39549.15561396563,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-09-30,CLARABEL,optimal,0.011387350101862467,,False,ewma,True,243,False,,,2.8805397703114e-06,0.12521140295843652,43468.03479297235,True,False,0.0,symmetrized,228,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-10-31,CLARABEL,optimal,0.01154642989369036,,False,ewma,True,243,False,,,3.1990532681133024e-06,0.1525598179802325,47689.05210203246,True,False,0.0,symmetrized,230,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-11-28,CLARABEL,optimal,0.012172994039138098,,False,ewma,True,243,False,,,2.858440780724414e-06,0.16502523703637426,57732.60658370258,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2025-12-31,CLARABEL,optimal,0.012164004619250093,,False,ewma,True,243,False,,,2.2733240364357466e-06,0.1554790575444255,68392.82700243423,True,False,0.0,symmetrized,229,14,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2026-01-30,CLARABEL,optimal,0.014173222783987034,,False,ewma,True,243,False,,,9.620244869318393e-07,0.21667804127577492,225231.31606225617,True,False,0.0,symmetrized,68,15,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2026-02-27,CLARABEL,optimal,0.014337670131151933,,False,ewma,True,243,False,,,1.199267323080812e-06,0.2010075245685402,167608.6062715105,True,False,0.0,symmetrized,74,15,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2026-03-31,CLARABEL,optimal,0.015825542014635707,,False,ewma,True,243,False,,,1.0661815031385098e-06,0.2037169008506844,191071.50166365167,True,False,0.0,symmetrized,88,15,60.0
+Improved Convex Adaptive Global Relaxed Risk Parity,2026-04-30,CLARABEL,optimal,0.015476099276030768,,False,ewma,True,243,False,,,1.240611237218531e-06,0.20300229873074765,163630.87213838386,True,False,0.0,symmetrized,107,15,60.0
