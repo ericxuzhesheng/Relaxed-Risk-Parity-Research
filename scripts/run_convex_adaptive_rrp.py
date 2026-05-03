@@ -21,7 +21,7 @@ from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.metrics import calculate_metrics
 from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
-from src.visualization import plot_drawdown_comparison, plot_nav_comparison
+from src.visualization import plot_drawdown_comparison, plot_metric_comparison, plot_nav_comparison
 
 
 BASE_CONVEX_MODEL_NAME = "Convex Adaptive Global Relaxed Risk Parity"
@@ -495,6 +495,8 @@ def main() -> None:
     plot_nav_comparison(nav_dict, f"Convex Adaptive RRP NAV since {eval_start_date}", resolve_path("results/figures/convex_adaptive_nav_comparison.png"))
     plot_drawdown_comparison(nav_dict, f"Convex Adaptive RRP Drawdown since {eval_start_date}", resolve_path("results/figures/convex_adaptive_drawdown_comparison.png"))
     plot_transaction_cost(tc_summary, resolve_path("results/figures/convex_adaptive_transaction_cost_comparison.png"))
+    plot_metric_comparison(summary_public, "avg_monthly_turnover", "Core Model Average Monthly Turnover", resolve_path("results/figures/convex_adaptive_turnover_comparison.png"), ylabel="Average monthly turnover")
+    plot_metric_comparison(summary_public, "cvar_95_daily_loss", "Core Model CVaR Comparison", resolve_path("results/figures/convex_adaptive_cvar_comparison.png"), ylabel="95% daily CVaR")
     plot_feature_timeline(graph_diag_df, ["correlation_stress_score", "avg_abs_corr", "largest_cluster_size_ratio"], "Asset Graph Stress Timeline", resolve_path("results/figures/asset_graph_stress_timeline.png"))
 
     baseline_metrics = summary.set_index("model").loc[BASE_CONVEX_MODEL_NAME].to_dict()

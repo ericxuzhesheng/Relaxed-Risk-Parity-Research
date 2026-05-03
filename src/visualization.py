@@ -27,6 +27,21 @@ def plot_drawdown_comparison(nav_dict: dict, title: str, save_path: str):
     plt.savefig(save_path)
     plt.close()
 
+
+def plot_metric_comparison(summary: pd.DataFrame, metric_col: str, title: str, save_path: str, ylabel: str | None = None):
+    if metric_col not in summary.columns:
+        raise ValueError(f"Missing metric column: {metric_col}")
+    plot_df = summary.set_index("model")[[metric_col]].copy()
+    ax = plot_df.plot(kind="bar", figsize=(12, 6), legend=False)
+    ax.set_title(title)
+    if ylabel is not None:
+        ax.set_ylabel(ylabel)
+    ax.grid(axis="y", alpha=0.3)
+    plt.xticks(rotation=25, ha="right")
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.close()
+
 def plot_weights(weights_df: pd.DataFrame, title: str, save_path: str):
     plt.figure(figsize=(12, 6))
     weights_df.plot.area(stacked=True, ax=plt.gca())

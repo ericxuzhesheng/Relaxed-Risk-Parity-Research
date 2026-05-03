@@ -9,7 +9,12 @@ expected_output,True,0,present,results\tables\robustness_overall_summary.csv
 expected_output,True,0,present,results\tables\robustness_block_bootstrap_summary.csv
 expected_output,True,0,present,results\tables\robustness_overfitting_diagnostic.csv
 expected_output,True,0,present,results\tables\asset_pricing_factor_exposure_summary.csv
+expected_output,True,1,missing,results\tables\extended_sample_robustness_summary.csv
+expected_output,True,1,missing,results\tables\cvar_sensitivity_summary.csv
+expected_output,True,1,missing,results\tables\cscv_pbo_enhanced_summary.csv
+expected_output,True,1,missing,results\tables\holdout_validation_summary.csv
 expected_output,True,0,present,report\methodology_notes.md
+expected_output,True,0,present,docs\MODEL_GOVERNANCE.md
 expected_output,True,0,present,report\asset_pricing_interpretation.md
 expected_output,True,0,present,report\insurance_allocation_perspective.md
 expected_output,True,0,present,report\thesis_figures_and_tables.md

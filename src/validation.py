@@ -136,6 +136,32 @@ def generate_frozen_oos_split(
     }
 
 
+def generate_retrospective_holdout_splits(
+    returns: pd.DataFrame,
+    holdout_starts: Iterable[str | pd.Timestamp],
+) -> list[dict[str, pd.Timestamp]]:
+    data = ensure_datetime_index(returns)
+    splits = []
+    for i, holdout_start in enumerate(holdout_starts, start=1):
+        requested = pd.Timestamp(holdout_start)
+        test_start = next_trading_day(data.index, requested, inclusive=True)
+        train = data[data.index < test_start]
+        test = data[data.index >= test_start]
+        if train.empty or test.empty:
+            raise ValueError("Retrospective holdout split requires non-empty pre-holdout and holdout periods.")
+        splits.append(
+            {
+                "split_id": f"holdout_{i:02d}",
+                "train_start": pd.Timestamp(train.index.min()),
+                "train_end": pd.Timestamp(train.index.max()),
+                "test_start": pd.Timestamp(test.index.min()),
+                "test_end": pd.Timestamp(test.index.max()),
+                "requested_holdout_start": requested,
+            }
+        )
+    return splits
+
+
 def generate_cscv_splits(
     returns: pd.DataFrame,
     num_blocks: int = 8,

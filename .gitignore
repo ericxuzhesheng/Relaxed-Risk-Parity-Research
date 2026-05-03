@@ -26,6 +26,8 @@ results/quick/
 !results/figures/convex_adaptive_drawdown_comparison.png
 !results/figures/convex_adaptive_nav_comparison.png
 !results/figures/convex_adaptive_transaction_cost_comparison.png
+!results/figures/convex_adaptive_turnover_comparison.png
+!results/figures/convex_adaptive_cvar_comparison.png
 !results/figures/online_regime_timeline.png
 !results/figures/robustness_subperiod_sharpe.png
 !results/figures/robustness_subperiod_drawdown.png
@@ -96,6 +98,14 @@ results/quick/
 !results/tables/full_pipeline_checklist.csv
 !results/tables/covariance_robustness_summary.csv
 !results/tables/covariance_estimator_diagnostics.csv
+!results/tables/extended_sample_robustness_summary.csv
+!results/tables/extended_sample_robustness_universe_timeline.csv
+!results/tables/cvar_sensitivity.csv
+!results/tables/cvar_sensitivity_summary.csv
+!results/tables/cscv_pbo_enhanced_results.csv
+!results/tables/cscv_pbo_enhanced_summary.csv
+!results/tables/holdout_validation.csv
+!results/tables/holdout_validation_summary.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*
