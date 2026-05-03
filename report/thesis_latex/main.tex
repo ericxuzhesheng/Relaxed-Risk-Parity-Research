@@ -1,7 +1,7 @@
 \documentclass{thesisSWUFE}
 
 % 封面信息。
-\covertitle{宽松风险平价在多资产配置中的改进与实证研究}
+\covertitle{宽松风险平价在多资产配置中的改进研究}
 \covercollege{特拉华数据科学学院}
 \covermajor{金融数学（金融服务与量化分析方向）}
 \coverauthor{许哲圣}
@@ -15,7 +15,7 @@
 \graphicspath{{../../results/figures/}}
 
 \hypersetup{
-  pdftitle={宽松风险平价在多资产配置中的改进与实证研究},
+  pdftitle={宽松风险平价在多资产配置中的改进研究},
   pdfauthor={Relaxed Risk Parity Research},
   pdfkeywords={宽松风险平价, 全球多资产配置, CVaR, ETF}
 }
@@ -57,7 +57,7 @@
 
 本文围绕宽松风险平价思想展开本科金融数学实证研究。研究对象包括 Standard Risk Parity、Local Relaxed Risk Parity、Global RRP、Defensive Dynamic RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP，以及作为对照的 HRP Benchmark 和 HERC Benchmark。本文不重写已有模型线，而是在可交易 ETF 资产池、滚动估计、月度调仓、交易成本扣减和无前视设计下，对模型定义、实证结果和稳健性验证进行系统整理。ETF 资产池覆盖短久期信用、可转债、中国权益、港股、全球权益和商品等主要风险来源；部分原始指数或连续期货序列被替换为可交易 ETF，以保持回测与可实施组合构建的一致性。
 
-根据 2026 年 5 月 3 日重新运行脚本后的结果，本文主绩效评价区间自 2021-01-01 开始。Global RRP 的净年化收益为 4.97\%，夏普比率为 0.71，最大回撤为 -4.71\%，是本文主要收益效率展示模型。Improved Convex Adaptive Global RRP 的净年化收益为 6.47\%，夏普比率为 0.96，最大回撤为 -3.51\%，平均月度换手率为 0.21\%，体现了低换手、CVaR-aware 和可实施约束下的改进效果。HRP Benchmark 与 HERC Benchmark 的净年化收益分别为 6.19\% 和 6.95\%，夏普比率分别为 0.95 和 1.05，是具有竞争力的层次化 benchmark，而不是被否定的失败模型。
+本文主绩效评价区间自 2021-01-01 开始。Global RRP 的净年化收益为 4.97\%，夏普比率为 0.71，最大回撤为 -4.71\%，是本文主要收益效率展示模型。Improved Convex Adaptive Global RRP 的净年化收益为 6.47\%，夏普比率为 0.96，最大回撤为 -3.51\%，平均月度换手率为 0.21\%，体现了低换手、CVaR-aware 和可实施约束下的改进效果。HRP Benchmark 与 HERC Benchmark 的净年化收益分别为 6.19\% 和 6.95\%，夏普比率分别为 0.95 和 1.05，是具有竞争力的层次化 benchmark，而不是被否定的失败模型。
 
 在主结果之外，本文加入了延长样本稳健性、CVaR 参数敏感性、增强版 CSCV/PBO、回顾性 holdout 切片、Walk-Forward、Nested Validation、Frozen OOS、Block Bootstrap 和无前视审计等验证层，对候选选择、样本依赖和参数依赖风险进行分层诊断。现有验证能够提升透明度，但仍不能把样本内与条件性样本外证据解释为未来收益保证。
 
