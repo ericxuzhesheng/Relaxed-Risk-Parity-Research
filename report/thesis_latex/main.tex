@@ -41,6 +41,38 @@
   }
 }
 
+% 重定义封面：论文题目单独一行，避免长标题与标签重叠
+\makeatletter
+\renewcommand{\makecover}{%
+    \begin{titlepage}
+        \centering
+        \vspace*{1cm}
+        \includegraphics[width=10cm]{swufe/swufe_title.pdf}
+        \vspace{0.6cm}
+        {\hwzhongsong\bfseries\fontsize{36pt}{36pt}\selectfont 本科毕业论文（设计）}
+        \vspace{1.2cm}
+        \includegraphics[width=3.2cm]{swufe/swufe_logo.pdf}
+        \vspace{0.6cm}
+        {\fangsong\zihao{3}\linespread{1.85}\selectfont
+            \bfseries\makebox[4.2em][s]{论文题目}：\par
+            \vspace{0.15cm}
+            \rlap{\rule[-0.5ex]{\coverfieldwidth}{1pt}}\makebox[\coverfieldwidth][c]{\cover@title}\par
+            \vspace{0.5cm}
+            \coverfield{4.2em}{所在学院}{\cover@college}\par
+            \coverfield{4.2em}{专\hfill 业}{\cover@major}\par
+            \coverfield{4.2em}{学生姓名}{\cover@author}\par
+            \coverfield{4.2em}{学\hfill 号}{\cover@studentid}\par
+            \coverfield{4.2em}{年\hfill 级}{\cover@grade}\par
+            \coverfield{4.2em}{指导教师}{\cover@advisor}\par
+        }
+        \vfill
+        \vspace{0.5cm}
+        {\fangsong\bfseries\zihao{3}\cover@date}
+        \vspace{1.5cm}
+    \end{titlepage}
+}
+\makeatother
+
 \begin{document}
 
 \makecover
@@ -65,7 +97,6 @@
 \end{abstract}
 
 \clearpage
-\setcounter{page}{1}
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
 Long-term asset allocation is not mainly a short-term return forecasting problem. It is a problem of building interpretable, reproducible and implementable risk diversification under uncertainty. Risk parity reallocates attention from expected-return inputs to risk budgeting, but global multi-asset ETF allocation introduces changing covariance structures, non-convex equal-risk-contribution conditions, turnover, transaction costs and tail losses.
