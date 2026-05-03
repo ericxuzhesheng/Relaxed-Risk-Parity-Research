@@ -141,9 +141,9 @@ def test_thesis_limitations_no_abc_buckets() -> None:
         assert old_marker not in tex  # A/B/C buckets intentionally removed
     for new_marker in [
         "真实流动性与资金容量数据不足",
-        "未纳入完整的资产负债管理和负债端约束",
-        "ETF 与指数/期货历史衔接仍需进一步研究",
-        "未来收益不可保证",
+        "未纳入完整资产负债管理和负债端约束",
+        "ETF 与代理指数或期货的历史衔接仍需进一步研究",
+        "历史回测不能保证未来表现",
     ]:
         assert new_marker in tex
 
