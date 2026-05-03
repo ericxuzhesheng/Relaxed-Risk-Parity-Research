@@ -135,10 +135,17 @@ def test_thesis_body_no_engineer_path() -> None:
     assert "\\path{python scripts/" not in body
 
 
-def test_thesis_limitations_three_bucket_structure() -> None:
+def test_thesis_limitations_no_abc_buckets() -> None:
     tex = Path("report/thesis_latex/main.tex").read_text(encoding="utf-8")
-    for marker in ["A 类", "B 类", "C 类", "已被实证或诊断澄清", "已有部分缓解但仍未彻底解决", "当前数据和条件下暂时不能解决"]:
-        assert marker in tex
+    for old_marker in ["A 类", "B 类", "C 类", "已被实证或诊断澄清"]:
+        assert old_marker not in tex  # A/B/C buckets intentionally removed
+    for new_marker in [
+        "真实流动性与资金容量数据不足",
+        "未纳入完整的资产负债管理和负债端约束",
+        "ETF 与指数/期货历史衔接仍需进一步研究",
+        "未来收益不可保证",
+    ]:
+        assert new_marker in tex
 
 
 def test_stale_turnover_cvar_numbers_absent_from_readme_and_thesis() -> None:
