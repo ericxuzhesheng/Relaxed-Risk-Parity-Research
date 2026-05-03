@@ -69,27 +69,27 @@ When README needs the latest core result table, use the following values unless 
 
 Evaluation starts from `2021-01-01`.
 
-Core model results:
+Core model results (evaluation from 2021-01-01):
 
 | Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| Global RRP | 5.90% | 1.15 | -4.38% | 1.35 | 22.45% |
-| Defensive Dynamic RRP | 3.88% | 0.48 | -6.51% | 0.60 | 20.22% |
-| Convex Adaptive Global RRP | 5.36% | 0.58 | -8.15% | 0.66 | 1.03% |
-| Improved Convex Adaptive Global RRP | 6.45% | 0.96 | -4.98% | 1.30 | 0.52% |
+| Global RRP | 4.97% | 0.71 | -4.71% | 1.06 | 19.87% |
+| Defensive Dynamic RRP | 4.06% | 0.47 | -7.22% | 0.56 | 17.53% |
+| Convex Adaptive Global RRP | 6.43% | 0.78 | -5.08% | 1.27 | 0.80% |
+| Improved Convex Adaptive Global RRP | 6.47% | 0.96 | -3.51% | 1.84 | 0.21% |
 
 Benchmark results:
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| HRP Benchmark | -0.12% | -6.36 | -0.73% | -0.16 | 1.56% |
-| HERC Benchmark | -0.10% | -6.30 | -0.73% | -0.14 | 1.60% |
+| HRP Benchmark | 6.19% | 0.95 | -8.29% | 0.75 | 9.44% |
+| HERC Benchmark | 6.95% | 1.05 | -9.69% | 0.72 | 8.29% |
 
 Important interpretation:
 
-Global RRP remains the main return-efficient showcase model. Improved Convex Adaptive Global RRP achieves a competitive risk-return profile while reducing average monthly turnover to 0.52%, highlighting the value of convex constraints for implementable and low-turnover portfolio construction.
+Global RRP remains the main return-efficient showcase model. Improved Convex Adaptive Global RRP achieves a competitive risk-return profile while reducing average monthly turnover to 0.21%, highlighting the value of convex constraints for implementable and low-turnover portfolio construction.
 
-HRP/HERC are included only as hierarchical risk-allocation benchmarks, not as proposed main models. Their weak performance in the current asset universe suggests that correlation clustering and recursive allocation alone are insufficient to replace the Global RRP and Convex Adaptive RRP framework.
+HRP/HERC are included only as hierarchical risk-allocation benchmarks, not as proposed main models. Their competitive returns in the current sample confirm that hierarchical methods have empirical value in global multi-asset ETF allocation, but their deeper drawdowns and inability to express CVaR and turnover constraints mean they should be evaluated alongside risk-budget models rather than in isolation.
 
 ## ETF Asset Pool Description
 

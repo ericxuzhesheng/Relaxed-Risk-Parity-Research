@@ -464,6 +464,10 @@ python -m pytest
 
 > 脚本源码：[`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
 
+### 复现与审计说明
+
+为提高论文复现性和文本一致性，本文在最终整理阶段使用自动化检查与大模型辅助审稿，对图表编号、结果数字一致性、路径残留、过强表述和无前视说明进行交叉检查。该过程仅用于文本审阅与质量控制，不参与模型参数选择、回测结果生成或实证结论判断。
+
 <a id="en"></a>
 
 ## English
@@ -892,6 +896,10 @@ python -m pytest
 ```
 
 > Script sources: [`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
+
+### Reproducibility and Audit Note
+
+To improve reproducibility and internal consistency, the final manuscript was cross-checked using automated tools and LLM-assisted review for figure/table numbering, numerical consistency across figures, tables, and text, residual paths, and overstated claims. This process was used solely for text review and quality control; it was not involved in model parameter selection, backtest result generation, or empirical conclusion judgment.
 
 ## License
 
