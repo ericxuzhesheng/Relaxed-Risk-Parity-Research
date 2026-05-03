@@ -1,7 +1,7 @@
 \documentclass{thesisSWUFE}
 
 % 封面信息。
-\covertitle{宽松风险平价在全球多资产配置中的改进与实证研究}
+\covertitle{宽松风险平价在多资产配置中的改进与实证研究}
 \covercollege{特拉华数据科学学院}
 \covermajor{金融数学（金融服务与量化分析方向）}
 \coverauthor{许哲圣}
@@ -15,7 +15,7 @@
 \graphicspath{{../../results/figures/}}
 
 \hypersetup{
-  pdftitle={宽松风险平价在全球多资产配置中的改进与实证研究},
+  pdftitle={宽松风险平价在多资产配置中的改进与实证研究},
   pdfauthor={Relaxed Risk Parity Research},
   pdfkeywords={宽松风险平价, 全球多资产配置, CVaR, ETF}
 }
@@ -40,38 +40,6 @@
     \end{figure}
   }
 }
-
-% 重定义封面：论文题目单独一行，避免长标题与标签重叠
-\makeatletter
-\renewcommand{\makecover}{%
-    \begin{titlepage}
-        \centering
-        \vspace*{1cm}
-        \includegraphics[width=10cm]{swufe/swufe_title.pdf}
-        \vspace{0.6cm}
-        {\hwzhongsong\bfseries\fontsize{36pt}{36pt}\selectfont 本科毕业论文（设计）}
-        \vspace{1.2cm}
-        \includegraphics[width=3.2cm]{swufe/swufe_logo.pdf}
-        \vspace{0.6cm}
-        {\fangsong\zihao{3}\linespread{1.85}\selectfont
-            \bfseries\makebox[4.2em][s]{论文题目}：\par
-            \vspace{0.15cm}
-            \rlap{\rule[-0.5ex]{\coverfieldwidth}{1pt}}\makebox[\coverfieldwidth][c]{\cover@title}\par
-            \vspace{0.5cm}
-            \coverfield{4.2em}{所在学院}{\cover@college}\par
-            \coverfield{4.2em}{专\hfill 业}{\cover@major}\par
-            \coverfield{4.2em}{学生姓名}{\cover@author}\par
-            \coverfield{4.2em}{学\hfill 号}{\cover@studentid}\par
-            \coverfield{4.2em}{年\hfill 级}{\cover@grade}\par
-            \coverfield{4.2em}{指导教师}{\cover@advisor}\par
-        }
-        \vfill
-        \vspace{0.5cm}
-        {\fangsong\bfseries\zihao{3}\cover@date}
-        \vspace{1.5cm}
-    \end{titlepage}
-}
-\makeatother
 
 \begin{document}
 
