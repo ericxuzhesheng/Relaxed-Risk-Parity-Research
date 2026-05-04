@@ -25,14 +25,14 @@
 
 \newcommand{\figmaybe}[3]{
   \IfFileExists{../../results/figures/#1}{
-    \begin{figure}[H]
+    \begin{figure}[htbp]
       \centering
       \includegraphics[width=0.86\textwidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
   }{
-    \begin{figure}[H]
+    \begin{figure}[htbp]
       \centering
       \fbox{\parbox{0.86\textwidth}{\centering 图文件未找到：#1}}
       \caption{#2}
@@ -142,7 +142,7 @@ Beyond the main results, the thesis adds extended-sample robustness, CVaR parame
 \section{文献综述与理论基础}
 
 \subsection{现代投资组合理论与估计误差}
-Markowitz 的均值--方差理论是现代资产配置研究的基础\cite{markowitz1959portfolio}。该框架通过预期收益向量和协方差矩阵描述组合收益与风险之间的权衡，使资产配置从经验判断转向可计算优化。Sharpe 的 CAPM 进一步把个体资产收益与市场系统性风险联系起来，为风险溢价解释提供了理论基础\cite{sharpe1964capital}。Black-Litterman 模型则试图把市场均衡和主观观点结合起来，缓解均值输入不稳定问题\cite{black1992global}。这一路径解决的是“如何把收益预期与风险代价写进同一个优化问题”。
+Markowitz 的均值--方差理论是现代资产配置研究的基础\cite{markowitz1959portfolio}。该框架通过预期收益向量和协方差矩阵描述组合收益与风险之间的权衡，使资产配置从经验判断转向可计算优化。Sharpe 的 CAPM 进一步把个体资产收益与市场系统性风险联系起来，为风险溢价解释提供了理论基础\cite{sharpe1964capital}。Black-Litterman 模型则试图把市场均衡和主观观点结合起来，缓解均值输入不稳定问题\cite{black1992global}。这为“如何把收益预期与风险代价写进同一个优化问题”提供了基础语言。
 
 但均值--方差框架在实证落地中长期面临输入敏感性。Jorion 的 Bayes-Stein 估计、Chopra 和 Ziemba 对均值、方差与协方差误差影响的分析都说明，预期收益估计误差会显著改变最优权重\cite{jorion1986bayes,chopra1993effect}。Grinold 和 Kahn 的主动管理框架也强调，预期收益信号必须与风险模型和组合约束共同使用，不能脱离估计误差讨论\cite{grinold1999active}。DeMiguel 等人比较简单 $1/N$ 组合与多种优化策略后发现，在有限样本中，复杂优化并不必然优于简单分散\cite{demiguel2009optimal}。换言之，已有文献已经充分说明“最优组合”往往首先受制于收益预测质量，而不是受制于求解器是否足够复杂。
 
@@ -151,7 +151,7 @@ Markowitz 的均值--方差理论是现代资产配置研究的基础\cite{marko
 \subsection{风险平价与风险预算}
 风险平价的核心不是资金等权，而是风险贡献分散。Qian 将风险平价解释为通过真实分散化提高组合效率的配置思想\cite{qian2005risk}。Maillard、Roncalli 和 Teiletche 系统研究了等风险贡献组合的性质，说明风险贡献可以作为资产配置权重之外的另一种分散化标准\cite{maillard2010properties}。Roncalli 进一步从风险预算角度给出完整框架，将风险贡献目标推广为一组可解释的风险预算约束\cite{roncalli2013introduction}。
 
-设组合波动率为 $\sigma_p$，第 $i$ 个资产的风险贡献为 $RC_i$。若 $RC_i$ 与预算 $b_i\sigma_p$ 一致，则得到风险预算组合；若所有 $b_i=1/n$，则得到等风险贡献组合。已有文献解决的是“如何把组合讨论从资本分配转向风险承担”。这使资产配置不必先回答“谁的收益最高”，而是先回答“谁在承担组合风险”，因而特别适合长期配置中的治理和解释。
+设组合波动率为 $\sigma_p$，第 $i$ 个资产的风险贡献为 $RC_i$。若 $RC_i$ 与预算 $b_i\sigma_p$ 一致，则得到风险预算组合；若所有 $b_i=1/n$，则得到等风险贡献组合。已有文献的关键推进，在于把组合讨论从资本分配转向风险承担。这使资产配置不必先回答“谁的收益最高”，而是先回答“谁在承担组合风险”，因而特别适合长期配置中的治理和解释。
 
 但风险预算文献也留下了现实难点。严格风险贡献等式通常不是简单线性约束，在多资产、多约束和动态调仓场景中，求解稳定性、换手率和执行成本都会成为额外负担。国内研究也反复强调，风险平价中的“风险”不应被狭义理解为资产波动率本身，而应理解为组合所承担的宏观风险暴露；在实际落地中，协方差口径、杠杆限制和可投资标的范围都会显著改变策略形态\cite{htsc2020misunderstanding,htsc2024practice}。
 
@@ -165,7 +165,7 @@ Markowitz 的均值--方差理论是现代资产配置研究的基础\cite{marko
 因此，本文选择 relaxed 而不是 exact ERC，并进一步采用凸化近似。Local Relaxed Risk Parity 和 Global RRP 保留风险预算主线，Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 则承接“多约束下如何近似实现风险预算”的问题意识。其中后者强调低换手、尾部风险解释和可实施性，而不是重新把收益最大化设为唯一目标。
 
 \subsection{CVaR、尾部风险与凸优化}
-波动率衡量收益围绕均值的整体离散程度，最大回撤衡量历史路径中的最大峰谷损失，VaR 衡量给定置信水平下的损失分位点。CVaR 则关注超过 VaR 后的平均尾部损失，更适合描述压力情景下的组合脆弱性。Rockafellar 和 Uryasev 提出的 CVaR 优化框架使尾部损失可以通过辅助变量进入优化问题\cite{rockafellar2000optimization}。Boyd 和 Vandenberghe 的凸优化理论说明，凸目标和凸约束有利于稳定求解，并便于加入线性约束、范数惩罚和辅助变量\cite{boyd2004convex}。这部分文献解决的是“如何把尾部损失写成可计算、可约束的优化对象”。
+波动率衡量收益围绕均值的整体离散程度，最大回撤衡量历史路径中的最大峰谷损失，VaR 衡量给定置信水平下的损失分位点。CVaR 则关注超过 VaR 后的平均尾部损失，更适合描述压力情景下的组合脆弱性。Rockafellar 和 Uryasev 提出的 CVaR 优化框架使尾部损失可以通过辅助变量进入优化问题\cite{rockafellar2000optimization}。Boyd 和 Vandenberghe 的凸优化理论说明，凸目标和凸约束有利于稳定求解，并便于加入线性约束、范数惩罚和辅助变量\cite{boyd2004convex}。这使尾部损失能够进入可计算、可约束的优化框架。
 
 但 CVaR 文献并没有承诺未来尾部风险一定被消除。CVaR 依赖历史窗口、置信水平和样本情景。如果未来出现历史样本中没有出现过的极端状态，历史 CVaR 仍可能低估风险。国内低利率环境下的绝对收益讨论也强调，风险控制优先、跨资产分散和执行约束往往比“承诺额外收益”更重要\cite{htsc2025lowrate}。因此，把 CVaR 直接解释为收益增强来源或极端风险保险，都超出了文献本身支持的边界。
 
@@ -477,9 +477,9 @@ Improved Convex Adaptive Global RRP & 6.47\% & 0.96 & -3.51\% & 1.84 & 0.21\% \\
 
 但单看夏普比率不足以支持“直接替代主模型”的结论。HERC Benchmark 的最大回撤为 -9.69\%，明显深于 Improved Convex Adaptive Global RRP 的 -3.51\%；HRP Benchmark 的最大回撤也达到 -8.29\%。从 Calmar 比率看，Improved Convex Adaptive Global RRP 为 1.84，亦高于 HRP 的 0.75 和 HERC 的 0.72。这意味着层次化方法在当前样本中拿到了较高的风险调整收益，但其路径风险代价更重，不能被简化为“收益更高所以更优”。
 
-进一步看执行层约束，HRP/HERC 的平均月度换手率分别为 9.44\% 和 8.29\%，显著高于 Improved Convex Adaptive Global RRP 的 0.21\%。在固定费率口径下，HERC Benchmark 的年化交易成本拖累约为 0.0060\%，高于 Improved Convex Adaptive Global RRP 的约 0.0008\%；若考虑真实市场中的冲击成本、价差和治理频率差异，这一执行差距通常只会被放大而不会被缩小。由此可见，本文并不否认 HRP/HERC 的高夏普，而是强调主模型选择不能只按单一收益指标排序，还必须同时考虑回撤、Calmar、换手和成本敏感性。
+进一步看执行层约束，HRP/HERC 的平均月度换手率分别为 9.44\% 和 8.29\%，显著高于 Improved Convex Adaptive Global RRP 的 0.21\%。若按“平均月度换手率 $\times 12 \times 3$bps”的默认交易成本口径做近似换算，则 HRP/HERC 的年化交易成本拖累约为 0.0340\% 和 0.0298\%，而 Improved Convex Adaptive Global RRP 仅约为 0.0008\%；若考虑真实市场中的冲击成本、价差和治理频率差异，这一执行差距通常只会被放大而不会被缩小。由此可见，本文并不否认 HRP/HERC 的高夏普，而是强调主模型选择不能只按单一收益指标排序，还必须同时考虑回撤、Calmar、换手和成本敏感性。
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{层次化 benchmark 绩效（评价起点 2021-01-01）}
 \label{tab:benchmark_perf}
@@ -494,20 +494,20 @@ HERC Benchmark & 6.95\% & 1.05 & -9.69\% & 0.72 & 8.29\% \\
 \end{table}
 
 \subsection{净值路径分析}
-\figmaybe{convex_adaptive_nav_comparison.png}{Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的净值比较}{fig:nav}
+\figmaybe{convex_adaptive_nav_comparison.png}{核心模型累计净值路径比较}{fig:nav}
 图 \ref{fig:nav} 展示了六个核心模型在统一评价区间内的累计净值路径。Global RRP 与 Defensive Dynamic RRP 提供了风险预算主线与防御覆盖实验的基础参照，但两者的期末净值整体位于较低区间。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段保持更高的累计净值水平，其中 Improved Convex Adaptive Global RRP 的路径更平稳，体现了低换手与约束优化结合后的可实施改进。HRP Benchmark 与 HERC Benchmark 也呈现出较强的阶段性上行能力，说明层次化方法在当前全球 ETF 样本中具有竞争性，但其路径评价仍需与回撤、换手和尾部风险指标结合解读，而不能仅依据期末净值排序下结论。
 
 \subsection{回撤表现分析}
-\figmaybe{convex_adaptive_drawdown_comparison.png}{核心模型回撤比较}{fig:drawdown}
+\figmaybe{convex_adaptive_drawdown_comparison.png}{核心模型回撤路径比较}{fig:drawdown}
 最大回撤反映投资者在历史路径中经历的最大峰谷损失。长期资金尤其关注回撤，因为回撤会影响风险预算、监管资本、客户赎回和投资委员会治理。Improved Convex Adaptive Global RRP 在核心表中最大回撤为 -3.51\%，优于 Global RRP 的 -4.71\%。但回撤控制不是未来收益保证，也不能说明模型在所有压力期都会更优。
 
 \subsection{换手率与可实施性分析}
-\figmaybe{convex_adaptive_turnover_comparison.png}{核心模型换手率比较}{fig:turnover}
+\figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
 换手率直接影响交易费用、冲击成本和组合管理复杂度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别为 19.87\% 和 17.53\%，说明基础风险预算模型在当前设定下调仓较频繁。Convex Adaptive Global RRP 将平均月度换手率降至 0.80\%，Improved Convex Adaptive Global RRP 进一步降至 0.21\%。这对长期资金具有实践意义，但低换手也可能降低模型对市场结构快速变化的响应速度。
 
 \subsection{权重路径与模型行为解释}
 \figmaybe{weight_path_asset_group_comparison.png}{Improved Convex Adaptive Global RRP、Global RRP、HRP Benchmark 与 HERC Benchmark 的资产组权重路径}{fig:weight_path}
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \small
 \caption{主要模型阶段性资产组平均权重（2021--2022 与 2023--2025）}
@@ -528,11 +528,12 @@ HERC & 2023--2025 & 93.13\% & 1.55\% & 0.53\% & 1.57\% & 3.22\% \\
 \end{tabular}
 \end{table}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \small
 \caption{主要模型关键资产阶段平均权重（附录 B 对应文件：\texttt{weight\_path\_key\_asset\_stage\_summary.csv}）}
 \label{tab:weight_path_key_asset}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrrr}
 \toprule
 Model & Stage & 短融ETF & 红利ETF & 黄金ETF & 恒生ETF & 纳指ETF & 标普500ETF \\
@@ -546,7 +547,7 @@ HRP & 2023--2025 & 99.76\% & 0.02\% & 0.07\% & 0.01\% & 0.01\% & 0.01\% \\
 HERC & 2021--2022 & 92.15\% & 0.48\% & 1.47\% & 0.49\% & 0.43\% & 0.59\% \\
 HERC & 2023--2025 & 92.33\% & 0.60\% & 1.52\% & 0.32\% & 0.41\% & 0.57\% \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 图 \ref{fig:weight_path}、表 \ref{tab:weight_path_stage} 和表 \ref{tab:weight_path_key_asset} 对应附录 B 中的权重路径结果文件，用于回答绩效表背后的模型行为问题。首先，Improved Convex Adaptive Global RRP 的权重路径确实更平滑，其债券底仓在两个阶段都稳定在约 50\% 附近，短融 ETF 维持在约 45\%，黄金配置也基本稳定在 7\% 左右。这种平滑并非偶然，而是换手惩罚、CVaR 约束和资产组边界共同抑制了阶段间的大幅再配置，使组合更像是在稳定债券底仓上做温和的跨资产暴露调整，而不是依靠频繁轮动获取样本收益。
@@ -556,7 +557,7 @@ HERC & 2023--2025 & 92.33\% & 0.60\% & 1.52\% & 0.32\% & 0.41\% & 0.57\% \\
 最后，HRP/HERC 的高夏普必须与其暴露结构一起解读。HRP Benchmark 在两个阶段的债券权重都接近 99\%，HERC Benchmark 也都在 93\% 左右，权益和商品仅保留很小的卫星暴露。也就是说，它们当前样本中的高夏普，很大程度上与低波动债券底仓和样本期防御资产表现有关。本文并不因此否定其经验价值，但需要区分“层次化分散结构”与“实际暴露高度集中”这两个概念。相较之下，Improved Convex Adaptive Global RRP 的价值不在于样本夏普绝对第一，而在于它在保留跨资产暴露的同时，用更平滑的权重演化、可解释的约束表达和极低换手率实现了更均衡的组合治理属性。
 
 \subsection{CVaR 尾部风险分析}
-\figmaybe{convex_adaptive_cvar_comparison.png}{核心模型 CVaR 比较}{fig:cvar}
+\figmaybe{convex_adaptive_cvar_comparison.png}{核心模型95\%日度CVaR比较}{fig:cvar}
 \begin{table}[H]
 \centering
 \small
