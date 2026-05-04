@@ -365,6 +365,7 @@ TC_t=c\cdot TO_t
 \[
 r_{p,t}^{net}=r_{p,t}^{gross}-TC_t
 \]
+本文默认在第 $t$ 个调仓日先基于该日之前可获得的历史窗口生成目标权重，并在该调仓日完成从 $w_{t-1}^{+}$ 到 $w_t$ 的再平衡，因此 $TC_t$ 表示该次调仓对应的一次性组合交易成本，随后组合以调仓后的持仓进入下一期收益实现。
 本文默认交易成本为 3 bps，并在结果中区分 gross return 和 net return。该处理仍是简化设定，没有覆盖冲击成本、买卖价差、申赎费用和市场容量。
 
 \subsection{组合约束与调仓规则}
@@ -469,7 +470,7 @@ HERC Benchmark & 6.95\% & 1.05 & -9.69\% & 0.72 & 8.29\% \\
 
 \subsection{净值路径分析}
 \figmaybe{convex_adaptive_nav_comparison.png}{Global RRP、Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 的净值比较}{fig:nav}
-图 \ref{fig:nav} 比较核心模型的累计净值路径。净值图不仅显示期末收益，也显示收益实现过程。若某模型只在少数阶段贡献收益，而中间经历较深回撤，则其期末收益可能掩盖路径风险。当前样本中，Convex Adaptive 和 Improved Convex 的累计表现较好，但仍需要结合回撤、换手和 CVaR 共同评价。
+图 \ref{fig:nav} 展示了六个核心模型在统一评价区间内的累计净值路径。Global RRP 与 Defensive Dynamic RRP 提供了风险预算主线与防御覆盖实验的基础参照，但两者的期末净值整体位于较低区间。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段保持更高的累计净值水平，其中 Improved Convex Adaptive Global RRP 的路径更平稳，体现了低换手与约束优化结合后的可实施改进。HRP Benchmark 与 HERC Benchmark 也呈现出较强的阶段性上行能力，说明层次化方法在当前全球 ETF 样本中具有竞争性，但其路径评价仍需与回撤、换手和尾部风险指标结合解读，而不能仅依据期末净值排序下结论。
 
 \subsection{回撤表现分析}
 \figmaybe{convex_adaptive_drawdown_comparison.png}{核心模型回撤比较}{fig:drawdown}
@@ -481,7 +482,26 @@ HERC Benchmark & 6.95\% & 1.05 & -9.69\% & 0.72 & 8.29\% \\
 
 \subsection{CVaR 尾部风险分析}
 \figmaybe{convex_adaptive_cvar_comparison.png}{核心模型 CVaR 比较}{fig:cvar}
-CVaR 与最大回撤不同。最大回撤依赖完整净值路径，CVaR 则关注历史日度损失尾部的平均水平。CVaR-aware 设计能够让尾部风险进入优化目标，提高风险解释能力。但 CVaR 依赖历史窗口和置信水平，不能覆盖所有未来极端情景。本文因此只把 CVaR 作为尾部风险诊断和约束工具，不把它解释为极端损失的完整防护机制。
+\begin{table}[H]
+\centering
+\small
+\caption{核心模型95\%日度CVaR（评价起点2021-01-01）}
+\label{tab:core_cvar}
+\begin{tabular}{lr}
+\toprule
+模型 & 95\%日度CVaR \\
+\midrule
+Global RRP & 0.67\% \\
+Defensive Dynamic RRP & 0.73\% \\
+Convex Adaptive Global RRP & 0.82\% \\
+Improved Convex Adaptive Global RRP & 0.66\% \\
+HRP Benchmark & 0.03\% \\
+HERC Benchmark & 0.09\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+表5-7给出各模型的具体CVaR数值。CVaR 与最大回撤不同。最大回撤依赖完整净值路径，CVaR 则关注历史日度损失尾部的平均水平。CVaR-aware 设计能够让尾部风险进入优化目标，提高风险解释能力。但 CVaR 依赖历史窗口和置信水平，不能覆盖所有未来极端情景。本文因此只把 CVaR 作为尾部风险诊断和约束工具，不把它解释为极端损失的完整防护机制。
 在具体实现中，CVaR 窗口对缺失值采用零填充处理，以保持不同调仓时点样本量口径一致；该处理不会引入未来信息，但会使缺失日被视为当日对该资产无额外收益冲击，因此应与样本覆盖范围一并理解。
 
 \subsection{小结}
@@ -530,7 +550,7 @@ CSCV/PBO 用于估计候选参数选择带来的过拟合概率\cite{bailey2014p
 \subsection{Walk-Forward、Nested 与 Frozen OOS}
 Walk-Forward 和 Nested Validation 的共同目标是把参数选择和测试评价分开。Walk-Forward 使用滚动训练/测试切片，Nested Validation 进一步区分训练、验证和测试层。当前两类验证均包含 23 个测试切片，测试窗口平均净年化收益为 7.18\%，平均夏普比率为 1.12，平均最大回撤为 -2.07\%。这些切片较短，指标波动较大，应作为滚动诊断证据。
 
-Frozen OOS 测试区间为 2025-01-02 至 2026-04-30，预先候选为 candidate\_09。该区间净年化收益为 13.56\%，夏普比率为 2.48，最大回撤为 -3.32\%。由于 2025 年以后的数据可能已在前期开发中被观察过，本文将其解释为 pseudo-frozen 条件性证据，不把 Sharpe 2.48 过度外推。另一方面，回顾性 holdout 切片（2024-01-01 和 2025-01-01 起点）提供额外的时间切片透明度，但同样属于回顾性证据。
+Frozen OOS 测试区间为 2025-01-02 至 2026-04-30，预先候选为 candidate\_09。该区间净年化收益为 13.56\%，夏普比率为 2.48，最大回撤为 -3.32\%。这一结果很可能同时受到样本期内全球权益风险偏好修复、黄金与商品等分散资产阶段性支撑以及利率环境相对平稳的共同影响，因此更适合被理解为特定市场背景下的条件性外样本证据，而不是可以在未来机械复制的稳定规律。换言之，candidate\_09 在该窗口中的较优表现说明预先冻结的低换手约束方案在该类环境下具有一定适应性，但并不足以单独证明模型已经获得对不同未来市场阶段都稳健成立的外部预测能力。
 
 \subsection{无前视审计}
 无前视审计包括以下检查：数据窗口只使用调仓日前收益；协方差估计使用 trailing window；再平衡日期不使用未来收益；交易成本在调仓换手上扣减；压力期标签只用于事后评价；bootstrap、PBO、Walk-Forward 和 Nested 不用于主模型重新选择；Frozen OOS 在可能被开发过程观察时按 pseudo-frozen 解读。审计通过只代表当前框架未发现明显前视偏差，不代表未来表现稳定。
@@ -646,17 +666,17 @@ Command & Output \\
 Command & Output \\
 \midrule
 \endhead
-\path{python scripts/run_rrp_pipeline.py --mode full} & 生成基础 RRP 模型绩效、权重和诊断表 \\
-\path{python scripts/run_convex_adaptive_rrp.py} & 生成凸自适应模型结果、候选参数、核心图 \\
-\path{python scripts/run_benchmark_suite.py} & 生成 benchmark 绩效、回撤和换手表 \\
-\path{python scripts/run_robustness_tests.py} & 生成子区间、成本、压力期、bootstrap 和过拟合图表 \\
-\path{python scripts/run_walkforward_validation.py} & 生成 Walk-Forward 验证表 \\
-\path{python scripts/run_nested_validation.py} & 生成 Nested 验证表 \\
-\path{python scripts/run_cscv_pbo.py --max-candidates 4 --num-blocks 6 --max-combinations 6} & 生成 CSCV/PBO 诊断表 \\
-\path{python scripts/run_frozen_oos_validation.py} & 生成 Frozen OOS 验证表 \\
-\path{python scripts/run_parameter_sensitivity.py} & 生成单因素参数敏感性表 \\
-\path{python scripts/run_covariance_robustness.py} & 生成协方差估计稳健性表和图 \\
-\path{python scripts/run_asset_descriptive_statistics.py} & 生成资产描述性统计表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_rrp\_pipeline.py\allowbreak{} --mode \allowbreak{} full} & 生成基础 RRP 模型绩效、权重和诊断表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_convex\_adaptive\_rrp.py} & 生成凸自适应模型结果、候选参数、核心图 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_benchmark\_suite.py} & 生成 benchmark 绩效、回撤和换手表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_robustness\_tests.py} & 生成子区间、成本、压力期、bootstrap 和过拟合图表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_walkforward\_validation.py} & 生成 Walk-Forward 验证表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_nested\_validation.py} & 生成 Nested 验证表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_cscv\_pbo.py\allowbreak{} --max-candidates \allowbreak{} 4 \allowbreak{} --num-blocks \allowbreak{} 6 \allowbreak{} --max-combinations \allowbreak{} 6} & 生成 CSCV/PBO 诊断表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_frozen\_oos\_validation.py} & 生成 Frozen OOS 验证表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_parameter\_sensitivity.py} & 生成单因素参数敏感性表 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_covariance\_robustness.py} & 生成协方差估计稳健性表和图 \\
+\texttt{python \allowbreak{} scripts/\allowbreak{} run\_asset\allowbreak{}\_descriptive\allowbreak{}\_statistics.py} & 生成资产描述性统计表 \\
 \bottomrule
 \end{longtable}
 
