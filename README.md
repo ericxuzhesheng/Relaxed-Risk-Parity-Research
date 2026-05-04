@@ -30,7 +30,10 @@
 
 - 基于 `report/reference/` 的核验材料深化第 2 章文献综述，并新增 [`report/reference/literature_support_matrix.md`](report/reference/literature_support_matrix.md) 作为内部支撑清单。
 - 细化第 5 章权重路径与模型行为解释，显式区分 Improved Convex Adaptive Global RRP 的平滑底仓逻辑、Global RRP 的阶段性再分配逻辑，以及 HRP/HERC 的高债券集中度特征。
-- 强化 HRP/HERC benchmark 讨论，正面承认 HERC 的更高样本夏普，同时结合回撤、Calmar、换手和成本敏感性解释其为何仍应作为竞争性 benchmark 而非主模型替代。
+- 新增第 5 章机制归因小节，直接回答低回撤与低换手的来源、Global RRP 的灵活性代价、HERC 的 Sharpe 含义，以及 HRP/HERC 的分散化边界。
+- 新增第 6 章稳健性检验与过拟合诊断总表，把子区间、成本、压力期、参数扰动、协方差、bootstrap、CSCV/PBO、Walk-Forward、Nested、Frozen OOS 和无前视审计的结论放在同一视图中。
+- 新增第 7 章机构目标-模型使用矩阵，并把主要结论整理为模型层、benchmark 层、验证层和治理层四个层次。
+- 补强后续研究方向，加入负债端与 ALM 扩展，以及真实交易摩擦与容量约束。
 - 收紧贡献表述、补足附录 A/B/C/D/E 调用，并复核图表编号、表题与正文引用的一致性。
 - 将机构配置含义具体化为治理规则视角，而不是泛泛的“长期配置有意义”式结论。
 
@@ -503,6 +506,11 @@ The second-round thesis rewrite now adds visible argumentation rather than surfa
 
 - the literature review is deepened using verified materials under `report/reference/`, with [`report/reference/literature_support_matrix.md`](report/reference/literature_support_matrix.md) as the internal support matrix;
 - the weight-path section is rewritten to explain the smoother bond-core behavior of Improved Convex Adaptive Global RRP, the more reactive reallocation pattern of Global RRP, and the bond concentration behind HRP/HERC;
+- a new mechanism-attribution subsection is added in Chapter 5, directly answering where lower drawdown and low turnover come from, why Global RRP is more flexible but higher-turnover, what HERC's higher Sharpe really means, and the diversification boundaries of HRP/HERC;
+- a new robustness-and-overfitting summary table is added in Chapter 6, putting subperiod, cost, stress, parameter, covariance, bootstrap, CSCV/PBO, Walk-Forward, Nested, Frozen OOS, and no-lookahead audit conclusions in a single view;
+- a new institutional model-selection matrix is added in Chapter 7, mapping institutional objectives to suitable models, rationales, and risks;
+- the main conclusions are restructured into four layers: model-level, benchmark-level, validation-level, and governance-level;
+- future-research directions now include ALM/liability-side extension and real transaction-friction modeling;
 - the HRP/HERC discussion is strengthened by explicitly acknowledging HERC's higher in-sample Sharpe while comparing it against drawdown, Calmar, turnover, and cost sensitivity;
 - the contribution statement, appendix cross-references, and figure/table citations are tightened for thesis consistency;
 - the institutional-allocation discussion is reframed around governance rules, implementation discipline, and ALM boundaries.
