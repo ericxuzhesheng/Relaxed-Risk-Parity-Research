@@ -82,6 +82,10 @@ def solve_convex_rrp(
     )
     cov = cov_result.covariance
     sigma = cov.values
+    # mu_t is estimated only from the historical window available before rebalance.
+    # It is an annualized sample mean of returns_window rather than a forward-looking forecast.
+    # The signal enters the objective only through the small return_reward coefficient.
+    # This keeps the convex program anchored on risk budgeting and implementability terms.
     mu = returns_window.mean().fillna(0.0).values * cfg.trading_days_per_year
     if budget_target is None:
         target = adaptive_budget_target(returns_window, graph_features, regime_label).values
@@ -95,6 +99,7 @@ def solve_convex_rrp(
         "objective_value": np.nan,
         "failure_reason": "",
         "fallback_used": False,
+        "inaccurate_solution": False,
         **cov_result.diagnostics,
     }
 
@@ -116,7 +121,10 @@ def solve_convex_rrp(
         for idxs, (lower, upper) in _group_constraints(returns_window.columns, cfg.group_bounds):
             exposure = cp.sum(w[idxs])
             constraints.extend([exposure >= lower, exposure <= upper])
-        cvar_window = returns_window.dropna(how="any")
+        cvar_effective_obs = int((~returns_window.isna().any(axis=1)).sum())
+        cvar_total_obs = len(returns_window)
+        diagnostics.update({"cvar_effective_obs": cvar_effective_obs, "cvar_total_obs": cvar_total_obs})
+        cvar_window = returns_window.fillna(0.0)
         if cfg.cvar_penalty > 0.0 and len(cvar_window) > 0:
             alpha = cp.Variable()
             u = cp.Variable(len(cvar_window))
@@ -136,6 +144,7 @@ def solve_convex_rrp(
                         "solver_name": solver,
                         "solver_status": str(problem.status),
                         "objective_value": float(problem.value) if problem.value is not None else np.nan,
+                        "inaccurate_solution": problem.status == cp.OPTIMAL_INACCURATE,
                     }
                 )
                 if problem.status in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE} and w.value is not None:
@@ -148,6 +157,7 @@ def solve_convex_rrp(
         diagnostics["failure_reason"] = "cvxpy unavailable"
 
     diagnostics["fallback_used"] = True
+    diagnostics["inaccurate_solution"] = False
     weights, value, reason = _solve_scipy_fallback(sigma, mu, previous, target, cfg)
     diagnostics.update({"solver_name": "scipy_slsqp_fallback", "solver_status": reason, "objective_value": value})
     return weights, diagnostics
@@ -208,7 +218,8 @@ def run_convex_adaptive_backtest(
 
     for date in returns.index:
         turnover = 0.0
-        if date in rebalance_dates:
+        is_rebalance = date in rebalance_dates
+        if is_rebalance:
             window_full = returns[returns.index < date].iloc[-cfg.lookback_days:]
             active_cols = investable_columns(window_full, min_observations=min(60, cfg.lookback_days))
             window = window_full[active_cols]
@@ -230,7 +241,7 @@ def run_convex_adaptive_backtest(
                 regime_rows.append({"date": date, **regime_state})
 
         daily_return = portfolio_return_for_available(returns.loc[date], weights)
-        cost = cost_rate * turnover
+        cost = cost_rate * turnover if is_rebalance else 0.0
         gross_return = daily_return
         net_return = daily_return - cost
         nav_gross *= 1.0 + gross_return
@@ -242,6 +253,7 @@ def run_convex_adaptive_backtest(
             "net_return": net_return,
             "transaction_cost": cost,
             "turnover": turnover,
+            "is_rebalance_day": is_rebalance,
             "nav_gross": nav_gross,
             "nav_net": nav_net,
         }
@@ -249,9 +261,16 @@ def run_convex_adaptive_backtest(
             row[f"weight_{asset}"] = weights[i]
         rows.append(row)
 
+    solver_df = pd.DataFrame(solver_rows)
+    total_rebalance = len(solver_df)
+    inaccurate_count = int(solver_df["inaccurate_solution"].fillna(False).sum()) if "inaccurate_solution" in solver_df.columns else 0
+    inaccurate_ratio = inaccurate_count / total_rebalance if total_rebalance else 0.0
+    print(f"[Solver QA] inaccurate_count={inaccurate_count}, total_rebalance={total_rebalance}, inaccurate_ratio={inaccurate_ratio:.4f}")
+    solver_df["inaccurate_ratio_overall"] = inaccurate_ratio
+
     return (
         pd.DataFrame(rows),
-        pd.DataFrame(solver_rows),
+        solver_df,
         pd.DataFrame(graph_rows),
         pd.DataFrame(regime_rows),
     )

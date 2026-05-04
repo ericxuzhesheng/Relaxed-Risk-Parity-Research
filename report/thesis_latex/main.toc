@@ -19,7 +19,7 @@
 \contentsline {subsection}{\numberline {3.3}宽松风险平价与 Global RRP}{9}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}Defensive Dynamic RRP}{9}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Convex Adaptive Global RRP}{10}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Improved Convex Adaptive Global RRP}{10}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.6}Improved Convex Adaptive Global RRP}{11}{subsection.3.6}%
 \contentsline {subsection}{\numberline {3.7}HRP 与 HERC Benchmark}{11}{subsection.3.7}%
 \contentsline {subsection}{\numberline {3.8}模型定位与理论框架总结}{12}{subsection.3.8}%
 \contentsline {section}{\numberline {4}数据、变量与研究设计}{12}{section.4}%
@@ -37,32 +37,32 @@
 \contentsline {subsection}{\numberline {5.4}回撤表现分析}{19}{subsection.5.4}%
 \contentsline {subsection}{\numberline {5.5}换手率与可实施性分析}{19}{subsection.5.5}%
 \contentsline {subsection}{\numberline {5.6}CVaR 尾部风险分析}{20}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}小结}{20}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.7}小结}{21}{subsection.5.7}%
 \contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{21}{section.6}%
 \contentsline {subsection}{\numberline {6.1}稳健性检验原则}{21}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}子区间稳健性}{21}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}交易成本敏感性}{22}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.2}子区间稳健性}{22}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}交易成本敏感性}{23}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4}压力期检验}{23}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}参数扰动与求解器稳定性}{23}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}协方差估计敏感性}{24}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Block Bootstrap}{25}{subsection.6.7}%
-\contentsline {subsection}{\numberline {6.8}CSCV/PBO 过拟合诊断}{26}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Walk-Forward、Nested 与 Frozen OOS}{27}{subsection.6.9}%
-\contentsline {subsection}{\numberline {6.10}无前视审计}{27}{subsection.6.10}%
-\contentsline {subsection}{\numberline {6.11}小结}{27}{subsection.6.11}%
-\contentsline {section}{\numberline {7}机构配置应用讨论、结论与展望}{28}{section.7}%
-\contentsline {subsection}{\numberline {7.1}长期资金配置需求}{28}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}低换手与执行约束}{28}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}尾部风险与风险治理}{29}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}HRP/HERC 对机构配置的参考意义}{29}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}适用边界与 ALM 扩展}{30}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}主要结论}{30}{subsection.7.6}%
-\contentsline {subsection}{\numberline {7.7}研究不足}{31}{subsection.7.7}%
-\contentsline {subsection}{\numberline {7.8}后续研究方向}{32}{subsection.7.8}%
-\contentsline {section}{\numberline {A}复现命令}{33}{appendix.A}%
-\contentsline {section}{\numberline {B}主要结果文件索引}{34}{appendix.B}%
-\contentsline {section}{\numberline {C}模型定位汇总表}{35}{appendix.C}%
-\contentsline {section}{\numberline {D}主要指标定义汇总}{36}{appendix.D}%
-\contentsline {section}{\numberline {E}无前视检查清单}{37}{appendix.E}%
-\contentsline {section}{参考文献}{38}{section*.20}%
+\contentsline {subsection}{\numberline {6.5}参数扰动与求解器稳定性}{24}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}协方差估计敏感性}{25}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Block Bootstrap}{26}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}CSCV/PBO 过拟合诊断}{27}{subsection.6.8}%
+\contentsline {subsection}{\numberline {6.9}Walk-Forward、Nested 与 Frozen OOS}{28}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.10}无前视审计}{28}{subsection.6.10}%
+\contentsline {subsection}{\numberline {6.11}小结}{28}{subsection.6.11}%
+\contentsline {section}{\numberline {7}机构配置应用讨论、结论与展望}{29}{section.7}%
+\contentsline {subsection}{\numberline {7.1}长期资金配置需求}{29}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}低换手与执行约束}{29}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}尾部风险与风险治理}{30}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}HRP/HERC 对机构配置的参考意义}{30}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}适用边界与 ALM 扩展}{31}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}主要结论}{31}{subsection.7.6}%
+\contentsline {subsection}{\numberline {7.7}研究不足}{32}{subsection.7.7}%
+\contentsline {subsection}{\numberline {7.8}后续研究方向}{33}{subsection.7.8}%
+\contentsline {section}{\numberline {A}复现命令}{34}{appendix.A}%
+\contentsline {section}{\numberline {B}主要结果文件索引}{35}{appendix.B}%
+\contentsline {section}{\numberline {C}模型定位汇总表}{36}{appendix.C}%
+\contentsline {section}{\numberline {D}主要指标定义汇总}{37}{appendix.D}%
+\contentsline {section}{\numberline {E}无前视检查清单}{38}{appendix.E}%
+\contentsline {section}{参考文献}{39}{section*.20}%
 \contentsfinish 
