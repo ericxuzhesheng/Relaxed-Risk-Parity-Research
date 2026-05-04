@@ -145,6 +145,19 @@ It must be:
 - not a log file;
 - not a giant implementation note.
 
+## Thesis And Report Second-Round Guidance
+
+When the task is thesis/report/README reinforcement rather than model redevelopment:
+
+- prefer substantive argument increments over wording-only polish;
+- use `report/thesis_latex/main.tex`, `report/reference/`, and existing `results/tables/` files as the primary evidence base;
+- keep Chapter 2 in review mode rather than literature listing mode: each subsection should end with `已有文献解决了什么 -> 在本文场景下的局限/启示 -> 本文为何采用当前设计`;
+- treat HRP/HERC as strong competitive benchmarks: do not hide higher sample Sharpe, but do interpret it jointly with drawdown, turnover, concentration, and cost sensitivity;
+- explain weight-path behavior using existing stage-summary outputs before inventing new diagnostics;
+- actively call appendix material from the thesis body when results index, metric definitions, model positioning, validation governance, or reproduction commands are discussed;
+- for institutional discussion, translate findings into governance rules and implementation boundaries rather than generic praise;
+- keep this second-round work documentation-only unless the user explicitly expands scope.
+
 README title must be Chinese first:
 
 ```markdown
