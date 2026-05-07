@@ -81,7 +81,7 @@ Current results (evaluation from `2015-01-01`, 3 bps transaction cost, monthly r
 | HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
 | Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.10 and Sortino 1.63, delivering 6.78% net annual return with max drawdown -5.83% at 1.44% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.514 across 36 candidates (35 splits) provides intermediate validation evidence; results should be interpreted as research diagnostics, not forward-looking guarantees. HRP's Sharpe is -0.06 because its near-zero volatility (0.17%) cannot overcome the risk-free rate gap; its -0.08% max drawdown reflects near-cash behavior in this universe.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.10 and Sortino 1.63, delivering 6.78% net annual return with max drawdown -5.83% at 1.44% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.514 across 36 candidates (35 splits) provides intermediate validation evidence; results should be interpreted as research diagnostics, not forward-looking guarantees. HRP's Sharpe is -0.06 because its near-zero volatility (0.17%) cannot overcome the risk-free rate gap; its -0.08% max drawdown reflects near-cash behavior in this universe. Evaluation window ends 2026-05-07.
 
 ---
 

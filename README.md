@@ -36,7 +36,7 @@
 
 **实证结果**
 
-以 2015-01-01 为评估起点（ETF 数据从 2018-01-30 起可用，逐点时间宇宙过滤），各核心模型绩效如下（净年化收益已扣除 3bps 交易成本）：
+以 2015-01-01 为评估起点，评估终点 2026-05-07（ETF 数据从 2018-01-30 起可用，逐点时间宇宙过滤），各核心模型绩效如下（净年化收益已扣除 3bps 交易成本）：
 
 | 模型 | 净年化收益 | 年化波动率 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手率 |
 |---|---|---|---|---|---|---|---|
@@ -551,7 +551,7 @@ The pool spans 30 ETFs across eight categories: bonds (short-duration, convertib
 
 **Empirical Results**
 
-Evaluated from 2015-01-01 (net returns after 3 bps transaction cost; ETF data available from 2018-01-30, point-in-time universe filtering applied):
+Evaluated from 2015-01-01 to 2026-05-07 (net returns after 3 bps transaction cost; ETF data available from 2018-01-30, point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---|---|---|---|---|---|---|
@@ -573,7 +573,7 @@ Evaluated from 2015-01-01 (net returns after 3 bps transaction cost; ETF data av
 
 **Robustness Diagnostics**
 
-Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (36 candidates, 35 splits, PBO = 0.514), CVaR parameter sensitivity (12 variants, mean Sharpe 1.12), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
+Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (36 candidates, 35 splits, PBO = 0.514), CVaR parameter sensitivity (12 variants, mean Sharpe 1.12, range 1.08–1.15), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
 
 The LaTeX template assets are under [`report/thesis_latex/thesisSWUFE.cls`](report/thesis_latex/thesisSWUFE.cls), [`report/thesis_latex/fonts`](report/thesis_latex/fonts), and [`report/thesis_latex/swufe`](report/thesis_latex/swufe). They are based on Marquis03/SWUFE-Thesis, with the template license retained.
 
