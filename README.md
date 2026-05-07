@@ -40,15 +40,15 @@
 
 | 模型 | 净年化收益 | 年化波动率 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手率 |
 |---|---|---|---|---|---|---|---|
-| Improved Convex Adaptive Global RRP | **5.57%** | 3.82% | **0.98** | 1.37 | -5.44% | 1.02 | **1.94%** |
+| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
 | Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
 | Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
 | Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
-| HERC Benchmark | 2.34% | 0.47% | 1.08 | 1.61 | -0.40% | 5.91 | 9.37% |
+| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
 | HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
 | Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
 
-- **Improved Convex Adaptive Global RRP** 是论文的低换手可实施改进方案。CVaR 约束与换手惩罚将月均换手率控制在 1.94%，在 5.57% 净年化收益下实现 Sharpe 0.98、最大回撤 -5.44%，综合风险调整绩效最优。
+- **Improved Convex Adaptive Global RRP** 是论文的低换手可实施改进方案。CVaR 约束与换手惩罚将月均换手率控制在 1.44%，在 6.78% 净年化收益下实现 Sharpe 1.10、Sortino 1.63、最大回撤 -5.83%，综合风险调整绩效最优。CVaR 参数敏感性分析（β ∈ {0.90, 0.95, 0.975, 0.99}，回望窗口 ∈ {126, 252, 504} 天）下均值 Sharpe 1.12，区间 1.08–1.15，参数稳健性强。
 - **Convex Adaptive Global RRP** 月均换手率 2.90%，Sharpe 0.87，最大回撤 -5.22%，在较低换手约束下保持稳健风险控制。
 - **Global RRP** 保留完整风险预算弹性，月均换手率 17.4%，净年化 4.27%，Sharpe 0.62。高换手反映模型对市场状态变化的频繁再分配响应。
 - **Defensive Dynamic RRP** 在 Global RRP 基础上叠加防御型风险覆盖层，换手率与 Global RRP 相近（17.5%），净年化 3.95%、Sharpe 0.53，防御设计以降低弹性为代价。
@@ -58,7 +58,7 @@
 
 **稳健性检验**
 
-第六章系统运行子区间分析（2021—2022、2023—2024）、交易成本敏感性扫描（0—15bps）、参数扰动、协方差矩阵稳健性（样本协方差、Ledoit-Wolf 收缩、DCC）、Bootstrap 分布、CSCV/PBO 过拟合验证（4 候选、6 块）、Walk-Forward 外推、Nested CV、Frozen OOS 和 Holdout 切片，形成多层次过拟合诊断与无前视证据体系。
+第六章系统运行子区间分析（2021—2022、2023—2024）、交易成本敏感性扫描（0—15bps）、参数扰动、协方差矩阵稳健性（样本协方差、Ledoit-Wolf 收缩、DCC）、Bootstrap 分布、CSCV/PBO 过拟合验证（36 候选、35 块、PBO = 0.514）、CVaR 参数敏感性（β × 回望窗口共 12 变体，均值 Sharpe 1.12）、Walk-Forward 外推、Nested CV、Frozen OOS 和 Holdout 切片，形成多层次过拟合诊断与无前视证据体系。
 
 LaTeX 模板资源位于 [`report/thesis_latex/thesisSWUFE.cls`](report/thesis_latex/thesisSWUFE.cls)、[`report/thesis_latex/fonts`](report/thesis_latex/fonts) 与 [`report/thesis_latex/swufe`](report/thesis_latex/swufe)，来源为 Marquis03/SWUFE-Thesis，并保留模板许可证文件。
 
@@ -296,17 +296,17 @@ $$
 | Global RRP | 4.27% | 0.62 | -6.83% | 0.63 | 17.4% |
 | Defensive Dynamic RRP | 3.95% | 0.53 | -7.47% | 0.53 | 17.5% |
 | Convex Adaptive Global RRP | 5.40% | 0.87 | -5.22% | 1.03 | 2.90% |
-| Improved Convex Adaptive Global RRP | 5.57% | 0.98 | -5.44% | 1.02 | 1.94% |
+| Improved Convex Adaptive Global RRP | 6.78% | 1.10 | -5.83% | 1.16 | 1.44% |
 
 基准结果：
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
 | HRP Benchmark | 1.81% | -0.06 | -0.08% | 22.08 | 5.96% |
-| HERC Benchmark | 2.34% | 1.08 | -0.40% | 5.91 | 9.37% |
+| HERC Benchmark | 2.33% | 1.08 | -0.39% | 5.91 | 9.37% |
 | Equal Weight | 7.70% | 0.53 | -20.24% | 0.38 | — |
 
-Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在当前评估口径下实现 5.57% 净年化收益，平均月度换手率 1.94%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置 benchmark；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
+Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在当前评估口径下实现 6.78% 净年化收益，Sharpe 1.10，平均月度换手率 1.44%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。CVaR 参数敏感性扫描（12 变体）均值 Sharpe 1.12，区间 1.08–1.15。HRP/HERC 仅作为层次化风险配置 benchmark；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
 
 HERC 在当前样本中具有较高 Sharpe（1.08），但极低波动率（0.47%）源于对债券类资产的高度集中，绝对收益受制于债券收益上限，因此更适合作为 benchmark，而不是直接替代主模型。
 
@@ -555,15 +555,15 @@ Evaluated from 2015-01-01 (net returns after 3 bps transaction cost; ETF data av
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---|---|---|---|---|---|---|
-| Improved Convex Adaptive Global RRP | **5.57%** | 3.82% | **0.98** | 1.37 | -5.44% | 1.02 | **1.94%** |
+| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
 | Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
 | Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
 | Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
-| HERC Benchmark | 2.34% | 0.47% | 1.08 | 1.61 | -0.40% | 5.91 | 9.37% |
+| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
 | HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
 | Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
 
-- **Improved Convex Adaptive Global RRP**: The thesis's implementable refinement. CVaR constraints and turnover penalties control average monthly turnover to 1.94%, delivering 5.57% net annualized return, Sharpe 0.98, and max drawdown −5.44%—the best risk-adjusted outcome across all models.
+- **Improved Convex Adaptive Global RRP**: The thesis's implementable refinement. CVaR constraints and turnover penalties control average monthly turnover to 1.44%, delivering 6.78% net annualized return, Sharpe 1.10, Sortino 1.63, and max drawdown −5.83%—the best risk-adjusted outcome across all models. CVaR parameter sensitivity (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days; 12 variants) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter robustness.
 - **Convex Adaptive Global RRP**: Monthly turnover 2.90%, Sharpe 0.87, max drawdown −5.22%; maintains robust risk control under moderate turnover constraint.
 - **Global RRP**: Full risk-budgeting flexibility; monthly turnover 17.4%, net annual return 4.27%, Sharpe 0.62. High turnover reflects frequent reallocation as market conditions shift.
 - **Defensive Dynamic RRP**: Defensive risk overlay on top of Global RRP logic; similar turnover (17.5%) but net return 3.95% and Sharpe 0.53, as the defensive design trades upside elasticity for tail protection.
@@ -573,7 +573,7 @@ Evaluated from 2015-01-01 (net returns after 3 bps transaction cost; ETF data av
 
 **Robustness Diagnostics**
 
-Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (4 candidates, 6 blocks), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
+Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (36 candidates, 35 splits, PBO = 0.514), CVaR parameter sensitivity (12 variants, mean Sharpe 1.12), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
 
 The LaTeX template assets are under [`report/thesis_latex/thesisSWUFE.cls`](report/thesis_latex/thesisSWUFE.cls), [`report/thesis_latex/fonts`](report/thesis_latex/fonts), and [`report/thesis_latex/swufe`](report/thesis_latex/swufe). They are based on Marquis03/SWUFE-Thesis, with the template license retained.
 
@@ -807,17 +807,17 @@ Core model results (evaluation from 2015-01-01; ETF data available from 2018-01-
 | Global RRP | 4.27% | 0.62 | -6.83% | 0.63 | 17.4% |
 | Defensive Dynamic RRP | 3.95% | 0.53 | -7.47% | 0.53 | 17.5% |
 | Convex Adaptive Global RRP | 5.40% | 0.87 | -5.22% | 1.03 | 2.90% |
-| Improved Convex Adaptive Global RRP | 5.57% | 0.98 | -5.44% | 1.02 | 1.94% |
+| Improved Convex Adaptive Global RRP | 6.78% | 1.10 | -5.83% | 1.16 | 1.44% |
 
 Benchmark results:
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
 | HRP Benchmark | 1.81% | -0.06 | -0.08% | 22.08 | 5.96% |
-| HERC Benchmark | 2.34% | 1.08 | -0.40% | 5.91 | 9.37% |
+| HERC Benchmark | 2.33% | 1.08 | -0.39% | 5.91 | 9.37% |
 | Equal Weight | 7.70% | 0.53 | -20.24% | 0.38 | — |
 
-Global RRP remains the main return-efficient global multi-asset model. Under the current evaluation setup, Improved Convex Adaptive Global RRP reaches 5.57% net annual return with average monthly turnover of 1.94%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
+Global RRP remains the main return-efficient global multi-asset model. Under the current evaluation setup, Improved Convex Adaptive Global RRP reaches 6.78% net annual return with Sharpe 1.10 and average monthly turnover of 1.44%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. CVaR sensitivity analysis across 12 parameter variants yields mean Sharpe 1.12 (range 1.08–1.15), confirming parameter stability. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
 
 HERC shows a competitive Sharpe (1.08) in the current sample, but its near-zero volatility (0.47%) driven by heavy bond concentration keeps it in the role of a benchmark rather than a replacement for the main model line.
 

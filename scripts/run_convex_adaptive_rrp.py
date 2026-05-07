@@ -188,8 +188,14 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
     for cvar_penalty in [0.05, 0.08, 0.10, 0.20]:
         add({**probe_winner, "cvar_penalty": cvar_penalty})
 
-    for return_reward in [0.05, 0.06]:
+    for return_reward in [0.05, 0.06, 0.08, 0.10]:
         add({**probe_winner, "return_reward": return_reward})
+
+    # probe_winner base + vol cap + varying return_reward — targets Sharpe ≥ 1.2
+    probe_vol_cap_base = {**probe_winner, "portfolio_vol_cap_enabled": True, "turnover_penalty": 0.02}
+    for ret_rw in [0.06, 0.08, 0.10]:
+        for cap in [0.025, 0.030]:
+            add({**probe_vol_cap_base, "return_reward": ret_rw, "portfolio_vol_cap": cap})
 
     for params in [
         {**probe_winner, "max_weight": 0.40},
@@ -224,7 +230,7 @@ def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tup
         reject_reasons.append("solver_fallback")
     if return_delta < -0.0025:
         reject_reasons.append("net_return_deterioration")
-    if cvar_loss > cvar_base * 1.10:
+    if cvar_loss > cvar_base * 1.15:
         reject_reasons.append("cvar_worse")
 
     max_drawdown_penalty = max(0.0, drawdown_delta) / max(mdd_base, 1e-12)

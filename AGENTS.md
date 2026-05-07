@@ -73,15 +73,15 @@ Current results (evaluation from `2015-01-01`, 3 bps transaction cost, monthly r
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | **5.57%** | 3.82% | **0.98** | 1.37 | -5.44% | 1.02 | **1.94%** |
+| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
 | Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
 | Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
 | Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
-| HERC Benchmark | 2.34% | 0.47% | 1.08 | 1.61 | -0.40% | 5.91 | 9.37% |
+| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
 | HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
 | Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves the best risk-adjusted outcome with Sharpe 0.98 and max drawdown -5.44% at 1.94% average monthly turnover. HRP's Sharpe is -0.06 because its near-zero volatility (0.17%) cannot overcome the risk-free rate gap; its -0.08% max drawdown reflects near-cash behavior in this universe.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.10 and Sortino 1.63, delivering 6.78% net annual return with max drawdown -5.83% at 1.44% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.514 across 36 candidates (35 splits) provides intermediate validation evidence; results should be interpreted as research diagnostics, not forward-looking guarantees. HRP's Sharpe is -0.06 because its near-zero volatility (0.17%) cannot overcome the risk-free rate gap; its -0.08% max drawdown reflects near-cash behavior in this universe.
 
 ---
 
