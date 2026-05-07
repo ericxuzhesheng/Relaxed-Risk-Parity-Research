@@ -39,6 +39,8 @@ class ConvexRRPConfig:
     use_transaction_cost_objective: bool = False
     use_online_regime: bool = False
     group_bounds: dict[str, tuple[float, float]] = field(default_factory=dict)
+    portfolio_vol_cap: float = 0.0
+    portfolio_vol_cap_enabled: bool = False
     solver: str | None = None
 
 
@@ -121,6 +123,9 @@ def solve_convex_rrp(
         for idxs, (lower, upper) in _group_constraints(returns_window.columns, cfg.group_bounds):
             exposure = cp.sum(w[idxs])
             constraints.extend([exposure >= lower, exposure <= upper])
+        if cfg.portfolio_vol_cap_enabled and cfg.portfolio_vol_cap > 0.0:
+            # sigma is annualized covariance; annualized portfolio variance ≤ vol_cap²
+            constraints.append(cp.quad_form(w, sigma) <= cfg.portfolio_vol_cap ** 2)
         cvar_effective_obs = int((~returns_window.isna().any(axis=1)).sum())
         cvar_total_obs = len(returns_window)
         diagnostics.update({"cvar_effective_obs": cvar_effective_obs, "cvar_total_obs": cvar_total_obs})

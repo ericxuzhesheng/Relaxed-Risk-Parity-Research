@@ -40,7 +40,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run enhanced CSCV/PBO diagnostics for convex adaptive candidates.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None)
-    parser.add_argument("--eval-start", default="2021-01-01")
+    parser.add_argument("--eval-start", default="2015-01-01")
     parser.add_argument("--num-blocks", type=int, default=10)
     parser.add_argument("--max-combinations", type=int, default=12)
     parser.add_argument("--smoke", action="store_true")

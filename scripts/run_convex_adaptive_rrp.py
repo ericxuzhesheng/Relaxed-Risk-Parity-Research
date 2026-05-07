@@ -153,6 +153,22 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
     add(incumbent)
     add(probe_winner)
 
+    vol_constrained = {
+        "lookback_days": 252,
+        "covariance_method": "ewma",
+        "max_weight": 0.40,
+        "turnover_cap": 0.60,
+        "turnover_penalty": 0.02,
+        "budget_penalty": 0.25,
+        "cvar_penalty": 0.15,
+        "cvar_beta": 0.95,
+        "return_reward": 0.06,
+        "portfolio_vol_cap_enabled": True,
+        "portfolio_vol_cap": 0.030,
+    }
+    for cap in [0.025, 0.030, 0.035]:
+        add({**vol_constrained, "portfolio_vol_cap": cap})
+
     for lookback_days in [120, 180, 252]:
         for budget_penalty in [0.05, 0.10]:
             add(
@@ -410,7 +426,7 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
 def main() -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
-    eval_start_date = config.get("plot_start_date", "2021-01-01")
+    eval_start_date = config.get("plot_start_date", "2015-01-01")
     incumbent_metrics = previous_improved_metrics()
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
 
