@@ -68,6 +68,7 @@ Do claim where appropriate:
 | Primary model metrics | `results/tables/convex_adaptive_performance_summary.csv` |
 | Full model comparison | `results/tables/hrp_comparison.csv` |
 | Per-ETF statistics | `results/tables/asset_descriptive_statistics.csv` |
+| Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 
 Current results (evaluation from `2019-01-01` to `2026-05-07`, 3 bps transaction cost, monthly rebalancing; earliest ETFs entered trading 2018-01-30, evaluation begins 2019-01-01 when full 30-ETF universe is investable; point-in-time universe filtering applied):
 
@@ -81,7 +82,7 @@ Current results (evaluation from `2019-01-01` to `2026-05-07`, 3 bps transaction
 | HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
 | Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.326 and Sortino 1.976, delivering 7.79% net annual return with max drawdown -5.83% at 0.51% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.429 across 36 candidates (35 splits) indicates below-0.5 PBO, meaning the in-sample selected candidate tends to outperform the out-of-sample median—a favorable indicator. Evaluation window shifted to 2019-01-01 through 2026-05-07 because the earliest ETFs entered trading 2018-01-30; before January 2019, not all 30 assets were available simultaneously. Results should be interpreted as research diagnostics, not forward-looking guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves no room for excess return. Evaluation window: 2019-01-01 to 2026-05-07.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.326 and Sortino 1.976, delivering 7.79% net annual return with max drawdown -5.83% at 0.51% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.429 across 36 candidates (35 splits) indicates below-0.5 PBO, meaning the in-sample selected candidate tends to outperform the out-of-sample median—a favorable indicator. The evaluation window runs from 2019-01-01 through 2026-05-07 because the earliest ETFs in the 30-asset universe entered trading 2018-01-30; before January 2019, not all 30 assets were simultaneously available for portfolio construction. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves minimal opportunity for excess return.
 
 ---
 
