@@ -235,19 +235,34 @@ $$
 |---|---|---|---|
 | 短融ETF | 511360.SH | 短久期信用债 | 防御性债券与流动性配置 |
 | 可转债ETF | 511380.SH | 可转债 | 股债混合弹性暴露 |
+| 国债ETF | 511010.SH | 利率债 | 久期债券风险平价锚 |
 | 沪深300ETF | 510300.SH | 中国股票 | A 股大盘核心暴露 |
+| 中证500ETF | 510500.SH | 中国股票 | A 股中盘暴露 |
 | 中证1000ETF | 512100.SH | 中国股票 | A 股小盘与成长暴露 |
 | 科创50ETF | 588000.SH | 中国股票 | 科创板成长暴露 |
 | 红利ETF | 510880.SH | 中国股票红利 | 高股息与价值风格暴露 |
-| 上证指数ETF | 510210.SH | 中国股票 | 宽基 A 股市场暴露 |
+| 半导体ETF | 512480.SH | 中国科技股票 | 半导体独立因子弹性 |
+| 芯片ETF | 159995.SZ | 中国科技股票 | 芯片集群弹性暴露 |
+| 科创芯片ETF | 588200.SH | 中国科技股票 | 科创板芯片集中暴露 |
+| 人工智能ETF | 159819.SZ | 中国科技股票 | AI / 新经济弹性暴露 |
+| 光伏ETF | 515790.SH | 中国新能源 | 清洁能源因子暴露 |
+| 新能源ETF | 516160.SH | 中国新能源 | 新能源车 / 储能 / 太阳能宽基 |
+| 证券ETF | 512880.SH | 中国金融 | 券商 / 金融市场周期 Beta |
+| 医药ETF | 512010.SH | 中国消费 / 防御 | 医疗健康防御因子 |
+| 消费ETF | 159928.SZ | 中国消费 / 防御 | 消费板块通胀受益暴露 |
 | 恒生ETF | 159920.SZ | 港股 | 香港股票市场暴露 |
 | 恒生科技ETF | 513180.SH | 港股科技 | 香港科技成长暴露 |
 | 纳指ETF | 159941.SZ | 全球股票 | 美国科技与成长股暴露 |
+| 纳指科技ETF | 159509.SZ | 全球股票 | 美国大型科技弹性暴露 |
 | 标普500ETF | 513500.SH | 全球股票 | 美国大盘股票暴露 |
 | 日经225ETF | 513880.SH | 全球股票 | 日本股票市场暴露 |
+| 德国ETF | 513030.SH | 全球股票 | 欧洲股票地理分散 |
 | 黄金ETF | 518880.SH | 商品 | 贵金属与避险资产暴露 |
 | 有色ETF | 159980.SZ | 商品 / 资源 | 有色金属与资源周期暴露 |
 | 豆粕ETF | 159985.SZ | 商品 | 农产品商品暴露 |
+| 养殖ETF | 159865.SZ | 商品 | 畜牧 / 农业多元化暴露 |
+| 油气ETF | 513350.SH | 商品 | 能源商品 / 通胀对冲暴露 |
+| 煤炭ETF | 515220.SH | 商品 | 传统能源独立供需因子 |
 
 ### 最新绩效看板
 
@@ -255,19 +270,19 @@ $$
 
 | Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| Global RRP | 4.97% | 0.71 | -4.71% | 1.06 | 19.87% |
-| Defensive Dynamic RRP | 4.06% | 0.47 | -7.22% | 0.56 | 17.53% |
-| Convex Adaptive Global RRP | 6.43% | 0.78 | -5.08% | 1.27 | 0.80% |
-| Improved Convex Adaptive Global RRP | 6.47% | 0.96 | -3.51% | 1.84 | 0.21% |
+| Global RRP | 3.61% | 0.52 | -4.15% | 0.87 | 20.1% |
+| Defensive Dynamic RRP | 2.72% | 0.23 | -7.55% | 0.36 | 20.7% |
+| Convex Adaptive Global RRP | 5.03% | 0.58 | -5.94% | 0.85 | 1.2% |
+| Improved Convex Adaptive Global RRP | 5.10% | 0.80 | -3.77% | 1.35 | 0.83% |
 
 基准结果：
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| HRP Benchmark | 6.19% | 0.95 | -8.29% | 0.75 | 9.44% |
-| HERC Benchmark | 6.95% | 1.05 | -9.69% | 0.72 | 8.29% |
+| HRP Benchmark | 2.25% | 1.63 | -0.26% | 8.61 | 1.0% |
+| HERC Benchmark | 2.91% | 1.31 | -0.73% | 3.98 | 5.7% |
 
-Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在当前重跑样本中保持较稳健的风险收益特征，并将平均月度换手率降至 0.21%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置 benchmark；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
+Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在扩展至 30 支 ETF 的资产池重跑样本中保持较稳健的风险收益特征，将平均月度换手率控制在 0.83%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。HRP/HERC 仅作为层次化风险配置 benchmark；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
 
 论文正文已同步扩展对 HRP/HERC 的正面讨论：HERC 在当前样本中的夏普更高，说明层次化方法在 ETF 多资产配置中具有现实经验价值；但其回撤、换手与成本敏感性也更强，因此更适合作为竞争性 benchmark，而不是直接替代主模型。
 
@@ -709,19 +724,34 @@ The asset universe represents major risk sources through tradable ETFs, includin
 |---|---|---|---|
 | Short-Term Financing ETF | 511360.SH | Short-duration credit | Defensive bond and liquidity allocation |
 | Convertible Bond ETF | 511380.SH | Convertible bond | Hybrid equity-bond convexity exposure |
+| Government Bond ETF | 511010.SH | Government bond | Duration bond anchor; critical for risk parity |
 | CSI 300 ETF | 510300.SH | China equity | Core China large-cap exposure |
+| CSI 500 ETF | 510500.SH | China equity | China mid-cap exposure |
 | CSI 1000 ETF | 512100.SH | China equity | China small-cap and growth exposure |
 | STAR 50 ETF | 588000.SH | China equity | STAR Market growth exposure |
 | Dividend ETF | 510880.SH | China equity dividend | High-dividend and value-style exposure |
-| Shanghai Composite ETF | 510210.SH | China equity | Broad A-share market exposure |
+| Semiconductor ETF | 512480.SH | China tech equity | Semiconductor factor upside elasticity |
+| Chip ETF | 159995.SZ | China tech equity | Chip cluster upside elasticity |
+| STAR Chip ETF | 588200.SH | China tech equity | STAR Market chip concentrated exposure |
+| AI ETF | 159819.SZ | China tech equity | AI / new-economy upside elasticity |
+| Solar/PV ETF | 515790.SH | China new energy | Clean energy factor exposure |
+| New Energy ETF | 516160.SH | China new energy | NEV / storage / solar broad exposure |
+| Securities ETF | 512880.SH | China finance | Broker / financial market-cycle beta |
+| Pharma ETF | 512010.SH | China consumer / defensive | Healthcare defensive factor |
+| Consumer ETF | 159928.SZ | China consumer / defensive | Consumer sector inflation-beneficiary |
 | Hang Seng ETF | 159920.SZ | Hong Kong equity | Hong Kong equity market exposure |
 | Hang Seng Tech ETF | 513180.SH | Hong Kong technology | Hong Kong technology growth exposure |
 | Nasdaq ETF | 159941.SZ | Global equity | U.S. technology and growth equity exposure |
+| Nasdaq Tech ETF | 159509.SZ | Global equity | U.S. mega-cap tech upside elasticity |
 | S&P 500 ETF | 513500.SH | Global equity | U.S. large-cap equity exposure |
 | Nikkei 225 ETF | 513880.SH | Global equity | Japan equity market exposure |
+| Germany ETF | 513030.SH | Global equity | European equity geographic diversification |
 | Gold ETF | 518880.SH | Commodity | Precious-metal and defensive asset exposure |
 | Non-Ferrous Metals ETF | 159980.SZ | Commodity / resources | Metals and resource-cycle exposure |
 | Soybean Meal ETF | 159985.SZ | Commodity | Agricultural commodity exposure |
+| Livestock ETF | 159865.SZ | Commodity | Livestock / agriculture diversification |
+| Oil & Gas ETF | 513350.SH | Commodity | Energy commodity / inflation-hedge exposure |
+| Coal ETF | 515220.SH | Commodity | Traditional energy independent supply factor |
 
 ### Latest Performance Dashboard
 
@@ -729,19 +759,19 @@ Core model results:
 
 | Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| Global RRP | 4.97% | 0.71 | -4.71% | 1.06 | 19.87% |
-| Defensive Dynamic RRP | 4.06% | 0.47 | -7.22% | 0.56 | 17.53% |
-| Convex Adaptive Global RRP | 6.43% | 0.78 | -5.08% | 1.27 | 0.80% |
-| Improved Convex Adaptive Global RRP | 6.47% | 0.96 | -3.51% | 1.84 | 0.21% |
+| Global RRP | 3.61% | 0.52 | -4.15% | 0.87 | 20.1% |
+| Defensive Dynamic RRP | 2.72% | 0.23 | -7.55% | 0.36 | 20.7% |
+| Convex Adaptive Global RRP | 5.03% | 0.58 | -5.94% | 0.85 | 1.2% |
+| Improved Convex Adaptive Global RRP | 5.10% | 0.80 | -3.77% | 1.35 | 0.83% |
 
 Benchmark results:
 
 | Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
 |---|---:|---:|---:|---:|---:|
-| HRP Benchmark | 6.19% | 0.95 | -8.29% | 0.75 | 9.44% |
-| HERC Benchmark | 6.95% | 1.05 | -9.69% | 0.72 | 8.29% |
+| HRP Benchmark | 2.25% | 1.63 | -0.26% | 8.61 | 1.0% |
+| HERC Benchmark | 2.91% | 1.31 | -0.73% | 3.98 | 5.7% |
 
-Global RRP remains the main return-efficient global multi-asset model. Improved Convex Adaptive Global RRP keeps a stable risk-return profile in the regenerated sample while reducing average monthly turnover to 0.21%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
+Global RRP remains the main return-efficient global multi-asset model. Improved Convex Adaptive Global RRP, re-run on the expanded 30-ETF universe, maintains a stable risk-return profile with average monthly turnover of 0.83%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
 
 The thesis text now treats HRP/HERC more directly: HERC posts the higher Sharpe in the current sample, confirming that hierarchical allocation has empirical value in this ETF universe, while the deeper drawdowns and higher turnover keep it in the role of a competitive benchmark rather than a replacement for the main model line.
 
