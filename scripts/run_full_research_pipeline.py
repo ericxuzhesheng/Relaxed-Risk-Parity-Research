@@ -153,6 +153,26 @@ def write_checklist(rows: list[dict]) -> Path:
     return output
 
 
+def compile_pdf() -> None:
+    tex_dir = ROOT_DIR / "report" / "thesis_latex"
+    if not (tex_dir / "main.tex").exists():
+        return
+    print("\nCompiling thesis PDF...")
+    try:
+        result = subprocess.run(
+            ["latexmk", "-xelatex", "-interaction=nonstopmode", "main.tex"],
+            cwd=tex_dir,
+        )
+        if result.returncode == 0:
+            print("Thesis PDF compiled successfully.")
+        else:
+            print("Warning: PDF compilation failed (latexmk returned non-zero).", file=sys.stderr)
+            print("  Run manually: cd report/thesis_latex && latexmk -xelatex -interaction=nonstopmode main.tex", file=sys.stderr)
+    except FileNotFoundError:
+        print("Warning: latexmk not found on PATH. Compile PDF manually:", file=sys.stderr)
+        print("  cd report/thesis_latex && latexmk -xelatex -interaction=nonstopmode main.tex", file=sys.stderr)
+
+
 def cleanup() -> None:
     cleanup_script = ROOT_DIR / "scripts" / "cleanup_temp.py"
     if cleanup_script.exists():
@@ -176,7 +196,8 @@ def main() -> None:
         checklist = write_checklist(rows)
         print(f"Full pipeline checklist written to {checklist}")
     finally:
-        cleanup()
+        compile_pdf()  # compile before cleanup so intermediates (.aux etc.) are present
+        cleanup()      # then remove intermediates; .pdf is not in cleanup list and is preserved
     if failed_critical:
         raise SystemExit(1)
 
