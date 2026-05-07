@@ -124,6 +124,25 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-30` 
 
 ---
 
+## Pipeline Run Protocol (mandatory)
+
+**Every pipeline run must follow this sequence:**
+
+### Before running:
+```powershell
+$env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
+python scripts/update_etf_data.py --provider tushare --start-date 20150101
+```
+
+### After running — all three must be updated before any commit:
+1. **`AGENTS.md`** — update performance table and key interpretation (read CSV first)
+2. **`README.md`** — update both Chinese and English performance dashboards (read CSV first)
+3. **`report/thesis_latex/main.tex`** — update all tables and narrative numbers in abstracts, Chapter 5, robustness summary table (read CSV first), then recompile PDF with xelatex × 3 passes
+
+Do not commit until AGENTS.md + README.md + main.tex + main.pdf are all updated.
+
+---
+
 ## Documentation Update Policy
 
 Every documentation update must describe the **current state** of the project — not what changed, not what was added in this round.
@@ -132,6 +151,7 @@ Every documentation update must describe the **current state** of the project �
 - All performance numbers must be read from the authoritative CSV files above before writing.
 - ETF pool must match `src/asset_universe.py`.
 - Data range and evaluation window must match the actual pipeline config.
+- Thesis writing must use rigorous formal academic Chinese — no casual expressions.
 
 See `agent.md` and `claude.md` for the full policy.
 
