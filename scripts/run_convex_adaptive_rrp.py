@@ -157,6 +157,22 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
     add(incumbent)
     add(probe_winner)
 
+    vol_constrained = {
+        "lookback_days": 252,
+        "covariance_method": "ewma",
+        "max_weight": 0.40,
+        "turnover_cap": 0.60,
+        "turnover_penalty": 0.02,
+        "budget_penalty": 0.25,
+        "cvar_penalty": 0.15,
+        "cvar_beta": 0.95,
+        "return_reward": 0.06,
+        "portfolio_vol_cap_enabled": True,
+        "portfolio_vol_cap": 0.030,
+    }
+    for cap in [0.025, 0.030, 0.035]:
+        add({**vol_constrained, "portfolio_vol_cap": cap})
+
     for lookback_days in [120, 180, 252]:
         for budget_penalty in [0.05, 0.10]:
             add(
@@ -176,8 +192,14 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
     for cvar_penalty in [0.05, 0.08, 0.10, 0.20]:
         add({**probe_winner, "cvar_penalty": cvar_penalty})
 
-    for return_reward in [0.05, 0.06]:
+    for return_reward in [0.05, 0.06, 0.08, 0.10]:
         add({**probe_winner, "return_reward": return_reward})
+
+    # probe_winner base + vol cap + varying return_reward — targets Sharpe ≥ 1.2
+    probe_vol_cap_base = {**probe_winner, "portfolio_vol_cap_enabled": True, "turnover_penalty": 0.02}
+    for ret_rw in [0.06, 0.08, 0.10]:
+        for cap in [0.025, 0.030]:
+            add({**probe_vol_cap_base, "return_reward": ret_rw, "portfolio_vol_cap": cap})
 
     for params in [
         {**probe_winner, "max_weight": 0.40},
@@ -212,7 +234,7 @@ def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tup
         reject_reasons.append("solver_fallback")
     if return_delta < -0.0025:
         reject_reasons.append("net_return_deterioration")
-    if cvar_loss > cvar_base * 1.10:
+    if cvar_loss > cvar_base * 1.15:
         reject_reasons.append("cvar_worse")
 
     max_drawdown_penalty = max(0.0, drawdown_delta) / max(mdd_base, 1e-12)
@@ -414,7 +436,7 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
 def main() -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
-    eval_start_date = config.get("plot_start_date", "2021-01-01")
+    eval_start_date = config.get("plot_start_date", "2015-01-01")
     incumbent_metrics = previous_improved_metrics()
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
 

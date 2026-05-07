@@ -37,7 +37,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run CSCV/PBO diagnostics for convex adaptive candidates.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None)
-    parser.add_argument("--eval-start", default="2018-01-01")
+    parser.add_argument("--eval-start", default="2015-01-01")
     parser.add_argument("--num-blocks", type=int, default=8)
     parser.add_argument("--max-combinations", type=int, default=None)
     parser.add_argument("--smoke", action="store_true")
@@ -48,7 +48,7 @@ def main() -> None:
         validation_kind = "smoke"
         args.max_candidates = args.max_candidates or 2
         args.max_combinations = args.max_combinations or 2
-    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2018-01-01":
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2015-01-01":
         validation_kind = "intermediate"
 
     requested_eval_start = args.eval_start
@@ -67,7 +67,7 @@ def main() -> None:
     validation_kind = "formal"
     if args.smoke:
         validation_kind = "smoke"
-    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2018-01-01":
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2015-01-01":
         validation_kind = "intermediate"
     elif len(candidates) < len(candidate_configurations(config["transaction_cost_bps"])):
         validation_kind = "intermediate"

@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_CONFIG = {
     "lookback_weeks": 48,
     "trading_days_per_year": 243,
-    "plot_start_date": "2018-01-01",
+    "plot_start_date": "2015-01-01",
     "lambda_pen": 1.9,
     "m": 1.9,
     "optim_tol": 1e-6,

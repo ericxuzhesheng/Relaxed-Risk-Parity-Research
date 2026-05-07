@@ -55,8 +55,8 @@ def build_variants(base: ConvexRRPConfig) -> list[dict[str, object]]:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run CVaR sensitivity diagnostics for the convex adaptive candidate.")
     parser.add_argument("--output-dir", default="results/tables")
-    parser.add_argument("--eval-start", default="2018-01-01")
-    parser.add_argument("--sample-start", default="2018-01-02")
+    parser.add_argument("--eval-start", default="2015-01-01")
+    parser.add_argument("--sample-start", default="2015-01-02")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
 

@@ -41,16 +41,16 @@
 \contentsline {subsection}{\numberline {5.7}绩效差异的机制归因}{27}{subsection.5.7}%
 \contentsline {subsection}{\numberline {5.8}CVaR 尾部风险分析}{28}{subsection.5.8}%
 \contentsline {subsection}{\numberline {5.9}小结}{29}{subsection.5.9}%
-\contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{30}{section.6}%
-\contentsline {subsection}{\numberline {6.1}稳健性检验原则}{30}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}子区间稳健性}{30}{subsection.6.2}%
+\contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{29}{section.6}%
+\contentsline {subsection}{\numberline {6.1}稳健性检验原则}{29}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}子区间稳健性}{29}{subsection.6.2}%
 \contentsline {subsection}{\numberline {6.3}交易成本敏感性}{31}{subsection.6.3}%
 \contentsline {subsection}{\numberline {6.4}压力期检验}{31}{subsection.6.4}%
 \contentsline {subsection}{\numberline {6.5}参数扰动与求解器稳定性}{32}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}协方差估计敏感性}{33}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.6}协方差估计敏感性}{32}{subsection.6.6}%
 \contentsline {subsection}{\numberline {6.7}Block Bootstrap}{34}{subsection.6.7}%
 \contentsline {subsection}{\numberline {6.8}CSCV/PBO 过拟合诊断}{34}{subsection.6.8}%
-\contentsline {subsection}{\numberline {6.9}Walk-Forward、Nested 与 Frozen OOS}{36}{subsection.6.9}%
+\contentsline {subsection}{\numberline {6.9}Walk-Forward、Nested 与 Frozen OOS}{35}{subsection.6.9}%
 \contentsline {subsection}{\numberline {6.10}无前视审计}{36}{subsection.6.10}%
 \contentsline {subsection}{\numberline {6.11}小结}{38}{subsection.6.11}%
 \contentsline {section}{\numberline {7}机构配置应用讨论、结论与展望}{38}{section.7}%

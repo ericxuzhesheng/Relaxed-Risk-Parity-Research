@@ -69,25 +69,25 @@ Do claim where appropriate:
 | Full model comparison | `results/tables/hrp_comparison.csv` |
 | Per-ETF statistics | `results/tables/asset_descriptive_statistics.csv` |
 
-Current results (evaluation from `2021-01-01`, 3 bps transaction cost, monthly rebalancing):
+Current results (evaluation from `2015-01-01`, 3 bps transaction cost, monthly rebalancing; ETF data available from 2018-01-30, point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | **5.62%** | 3.85% | **0.99** | 1.46 | -3.51% | 1.60 | **0.58%** |
-| Convex Adaptive Global RRP | 3.88% | 2.59% | 0.79 | 1.19 | -2.34% | 1.66 | 1.58% |
-| Global RRP | 3.13% | 3.70% | 0.35 | 0.38 | -6.41% | 0.49 | 20.1% |
-| Defensive Dynamic RRP | 2.08% | 3.60% | 0.07 | 0.08 | -6.87% | 0.30 | 21.0% |
-| HERC Benchmark | 2.23% | 0.45% | 0.91 | 1.29 | -0.24% | 9.13 | 10.0% |
-| HRP Benchmark | 1.77% | 0.16% | -0.33 | -0.54 | -0.07% | 27.19 | 7.8% |
-| Equal Weight | 6.06% | 11.24% | 0.38 | 0.60 | -18.80% | 0.32 | — |
+| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
+| Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
+| Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
+| Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
+| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
+| HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
+| Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves the best risk-adjusted outcome with Sharpe 0.99 and max drawdown -3.51% at only 0.58% average monthly turnover. HRP's Sharpe is -0.33 because its near-zero volatility (0.16%) cannot overcome the risk-free rate gap; its -0.07% max drawdown reflects near-cash behavior in this universe.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.10 and Sortino 1.63, delivering 6.78% net annual return with max drawdown -5.83% at 1.44% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.514 across 36 candidates (35 splits) provides intermediate validation evidence; results should be interpreted as research diagnostics, not forward-looking guarantees. HRP's Sharpe is -0.06 because its near-zero volatility (0.17%) cannot overcome the risk-free rate gap; its -0.08% max drawdown reflects near-cash behavior in this universe.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-02` to `2026-05-06`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-30` to `2026-05-07`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -103,16 +103,16 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-02` 
 | 红利ETF | 510880.SH | china equity dividend |
 | 半导体ETF | 512480.SH | china tech equity |
 | 芯片ETF | 159995.SZ | china tech equity |
-| 科创芯片ETF | 588200.SH | china tech equity |
+| 机器人ETF | 562500.SH | china advanced manufacturing |
 | 人工智能ETF | 159819.SZ | china tech equity |
 | 卫星ETF | 159206.SZ | china tech equity |
 | 光伏ETF | 515790.SH | china new energy |
 | 新能源ETF | 516160.SH | china new energy |
 | 证券ETF | 512880.SH | china finance |
 | 恒生ETF | 159920.SZ | hong kong equity |
-| 恒生科技ETF | 513180.SH | hong kong equity |
+| 创新药ETF | 516080.SH | china pharma |
 | 纳指ETF | 159941.SZ | global equity |
-| 纳指科技ETF | 159509.SZ | global equity |
+| 军工ETF | 512660.SH | china defense |
 | 标普500ETF | 513500.SH | global equity |
 | 日经225ETF | 513880.SH | global equity |
 | 道琼斯ETF | 513400.SH | global equity |
@@ -124,6 +124,25 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-02` 
 
 ---
 
+## Pipeline Run Protocol (mandatory)
+
+**Every pipeline run must follow this sequence:**
+
+### Before running:
+```powershell
+$env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
+python scripts/update_etf_data.py --provider tushare --start-date 20150101
+```
+
+### After running — all three must be updated before any commit:
+1. **`AGENTS.md`** — update performance table and key interpretation (read CSV first)
+2. **`README.md`** — update both Chinese and English performance dashboards (read CSV first)
+3. **`report/thesis_latex/main.tex`** — update all tables and narrative numbers in abstracts, Chapter 5, robustness summary table (read CSV first), then recompile PDF with xelatex × 3 passes
+
+Do not commit until AGENTS.md + README.md + main.tex + main.pdf are all updated.
+
+---
+
 ## Documentation Update Policy
 
 Every documentation update must describe the **current state** of the project — not what changed, not what was added in this round.
@@ -132,6 +151,7 @@ Every documentation update must describe the **current state** of the project �
 - All performance numbers must be read from the authoritative CSV files above before writing.
 - ETF pool must match `src/asset_universe.py`.
 - Data range and evaluation window must match the actual pipeline config.
+- Thesis writing must use rigorous formal academic Chinese — no casual expressions.
 
 See `agent.md` and `claude.md` for the full policy.
 
