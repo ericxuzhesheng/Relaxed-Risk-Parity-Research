@@ -1,16 +1,31 @@
 ﻿old_name,new_name,ticker,asset_class,reason,data_source_field
 0-5中高信用票,短融ETF,511360.SH,short-duration credit,Replace non-ETF credit index with a tradable short-duration bond ETF.,adj_close
 中证转债,可转债ETF,511380.SH,convertible bond,Replace convertible-bond index with a tradable convertible-bond ETF.,adj_close
+国债ETF,国债ETF,511010.SH,government bond,Add government bond ETF for duration exposure; critical for risk parity bond anchor.,adj_close
+信用债ETF,信用债ETF,511030.SH,credit bond,Add credit spread bond ETF for yield pickup over government bonds.,adj_close
+银华日利ETF,银华日利ETF,511880.SH,money market,Add money market ETF for ultra-short duration cash management layer.,adj_close
 沪深300ETF,沪深300ETF,510300.SH,china equity,Existing tradable broad China equity ETF.,adj_close
+中证500ETF,中证500ETF,510500.SH,china equity,Add mid-cap China equity exposure.,adj_close
 中证1000ETF,中证1000ETF,512100.SH,china equity,Existing tradable small-cap China equity ETF.,adj_close
 科创50ETF,科创50ETF,588000.SH,china equity,Existing tradable STAR 50 ETF.,adj_close
 红利ETF,红利ETF,510880.SH,china equity dividend,Existing tradable dividend equity ETF.,adj_close
-上证指数ETF,上证指数ETF,510210.SH,china equity,Existing tradable Shanghai Composite ETF.,adj_close
+半导体ETF,半导体ETF,512480.SH,china tech equity,Add semiconductor ETF for China tech elasticity.,adj_close
+芯片ETF,芯片ETF,159995.SZ,china tech equity,Add chip ETF for additional China semiconductor exposure.,adj_close
+科创芯片ETF,科创芯片ETF,588200.SH,china tech equity,Add STAR-market chip ETF for concentrated semiconductor exposure.,adj_close
+人工智能ETF,人工智能ETF,159819.SZ,china tech equity,Add AI/new-economy ETF for China tech upside elasticity.,adj_close
+卫星ETF,卫星ETF,159206.SZ,china tech equity,Add satellite/space industry ETF for aerospace technology factor exposure.,adj_close
+光伏ETF,光伏ETF,515790.SH,china new energy,Add solar/PV ETF for clean energy factor.,adj_close
+新能源ETF,新能源ETF,516160.SH,china new energy,Add broad new energy ETF (NEV+storage+solar).,adj_close
+证券ETF,证券ETF,512880.SH,china finance,Add China brokerage/securities sector for market-cyclical beta.,adj_close
 恒生ETF,恒生ETF,159920.SZ,hong kong equity,Existing tradable Hong Kong equity ETF.,adj_close
 恒生科技ETF,恒生科技ETF,513180.SH,hong kong equity,Existing tradable Hang Seng Tech ETF.,adj_close
 纳指ETF,纳指ETF,159941.SZ,global equity,Existing tradable Nasdaq ETF.,adj_close
+纳指科技ETF,纳指科技ETF,159509.SZ,global equity,Add concentrated US tech ETF for greater tech upside elasticity.,adj_close
 标普500ETF,标普500ETF,513500.SH,global equity,Existing tradable S&P 500 ETF.,adj_close
 日经225ETF,日经225ETF,513880.SH,global equity,Existing tradable Nikkei 225 ETF.,adj_close
+道琼斯ETF,道琼斯ETF,513400.SH,global equity,Replace German DAX with Dow Jones Industrial ETF for US large-cap blue-chip diversification.,adj_close
 黄金ETF,黄金ETF,518880.SH,commodity,Existing tradable gold ETF.,adj_close
 有色ETF,有色ETF,159980.SZ,commodity equity,Existing tradable non-ferrous metals ETF.,adj_close
 豆粕连续,豆粕ETF,159985.SZ,commodity,Replace commodity futures series with a tradable soybean meal ETF.,adj_close
+油气ETF,油气ETF,513350.SH,commodity,Add S&P global oil & gas ETF for energy commodity exposure.,adj_close
+煤炭ETF,煤炭ETF,515220.SH,commodity,Add coal ETF for traditional energy factor with independent supply dynamics.,adj_close

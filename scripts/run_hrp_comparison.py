@@ -21,15 +21,25 @@ from src.visualization import plot_drawdown_comparison, plot_nav_comparison, plo
 
 
 LOCAL_ASSETS = [
-    "0-5中高信用票",
-    "中证转债",
+    "短融ETF",
+    "可转债ETF",
+    "国债ETF",
+    "信用债ETF",
+    "银华日利ETF",
     "沪深300ETF",
+    "中证500ETF",
     "中证1000ETF",
     "科创50ETF",
     "红利ETF",
-    "上证指数ETF",
+    "半导体ETF",
+    "芯片ETF",
+    "科创芯片ETF",
+    "人工智能ETF",
+    "卫星ETF",
+    "光伏ETF",
+    "新能源ETF",
+    "证券ETF",
     "恒生ETF",
-    "恒生科技ETF",
     "黄金ETF",
 ]
 
