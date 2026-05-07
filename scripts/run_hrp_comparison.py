@@ -33,7 +33,7 @@ LOCAL_ASSETS = [
     "红利ETF",
     "半导体ETF",
     "芯片ETF",
-    "科创芯片ETF",
+    "机器人ETF",
     "人工智能ETF",
     "卫星ETF",
     "光伏ETF",
@@ -41,6 +41,8 @@ LOCAL_ASSETS = [
     "证券ETF",
     "恒生ETF",
     "黄金ETF",
+    "创新药ETF",
+    "军工ETF",
 ]
 
 

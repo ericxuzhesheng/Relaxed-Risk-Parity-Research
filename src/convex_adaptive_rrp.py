@@ -40,6 +40,8 @@ class ConvexRRPConfig:
     use_online_regime: bool = False
     group_bounds: dict[str, tuple[float, float]] = field(default_factory=dict)
     solver: str | None = None
+    vol_target_enabled: bool = False
+    vol_target: float = 0.040
 
 
 def _clean_weights(weights: np.ndarray) -> np.ndarray:
@@ -236,6 +238,17 @@ def run_convex_adaptive_backtest(
                 budget = adaptive_budget_target(window, graph, regime_state["regime_label"])
                 active_weights, diag = solve_convex_rrp(window, previous_active, cfg, budget, graph, regime_state["regime_label"])
                 weights = expand_weights(active_weights, active_cols, returns.columns)
+                if cfg.vol_target_enabled:
+                    from src.risk_overlay import RiskOverlayConfig as _OvCfg, vol_target_scale
+                    _port_rets = pd.Series(
+                        window_full.fillna(0.0).values @ weights,
+                        index=window_full.index,
+                    )
+                    _scalar = vol_target_scale(
+                        _port_rets,
+                        _OvCfg(target_vol=cfg.vol_target, max_risk_scale=1.0),
+                    )
+                    weights = weights * _scalar
                 turnover = float(np.abs(weights - previous).sum())
                 solver_rows.append({"date": date, **diag})
                 regime_rows.append({"date": date, **regime_state})

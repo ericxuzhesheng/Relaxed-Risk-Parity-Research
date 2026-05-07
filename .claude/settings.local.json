@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m 'docs: update thesis draft and generated PDF *)",
+      "Bash(git push *)",
+      "Bash(latexmk -xelatex -interaction=nonstopmode main.tex)",
+      "Bash(Get-Content *)",
+      "Bash(git commit -m 'docs: add mechanism attribution, robustness summary table, institutional matrix, and layered conclusions *)"
+    ]
+  }
+}

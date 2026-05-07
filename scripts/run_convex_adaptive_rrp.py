@@ -137,6 +137,8 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
         "cvar_penalty": 0.20,
         "cvar_beta": 0.95,
         "return_reward": 0.05,
+        "vol_target_enabled": True,
+        "vol_target": 0.035,
     }
     probe_winner = {
         "lookback_days": 252,
@@ -148,6 +150,8 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
         "cvar_penalty": 0.08,
         "cvar_beta": 0.95,
         "return_reward": 0.05,
+        "vol_target_enabled": True,
+        "vol_target": 0.035,
     }
 
     add(incumbent)

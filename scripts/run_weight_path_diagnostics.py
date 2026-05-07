@@ -36,7 +36,7 @@ KEY_ASSETS = [
     "红利ETF",
     "黄金ETF",
     "恒生ETF",
-    "恒生科技ETF",
+    "机器人ETF",
     "纳指ETF",
     "标普500ETF",
 ]
