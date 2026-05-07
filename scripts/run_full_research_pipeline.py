@@ -153,20 +153,30 @@ def write_checklist(rows: list[dict]) -> Path:
     return output
 
 
+def cleanup() -> None:
+    cleanup_script = ROOT_DIR / "scripts" / "cleanup_temp.py"
+    if cleanup_script.exists():
+        print("\nCleaning temporary files...")
+        subprocess.run([sys.executable, str(cleanup_script)], cwd=ROOT_DIR)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full thesis research reproduction pipeline.")
     parser.add_argument("--quick", action="store_true", help="Use smoke/fast modes for diagnostics where supported.")
     args = parser.parse_args()
     rows = []
     failed_critical = False
-    for step in steps(args.quick):
-        row = run_step(step, args.quick)
-        rows.append(row)
-        if row["status"] == "critical_failed":
-            failed_critical = True
-            break
-    checklist = write_checklist(rows)
-    print(f"Full pipeline checklist written to {checklist}")
+    try:
+        for step in steps(args.quick):
+            row = run_step(step, args.quick)
+            rows.append(row)
+            if row["status"] == "critical_failed":
+                failed_critical = True
+                break
+        checklist = write_checklist(rows)
+        print(f"Full pipeline checklist written to {checklist}")
+    finally:
+        cleanup()
     if failed_critical:
         raise SystemExit(1)
 
