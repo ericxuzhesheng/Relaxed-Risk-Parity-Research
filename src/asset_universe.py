@@ -23,6 +23,10 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Replace convertible-bond index with a tradable convertible-bond ETF."),
     AssetMapping("国债ETF",       "国债ETF",     "511010.SH", "government bond",
                  "Add government bond ETF for duration exposure; critical for risk parity bond anchor."),
+    AssetMapping("信用债ETF",     "信用债ETF",   "511030.SH", "credit bond",
+                 "Add credit spread bond ETF for yield pickup over government bonds."),
+    AssetMapping("银华日利ETF",   "银华日利ETF", "511880.SH", "money market",
+                 "Add money market ETF for ultra-short duration cash management layer."),
     # ── A 股宽基 ──────────────────────────────────────────────────────────────
     AssetMapping("沪深300ETF",    "沪深300ETF",  "510300.SH", "china equity",
                  "Existing tradable broad China equity ETF."),
@@ -43,6 +47,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Add STAR-market chip ETF for concentrated semiconductor exposure."),
     AssetMapping("人工智能ETF",   "人工智能ETF", "159819.SZ", "china tech equity",
                  "Add AI/new-economy ETF for China tech upside elasticity."),
+    AssetMapping("卫星ETF",       "卫星ETF",     "159206.SZ", "china tech equity",
+                 "Add satellite/space industry ETF for aerospace technology factor exposure."),
     # ── 中国新能源 ────────────────────────────────────────────────────────────
     AssetMapping("光伏ETF",       "光伏ETF",     "515790.SH", "china new energy",
                  "Add solar/PV ETF for clean energy factor."),
@@ -51,10 +57,6 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
     # ── 中国行业 ──────────────────────────────────────────────────────────────
     AssetMapping("证券ETF",       "证券ETF",     "512880.SH", "china finance",
                  "Add China brokerage/securities sector for market-cyclical beta."),
-    AssetMapping("医药ETF",       "医药ETF",     "512010.SH", "china consumer",
-                 "Add healthcare/pharma ETF for defensive consumer factor."),
-    AssetMapping("消费ETF",       "消费ETF",     "159928.SZ", "china consumer",
-                 "Add consumer sector ETF for inflation-beneficiary and defensive exposure."),
     # ── 港股 ──────────────────────────────────────────────────────────────────
     AssetMapping("恒生ETF",       "恒生ETF",     "159920.SZ", "hong kong equity",
                  "Existing tradable Hong Kong equity ETF."),
@@ -69,8 +71,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Existing tradable S&P 500 ETF."),
     AssetMapping("日经225ETF",    "日经225ETF",  "513880.SH", "global equity",
                  "Existing tradable Nikkei 225 ETF."),
-    AssetMapping("德国ETF",       "德国ETF",     "513030.SH", "global equity",
-                 "Add European equity via German DAX ETF for geographic diversification."),
+    AssetMapping("道琼斯ETF",     "道琼斯ETF",   "513400.SH", "global equity",
+                 "Replace German DAX with Dow Jones Industrial ETF for US large-cap blue-chip diversification."),
     # ── 大宗商品 ──────────────────────────────────────────────────────────────
     AssetMapping("黄金ETF",       "黄金ETF",     "518880.SH", "commodity",
                  "Existing tradable gold ETF."),
@@ -78,8 +80,6 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Existing tradable non-ferrous metals ETF."),
     AssetMapping("豆粕连续",      "豆粕ETF",     "159985.SZ", "commodity",
                  "Replace commodity futures series with a tradable soybean meal ETF."),
-    AssetMapping("养殖ETF",       "养殖ETF",     "159865.SZ", "commodity",
-                 "Add livestock/agriculture ETF for diversified commodity exposure."),
     AssetMapping("油气ETF",       "油气ETF",     "513350.SH", "commodity",
                  "Add S&P global oil & gas ETF for energy commodity exposure."),
     AssetMapping("煤炭ETF",       "煤炭ETF",     "515220.SH", "commodity",
