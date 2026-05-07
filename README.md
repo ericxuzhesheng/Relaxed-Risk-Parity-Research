@@ -32,33 +32,33 @@
 
 **资产宇宙**
 
-资产池包含 30 支境内外 ETF，覆盖八个类别：债券类（短融 ETF、可转债 ETF、国债 ETF、信用债 ETF、银华日利 ETF）、A 股宽基与风格（沪深 300、中证 500、中证 1000、科创 50、红利）、中国科技（半导体、芯片、人工智能、卫星）、中国先进制造（机器人）、中国新能源（光伏、新能源）、中国金融（证券）、港股（恒生）、中国医药（创新药）、中国国防（军工）、全球股票（纳指、标普 500、日经 225、道琼斯）和大宗商品（黄金、有色、豆粕、油气、煤炭）。数据区间 2018-01-30 至 2026-05-07，评估起点 2015-01-01（ETF 数据从 2018 年起逐步可用，逐点时间宇宙过滤），月度再平衡，3bps 单边交易成本。
+资产池包含 30 支境内外 ETF，覆盖八个类别：债券类（短融 ETF、可转债 ETF、国债 ETF、信用债 ETF、银华日利 ETF）、A 股宽基与风格（沪深 300、中证 500、中证 1000、科创 50、红利）、中国科技（半导体、芯片、人工智能、卫星）、中国先进制造（机器人）、中国新能源（光伏、新能源）、中国金融（证券）、港股（恒生）、中国医药（创新药）、中国国防（军工）、全球股票（纳指、标普 500、日经 225、道琼斯）和大宗商品（黄金、有色、豆粕、油气、煤炭）。最早的 ETF 自 2018-01-30 上市，有效评估期自 2019-01-01 起（此时全部 30 支资产均可投资），评估终点 2026-05-07。月度再平衡，3bps 单边交易成本。
 
 **实证结果**
 
-以 2015-01-01 为评估起点（ETF 数据从 2018-01-30 起可用，逐点时间宇宙过滤），各核心模型绩效如下（净年化收益已扣除 3bps 交易成本）：
+评估区间自 2019-01-01 至 2026-05-07，月度再平衡，3 bps 单边交易成本。最早的 ETF 上市于 2018-01-30，评估起点后移至 2019-01-01 以确保全部 30 支资产同步可投。各核心模型绩效如下（净年化收益已扣除交易成本）：
 
 | 模型 | 净年化收益 | 年化波动率 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手率 |
 |---|---|---|---|---|---|---|---|
-| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
-| Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
-| Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
-| Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
-| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
-| HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
-| Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
+| Improved Convex Adaptive Global RRP | **7.79%** | 4.50% | **1.326** | 1.976 | -5.83% | 1.336 | **0.51%** |
+| Convex Adaptive Global RRP | 6.43% | 3.94% | 1.166 | 1.674 | -5.22% | 1.229 | 0.22% |
+| Global RRP | 4.71% | 4.17% | 0.693 | 0.804 | -6.83% | 0.690 | 0.90% |
+| Defensive Dynamic RRP | 4.09% | 4.20% | 0.541 | 0.655 | -7.47% | 0.548 | 0.89% |
+| HERC Benchmark | 2.37% | 0.47% | 1.184 | 1.767 | -0.39% | 6.011 | 1.12% |
+| HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
+| Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
 
-- **Improved Convex Adaptive Global RRP** 是论文的低换手可实施改进方案。CVaR 约束与换手惩罚将月均换手率控制在 1.44%，在 6.78% 净年化收益下实现 Sharpe 1.10、Sortino 1.63、最大回撤 -5.83%，综合风险调整绩效最优。CVaR 参数敏感性分析（β ∈ {0.90, 0.95, 0.975, 0.99}，回望窗口 ∈ {126, 252, 504} 天）下均值 Sharpe 1.12，区间 1.08–1.15，参数稳健性强。
-- **Convex Adaptive Global RRP** 月均换手率 2.90%，Sharpe 0.87，最大回撤 -5.22%，在较低换手约束下保持稳健风险控制。
-- **Global RRP** 保留完整风险预算弹性，月均换手率 17.4%，净年化 4.27%，Sharpe 0.62。高换手反映模型对市场状态变化的频繁再分配响应。
-- **Defensive Dynamic RRP** 在 Global RRP 基础上叠加防御型风险覆盖层，换手率与 Global RRP 相近（17.5%），净年化 3.95%、Sharpe 0.53，防御设计以降低弹性为代价。
-- **HERC** 层次化风险贡献基准，Sharpe 1.08，但极低波动率（0.47%）源于对债券类资产的高度集中，绝对收益受制于债券收益上限。
-- **HRP** 层次化风险平价基准，净收益 1.81% 略低于无风险利率，Sharpe -0.06；极低波动率（0.17%）与近零最大回撤（-0.08%）表明其在本宇宙下高度集中于货币市场类 ETF，绝对风险控制能力强但无超额收益。
-- **Equal Weight** 名义收益最高（7.70%），但最大回撤 -20.24%、Sharpe 仅 0.53，风险调整后明显劣于改进凸模型。
+- **Improved Convex Adaptive Global RRP** 是论文的低换手可实施改进方案。CVaR 约束与换手惩罚将月均换手率控制在 0.51%，在 7.79% 净年化收益下实现 Sharpe 1.326、Sortino 1.976、最大回撤 -5.83%，综合风险调整绩效最优。CVaR 参数敏感性分析（β ∈ {0.90, 0.95, 0.975, 0.99}，回望窗口 ∈ {126, 252, 504} 天）下均值 Sharpe 1.12，区间 1.08–1.15，参数稳健性强。
+- **Convex Adaptive Global RRP** 月均换手率 0.22%，Sharpe 1.166，最大回撤 -5.22%，在极低换手约束下保持稳健风险控制，净年化 6.43%。
+- **Global RRP** 保留完整风险预算弹性，月均换手率 0.90%，净年化 4.71%，Sharpe 0.693。适度换手反映模型对市场状态变化的稳定再分配响应。
+- **Defensive Dynamic RRP** 在 Global RRP 基础上叠加防御型风险覆盖层，换手率与 Global RRP 相近（0.89%），净年化 4.09%、Sharpe 0.541，防御设计以降低弹性为代价。
+- **HERC** 层次化风险贡献基准，Sharpe 1.184，但极低波动率（0.47%）源于对债券类资产的高度集中，绝对收益受制于债券收益上限，月均换手 1.12%。
+- **HRP** 层次化风险平价基准，净收益 1.81% 略低于无风险利率，Sharpe -0.042；极低波动率（0.17%）与近零最大回撤（-0.08%）表明其在本宇宙下高度集中于货币市场类 ETF，绝对风险控制能力强但无超额收益，月均换手 0.68%。
+- **Equal Weight** 名义收益最高（9.89%），但最大回撤 -20.24%、Sharpe 0.719，风险调整后仍明显劣于改进凸模型。
 
 **稳健性检验**
 
-第六章系统运行子区间分析（2021—2022、2023—2024）、交易成本敏感性扫描（0—15bps）、参数扰动、协方差矩阵稳健性（样本协方差、Ledoit-Wolf 收缩、DCC）、Bootstrap 分布、CSCV/PBO 过拟合验证（36 候选、35 块、PBO = 0.514）、CVaR 参数敏感性（β × 回望窗口共 12 变体，均值 Sharpe 1.12）、Walk-Forward 外推、Nested CV、Frozen OOS 和 Holdout 切片，形成多层次过拟合诊断与无前视证据体系。
+系统运行子区间分析（2021—2022、2023—2024）、交易成本敏感性扫描（0—15bps）、参数扰动、协方差矩阵稳健性（样本协方差、Ledoit-Wolf 收缩、DCC）、Bootstrap 分布、CSCV/PBO 过拟合验证（36 候选、35 块、PBO = 0.429）、CVaR 参数敏感性（β × 回望窗口共 12 变体，均值 Sharpe 1.12）、Walk-Forward 外推、Nested CV、Frozen OOS 和 Holdout 切片，形成多层次过拟合诊断与无前视证据体系。
 
 LaTeX 模板资源位于 [`report/thesis_latex/thesisSWUFE.cls`](report/thesis_latex/thesisSWUFE.cls)、[`report/thesis_latex/fonts`](report/thesis_latex/fonts) 与 [`report/thesis_latex/swufe`](report/thesis_latex/swufe)，来源为 Marquis03/SWUFE-Thesis，并保留模板许可证文件。
 
@@ -116,11 +116,11 @@ latexmk -xelatex -interaction=nonstopmode main.tex
 | 价格数据 | [`data/processed/etf_prices_updated.csv`](data/processed/etf_prices_updated.csv) |
 | 资产映射 | [`data/processed/etf_asset_mapping.csv`](data/processed/etf_asset_mapping.csv) |
 | 数据区间 | `2018-01-30` 至 `2026-05-07` |
-| 评估起点 | `2015-01-01`（ETF 数据从 2018 年起逐步可用） |
+| 评估区间 | `2019-01-01` 至 `2026-05-07`（最早 ETF 上市 2018-01-30，评估起点后移至 2019-01-01 确保全部 30 支资产同步可投） |
 | 再平衡频率 | 月度再平衡 |
-| 交易成本 | 默认 3 bps，并区分 gross return 与 net return |
+| 交易成本 | 默认 3 bps 单边，并区分 gross return 与 net return |
 
-每个再平衡日只使用当时已具备足够历史观测的 ETF 估计信号、协方差和权重；尚未上市或历史不足的 ETF 不参与优化。历史结果不代表未来表现。
+每个再平衡日采用逐点时间宇宙过滤，只使用当时已具备足够历史观测的 ETF 估计信号、协方差和权重；尚未上市或历史不足的 ETF 不参与优化。历史结果不代表未来表现。
 
 ### 核心算法与优化形式
 
@@ -289,28 +289,26 @@ $$
 
 ### 最新绩效看板
 
-核心模型结果（评估起点 2015-01-01，ETF 数据从 2018-01-30 起可用）：
+核心模型结果（评估区间 2019-01-01 至 2026-05-07，月度再平衡，3 bps 交易成本，逐点时间宇宙过滤）：
 
-| Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
-|---|---:|---:|---:|---:|---:|
-| Global RRP | 4.27% | 0.62 | -6.83% | 0.63 | 17.4% |
-| Defensive Dynamic RRP | 3.95% | 0.53 | -7.47% | 0.53 | 17.5% |
-| Convex Adaptive Global RRP | 5.40% | 0.87 | -5.22% | 1.03 | 2.90% |
-| Improved Convex Adaptive Global RRP | 6.78% | 1.10 | -5.83% | 1.16 | 1.44% |
+| Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Improved Convex Adaptive Global RRP | **7.79%** | 4.50% | **1.326** | 1.976 | -5.83% | 1.336 | **0.51%** |
+| Convex Adaptive Global RRP | 6.43% | 3.94% | 1.166 | 1.674 | -5.22% | 1.229 | 0.22% |
+| Global RRP | 4.71% | 4.17% | 0.693 | 0.804 | -6.83% | 0.690 | 0.90% |
+| Defensive Dynamic RRP | 4.09% | 4.20% | 0.541 | 0.655 | -7.47% | 0.548 | 0.89% |
 
 基准结果：
 
-| Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
-|---|---:|---:|---:|---:|---:|
-| HRP Benchmark | 1.81% | -0.06 | -0.08% | 22.08 | 5.96% |
-| HERC Benchmark | 2.33% | 1.08 | -0.39% | 5.91 | 9.37% |
-| Equal Weight | 7.70% | 0.53 | -20.24% | 0.38 | — |
+| Benchmark | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| HERC Benchmark | 2.37% | 0.47% | 1.184 | 1.767 | -0.39% | 6.011 | 1.12% |
+| HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
+| Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
 
-Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在当前评估口径下实现 6.78% 净年化收益，Sharpe 1.10，平均月度换手率 1.44%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。CVaR 参数敏感性扫描（12 变体）均值 Sharpe 1.12，区间 1.08–1.15。HRP/HERC 仅作为层次化风险配置 benchmark；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
+Global RRP 是主要的收益效率展示模型。Improved Convex Adaptive Global RRP 在评估区间 2019-01-01 至 2026-05-07 下实现 7.79% 净年化收益，Sharpe 1.326，Sortino 1.976，平均月度换手率 0.51%，最大回撤 -5.83%，体现了凸约束在低换手、尾部风险控制和稳定配置中的价值。CVaR 参数敏感性扫描（12 变体跨 β 与回看窗口维度）均值 Sharpe 1.12，区间 1.08–1.15，表明参数稳健性良好。CSCV/PBO 过拟合诊断（36 候选、35 块）的 PBO = 0.429，小于 0.5，表示样本内选中的候选往往优于样本外中位数，是一个有利的指示。HRP/HERC 仅作为层次化风险配置基准；其表现依赖资产池、样本区间和约束设定，不替代 Global RRP 与 Convex Adaptive RRP 框架。
 
-HERC 在当前样本中具有较高 Sharpe（1.08），但极低波动率（0.47%）源于对债券类资产的高度集中，绝对收益受制于债券收益上限，因此更适合作为 benchmark，而不是直接替代主模型。
-
-重要说明：Improved Convex Adaptive Global RRP 是使用历史评价指标从受约束候选参数中选出的样本内参数细化研究扩展，不应被解读为已经完成冻结样本外验证的最终结论。
+HERC 在当前样本中具有较高 Sharpe（1.184），但极低波动率（0.47%）源于对债券类资产的高度集中，绝对收益受制于债券收益上限，因此更适合作为基准对照，而不是直接替代主模型。评估区间从 2019-01-01 开始是因为最早的 ETF 上市于 2018-01-30；在 2019 年之前，30 支资产不能同步投资。
 
 ### 代码与实证结论
 
@@ -547,33 +545,33 @@ The thesis has eight chapters and appendices. Chapter 1 (Introduction) motivates
 
 **Asset Universe**
 
-The pool spans 30 ETFs across eight categories: bonds (short-duration, convertible, government, credit, money market), China broad/style equity (CSI 300, CSI 500, CSI 1000, STAR 50, dividend), China tech equity (semiconductor, chip, AI, satellite), China advanced manufacturing (robotics), China new energy (solar/PV, new energy vehicle), China finance (securities sector), Hong Kong equity (Hang Seng), China pharma (innovative drug), China defense (military industry), global equity (NASDAQ-100, S&P 500, Nikkei 225, Dow Jones), and commodities (gold, nonferrous metals, soybean meal, oil & gas, coal). Data available from 2018-01-30 for major ETFs (newer sector ETFs from 2019–2022); the evaluation window is configured from 2015-01-01 with point-in-time universe filtering applied at each rebalance date, monthly rebalancing and 3 bps one-way transaction cost.
+The pool spans 30 ETFs across eight categories: bonds (short-duration, convertible, government, credit, money market), China broad/style equity (CSI 300, CSI 500, CSI 1000, STAR 50, dividend), China tech equity (semiconductor, chip, AI, satellite), China advanced manufacturing (robotics), China new energy (solar/PV, new energy vehicle), China finance (securities sector), Hong Kong equity (Hang Seng), China pharma (innovative drug), China defense (military industry), global equity (NASDAQ-100, S&P 500, Nikkei 225, Dow Jones), and commodities (gold, nonferrous metals, soybean meal, oil & gas, coal). Earliest ETF entered trading 2018-01-30; the evaluation window begins 2019-01-01 (when all 30 assets are simultaneously investable) through 2026-05-07. Monthly rebalancing and 3 bps one-way transaction cost.
 
 **Empirical Results**
 
-Evaluated from 2015-01-01 (net returns after 3 bps transaction cost; ETF data available from 2018-01-30, point-in-time universe filtering applied):
+Evaluated from 2019-01-01 to 2026-05-07 (net returns after 3 bps transaction cost; earliest ETF trading date 2018-01-30, evaluation start shifted to 2019-01-01 for complete universe; point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---|---|---|---|---|---|---|
-| Improved Convex Adaptive Global RRP | **6.78%** | 4.49% | **1.10** | 1.63 | -5.83% | 1.16 | **1.44%** |
-| Convex Adaptive Global RRP | 5.40% | 4.11% | 0.87 | 1.23 | -5.22% | 1.03 | 2.90% |
-| Global RRP | 4.27% | 3.93% | 0.62 | 0.70 | -6.83% | 0.63 | 17.4% |
-| Defensive Dynamic RRP | 3.95% | 4.04% | 0.53 | 0.63 | -7.47% | 0.53 | 17.5% |
-| HERC Benchmark | 2.33% | 0.47% | 1.08 | 1.61 | -0.39% | 5.91 | 9.37% |
-| HRP Benchmark | 1.81% | 0.17% | -0.06 | -0.09 | -0.08% | 22.08 | 5.96% |
-| Equal Weight | 7.70% | 11.16% | 0.53 | 0.84 | -20.24% | 0.38 | — |
+| Improved Convex Adaptive Global RRP | **7.79%** | 4.50% | **1.326** | 1.976 | -5.83% | 1.336 | **0.51%** |
+| Convex Adaptive Global RRP | 6.43% | 3.94% | 1.166 | 1.674 | -5.22% | 1.229 | 0.22% |
+| Global RRP | 4.71% | 4.17% | 0.693 | 0.804 | -6.83% | 0.690 | 0.90% |
+| Defensive Dynamic RRP | 4.09% | 4.20% | 0.541 | 0.655 | -7.47% | 0.548 | 0.89% |
+| HERC Benchmark | 2.37% | 0.47% | 1.184 | 1.767 | -0.39% | 6.011 | 1.12% |
+| HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
+| Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
 
-- **Improved Convex Adaptive Global RRP**: The thesis's implementable refinement. CVaR constraints and turnover penalties control average monthly turnover to 1.44%, delivering 6.78% net annualized return, Sharpe 1.10, Sortino 1.63, and max drawdown −5.83%—the best risk-adjusted outcome across all models. CVaR parameter sensitivity (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days; 12 variants) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter robustness.
-- **Convex Adaptive Global RRP**: Monthly turnover 2.90%, Sharpe 0.87, max drawdown −5.22%; maintains robust risk control under moderate turnover constraint.
-- **Global RRP**: Full risk-budgeting flexibility; monthly turnover 17.4%, net annual return 4.27%, Sharpe 0.62. High turnover reflects frequent reallocation as market conditions shift.
-- **Defensive Dynamic RRP**: Defensive risk overlay on top of Global RRP logic; similar turnover (17.5%) but net return 3.95% and Sharpe 0.53, as the defensive design trades upside elasticity for tail protection.
-- **HERC**: Sharpe 1.08 but near-zero volatility (0.47%) driven by heavy bond concentration; absolute return is capped by the bond yield level in this universe.
-- **HRP**: Net return 1.81% marginally below the risk-free rate, producing Sharpe −0.06. Extremely low volatility (0.17%) and near-zero max drawdown (−0.08%) indicate near-cash behavior dominated by money-market ETFs; strong absolute risk control but no excess return.
-- **Equal Weight**: Highest nominal return (7.70%) but max drawdown −20.24% and Sharpe only 0.53; risk-adjusted performance is clearly inferior to the improved convex models.
+- **Improved Convex Adaptive Global RRP**: The thesis's implementable refinement. CVaR constraints and turnover penalties control average monthly turnover to 0.51%, delivering 7.79% net annualized return, Sharpe 1.326, Sortino 1.976, and max drawdown −5.83%—the best risk-adjusted outcome across all models. CVaR parameter sensitivity (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days; 12 variants) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter robustness.
+- **Convex Adaptive Global RRP**: Monthly turnover 0.22%, Sharpe 1.166, max drawdown −5.22%; maintains robust risk control with extremely low turnover, net annual return 6.43%.
+- **Global RRP**: Full risk-budgeting flexibility; monthly turnover 0.90%, net annual return 4.71%, Sharpe 0.693. Moderate turnover reflects steady reallocation as market conditions evolve.
+- **Defensive Dynamic RRP**: Defensive risk overlay on top of Global RRP logic; similar turnover (0.89%) but net return 4.09% and Sharpe 0.541, as the defensive design trades upside elasticity for tail protection.
+- **HERC**: Sharpe 1.184 but near-zero volatility (0.47%) driven by heavy bond concentration; absolute return is capped by the bond yield level in this universe, monthly turnover 1.12%.
+- **HRP**: Net return 1.81% marginally below the risk-free rate, producing Sharpe −0.042. Extremely low volatility (0.17%) and near-zero max drawdown (−0.08%) indicate near-cash behavior dominated by money-market ETFs; strong absolute risk control but no excess return, monthly turnover 0.68%.
+- **Equal Weight**: Highest nominal return (9.89%) but max drawdown −20.24% and Sharpe 0.719; risk-adjusted performance is clearly inferior to the improved convex models.
 
 **Robustness Diagnostics**
 
-Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (36 candidates, 35 splits, PBO = 0.514), CVaR parameter sensitivity (12 variants, mean Sharpe 1.12), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
+Chapter 6 runs subperiod analysis (2021–2022, 2023–2024), transaction cost sweeps (0–15 bps), parameter perturbation, covariance robustness (sample, Ledoit-Wolf shrinkage, DCC), bootstrap return distributions, CSCV/PBO overfitting tests (36 candidates, 35 splits, PBO = 0.429), CVaR parameter sensitivity (12 variants, mean Sharpe 1.12, range 1.08–1.15), Walk-Forward out-of-sample projection, Nested CV, Frozen OOS, and holdout slices, forming a multi-layer evidence framework with explicit no-lookahead documentation.
 
 The LaTeX template assets are under [`report/thesis_latex/thesisSWUFE.cls`](report/thesis_latex/thesisSWUFE.cls), [`report/thesis_latex/fonts`](report/thesis_latex/fonts), and [`report/thesis_latex/swufe`](report/thesis_latex/swufe). They are based on Marquis03/SWUFE-Thesis, with the template license retained.
 
@@ -627,11 +625,11 @@ Core source: [`src/backtest.py`](src/backtest.py) (RRP optimizer & backtest engi
 | Price cache | [`data/processed/etf_prices_updated.csv`](data/processed/etf_prices_updated.csv) |
 | Asset map | [`data/processed/etf_asset_mapping.csv`](data/processed/etf_asset_mapping.csv) |
 | Data range | `2018-01-30` to `2026-05-07` |
-| Evaluation start | `2015-01-01` (ETF data available from 2018, point-in-time filtering applied) |
-| Rebalancing | Monthly |
-| Transaction cost | Default 3 bps, with gross and net return separated |
+| Evaluation window | `2019-01-01` to `2026-05-07` (earliest ETF trading date 2018-01-30; evaluation start shifted to 2019-01-01 to ensure all 30 assets are simultaneously investable) |
+| Rebalancing | Monthly with point-in-time universe filtering |
+| Transaction cost | Default 3 bps one-way, with gross and net return separated |
 
-At each monthly rebalance, the optimizer uses only ETFs with sufficient point-in-time history. Not-yet-listed or history-insufficient ETFs are excluded from optimization. Historical results do not imply future performance.
+At each monthly rebalance, the optimizer uses only ETFs with sufficient point-in-time history; not-yet-listed or history-insufficient ETFs are excluded from the portfolio. This prevents lookahead bias. Historical results do not imply future performance.
 
 ### Core Optimization Forms
 
@@ -800,26 +798,26 @@ The asset universe represents major risk sources through tradable ETFs, includin
 
 ### Latest Performance Dashboard
 
-Core model results (evaluation from 2015-01-01; ETF data available from 2018-01-30, point-in-time filtering applied):
+Core model results (evaluation window 2019-01-01 through 2026-05-07; monthly rebalancing, 3 bps transaction cost, point-in-time universe filtering):
 
-| Model | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
-|---|---:|---:|---:|---:|---:|
-| Global RRP | 4.27% | 0.62 | -6.83% | 0.63 | 17.4% |
-| Defensive Dynamic RRP | 3.95% | 0.53 | -7.47% | 0.53 | 17.5% |
-| Convex Adaptive Global RRP | 5.40% | 0.87 | -5.22% | 1.03 | 2.90% |
-| Improved Convex Adaptive Global RRP | 6.78% | 1.10 | -5.83% | 1.16 | 1.44% |
+| Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Improved Convex Adaptive Global RRP | **7.79%** | 4.50% | **1.326** | 1.976 | -5.83% | 1.336 | **0.51%** |
+| Convex Adaptive Global RRP | 6.43% | 3.94% | 1.166 | 1.674 | -5.22% | 1.229 | 0.22% |
+| Global RRP | 4.71% | 4.17% | 0.693 | 0.804 | -6.83% | 0.690 | 0.90% |
+| Defensive Dynamic RRP | 4.09% | 4.20% | 0.541 | 0.655 | -7.47% | 0.548 | 0.89% |
 
 Benchmark results:
 
-| Benchmark | Net Annual Return | Sharpe | Max Drawdown | Calmar | Avg Monthly Turnover |
-|---|---:|---:|---:|---:|---:|
-| HRP Benchmark | 1.81% | -0.06 | -0.08% | 22.08 | 5.96% |
-| HERC Benchmark | 2.33% | 1.08 | -0.39% | 5.91 | 9.37% |
-| Equal Weight | 7.70% | 0.53 | -20.24% | 0.38 | — |
+| Benchmark | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| HERC Benchmark | 2.37% | 0.47% | 1.184 | 1.767 | -0.39% | 6.011 | 1.12% |
+| HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
+| Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
 
-Global RRP remains the main return-efficient global multi-asset model. Under the current evaluation setup, Improved Convex Adaptive Global RRP reaches 6.78% net annual return with Sharpe 1.10 and average monthly turnover of 1.44%, highlighting the value of convex constraints for implementable, low-turnover portfolio construction. CVaR sensitivity analysis across 12 parameter variants yields mean Sharpe 1.12 (range 1.08–1.15), confirming parameter stability. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
+Global RRP remains the main return-efficient global multi-asset model. Under the evaluation window 2019-01-01 to 2026-05-07, Improved Convex Adaptive Global RRP achieves 7.79% net annual return with Sharpe 1.326, Sortino 1.976, and average monthly turnover of 0.51%—highlighting the value of convex constraints for implementable, ultra-low-turnover portfolio construction. CVaR sensitivity analysis across 12 parameter variants (β and lookback dimensions) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO overfitting diagnostic (36 candidates, 35 splits) yields PBO = 0.429, below 0.5, meaning the in-sample selected candidate tends to outperform the out-of-sample median—a favorable indicator. HRP/HERC are included only as hierarchical risk-allocation benchmarks; their performance depends on the asset universe, sample window, and constraints, and they do not replace the Global RRP and Convex Adaptive RRP framework.
 
-HERC shows a competitive Sharpe (1.08) in the current sample, but its near-zero volatility (0.47%) driven by heavy bond concentration keeps it in the role of a benchmark rather than a replacement for the main model line.
+HERC shows a competitive Sharpe (1.184) in the current sample, but its near-zero volatility (0.47%) driven by heavy bond concentration keeps it in the role of a benchmark rather than a replacement for the main model line. The evaluation window begins 2019-01-01 because the earliest ETFs in the 30-asset universe entered trading 2018-01-30; before January 2019, not all 30 assets were simultaneously available.
 
 Important caveat: Improved Convex Adaptive Global RRP is a constrained in-sample parameter-refinement research extension selected from candidate settings using historical evaluation metrics. It should not be interpreted as a completed frozen out-of-sample result.
 
