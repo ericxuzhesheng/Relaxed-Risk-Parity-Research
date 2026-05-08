@@ -10,17 +10,17 @@
 \contentsline {subsection}{\numberline {2.2}风险平价与风险预算}{5}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}宽松风险平价与多约束组合优化}{6}{subsection.2.3}%
 \contentsline {subsection}{\numberline {2.4}CVaR、尾部风险与凸优化}{7}{subsection.2.4}%
-\contentsline {subsection}{\numberline {2.5}协方差估计与稳健资产配置}{7}{subsection.2.5}%
+\contentsline {subsection}{\numberline {2.5}协方差估计与稳健资产配置}{8}{subsection.2.5}%
 \contentsline {subsection}{\numberline {2.6}HRP/HERC 层次化风险配置}{8}{subsection.2.6}%
 \contentsline {subsection}{\numberline {2.7}国内实践进展与本文定位}{9}{subsection.2.7}%
-\contentsline {subsection}{\numberline {2.8}文献评述与本文切入点}{9}{subsection.2.8}%
+\contentsline {subsection}{\numberline {2.8}文献评述与本文切入点}{10}{subsection.2.8}%
 \contentsline {section}{\numberline {3}理论框架与模型方法}{10}{section.3}%
 \contentsline {subsection}{\numberline {3.1}统一符号}{10}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}标准风险平价}{11}{subsection.3.2}%
 \contentsline {subsection}{\numberline {3.3}宽松风险平价与 Global RRP}{12}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}Defensive Dynamic RRP}{12}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.4}Defensive Dynamic RRP}{13}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Convex Adaptive Global RRP}{13}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Improved Convex Adaptive Global RRP}{13}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.6}Improved Convex Adaptive Global RRP}{14}{subsection.3.6}%
 \contentsline {subsection}{\numberline {3.7}HRP 与 HERC Benchmark}{14}{subsection.3.7}%
 \contentsline {subsection}{\numberline {3.8}模型定位与理论框架总结}{15}{subsection.3.8}%
 \contentsline {section}{\numberline {4}数据、变量与研究设计}{15}{section.4}%
