@@ -1,22 +1,22 @@
 # Fdb version 4
-["bibtex main"] 1778214126.21187 "main.aux" "main.bbl" "main" 1778214132.11969 0
+["bibtex main"] 1778214126.21187 "main.aux" "main.bbl" "main" 1778216338.24472 0
   "./references.bib" 1778209468 8422 7cc425716ae465fd218953fa84b1c432 ""
   "c:/texlive/2025/texmf-dist/bibtex/bst/gbt7714/gbt7714-numerical.bst" 1771077930 58899 d0fae0cf8d28654026c4bf03972fb16c ""
-  "main.aux" 1778214128 23845 294d283601b31558dfa3c0b214b7de25 "xelatex"
+  "main.aux" 1778216334 23845 294d283601b31558dfa3c0b214b7de25 "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1778214129.71924 "main.xdv" "main.pdf" "main" 1778214132.13092 0
-  "main.xdv" 1778214128 808960 948fe33f48e435bee69c05ecd51764b6 "xelatex"
+["xdvipdfmx"] 1778216335.97249 "main.xdv" "main.pdf" "main" 1778216338.25626 0
+  "main.xdv" 1778216334 808960 1643877c5c3c8c122ec7218a68a66df5 "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1778214126.74313 "main.tex" "main.xdv" "main" 1778214132.12006 0
-  "../../results/figures/convex_adaptive_cvar_comparison.png" 1778169063 52001 a30d4da9994b86615133bfa5dd312e86 ""
-  "../../results/figures/convex_adaptive_drawdown_comparison.png" 1778169063 170364 1b3a95b2aee9be1a0456056820e0ea9f ""
-  "../../results/figures/convex_adaptive_nav_comparison.png" 1778169063 116254 c993014d5bfee31b18334c858f72c746 ""
-  "../../results/figures/convex_adaptive_turnover_comparison.png" 1778169063 54077 0e3427baaffeb5164b7f007b0006b17a ""
+["xelatex"] 1778216333.02555 "main.tex" "main.xdv" "main" 1778216338.24499 0
+  "../../results/figures/convex_adaptive_cvar_comparison.png" 1778215562 51976 bad6cea894895ec44318b39e97e7c3e9 ""
+  "../../results/figures/convex_adaptive_drawdown_comparison.png" 1778216324 164002 9eebf038887d87c8c2f28f1b572daad0 ""
+  "../../results/figures/convex_adaptive_nav_comparison.png" 1778216324 109798 9eb2f2ca0da392317b0c8b638f8cc2cc ""
+  "../../results/figures/convex_adaptive_turnover_comparison.png" 1778215562 54072 d9da6d6ff5b2eb9cdfb96ea693cb58ae ""
   "../../results/figures/covariance_robustness_drawdown.png" 1778165175 53853 a1b0f25a189317038c2ea07a02418a41 ""
   "../../results/figures/covariance_robustness_sharpe.png" 1778165175 44085 a699cc0bc63ec96bc6854d0d110018ae ""
   "../../results/figures/robustness_bootstrap_drawdown_distribution.png" 1778165175 30314 c85ed569c26d7f7d786f09435dd092e6 ""
@@ -253,11 +253,11 @@
   "c:/texlive/2025/texmf-dist/web2c/texmf.cnf" 1771076280 42213 4e2ca030e8e2640502016e9e45868dcb ""
   "c:/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt" 1771081124 5948047 f6225a9155c25e6ad2961513b3db643e ""
   "c:/texlive/2025/texmf.cnf" 1771080957 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1778214128 23845 294d283601b31558dfa3c0b214b7de25 "xelatex"
+  "main.aux" 1778216334 23845 294d283601b31558dfa3c0b214b7de25 "xelatex"
   "main.bbl" 1778214126 7547 68858bee453be3b77816b16f796775e7 "bibtex main"
-  "main.out" 1778214128 9218 1886566c4c6ccd5ce3dfcba20723e171 "xelatex"
+  "main.out" 1778216334 9218 1886566c4c6ccd5ce3dfcba20723e171 "xelatex"
   "main.tex" 1778209468 104389 1365c9ecdc5c830ceaa385fbc6d679de ""
-  "main.toc" 1778214128 6382 362a6d2914335987bf7b8380aa342da9 "xelatex"
+  "main.toc" 1778216334 6382 362a6d2914335987bf7b8380aa342da9 "xelatex"
   "swufe/swufe_logo.pdf" 1777791028 21747 25c6b35d3214d3b73c8d0ae5418092ee ""
   "swufe/swufe_title.pdf" 1777791028 26987 3664d0b96d125f169d400104ba63d6a3 ""
   "thesisSWUFE.cls" 1777791426 8695 304806db46fe1ce401666d45b866d561 ""
