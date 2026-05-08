@@ -166,6 +166,15 @@ def run_static_backtest(
             "reentry_state": overlay_state["reentry_state"],
             "trend_positive_count": overlay_state["trend_positive_count"],
         }
+        for key in (
+            "ema_deviation_min",
+            "ema_deviation_max",
+            "ema_strong_trend_count",
+            "ema_overextended_count",
+            "ema_stop_count",
+            "ema_insufficient_history",
+        ):
+            res[key] = overlay_state.get(key, None)
         for j, asset in enumerate(returns.columns):
             res[f"weight_{asset}"] = current_weights[j]
         results.append(res)

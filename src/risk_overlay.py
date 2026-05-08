@@ -34,6 +34,15 @@ class RiskOverlayConfig:
     signal_persistence: int = 1
     weight_smoothing: float = 0.0
     transaction_cost_bps: float = 3.0
+    ema_deviation_enabled: bool = False
+    ema_deviation_span: int = 20
+    ema_strong_threshold: float = 0.05
+    ema_overextended_threshold: float = 0.15
+    ema_overextended_scale: float = 0.60
+    ema_stop_threshold: float = -0.05
+    ema_stop_scale: float = 0.30
+    ema_equity_only: bool = True
+    ema_renormalize_after_scale: bool = False
     trading_days_per_year: int = 243
 
     @classmethod
@@ -75,6 +84,15 @@ class RiskOverlayConfig:
             signal_persistence=int(config.get("signal_persistence", cls.signal_persistence)),
             weight_smoothing=float(config.get("weight_smoothing", cls.weight_smoothing)),
             transaction_cost_bps=float(config.get("transaction_cost_bps", cls.transaction_cost_bps)),
+            ema_deviation_enabled=bool(config.get("ema_deviation_enabled", cls.ema_deviation_enabled)),
+            ema_deviation_span=int(config.get("ema_deviation_span", cls.ema_deviation_span)),
+            ema_strong_threshold=float(config.get("ema_strong_threshold", cls.ema_strong_threshold)),
+            ema_overextended_threshold=float(config.get("ema_overextended_threshold", cls.ema_overextended_threshold)),
+            ema_overextended_scale=float(config.get("ema_overextended_scale", cls.ema_overextended_scale)),
+            ema_stop_threshold=float(config.get("ema_stop_threshold", cls.ema_stop_threshold)),
+            ema_stop_scale=float(config.get("ema_stop_scale", cls.ema_stop_scale)),
+            ema_equity_only=bool(config.get("ema_equity_only", cls.ema_equity_only)),
+            ema_renormalize_after_scale=bool(config.get("ema_renormalize_after_scale", cls.ema_renormalize_after_scale)),
             trading_days_per_year=int(config.get("trading_days_per_year", cls.trading_days_per_year)),
         )
 
@@ -191,6 +209,76 @@ def apply_turnover_cap(
     return capped, float(np.abs(capped - previous_weights).sum()), True
 
 
+def apply_ema_deviation_scale(
+    weights: np.ndarray,
+    window: pd.DataFrame,
+    overlay_config: RiskOverlayConfig,
+) -> tuple[np.ndarray, dict]:
+    """
+    对权重向量应用 EMA 乖离率缩放。
+
+    仅对 infer_asset_class(col) == "equity" 的资产生效（equity_only=True 时）。
+    ema_renormalize_after_scale=False（默认）：允许总敞口下降，形成防御性现金缺口。
+    ema_renormalize_after_scale=True：缩放后等比恢复总权重之和，内部再分配。
+
+    Returns
+    -------
+    scaled_weights : np.ndarray
+    ema_state : dict
+        keys: ema_deviation_min, ema_deviation_max, ema_strong_trend_count,
+              ema_overextended_count, ema_stop_count, ema_insufficient_history
+    """
+    from src.utils import infer_asset_class
+    from src.ema_deviation import compute_ema_deviation, ema_deviation_weight_scales
+
+    cfg = overlay_config
+    deviation, diag = compute_ema_deviation(window, cfg.ema_deviation_span)
+
+    if diag["ema_insufficient_history"]:
+        return weights.copy(), {
+            "ema_deviation_min": 0.0,
+            "ema_deviation_max": 0.0,
+            "ema_strong_trend_count": 0,
+            "ema_overextended_count": 0,
+            "ema_stop_count": 0,
+            "ema_insufficient_history": True,
+        }
+
+    scales = ema_deviation_weight_scales(
+        deviation,
+        list(window.columns),
+        cfg.ema_overextended_threshold,
+        cfg.ema_overextended_scale,
+        cfg.ema_strong_threshold,
+        cfg.ema_stop_threshold,
+        cfg.ema_stop_scale,
+        cfg.ema_equity_only,
+    )
+    scaled = weights * scales
+
+    if cfg.ema_renormalize_after_scale:
+        original_sum = float(weights.sum())
+        scaled_sum = float(scaled.sum())
+        if scaled_sum > 1e-8:
+            scaled = scaled / scaled_sum * original_sum
+
+    equity_devs = [
+        float(deviation.get(c, 0.0))
+        for c in window.columns
+        if infer_asset_class(str(c)) == "equity"
+    ]
+    return scaled, {
+        "ema_deviation_min": float(min(equity_devs)) if equity_devs else 0.0,
+        "ema_deviation_max": float(max(equity_devs)) if equity_devs else 0.0,
+        "ema_strong_trend_count": int(
+            sum(cfg.ema_strong_threshold <= d <= cfg.ema_overextended_threshold for d in equity_devs)
+        ),
+        "ema_overextended_count": int(sum(d > cfg.ema_overextended_threshold for d in equity_devs)),
+        "ema_stop_count": int(sum(d < cfg.ema_stop_threshold for d in equity_devs)),
+        "ema_insufficient_history": False,
+    }
+
+
 def apply_risk_overlay(
     proposed_weights: np.ndarray,
     previous_weights: np.ndarray,
@@ -226,6 +314,20 @@ def apply_risk_overlay(
     final_risk_scalar = min(cfg.max_risk_scale, max(0.0, final_risk_scalar))
 
     weights = weights * final_risk_scalar
+
+    # EMA 乖离率辅助缩放（默认关闭）
+    if cfg.ema_deviation_enabled and not window.empty:
+        weights, ema_state = apply_ema_deviation_scale(weights, window, cfg)
+    else:
+        ema_state = {
+            "ema_deviation_min": 0.0,
+            "ema_deviation_max": 0.0,
+            "ema_strong_trend_count": 0,
+            "ema_overextended_count": 0,
+            "ema_stop_count": 0,
+            "ema_insufficient_history": False,
+        }
+
     smoothing = min(max(cfg.weight_smoothing, 0.0), 1.0)
     if smoothing > 0.0:
         weights = smoothing * previous + (1.0 - smoothing) * weights
@@ -246,6 +348,7 @@ def apply_risk_overlay(
         "reentry_state": float(reentry_state),
         "persisted_risk_scalar": float(final_risk_scalar),
     }
+    state.update(ema_state)
     return weights, state
 
 

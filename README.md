@@ -316,6 +316,53 @@ HERC 在当前样本中具有较高 Sharpe（1.184），但极低波动率（0.4
 
 从现有回测看，凸约束、换手约束和 CVaR 惩罚能够把研究重点从单纯收益展示推进到可实施组合构建。HRP/HERC 在当前 ETF 资产池中作为基准有比较价值，但不能单独替代 Global RRP 与 Convex Adaptive RRP 框架。稳健性、交易成本、子区间和协方差估计测试均作为验证层，不用于重新选择官方主模型。
 
+### EMA 乖离率辅助层（EMA Deviation Overlay）
+
+可选辅助过滤层，**默认关闭**（`ema_deviation_enabled=False`），关闭时对现有回测结果零影响。
+
+**公式**：`deviation = ln(close) - ln(EMA_20(close))`（对数减法，相对价格乖离率，相对于窗口起点价格重建的相对价格序列计算）
+
+**信号区间**：
+
+| 乖离率区间 | 状态 | 处理 |
+|------------|------|------|
+| > 15% | 过热 | 权重 / 上限缩减 |
+| 5% ～ 15% | 强趋势 | 记录状态，不调整权重（`ema_strong_trend_count`） |
+| −5% ～ 0% | 刚跌破均线 | 坚守，不调整 |
+| < −5% | 趋势失速 | 权重 / 上限缩减 |
+
+**适用范围**：仅对 `infer_asset_class(col) == "equity"` 的资产生效（`ema_equity_only=True`），债券、防御型、商品类底仓权重不受影响。
+
+**两种集成模式**：
+
+- **标准 / 宽松模型**（`src/risk_overlay.py`）：优化后敞口缩放。对权重向量按 per-asset scale 因子相乘；`ema_renormalize_after_scale=False`（默认）时允许总敞口下降，形成防御性现金缺口。
+- **凸自适应模型**（`src/convex_adaptive_rrp.py`）：优化层 per-asset 动态上限。将 EMA 状态转化为 CVXPY 约束中的 `per_asset_max` 数组（`w <= per_asset_max`），组合总权重仍满足 `sum(w) == 1`，敞口在内部重新分配。
+
+**开启方式**：
+
+```python
+# 标准 / 宽松模型
+from src.backtest import run_static_backtest
+df = run_static_backtest(returns, model_type="relaxed", config_overrides={"ema_deviation_enabled": True})
+
+# 凸自适应模型
+from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+cfg = ConvexRRPConfig(ema_deviation_enabled=True, ema_overextended_max_weight=0.20, ema_stop_max_weight=0.05)
+df, solver_df, _, _ = run_convex_adaptive_backtest(returns, cfg)
+# solver_df 自动包含 ema_insufficient_history、ema_deviation_span、ema_valid_asset_count 列
+```
+
+**诊断字段**：
+
+| 字段 | 来源 | 含义 |
+|------|------|------|
+| `ema_deviation_min` / `ema_deviation_max` | `overlay_state`（标准/宽松） | 当期所有 equity 资产乖离率的最小 / 最大值 |
+| `ema_strong_trend_count` | `overlay_state` | 处于 5% ～ 15% 强趋势区的 equity 资产数 |
+| `ema_overextended_count` | `overlay_state` | 过热（> 15%）的 equity 资产数 |
+| `ema_stop_count` | `overlay_state` | 趋势失速（< −5%）的 equity 资产数 |
+| `ema_insufficient_history` | 两种模式均有 | 历史长度不足（< span × 3）时为 True，不启用信号 |
+| `ema_deviation_span` / `ema_valid_asset_count` | `solver_df`（凸模型） | 本期使用的 EMA 周期 / 有效资产数 |
+
 ### 图表展示
 
 #### 净值曲线
@@ -822,6 +869,53 @@ Important caveat: Improved Convex Adaptive Global RRP is a constrained in-sample
 The central implementation conclusion is that final portfolio weights should come from transparent optimization rather than directly from machine-learning, graph-feature, or regime modules. Global RRP is the main return-efficient showcase model; Improved Convex Adaptive Global RRP is the implementable convex refinement emphasizing low turnover, CVaR-aware tail-risk control, and stable allocation; Defensive Dynamic RRP is best interpreted as a defensive risk-overlay experiment.
 
 The current evidence suggests that convex constraints, turnover control, and CVaR penalties move the framework from return demonstration toward implementable portfolio construction. HRP/HERC remain useful hierarchical benchmarks, but in the current ETF universe they do not replace the Global RRP and Convex Adaptive RRP framework. Robustness, transaction-cost, subperiod, and covariance-estimation tests are validation layers only, not model-selection or ranking engines.
+
+### EMA Deviation Overlay
+
+An optional auxiliary filter layer, **off by default** (`ema_deviation_enabled=False`), with zero effect on existing backtest results when disabled.
+
+**Formula**: `deviation = ln(close) - ln(EMA_20(close))` (log-subtraction; computed on the relative price series reconstructed from the returns window, not on raw absolute prices)
+
+**Signal zones**:
+
+| Deviation range | State | Action |
+|-----------------|-------|--------|
+| > 15% | Overextended | Reduce weight / cap |
+| 5% – 15% | Strong trend | Record state only (`ema_strong_trend_count`), no weight change |
+| −5% – 0% | Just broke below MA | Hold, no adjustment |
+| < −5% | Trend stalling | Reduce weight / cap |
+
+**Scope**: only applies to assets where `infer_asset_class(col) == "equity"` (`ema_equity_only=True`). Bond, defensive, and commodity holdings are unaffected.
+
+**Two integration modes**:
+
+- **Standard / Relaxed models** (`src/risk_overlay.py`): post-optimization exposure scaling. Weights are multiplied by a per-asset scale factor. With `ema_renormalize_after_scale=False` (default), total exposure is allowed to decrease, creating a defensive cash gap.
+- **Convex Adaptive model** (`src/convex_adaptive_rrp.py`): optimization-level per-asset upper-bound constraint. EMA state is translated into a `per_asset_max` array used in the CVXPY constraint `w <= per_asset_max`; the portfolio sum-to-one constraint is preserved and exposure is reallocated internally.
+
+**Usage**:
+
+```python
+# Standard / Relaxed model
+from src.backtest import run_static_backtest
+df = run_static_backtest(returns, model_type="relaxed", config_overrides={"ema_deviation_enabled": True})
+
+# Convex Adaptive model
+from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+cfg = ConvexRRPConfig(ema_deviation_enabled=True, ema_overextended_max_weight=0.20, ema_stop_max_weight=0.05)
+df, solver_df, _, _ = run_convex_adaptive_backtest(returns, cfg)
+# solver_df automatically contains ema_insufficient_history, ema_deviation_span, ema_valid_asset_count columns
+```
+
+**Diagnostic fields**:
+
+| Field | Source | Meaning |
+|-------|--------|---------|
+| `ema_deviation_min` / `ema_deviation_max` | `overlay_state` (standard/relaxed) | Min / max deviation across all equity assets in the current period |
+| `ema_strong_trend_count` | `overlay_state` | Number of equity assets in the 5%–15% strong-trend zone |
+| `ema_overextended_count` | `overlay_state` | Number of overextended equity assets (> 15%) |
+| `ema_stop_count` | `overlay_state` | Number of stalling equity assets (< −5%) |
+| `ema_insufficient_history` | Both modes | True when history length < span × 3; signal disabled |
+| `ema_deviation_span` / `ema_valid_asset_count` | `solver_df` (convex) | EMA span used and number of valid assets in the current period |
 
 ### Figures
 

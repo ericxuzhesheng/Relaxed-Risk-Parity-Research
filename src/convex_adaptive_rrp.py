@@ -44,6 +44,14 @@ class ConvexRRPConfig:
     solver: str | None = None
     vol_target_enabled: bool = False
     vol_target: float = 0.040
+    ema_deviation_enabled: bool = False
+    ema_deviation_span: int = 20
+    ema_strong_threshold: float = 0.05
+    ema_overextended_threshold: float = 0.15
+    ema_overextended_max_weight: float = 0.20
+    ema_stop_threshold: float = -0.05
+    ema_stop_max_weight: float = 0.05
+    ema_equity_only: bool = True
 
 
 def _clean_weights(weights: np.ndarray) -> np.ndarray:
@@ -107,6 +115,28 @@ def solve_convex_rrp(
         **cov_result.diagnostics,
     }
 
+    # --- EMA 乖离率动态上限 ---
+    per_asset_max = np.full(n_assets, cfg.max_weight)
+    ema_diag: dict = {
+        "ema_insufficient_history": False,
+        "ema_deviation_span": cfg.ema_deviation_span,
+        "ema_valid_asset_count": 0,
+    }
+    if cfg.ema_deviation_enabled:
+        from src.ema_deviation import compute_ema_deviation
+
+        dev_series, ema_diag = compute_ema_deviation(returns_window, cfg.ema_deviation_span)
+        if not ema_diag["ema_insufficient_history"]:
+            for i, col in enumerate(returns_window.columns):
+                if cfg.ema_equity_only and infer_asset_class(str(col)) != "equity":
+                    continue
+                dev = float(dev_series.get(col, 0.0))
+                if dev > cfg.ema_overextended_threshold:
+                    per_asset_max[i] = min(cfg.max_weight, cfg.ema_overextended_max_weight)
+                elif dev < cfg.ema_stop_threshold:
+                    per_asset_max[i] = min(cfg.max_weight, cfg.ema_stop_max_weight)
+    diagnostics.update(ema_diag)
+
     if cp is not None:
         w = cp.Variable(n_assets)
         turnover = cp.norm1(w - previous)
@@ -119,7 +149,7 @@ def solve_convex_rrp(
         )
         if cfg.use_transaction_cost_objective:
             objective += cfg.transaction_cost_penalty * tc_rate * turnover
-        constraints = [w >= 0.0, cp.sum(w) == 1.0, w <= cfg.max_weight]
+        constraints = [w >= 0.0, cp.sum(w) == 1.0, w <= per_asset_max]
         if cfg.turnover_cap is not None:
             constraints.append(turnover <= cfg.turnover_cap)
         for idxs, (lower, upper) in _group_constraints(returns_window.columns, cfg.group_bounds):
@@ -165,7 +195,7 @@ def solve_convex_rrp(
 
     diagnostics["fallback_used"] = True
     diagnostics["inaccurate_solution"] = False
-    weights, value, reason = _solve_scipy_fallback(sigma, mu, previous, target, cfg)
+    weights, value, reason = _solve_scipy_fallback(sigma, mu, previous, target, cfg, per_asset_max)
     diagnostics.update({"solver_name": "scipy_slsqp_fallback", "solver_status": reason, "objective_value": value})
     return weights, diagnostics
 
@@ -176,7 +206,10 @@ def _solve_scipy_fallback(
     previous: np.ndarray,
     target: np.ndarray,
     cfg: ConvexRRPConfig,
+    per_asset_max: np.ndarray | None = None,
 ) -> tuple[np.ndarray, float, str]:
+    if per_asset_max is None:
+        per_asset_max = np.full(len(previous), cfg.max_weight)
     tc_rate = cfg.transaction_cost_bps / 10000.0 if cfg.use_transaction_cost_objective else 0.0
 
     def objective(w):
@@ -192,7 +225,7 @@ def _solve_scipy_fallback(
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
     if cfg.turnover_cap is not None:
         constraints.append({"type": "ineq", "fun": lambda w: cfg.turnover_cap - np.abs(w - previous).sum()})
-    bounds = [(0.0, cfg.max_weight)] * len(previous)
+    bounds = [(0.0, float(per_asset_max[i])) for i in range(len(previous))]
     result = minimize(objective, previous, method="SLSQP", bounds=bounds, constraints=constraints, options={"maxiter": 1000, "ftol": 1e-9})
     if result.success:
         return _clean_weights(result.x), float(result.fun), "success"
