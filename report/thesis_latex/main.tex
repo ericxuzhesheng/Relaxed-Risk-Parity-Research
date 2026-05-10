@@ -51,11 +51,11 @@
 \setcounter{page}{1}
 \renewcommand{\abstractname}{摘要}
 \begin{abstract}
-长期资产配置的核心不是预测单一资产短期收益，而是在不确定市场环境下构建可解释、可执行的风险分散机制。风险平价方法以风险预算为基础，降低了对预期收益估计的依赖，但当资产池扩展至全球多资产 ETF 时，仍面临相关结构动态变化、严格等风险贡献约束的非凸性以及交易成本与尾部风险对可实施性的制约。
+长期资产配置面对的根本问题不是预测单一资产的短期涨跌，而是在市场不确定时如何维持合理的风险分散。风险平价以风险预算为基础，降低了对预期收益估计的依赖，但当资产池扩展至全球多资产 ETF 时，相关结构动态变化、严格等风险贡献约束的非凸性以及交易成本的累积都构成实际问题。
 
-本文围绕宽松风险平价思想，以 30 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。数据来源于 Tushare ETF 接口，资产池覆盖短久期信用债、可转债、A 股宽基、中国科技与新能源、港股、全球股票和大宗商品八类风险来源。绩效评价区间为 2019-01-01 至 2026-05-07，共 86 个月度观测，采用月度调仓、交易成本扣减（3 bps）和无前视设计。研究在统一框架下系统比较 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 与层次化基准 HRP 及 HERC 的绩效表现与稳健性。
+本文围绕宽松风险平价思想，以 30 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。数据来源于 Tushare ETF 接口，资产池覆盖短久期信用债、可转债、A 股宽基、中国科技与新能源、港股、全球股票和大宗商品八类风险来源。绩效评价区间为 2019-01-01 至 2026-05-07，共 86 个月度观测，采用月度调仓、交易成本扣减（3 bps）和无前视设计。在同一回测框架下，本文比较了 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 和层次化基准 HRP、HERC 的表现。
 
-核心实证结果如下：Global RRP 净年化收益为 4.71\%，夏普比率为 0.693，最大回撤为 -6.83\%，展示了宽松风险预算在全球 ETF 资产池中的基础表现。Improved Convex Adaptive Global RRP 净年化收益为 7.79\%，年化波动率为 4.50\%，夏普比率为 1.326，Sortino 比率为 1.976，最大回撤为 -5.83\%，平均月度换手率仅为 0.51\%，体现了引入 CVaR 约束、低换手惩罚和资产组限制后的综合改进效果。HRP 与 HERC 基准模型净年化收益分别为 1.81\% 与 2.37\%，夏普比率分别为 -0.042 与 1.184，为层次化配置提供了有实证竞争力的对照参照。综合而言，Improved Convex Adaptive Global RRP 在收益、回撤控制和低换手约束之间实现了较为均衡的权衡，但并非在所有单项指标上绝对最优。
+Global RRP 净年化收益为 4.71\%，夏普比率为 0.693，最大回撤为 -6.83\%，月度换手率为 18.0\%，是宽松风险预算在全球 ETF 资产池中的基础版本。Improved Convex Adaptive Global RRP 净年化收益为 7.79\%，年化波动率为 4.50\%，夏普比率为 1.326，Sortino 比率为 1.976，最大回撤为 -5.83\%，平均月度换手率仅为 0.51\%。HRP 与 HERC 净年化收益分别为 1.81\% 与 2.37\%，夏普比率分别为 -0.042 与 1.184。Improved Convex Adaptive Global RRP 在收益和回撤上表现尚可，换手极低，但这并不意味着它在每个指标上都是最优解。
 
 本文所有实证结论均基于特定历史评价区间和约束设定，不构成对未来收益的保证。
 
@@ -65,11 +65,11 @@
 \clearpage
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-Long-term asset allocation is not primarily a short-term return forecasting problem but rather a challenge of constructing interpretable and implementable risk diversification under uncertainty. Risk parity reduces dependence on expected-return estimation by focusing on risk budgeting, yet faces practical constraints when the asset pool expands to global multi-asset ETFs: time-varying correlation structures, the non-convexity of exact equal-risk-contribution conditions, and the impact of transaction costs and tail risks on implementability.
+Long-term asset allocation is fundamentally a problem of managing risk over time, not predicting returns. Risk parity sidesteps expected-return estimation by budgeting risk instead, but when the universe expands to global multi-asset ETFs, practical complications multiply: correlations shift across regimes, exact equal-risk-contribution constraints are non-convex, and transaction costs erode enough of net return to matter at monthly rebalancing frequency.
 
-This undergraduate thesis studies a Relaxed Risk Parity framework using 30 tradable global multi-asset ETFs. Data are sourced from the Tushare ETF interface; the universe covers eight asset classes including short-duration credit, convertible bonds, China equities across styles, Hong Kong equities, global equities, and commodities. The evaluation window runs from 2019-01-01 to 2026-05-07 (86 monthly observations) with monthly rebalancing, a 3-basis-point transaction cost, and no-lookahead controls. The study systematically compares Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, and the hierarchical benchmarks HRP and HERC.
+This undergraduate thesis studies a Relaxed Risk Parity framework using 30 tradable global multi-asset ETFs. Data are sourced from the Tushare ETF interface; the universe covers eight asset classes including short-duration credit, convertible bonds, China equities across styles, Hong Kong equities, global equities, and commodities. The evaluation window runs from 2019-01-01 to 2026-05-07 (86 monthly observations) with monthly rebalancing, a 3-basis-point transaction cost, and no-lookahead controls. Models compared include Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, HRP, and HERC.
 
-Key empirical findings are as follows. Global RRP delivers a 4.71\% net annual return, a Sharpe ratio of 0.693, and a maximum drawdown of -6.83\%, illustrating the baseline performance of relaxed risk budgeting in the global ETF universe. Improved Convex Adaptive Global RRP delivers a 7.79\% net annual return, an annualized volatility of 4.50\%, a Sharpe ratio of 1.326, a Sortino ratio of 1.976, a maximum drawdown of -5.83\%, and an average monthly turnover of 0.51\%, demonstrating the combined effect of CVaR constraints, low-turnover discipline, and implementability-oriented design. HRP and HERC benchmarks report net annual returns of 1.81\% and 2.37\% with Sharpe ratios of -0.042 and 1.184, providing empirically competitive hierarchical benchmarks. Overall, Improved Convex Adaptive Global RRP achieves a more balanced profile across return, drawdown, and turnover discipline, though it is not the unconditional best model on every individual metric.
+Global RRP produces a 4.71\% net annual return, Sharpe 0.693, and maximum drawdown of -6.83\% --- workable numbers, but monthly turnover of 18.0\% creates meaningful cost drag. Adding CVaR constraints, a low-turnover penalty, and group weight limits in Improved Convex Adaptive Global RRP brings the turnover down to 0.51\% while lifting net return to 7.79\%, Sharpe to 1.326, Sortino to 1.976, and compressing drawdown to -5.83\%. HRP and HERC post Sharpe ratios of -0.042 and 1.184 respectively, but both allocate over 90\% to bonds throughout the sample --- their risk-adjusted performance reflects low volatility rather than broad diversification. Improved Convex Adaptive Global RRP does not dominate on every single metric, but holds up better across the three dimensions that matter most for an implementable long-term portfolio.
 
 All empirical findings are conditional on the historical evaluation period and constraint settings reported here, and do not constitute a guarantee of future performance.
 
@@ -85,22 +85,22 @@ All empirical findings are conditional on the historical evaluation period and c
 \section{绪论}
 
 \subsection{研究背景与意义}
-资产配置在很大程度上决定了长期组合的风险收益特征。与短期择时策略相比，长期资产配置更关注不同资产类别间的风险来源、回撤控制和流动性管理。保险资金、养老金和银行理财等长期资金通常需要在多年时间维度上维持稳定的风险暴露，其管理难度不仅在于提升收益水平，更在于清晰解释收益来源、阐明风险如何分散、确保调仓成本可控。
+资产配置在很大程度上决定了长期组合的风险收益特征。与短期择时策略相比，长期资产配置更关注不同资产类别间的风险来源、回撤控制和流动性管理。保险资金、养老金和银行理财等长期资金通常需要在多年时间维度上维持稳定的风险暴露，管理难度不只在于收益水平，如何说清楚收益来自哪里、风险分散到什么程度、调仓成本是否可控，同样是实际问题。
 
-风险平价和风险预算方法在这一背景下应运而生。其核心思想不是实现资本金额的均匀分配，而是致力于使不同资产对组合总风险的贡献保持更加均衡。这种方法对收益预测的依赖程度较低，适合构建可解释性强的长期配置框架\cite{qian2005risk,maillard2010properties}。然而，当资产池扩展至全球多资产 ETF 时，新的现实约束随之产生：不同市场的交易时间不完全同步，海外 ETF 受汇率波动影响，各 ETF 上市时间存在差异，商品与权益资产在尾部特征上差异显著，交易成本和换手率的累积也使模型的实际可执行性面临多重约束。
+风险平价和风险预算方法正是针对这类需求发展起来的。其核心思想不是资本金额的均匀分配，而是使不同资产对组合总风险的贡献更加均衡。这种方法对收益预测的依赖程度较低，适合构建可解释性强的长期配置框架\cite{qian2005risk,maillard2010properties}。扩展到全球 ETF 后，问题变得复杂：不同市场收盘时间不一致，海外 ETF 带汇率暴露，各标的上市时间参差不齐，商品和权益的尾部行为差异明显。交易成本和换手的累积尤其重要，月度调仓在长周期内会侵蚀相当一部分净收益。
 
 从理论层面看，将风险平价从严格等风险贡献条件扩展至更灵活的宽松风险预算框架，能够把权重上限、资产组约束、换手约束和 CVaR 尾部风险度量统一纳入可计算的凸优化框架。从实践层面看，以可交易 ETF 替代部分原始指数，使回测结果更贴近真实组合执行，有助于讨论执行纪律和交易成本对长期收益的实际影响。
 
 \subsection{研究问题与研究思路}
-本文围绕四个核心研究问题展开论证。第一，在可交易全球多资产 ETF 资产池中，宽松风险平价方法是否能够构建可解释的资产配置框架。第二，引入凸化约束、CVaR 约束项和换手惩罚项后，模型是否能够改善收益、回撤和换手率之间的平衡。第三，作为层次化风险配置基准，HRP 与 HERC 在当前样本中的表现如何，其与主模型的关系如何定位。第四，多层稳健性检验是否能够识别模型对样本区间、参数设定和候选选择的依赖程度。
+本文围绕四个问题展开。宽松风险平价能否在 30 支全球 ETF 中建立风险来源清晰的配置框架？加入 CVaR 约束和换手惩罚后，收益、回撤与换手率之间的权衡是否确实改善？HRP 和 HERC 在同一样本中表现如何，与主模型是何种关系？稳健性检验能否识别出结论对样本期和参数选择的依赖程度？
 
-本文首先基于现代投资组合理论和风险预算文献回顾，阐述均值-方差框架、风险平价、CVaR 和层次化配置方法之间的理论联系；其次构建可交易 ETF 资产池并建立统一的回测标准；再次在一致的研究设计下比较各模型的实证表现；最后通过多维度稳健性检验和过拟合诊断对结论的强度和适用范围进行约束。
+本文先梳理均值-方差、风险预算、CVaR 和层次化配置方法的理论联系，再建立可交易 ETF 资产池和统一回测标准，然后在相同研究设计下比较各模型，最后用多维度稳健性检验和过拟合诊断约束结论的适用范围。
 
 \subsection{研究内容与章节安排}
-本文共分为七章。第一章为绪论，说明研究背景、研究意义、研究问题和边际贡献。第二章为文献综述，围绕均值--方差、风险预算、CVaR、协方差估计和层次化配置展开评述，明确本文在已有文献中的切入点。第三章为理论框架与模型方法，给出统一符号、模型定义和定位汇总。第四章为数据、变量与研究设计，说明 ETF 资产池、数据处理、评价指标和回测流程。第五章为实证结果分析，比较各模型绩效、净值路径、回撤、换手率和 CVaR 特征。第六章为稳健性检验与过拟合诊断，从多个维度检验结论对样本和参数的依赖程度。第七章总结主要结论，说明研究不足与后续研究方向。
+论文分七章。第二章综述均值-方差、风险预算、CVaR 和层次化配置文献，说明本文的切入点。第三章给出模型符号和定位汇总。第四章说明 ETF 资产池、数据处理和回测规则。第五章比较各模型的绩效、净值路径和权重结构。第六章从子区间、参数扰动、协方差估计和过拟合诊断多个角度检验结论稳健性。第七章总结结论并指出研究局限。
 
 \subsection{可能的边际贡献}
-本文的贡献体现在三个层面。第一，数据与可实施性整合：以可交易 ETF 资产池替代部分原始指数或连续期货序列，使回测环境与现实可投资组合更加一致，使组合讨论从抽象风险因子落地到真实可执行的交易工具。第二，方法论整合：将风险预算偏离惩罚、CVaR 约束、换手约束、交易成本和资产组限制统一纳入凸优化近似框架，在保持模型定位清晰的前提下增强可实施性表述的完整性。第三，验证体系整合：将子区间分析、压力期检验、参数扰动、协方差敏感性检验、分块自助法（Block Bootstrap）、CSCV/PBO 和滚动前向验证等诊断方法串联成多维度稳健性检验，避免将单一样本期内的优良净值曲线直接解释为未来收益的保证。
+本文的边际贡献主要有三点。其一是数据选择：以可交易 ETF 替代不可交易指数，使回测更贴近实际组合执行，而不是停留在指数层面。其二是方法整合：把风险预算偏离惩罚、CVaR 约束、换手约束和资产组限制放进同一个凸优化框架，允许同时处理多个实施约束。其三是验证角度：将多种稳健性诊断串联起来，把结论的适用范围限定在具体的样本区间和参数设定上，而不是笼统宣称模型有效。
 
 \section{文献综述与理论基础}
 
@@ -109,29 +109,29 @@ Markowitz 的均值--方差理论是现代资产配置研究的基础\cite{marko
 
 然而，均值-方差框架在实证应用中长期面临输入参数敏感性问题。Jorion 的 Bayes-Stein 收缩估计、Chopra 和 Ziemba 关于均值与协方差误差影响的研究均表明，预期收益估计中的微小误差可能导致最优权重发生显著变化\cite{jorion1986bayes,chopra1993effect}。Grinold 和 Kahn 强调，预期收益信号必须与风险模型和约束相结合使用\cite{grinold1999active}。DeMiguel 等人通过比较等权组合与多种优化方法发现，在有限样本下复杂优化未必优于简单多元化策略\cite{demiguel2009optimal}。Laloux 等人借助随机矩阵理论证明，金融资产相关矩阵的绝大多数特征值落入噪声区间，这从理论上揭示了样本协方差矩阵包含大量噪声的根本来源，为收缩估计方法提供了直接支撑\cite{laloux1999noise}。此外，Herculano 的贝叶斯参数化组合策略通过在策略系数上设置先验，绕过显式收益和协方差建模，为估计误差条件下的组合构建提供了贝叶斯路径\cite{herculano2026bayesian}；Hellum 等人在理论层面表明，特定条件下高维资产池中均值-方差组合的样本外表现可能随资产数量增加而改善\cite{hellum2026complex}。
 
-这些研究共同表明，组合实际表现首先受约束于收益预测质量，组合的稳健性高度依赖协方差估计方法的选取。本文因此以风险预算为主要配置线索，并在稳健性检验中比较不同协方差估计器的影响。
+以上研究的共同含义是：输入参数质量是限制组合表现的主要约束，协方差估计方法的选择对结果有实质影响。本文选择以风险预算为主线，同时在稳健性检验中比较不同协方差估计器。
 
 \subsection{风险平价与宽松风险平价}
 风险平价的核心不是资金等权，而是风险贡献分散。Qian 将风险平价解释为通过真实分散化提高组合效率的配置思想\cite{qian2005risk}。Maillard、Roncalli 和 Teiletche 系统研究了等风险贡献组合的性质，说明风险贡献可作为资产配置权重之外的另一种分散化标准\cite{maillard2010properties}。Roncalli 进一步给出完整风险预算框架，将风险贡献目标推广为一组可解释的风险预算约束\cite{roncalli2013introduction}。国内研究强调，风险平价中的"风险"不应被狭义理解为资产波动率本身，而应理解为组合的宏观风险暴露；实际落地中，协方差口径、杠杆限制和可投资标的范围都会显著改变策略形态\cite{htsc2020misunderstanding,htsc2024practice}。
 
 宽松风险平价的动机是把严格风险贡献匹配转化为可容忍偏离的优化目标。Gambeta 和 Kwon 的研究表明，宽松风险平价可以在保留风险预算特征的同时，显式引入收益目标与风险预算偏离之间的权衡\cite{gambeta2020risk}。Cetingoz 和 Gu{\'e}ant 进一步表明，资产层和因子层风险预算之间可以被放入更一般的平衡框架，为风险预算扩展到更复杂约束提供了理论启发\cite{cetingoz2024assetfactor}。Bessler、Taushanov 和 Wolff 的实证研究表明，以资产类别为基础的组合构造在样本外鲁棒性上并不弱于纯粹的因子层面分解\cite{bessler2021factor}。
 
-宽松处理本质上是一种近似：它提高约束兼容性，但不能被误解为对经典风险平价的全局精确求解。本文沿此路径选择 relaxed 而不是 exact ERC 框架，并进一步采用凸化近似，以便纳入 CVaR 约束、换手约束和资产组限制。
+宽松处理是一种近似，不是经典风险平价的精确等价。本文采用 relaxed 而非 exact ERC，是为了把 CVaR、换手约束和资产组限制放进可求解的框架里。
 
 \subsection{CVaR、交易成本与组合约束}
 CVaR 关注超越 VaR 分位点之后的平均尾部损失水平。Rockafellar 和 Uryasev 的研究提出可计算的 CVaR 优化框架，通过引入辅助变量使尾部损失约束能够进入优化问题\cite{rockafellar2000optimization}。Boyd 和 Vandenberghe 的凸优化理论表明，凸目标函数和凸约束集合有利于获得稳健的数值求解，并便于纳入线性约束、范数惩罚项和辅助变量\cite{boyd2004convex}。
 
 CVaR 的准确性依赖于历史回看窗口和置信水平的设定，历史样本之外的极端市场状态仍可能低估实际尾部风险。Uhl、Jurt 和 Walliser 借助自然语言处理构建了基于 AI 的尾部事件识别框架，为尾部风险的情境识别提供了机器学习视角的补充证据\cite{uhl2024aitail}。Alouadi 等人提出的 SBBTS 框架通过 Schrödinger Bridge 与 Bass 鞅原理联合校准漂移和随机波动率生成合成时间序列，为组合策略的压力情景模拟提供了不依赖历史分布假设的新路径\cite{alouadi2026sbbts}。
 
-本文将 CVaR 定位为约束工具和风险诊断手段，而非收益增强的承诺，其主要作用是将尾部损失信息显式纳入优化目标和风险讨论框架。
+本文用 CVaR 做约束和风险诊断，不是用它来承诺收益。实际作用是把尾部损失的历史信息放进优化目标，但它无法覆盖历史中从未发生过的极端情景。
 
 \subsection{HRP/HERC 与国内实践}
 López de Prado 提出的 HRP 方法利用相关矩阵构造距离矩阵，再通过层次聚类、准对角化和递归二分生成权重\cite{lopezdeprado2016building}。Raffinot 提出的 HERC 在层次结构中引入风险贡献思想，使簇内和簇间配置更接近风险预算逻辑\cite{raffinot2018hierarchical}。Ciciretti 和 Pallotta 将图论工具引入风险平价框架，提出基于最小生成树的网络风险平价方法，在资产数量较多时样本外表现尤为突出\cite{ciciretti2024network}。这类方法的优势在于避免直接求逆协方差矩阵，但对聚类结构和样本区间敏感，且难以直接表达 CVaR 和换手约束。
 
-国内实践研究指出，在中国市场语境下，风险平价必须面对低利率、工具约束和执行频率等现实问题，ETF 工具丰富化为风险平价落地提供了现实基础\cite{htsc2021hrp,htsc2024practice,csc2025chinaallocation,htsc2025lowrate}。本文将 HRP/HERC 作为竞争性基准，而不是弱化处理的对照组，后文对其夏普、回撤和权重集中度均作正面比较。
+国内实践研究指出，在中国市场语境下，风险平价必须面对低利率、工具约束和执行频率等现实问题，ETF 工具丰富化为风险平价落地提供了现实基础\cite{htsc2021hrp,htsc2024practice,csc2025chinaallocation,htsc2025lowrate}。本文把 HRP/HERC 当作真正有竞争力的基准——后文的夏普比率、回撤和权重集中度比较都是认真对待它们的。
 
 \subsection{文献评述与本文切入点}
-已有文献分别从均值--方差、风险预算、CVaR、协方差估计和层次化配置角度解决了不同问题，但也各自留下了收益预测脆弱、严格约束难实现、风险估计可能漂移以及层次化模型难表达复杂约束等局限。本文在本科金融数学论文范围内，将这些方法放入可交易全球 ETF 资产池、低换手约束、CVaR 约束设计和多维度稳健性验证的统一实证框架中进行比较，与已有文献是整合而非替代的关系：保留风险预算主线，正面比较层次化基准，并用凸约束和验证层把结论的适用范围限定得更清楚。
+以上文献各自在其问题上有贡献，但每种方法都有局限：均值-方差对收益预测过度依赖，严格等风险贡献约束在多约束场景下难以直接求解，层次化模型无法直接处理 CVaR 和换手约束。本文的做法是把这些方法放进同一个可交易 ETF 回测框架里比较，用实证数据和多维度验证检查它们在当前样本中各自能走多远。
 
 \section{理论框架与模型方法}
 
@@ -189,7 +189,7 @@ RC_i=w_i MRC_i=w_i\frac{(\Sigma w)_i}{\sigma_p}
 \[
 RC_i=b_i\sigma_p,\quad i=1,\ldots,n,\quad \sum_i b_i=1
 \]
-当 $b_i=1/n$ 时，模型退化为等风险贡献组合。标准风险平价定义清晰、风险来源可解释、对收益预测依赖低，但加入权重上下限、组别约束和交易成本后问题不再容易直接求解，本文将其作为理论参照而不是最终实施模型。
+当 $b_i=1/n$ 时，模型退化为等风险贡献组合。标准风险平价的好处是定义干净、对收益预测依赖很小。但只要加上权重上下限、组别约束和交易成本，直接求解就不再容易，本文只把它作为理论参照。
 
 \subsection{宽松风险平价与 Global RRP}
 宽松风险平价不是放弃风险预算，而是把严格风险贡献等式改为偏离惩罚：
@@ -199,9 +199,9 @@ RC_i=b_i\sigma_p,\quad i=1,\ldots,n,\quad \sum_i b_i=1
 \[
 \sum_i w_i=1,\quad l_i\leq w_i\leq u_i
 \]
-其中，第一项刻画风险贡献相对预算的偏离，第二项刻画与参考权重或上一期权重的距离。该表达允许模型在风险预算、权重稳定和现实约束之间折中。
+其中，第一项刻画风险贡献相对预算的偏离，第二项刻画与参考权重或上一期权重的距离。这个表达允许在风险预算、权重稳定性和现实约束之间做折中，而不是强迫三者同时精确满足。
 
-Local Relaxed Risk Parity 表示本地资产池中的宽松风险预算模型。Global RRP 表示扩展到全球多资产 ETF 后的基准宽松风险预算模型，将债券、可转债、中国权益、港股、海外权益和商品放入统一风险预算框架。其优点是风险预算逻辑清楚、资产分散更广；局限是换手较高，对交易成本更敏感，且基础版本没有直接将 CVaR 尾部约束放入目标函数。
+Local Relaxed Risk Parity 表示本地资产池中的宽松风险预算模型。Global RRP 表示扩展到全球多资产 ETF 后的基准宽松风险预算模型，将债券、可转债、中国权益、港股、海外权益和商品放入统一风险预算框架。它的问题在于换手较高，交易成本对净收益的影响比较明显，基础版本没有 CVaR 约束。
 
 \subsection{凸优化改进模型}
 Convex Adaptive Global RRP 将风险预算思想转化为凸化近似，使模型可以更自然地纳入换手率、CVaR、资产上限和组别约束。其简化目标函数为：
@@ -217,18 +217,18 @@ J(w)=\lambda_{var} w^T\Sigma_t w+\lambda_{budget}||w-b_t||_2^2
 \[
 \sum_i w_i=1,\quad 0\leq w_i\leq u_i,\quad L_g\leq \sum_{i\in g}w_i\leq U_g
 \]
-方差项控制整体波动，预算跟踪项保留风险预算方向，换手惩罚项降低交易频率，CVaR 项关注历史尾部损失，收益倾斜项提供有限的收益输入。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。其中，$\mu_t$ 仅基于调仓日前历史窗口 $R_t$ 计算的样本均值年化输入；$\lambda_{return}=0.05$ 为固定小权重，为凸目标提供温和的收益倾向，而非择时信号。参数扰动检验中特别纳入了 $\lambda_{return}=0$ 的对照情形，用于比较去除收益倾斜项后模型表现是否发生实质变化。
+目标函数中各项分工明确：方差项控制整体波动；预算跟踪项让权重不偏离风险预算太远；$L_1$ 换手惩罚项直接压低交易频率；CVaR 项把历史尾部损失纳入考量；收益倾斜项权重固定为 0.05，只提供温和的收益输入。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。$\mu_t$ 仅基于调仓日前历史窗口 $R_t$ 计算的样本均值年化输入；$\lambda_{return}=0.05$ 为固定小权重，而非择时信号。参数扰动检验中特别纳入了 $\lambda_{return}=0$ 的对照情形，用于比较去除收益倾斜项后模型表现是否发生实质变化。
 
 Improved Convex Adaptive Global RRP 是本文重点讨论的可实施改进，其改进体现在低换手、CVaR 约束、资产组约束和权重路径稳定四个方面。若历史情景损失为 $L_s=-r_s^T w$，CVaR 可表示为\cite{rockafellar2000optimization,boyd2004convex}：
 \[
 CVaR_\alpha(L)=\min_\eta\left[\eta+\frac{1}{(1-\alpha)T}\sum_{s=1}^{T}\max(L_s-\eta,0)\right]
 \]
-在当前样本中，Improved Convex Adaptive Global RRP 的平均月度换手率为 0.51\%。对于长期资金而言，低换手意味着更低的交易成本敏感性和更少的运营扰动，但过强的稳定性约束可能在市场结构快速变化时降低组合响应速度。
+在当前样本中，Improved Convex Adaptive Global RRP 的平均月度换手率为 0.51\%。0.51\% 的月度换手基本意味着每月只微调少量头寸，对长期资金友好，但代价是对市场结构变化的响应会慢一些。
 
 \subsection{HRP 与 HERC 基准模型}
 HRP 基准模型的流程包括：基于收益率估计相关矩阵，将相关性转化为距离矩阵，进行层次聚类，按照聚类顺序进行准对角化，最后通过递归二分分配权重\cite{lopezdeprado2016building}。HERC 基准模型在层次结构中加入风险贡献思想，使簇内和簇间风险分配更接近风险预算逻辑\cite{raffinot2018hierarchical}。
 
-当前结果中，HRP/HERC 的夏普比率具有竞争力，但最大回撤和换手率高于 Improved Convex Adaptive Global RRP。本文把它们作为重要的竞争性基准，而不是被动的对照组。其局限在于对聚类结构和样本区间敏感，且难以直接表达 CVaR 和换手约束。
+当前样本中 HRP/HERC 夏普比率不弱，但回撤和换手率都高于 Improved Convex Adaptive Global RRP。两类方法各有逻辑，HRP/HERC 的主要限制是对聚类结构的选择敏感，且没有直接处理 CVaR 和换手约束的机制。
 
 \begin{table}[H]
 \centering
@@ -253,7 +253,7 @@ HERC Benchmark & 层次化风险贡献基准模型 & 引入层次风险贡献 & 
 \section{数据、变量与研究设计}
 
 \subsection{ETF 资产池构建原则}
-本文使用可交易 ETF 构建全球多资产池。构建原则包括可交易性、跨资产分散、数据可复现和主要风险来源覆盖。与直接使用不可交易指数不同，ETF 资产池更接近真实组合构建，但仍不能完全覆盖流动性冲击、申赎成本和大额交易约束。
+本文使用可交易 ETF 构建全球多资产池。选择标准主要是可交易性和跨资产覆盖。用 ETF 而非不可交易指数，回测结论更贴近实际组合执行，但流动性冲击、申赎成本和大额交易的滑点都没有纳入。
 
 \begin{longtable}{p{3.2cm}p{3.0cm}p{4.8cm}}
 \caption{ETF 资产池}\label{tab:etf_pool}\\
@@ -394,14 +394,14 @@ ETF & Obs. & Ann. Return & Ann. Vol. & Max DD \\
 \multicolumn{5}{l}{\footnotesize $^*$ 近期上市 ETF，可用历史较短，仅在积累足够观测后参与优化。} \\
 \end{longtable}
 
-描述性统计并不用于直接选择模型，而是帮助理解资产池结构。银华日利 ETF 波动极低（0.19\%），科技类和新能源类 ETF 波动率多超过 25\%，最大回撤较深，说明高弹性资产需要风险预算控制；黄金和商品类 ETF 与权益相关性较低，有助于跨资产分散；创新药 ETF 在样本内出现负年化收益（$-7.13\%$），显示医药板块阶段性风险；机器人 ETF、卫星 ETF、道琼斯 ETF 及创新药 ETF 为近期上市品种，在数据不足阶段通过 \texttt{investable\_columns} 过滤自动退出优化。
+这些统计只是帮助理解资产池结构差异，不直接用于模型选择。银华日利 ETF 年化波动仅 0.19\%，而科技和新能源 ETF 的波动率普遍超过 25\%，最大回撤多超 60\%。黄金和部分商品 ETF 与权益资产相关性较低，是跨资产分散的主要来源。创新药 ETF 样本内年化收益为 $-7.13\%$，医药板块在评价区间内整体处于调整期。近期上市品种（机器人、卫星、道琼斯、创新药 ETF）在历史数据不足阶段由 \texttt{investable\_columns} 过滤自动排除。
 
 \section{实证结果分析}
 
 \subsection{主模型绩效比较}
-表 \ref{tab:core_perf} 展示了核心模型的实证绩效指标，评价区间为 2019-01-01 至 2026-05-07，共 86 个月度观测。Global RRP 净年化收益率为 4.71\%，年化波动率为 4.17\%，夏普比率为 0.693，最大回撤为 -6.83\%，平均月度换手率为 18.0\%，较高的换手率表明在实际应用中需要对可实施性进行谨慎评估。
+表 \ref{tab:core_perf} 展示了核心模型的实证绩效指标，评价区间为 2019-01-01 至 2026-05-07，共 86 个月度观测。Global RRP 净年化收益率为 4.71\%，年化波动率为 4.17\%，夏普比率为 0.693，最大回撤为 -6.83\%，平均月度换手率为 18.0\%。月度换手率 18.0\% 是个实际问题——按 3 bps 费率，这部分成本每年大约侵蚀 0.65 个百分点的净收益。
 
-Convex Adaptive Global RRP 取得了 6.43\% 的净年化收益，夏普比率为 1.166，最大回撤为 -5.22\%，平均月度换手率降至 1.82\%，表明凸化约束机制在显著降低交易换手方面的有效性。Improved Convex Adaptive Global RRP 进一步达到了 7.79\% 的净年化收益，夏普比率为 1.326，Sortino 比率为 1.976，最大回撤为 -5.83\%，平均月度换手率仅为 0.51\%，在收益水平、回撤控制和换手率约束之间实现了相对均衡的表现。
+Convex Adaptive Global RRP 取得了 6.43\% 的净年化收益，夏普比率为 1.166，最大回撤为 -5.22\%，平均月度换手率降至 1.82\%。换手从 18.0\% 降至 1.82\%。Improved Convex Adaptive Global RRP 进一步达到了 7.79\% 的净年化收益，夏普比率为 1.326，Sortino 比率为 1.976，最大回撤为 -5.83\%，平均月度换手率仅为 0.51\%。这个模型的好处不是某一项指标特别突出，而是三个维度上都没有明显短板。
 
 \begin{table}[H]
 \centering
@@ -425,9 +425,9 @@ Improved Convex Adaptive Global RRP & 7.79\% & 1.326 & -5.83\% & 1.336 & 0.51\% 
 \subsection{HRP/HERC 基准模型对比}
 表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。HRP 基准模型实现了 1.81\% 的净年化收益，夏普比率为 -0.042，最大回撤仅为 -0.08\%，Calmar 比率达到 22.12，平均月度换手率为 5.60\%。HERC 基准模型的净年化收益为 2.37\%，夏普比率为 1.184，最大回撤为 -0.39\%，Calmar 比率为 6.011，平均月度换手率为 9.24\%。
 
-HRP 的负夏普比率主要源于其净年化收益（1.81\%）略低于同期无风险利率水平（约 1.82\%），这并非真实亏损而是相对表现。HERC 基准模型的夏普比率为 1.184，表明层次化风险贡献配置方法在 ETF 资产池框架下具有实证竞争力。
+HRP 的负夏普比率主要源于其净年化收益（1.81\%）略低于同期无风险利率水平（约 1.82\%），这并非真实亏损而是相对表现。HERC 基准模型的夏普比率为 1.184，在当前样本里是有实质意义的正值。
 
-然而，单纯依据夏普比率尚不足以支撑"直接替代主模型"的结论。HRP 和 HERC 的绝对年化收益（分别为 1.81\% 与 2.37\%）与 Improved Convex Adaptive Global RRP 的 7.79\% 相比差距显著，主要来源于极低的波动水平（HRP 的年化波动仅为 0.17\%），而非有效的多资产分散机制。Improved Convex Adaptive Global RRP 的平均月度换手率（0.51\%）显著低于 HRP（5.60\%）和 HERC（9.24\%），体现了更强的实施效率。
+但夏普比率高不等于可以替代主模型。HRP 和 HERC 的绝对年化收益（分别为 1.81\% 与 2.37\%）与 Improved Convex Adaptive Global RRP 的 7.79\% 相比差距显著，主要来源于极低的波动水平（HRP 的年化波动仅为 0.17\%），而不是多资产分散的结果。权重路径（见后文）也说明两者几乎全仓债券。另外，HRP 和 HERC 的月度换手率（5.60\% 和 9.24\%）都远高于 Improved Convex Adaptive Global RRP 的 0.51\%。
 
 \begin{table}[htbp]
 \centering
@@ -445,14 +445,14 @@ HERC Benchmark & 2.37\% & 1.184 & -0.39\% & 6.011 & 9.24\% \\
 
 \subsection{净值路径与回撤分析}
 \figmaybe{convex_adaptive_nav_comparison.png}{核心模型累计净值路径比较}{fig:nav}
-图 \ref{fig:nav} 展示了六个核心模型在统一评价区间内的累计净值路径。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段保持更高的累计净值水平，其中 Improved Convex Adaptive Global RRP 的路径更平稳，体现了低换手与约束优化结合后的可实施改进。HRP 与 HERC 也呈现出较强的阶段性上行能力，说明层次化方法在当前全球 ETF 样本中具有竞争性，但其路径评价仍需与回撤、换手和尾部风险指标结合解读。
+图 \ref{fig:nav} 展示了六个核心模型在统一评价区间内的累计净值路径。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段保持更高的累计净值水平，其中 Improved Convex Adaptive Global RRP 的路径更平稳。HRP 和 HERC 的路径较平，接近一条斜率温和的直线，与它们近全仓债券的配置结构一致。仅看净值路径不足以判断哪个模型更好，还需要结合回撤深度和换手成本。
 
 \figmaybe{convex_adaptive_drawdown_comparison.png}{核心模型回撤路径比较}{fig:drawdown}
-最大回撤反映投资者在历史净值曲线上所经历的峰值到谷值的最大跌幅，长期资金对此指标关注程度较高。Improved Convex Adaptive Global RRP 的最大回撤为 -5.83\%，相比 Global RRP 的 -6.83\% 有所改善。样本期内的回撤控制表现不构成对未来回撤水平的预测承诺。
+最大回撤反映投资者在历史净值曲线上所经历的峰值到谷值的最大跌幅，长期资金对此指标关注程度较高。Improved Convex Adaptive Global RRP 的最大回撤为 -5.83\%，相比 Global RRP 的 -6.83\% 有所改善。两个模型最深的回撤都出现在 2022 年市场下行期间。
 
 \subsection{换手率与权重结构分析}
 \figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
-换手率直接影响交易费用总额和组合日常管理的复杂程度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别达到 18.0\% 和 17.1\%，表明基础风险预算类模型在当前参数设定下需要相对频繁的再平衡。Improved Convex Adaptive Global RRP 将换手率控制在 0.51\% 的水平，显著低于 HRP（5.60\%）和 HERC（9.24\%），体现了凸化约束在提升可实施性方面的优势。过低的换手率可能在市场结构发生快速变化时降低模型的适应响应能力。
+换手率直接影响交易费用总额和组合日常管理的复杂程度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别达到 18.0\% 和 17.1\%，基础风险预算模型在没有换手约束的情况下换手自然较高。Improved Convex Adaptive Global RRP 加入 $L_1$ 惩罚后基本稳定在低水平，换手率控制在 0.51\%，显著低于 HRP（5.60\%）和 HERC（9.24\%）。当然，换手极低也有代价：市场相关结构快速变化时，组合调整会比较迟缓。
 
 \figmaybe{weight_path_asset_group_comparison.png}{Improved Convex Adaptive Global RRP、Global RRP、HRP 基准模型与 HERC 基准模型的资产组权重路径}{fig:weight_path}
 \begin{table}[htbp]
@@ -476,11 +476,11 @@ HERC & 2023--2025 & 93.13\% & 1.55\% & 0.53\% & 1.57\% & 3.22\% \\
 \end{tabular}
 \end{table}
 
-图 \ref{fig:weight_path} 与表 \ref{tab:weight_path_stage} 用于回答绩效差异背后的模型行为问题。Improved Convex Adaptive Global RRP 的权重路径更平滑，其债券底仓在两个阶段都稳定在约 50\% 附近，短融 ETF 维持在约 45\%，黄金配置基本稳定在 7\% 左右。这种平滑来自换手惩罚、CVaR 约束和资产组边界对阶段间大幅再配置的共同抑制，使组合更像是在稳定债券底仓上做温和的跨资产暴露调整。
+图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 说明各模型绩效差异从何而来。Improved Convex Adaptive Global RRP 的权重路径更平滑，其债券底仓在两个阶段都稳定在约 50\% 附近，短融 ETF 维持在约 45\%，黄金配置基本稳定在 7\% 左右。这种稳定性来自换手惩罚和资产组边界的约束，而不是模型自发保守。
 
-Global RRP 的阶段切换更明显，其债券组权重从 54.03\% 下降到 44.38\%，商品组从 6.76\% 抬升到 11.90\%，说明基础风险预算模型会更直接地响应协方差结构变化，具有更强的适应性，但也对应更高的换手。
+Global RRP 在没有换手约束的情况下更直接地响应协方差变化，其债券组权重从 54.03\% 下降到 44.38\%，商品组从 6.76\% 抬升到 11.90\%，适应性强，换手代价也更高。
 
-HRP/HERC 的良好表现必须与其暴露结构一起解读：HRP 在两个阶段的债券权重都接近 99\%，HERC 也都在 93\% 左右，当前样本中的良好夏普比率很大程度上与低波动债券底仓和样本期防御资产表现有关，而不必然来自更完整的跨资产分散机制。
+HRP/HERC 的情况更直接：两个阶段债券权重都在 93--99\%。它们的夏普比率主要来自低波动债券仓位，而不是跨资产分散。这不是批评——在这个样本区间里重债券本来就不差——但和主模型的配置逻辑是完全不同的两件事。
 
 \subsection{CVaR 尾部风险分析}
 \figmaybe{convex_adaptive_cvar_comparison.png}{核心模型95\%日度CVaR比较}{fig:cvar}
@@ -503,52 +503,70 @@ HERC Benchmark & 0.06\% \\
 \end{tabular}
 \end{table}
 
-表 \ref{tab:core_cvar} 展示了各模型的 CVaR 数值。CVaR 与最大回撤在度量逻辑上存在根本差异：最大回撤依赖于完整的历史净值路径序列，而 CVaR 聚焦于历史日度收益率损失的尾部平均水平。CVaR 约束设计能够将尾部损失信息显式纳入优化目标，但历史 CVaR 无法覆盖历史样本中从未出现过的极端市场情景。本文将 CVaR 定位为尾部风险诊断和约束工具，而非极端损失的完整防护机制。
+表 \ref{tab:core_cvar} 展示了各模型的 CVaR 数值。CVaR 和最大回撤衡量的是不同的东西：最大回撤看整条净值路径上最深的跌幅，CVaR 是历史日度损失超过某分位点后的均值。两者都有参考价值，但不可替换。历史 CVaR 对历史中从未出现过的极端情景无能为力。
 
 \subsection{小结}
-实证结果表明，各模型在优势特征和权衡取向上存在明显差异。Improved Convex Adaptive Global RRP 在当前样本期内在收益、回撤控制和低换手约束之间表现出相对均衡的权衡；HRP 和 HERC 在夏普比率方面具有竞争力，但其回撤幅度、换手频率和暴露集中度与主模型存在实质差异，主模型选择不能仅依据单一绩效指标排序。
+各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内收益、回撤和换手三个维度上都没有明显短板；HRP 和 HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
 
 \section{稳健性检验与过拟合诊断}
 
 \subsection{子区间与压力期检验}
 \figmaybe{robustness_subperiod_sharpe.png}{子区间夏普比率稳健性}{fig:sub_sharpe}
 \figmaybe{robustness_subperiod_drawdown.png}{子区间最大回撤稳健性}{fig:sub_drawdown}
-图 \ref{fig:sub_sharpe} 和图 \ref{fig:sub_drawdown} 展示不同子区间的夏普比率和最大回撤。子区间结果通常比全样本结果波动更大，因为短样本受市场状态影响更明显。本文不声称任何模型在所有市场环境中稳定占优，而是把子区间检验作为识别模型边界的工具。
+图 \ref{fig:sub_sharpe} 和图 \ref{fig:sub_drawdown} 展示不同子区间的夏普比率和最大回撤。子区间结果通常比全样本结果波动更大，因为短样本受市场状态影响更明显。这些图的用途是看模型结论在哪些区间成立、在哪些区间减弱，而不是用来寻找"最优子区间"。
 
 \figmaybe{robustness_stress_period_performance.png}{压力期表现检验}{fig:stress}
-压力期检验用于观察极端阶段组合反应，但压力期标签只用于事后评价，不作为交易信号，不能用压力期结果倒推调参有效性。
+压力期检验用于观察极端阶段组合反应。压力期标签是事后贴上去的，只用于观察组合在特定阶段的行为，不作为调参依据。
 
 \subsection{交易成本与参数敏感性}
 \figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
-图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。成本越高，高换手模型越容易受到净收益侵蚀；低换手模型对成本更不敏感。CVaR 参数敏感性分析（12 个变体跨 $\beta$ 与回望窗口维度）的均值夏普为 1.12，范围 1.08--1.15，表明参数稳健性良好。本文交易成本仍是简化费率，没有纳入冲击成本、买卖价差和大额交易滑点。
+图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。CVaR 参数敏感性分析（12 个变体跨 $\beta$ 与回望窗口维度）的均值夏普为 1.12，范围 1.08--1.15。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
 
 \figmaybe{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
-参数扰动采用单因素变化方式，观察模型是否对某一个参数过度敏感。若只有非常窄的参数区间有效，则部署风险较高。当前结果表明模型在已测试扰动范围内表现相对稳定，但不能证明参数在所有市场状态下均保持稳健。
+参数扰动采用单因素变化方式，观察模型是否对某一个参数过度敏感。在已测试的扰动范围内较为稳定；测试范围以外是未知的。
 
 \subsection{协方差估计与过拟合诊断}
 \figmaybe{covariance_robustness_sharpe.png}{不同协方差估计下的夏普比率}{fig:cov_sharpe}
 \figmaybe{covariance_robustness_drawdown.png}{不同协方差估计下的回撤表现}{fig:cov_drawdown}
 \figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
-本文比较 sample covariance、Ledoit-Wolf 收缩估计和不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 结果表明主要结论不依赖单一协方差估计方法，但协方差选择会影响权重细节和换手率。本文不宣称某个估计器永久最优，而是把协方差层作为验证对象。
+本文比较 sample covariance、Ledoit-Wolf 收缩估计和不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 结果表明主要结论不依赖单一协方差估计方法，但协方差选择会影响权重细节和换手率。哪个估计器在未来更优没有定论。
 
 \figmaybe{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
-CSCV/PBO 用于估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选、35 个区块分割，PBO 为 0.429。PBO 低于 0.5 表明样本内优胜候选在样本外排名中位居中位数以上，是有利信号；中位逻辑秩为 0.288，高于随机基准零点。尽管如此，CSCV 诊断仅提供参数选择偏差的统计估计，不能视为对未来表现的保证。
+CSCV/PBO 用于估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选、35 个区块分割，PBO 为 0.429。PBO 低于 0.5 表明样本内优胜候选在样本外排名中位居中位数以上，是有利信号；中位逻辑秩为 0.288，高于随机基准零点。这是个有利信号，但不是保证——CSCV 只是估计参数选择偏差的程度，不代表样本外表现可以预测。
 
-滚动前向验证（Walk-Forward）包含 23 个测试切片，测试窗口平均净年化收益为 7.18\%，平均夏普比率为 1.12，平均最大回撤为 -2.07\%；切片较短，指标波动较大，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，候选 candidate\_09 净年化收益为 13.56\%，夏普比率为 2.48，最大回撤为 -3.32\%；该结果受到样本期内全球权益修复、黄金等分散资产支撑等因素的共同影响，应理解为特定市场背景下的条件性外样本证据。
+滚动前向验证（Walk-Forward）包含 23 个测试切片，测试窗口平均净年化收益为 7.18\%，平均夏普比率为 1.12，平均最大回撤为 -2.07\%。切片较短，指标波动较大，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，候选 candidate\_09 净年化收益为 13.56\%，夏普比率为 2.48，最大回撤为 -3.32\%。该结果受到样本期内全球权益修复、黄金等分散资产支撑等因素的共同影响，应理解为特定市场背景下的条件性外样本证据。
 
 \subsection{小结}
-多维度稳健性检验提升了论文可信度，迫使结论与样本、参数、成本和候选选择过程绑定。所有检验结果均不构成对未来收益的保证，也不能完全消除过拟合风险。本文最终结论必须与评价区间（2019-01-01 至 2026-05-07）、交易成本假设和条件性验证条件一起理解。
+以上检验共同做的事情是把结论限定在具体条件下——特定评价区间、特定成本假设、特定参数选择。没有哪项检验能消除过拟合的可能性，只能说目前的证据在已测试的多个维度上是自洽的。
 
 \section{结论与展望}
 
 \subsection{主要结论}
-本文围绕四个核心研究问题，在可交易全球多资产 ETF 框架下系统比较了宽松风险平价与层次化配置方法。就第一个研究问题而言，Global RRP 证明了宽松风险预算方法能够在 30 支全球 ETF 资产池中构建定义清晰、风险来源可解释的配置框架，其净年化收益为 4.71\%，最大回撤为 -6.83\%。就第二个研究问题而言，在引入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 将净年化收益提升至 7.79\%、平均月度换手率压缩至 0.51\%，在收益、回撤和低换手之间实现了更均衡的权衡，验证了凸化改进的实施价值。就第三个研究问题而言，HRP 和 HERC 基准模型在当前样本中具有实证竞争力，HERC 的夏普比率（1.184）表现较为突出，但其收益绝对水平较低且高度依赖债券底仓，两者与主模型代表不同的配置逻辑，而不是简单的优劣关系。就第四个研究问题而言，子区间、参数扰动、协方差估计、CSCV/PBO 和滚动前向验证等多维度稳健性检验明确识别出结论对样本区间和参数设定的依赖程度，PBO = 0.429 表明候选选择偏差风险可控，但所有结论均属条件性实证证据，不构成对未来收益的保证。
+本文的四个研究问题都得到了相对明确的实证回答，不过每个答案都附带条件。
+
+宽松风险平价在可交易全球 ETF 资产池中确实可以建立一个风险来源清晰的配置框架。Global RRP 净年化收益 4.71\%，最大回撤 -6.83\%，在没有 CVaR 和换手约束的情况下已经可以运行，但 18.0\% 的月度换手是个实际问题。
+
+加入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 净年化收益升至 7.79\%，最大回撤 -5.83\%，换手降至 0.51\%。这不是每项指标都领先，而是没有明显短板。
+
+HRP 和 HERC 在当前样本中夏普比率不低，但原因需要说清楚：两者几乎全仓债券，夏普比率来自极低的波动，而不是多资产分散。这和主模型是两种不同的配置思路，本文没有把它们放在同一个评价坐标上排序。
+
+稳健性检验方面，PBO = 0.429 说明候选选择带来的过拟合风险在可接受范围内，协方差估计器的选择不改变主要结论。但这些检验只能覆盖已测试的维度，所有结论都依赖当前的评价区间（2019--2026）和成本假设。
 
 \subsection{研究不足}
-本研究存在以下局限，应在解释结论时充分考虑。首先，当前可获取的数据缺少买卖价差、成交量和基金资产规模等市场微观结构字段，无法严谨估计大额资金进出可能产生的冲击成本和实际投资容量上限，固定费率处理是对真实市场结构的简化近似。其次，本文从资产端视角讨论长期资金配置，尚未引入负债现金流预测、资产负债久期缺口匹配、偿付能力资本占用规则和会计税费约束，因此不应被直接解释为保险资金或养老金的完整资产负债管理方案。再次，部分 ETF 上市时间较晚，限制了在更长经济周期上进行系统性比较的可能，若要跨越更完整的经济周期，需要在严格控制前视偏差原则的前提下研究 ETF 上市前数据的衔接方法。此外，所有实证结论均基于特定历史数据期间和当前市场相关性结构，若未来市场结构发生实质性变化，模型表现可能随之改变，本文结论为条件性实证陈述，不构成对未来长期表现的预测。
+当前可获取的数据缺少买卖价差、成交量和基金资产规模等市场微观结构字段，无法严谨估计大额资金进出可能产生的冲击成本和实际投资容量上限。固定费率是对真实市场结构的简化，冲击成本没有纳入。
+
+本文从资产端视角讨论长期资金配置，尚未引入负债现金流预测、资产负债久期缺口匹配和偿付能力资本占用规则，所以结论不能直接套用到资产负债管理场景。
+
+部分 ETF 上市时间较晚，限制了在更长经济周期上进行系统性比较的可能。若要跨越更完整的经济周期，需要在严格控制前视偏差的前提下研究 ETF 上市前数据的衔接方法。
+
+所有实证结论均基于特定历史评价区间（2019-01-01 至 2026-05-07）和当前市场相关性结构，若未来市场结构发生实质性变化，模型表现可能随之改变，本文结论为条件性实证陈述，不构成对未来长期表现的预测。
 
 \subsection{后续研究方向}
-第一，引入真实市场微观结构数据。通过获取 ETF 成交额、即时买卖价差和日均成交量等字段，开发更现实的市场冲击成本估计模型和资金投资容量框架，将当前基于静态费率的成本敏感性诊断提升为涵盖流动性约束的完整实证分析。第二，扩展交易成本建模框架。在现有固定 bps 费率基础上，进一步加入动态买卖价差模型和基于交易规模的市场冲击成本函数，使成本假设更贴近机构资产管理的实际执行环境。第三，将研究范围扩展至负债驱动的资产负债管理框架。把负债端现金流预测、资产负债久期缺口、偿付能力资本占用规则与资产端凸优化框架结合，使配置问题从单纯的投资端资产选择推进至更完整的负债驱动型决策框架。
+最直接的后续工作是改善成本建模。引入买卖价差和基于成交量的冲击成本函数，比固定费率更接近机构执行环境，也能让成本敏感性分析的结论更有说服力。
+
+另一个值得做的方向是延长样本。当更多 ETF 积累足够历史数据后，重复当前比较并检验结论是否稳定，本身就是有价值的工作。
+
+把研究推进到负债端需要引入现金流预测、久期缺口和资本占用规则——这超出了本科论文的范围，但是一个逻辑上合理的扩展方向。
 
 \appendix
 \section{主要指标定义汇总}
