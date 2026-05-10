@@ -1,4 +1,6 @@
-# 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation
+# 宽松风险平价在全球 ETF 资产配置中的改进与实证研究
+
+> Improvements and Empirical Study of Relaxed Risk Parity in Global ETF Asset Allocation
 
 <p align="center">
   <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-%E4%B8%AD%E6%96%87-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
@@ -524,6 +526,9 @@ python -m pytest
 <a id="en"></a>
 
 ## English
+
+> **Thesis title:** Improvements and Empirical Study of Relaxed Risk Parity in Global ETF Asset Allocation
+> （宽松风险平价在全球 ETF 资产配置中的改进与实证研究）
 
 ### Project Overview
 
