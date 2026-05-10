@@ -34,10 +34,10 @@
 \contentsline {section}{\numberline {5}实证结果分析}{23}{section.5}%
 \contentsline {subsection}{\numberline {5.1}主模型绩效结果}{23}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}HRP/HERC Benchmark 对比}{24}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}净值路径分析}{24}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.3}净值路径分析}{25}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}回撤表现分析}{25}{subsection.5.4}%
 \contentsline {subsection}{\numberline {5.5}换手率与可实施性分析}{26}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}权重路径与模型行为解释}{28}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.6}权重路径与模型行为解释}{27}{subsection.5.6}%
 \contentsline {subsection}{\numberline {5.7}绩效差异的机制归因}{28}{subsection.5.7}%
 \contentsline {subsection}{\numberline {5.8}CVaR 尾部风险分析}{29}{subsection.5.8}%
 \contentsline {subsection}{\numberline {5.9}小结}{30}{subsection.5.9}%
