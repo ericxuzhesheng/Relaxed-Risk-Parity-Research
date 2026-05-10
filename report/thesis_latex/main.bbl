@@ -1,4 +1,4 @@
-\begin{thebibliography}{29}
+\begin{thebibliography}{35}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -70,6 +70,18 @@ GRINOLD R~C, KAHN R~N.
 \newblock Active portfolio management\allowbreak[M].
 \newblock New York: McGraw-Hill, 1999.
 
+\bibitem[Herculano(2026)]{herculano2026bayesian}
+HERCULANO M~C.
+\newblock Bayesian parametric portfolio policies\allowbreak[A/OL].
+\newblock arXiv (2026).
+\newblock \url{https://arxiv.org/abs/2602.21173}.
+
+\bibitem[Hellum et~al.(2026)Hellum, Jensen, Kelly, and
+  Malamud]{hellum2026complex}
+HELLUM O, JENSEN T~I, KELLY B~T, et~al.
+\newblock Complex modern portfolio theory\allowbreak[J].
+\newblock SSRN Working Paper, 2026.
+
 \bibitem[林晓明\ 等(2020)林晓明, 黄晓彬, and
   源洁莹]{htsc2020misunderstanding}
 林晓明, 黄晓彬, 源洁莹.
@@ -117,6 +129,12 @@ BOYD S, VANDENBERGHE L.
 \newblock Convex optimization\allowbreak[M].
 \newblock Cambridge: Cambridge University Press, 2004.
 
+\bibitem[Uhl et~al.(2024)Uhl, Jurt, and Walliser]{uhl2024aitail}
+UHL M~W, JURT F, WALLISER S.
+\newblock Can {AI} detect tail events? {S}tock performance around tail events
+  during different sentiment regimes\allowbreak[J].
+\newblock Journal of Behavioral Finance, 2024.
+
 \bibitem[张继强\ 等(2025)张继强, 陶冶, and 何颖雯]{htsc2025lowrate}
 张继强, 陶冶, 何颖雯.
 \newblock 低利率环境下的绝对收益路径:
@@ -129,10 +147,24 @@ LEDOIT O, WOLF M.
   matrices\allowbreak[J].
 \newblock Journal of Multivariate Analysis, 2004, 88\allowbreak (2): 365-411.
 
+\bibitem[Laloux et~al.(1999)Laloux, Cizeau, Bouchaud, and
+  Potters]{laloux1999noise}
+LALOUX L, CIZEAU P, BOUCHAUD J~P, et~al.
+\newblock Noise dressing of financial correlation matrices\allowbreak[J/OL].
+\newblock Physical Review Letters, 1999, 83\allowbreak (7): 1467-1470.
+\newblock DOI: \doi{10.1103/PhysRevLett.83.1467}.
+
 \bibitem[林晓明\ 等(2021)林晓明, 黄晓彬, and 张泽]{htsc2021hrp}
 林晓明, 黄晓彬, 张泽.
 \newblock 风险平价之标的优选与层次化风险估计\allowbreak[R].
 \newblock 华泰证券研究所, 2021.
+
+\bibitem[Alouadi et~al.(2026)]{alouadi2026sbbts}
+ALOUADI A, et~al.
+\newblock {SBBTS}: a unified {S}chr{\"o}dinger--{B}ass framework for synthetic
+  financial time series\allowbreak[A/OL].
+\newblock arXiv (2026).
+\newblock \url{https://arxiv.org/abs/2604.07159}.
 
 \bibitem[L{\'o}pez~de Prado(2016)]{lopezdeprado2016building}
 L{\'O}PEZ~DE PRADO M.
@@ -144,6 +176,13 @@ L{\'O}PEZ~DE PRADO M.
 RAFFINOT T.
 \newblock The hierarchical equal risk contribution portfolio\allowbreak[J].
 \newblock SSRN Electronic Journal, 2018.
+
+\bibitem[Ciciretti et~al.(2024)Ciciretti and Pallotta]{ciciretti2024network}
+CICIRETTI V, PALLOTTA A.
+\newblock Network risk parity: graph theory-based portfolio
+  construction\allowbreak[J/OL].
+\newblock Journal of Asset Management, 2024, 25\allowbreak (2): 136-146.
+\newblock DOI: \doi{10.1057/s41260-023-00347-8}.
 
 \bibitem[陈果\ 等(2025)陈果 and 王程畅]{csc2025chinaallocation}
 陈果, 王程畅.
