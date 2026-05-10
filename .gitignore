@@ -47,6 +47,7 @@ results/quick/
 !results/figures/covariance_robustness_sharpe.png
 !results/figures/covariance_robustness_drawdown.png
 !results/figures/covariance_robustness_turnover.png
+!results/figures/weight_path_asset_group_comparison.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
