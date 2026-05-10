@@ -225,6 +225,29 @@ CVaR_\alpha(L)=\min_\eta\left[\eta+\frac{1}{(1-\alpha)T}\sum_{s=1}^{T}\max(L_s-\
 \]
 在当前样本中，Improved Convex Adaptive Global RRP 的平均月度换手率为 0.51\%。0.51\% 的月度换手基本意味着每月只微调少量头寸，对长期资金友好，但代价是对市场结构变化的响应会慢一些。
 
+\subsection{协方差估计方法}
+协方差矩阵的质量直接影响风险预算分配和权重求解。本文在不同模型和稳健性检验中使用三类估计器。
+
+样本协方差矩阵是最直接的方法：给定历史收益率窗口 $R_t \in \mathbb{R}^{T \times n}$，
+\[
+S_t = \frac{1}{T-1}(R_t - \bar{r}_t \mathbf{1}^T)^T (R_t - \bar{r}_t \mathbf{1}^T)
+\]
+在资产数量 $n$ 较大或历史窗口 $T$ 较短时，样本协方差矩阵的估计噪声较大、条件数较差，容易导致极端权重。Laloux 等人的随机矩阵理论研究表明，金融资产相关矩阵中大量特征值落入噪声区间\cite{laloux1999noise}，这是样本估计不稳定的根本来源。
+
+Ledoit-Wolf 收缩估计\cite{ledoit2004well}将样本协方差矩阵向结构化目标 $F_t$ 做加权平均：
+\[
+\hat{\Sigma}_t = (1-\delta) S_t + \delta F_t
+\]
+其中 $F_t$ 通常取等方差对角矩阵，最优收缩系数 $\delta \in [0,1]$ 通过 Oracle 近似方法求解。收缩使极端特征值向均值压缩，降低权重对样本误差的敏感度。
+
+指数加权移动平均（EWMA）通过对近期观测赋予更高权重，捕捉协方差的时变性：
+\[
+\hat{\Sigma}_t = (1-\lambda)\sum_{s=0}^{T-1}\lambda^s r_{t-s} r_{t-s}^T,\quad \lambda = e^{-\ln 2/\tau}
+\]
+其中 $\tau$ 为半衰期参数。本文在稳健性检验中测试 $\tau \in \{20, 60, 120\}$ 三种设定，分别对应短期、中期和长期时间尺度。
+
+主模型默认使用 Ledoit-Wolf 收缩估计，第六章协方差稳健性检验系统比较三类估计器对主要绩效指标的影响。
+
 \subsection{HRP 与 HERC 基准模型}
 HRP 基准模型的流程包括：基于收益率估计相关矩阵，将相关性转化为距离矩阵，进行层次聚类，按照聚类顺序进行准对角化，最后通过递归二分分配权重\cite{lopezdeprado2016building}。HERC 基准模型在层次结构中加入风险贡献思想，使簇内和簇间风险分配更接近风险预算逻辑\cite{raffinot2018hierarchical}。
 
@@ -307,6 +330,10 @@ ETF & Ticker & Asset Class \\
 \end{longtable}
 
 资产池包含 30 支可交易 ETF，覆盖八类风险来源。债券类包含短融、可转债、国债、信用债和银华日利 ETF；A股宽基涵盖大、中、小盘及科创与红利风格；中国科技类包含半导体、芯片、人工智能和卫星 ETF；中国先进制造类包含机器人 ETF；中国新能源类涵盖光伏与新能源宽基；中国行业类补充券商周期因子；港股与医药类分别覆盖香港市场权益和创新药；全球股票类包含纳指、标普500、日经225和道琼斯 ETF；大宗商品类通过黄金、有色、豆粕、油气和煤炭 ETF 提供多元大宗商品暴露。
+
+\figmaybe{asset_graph_stress_timeline.png}{资产池跨类别相关结构（平静期与压力期对比）}{fig:asset_graph}
+
+图 \ref{fig:asset_graph} 展示了资产池在平静期与主要压力期前后的跨类别相关结构变化。债券类（短融、国债）与权益、商品的相关性在压力期通常有所上升，典型的分散化效果有所削弱；黄金在多数压力期仍保持与权益的低相关或负相关，是当前资产池中分散效果最稳定的品种之一。全球股票类与中国 A 股之间的相关性在 2020 年初流动性危机和 2022 年下行期明显走高，这也是协方差估计器需要兼顾近期和历史信息的一个具体原因。不同压力情景下相关结构的变化路径，是协方差稳健性检验的重要背景。
 
 \subsection{数据来源与处理流程}
 价格数据来自 Tushare ETF 数据接口，使用经复权处理后的可比价格序列。日收益率按相邻交易日价格变化计算，并对不同 ETF 的交易日进行对齐。上市前缺失价格不进行填补；若某 ETF 在再平衡日前历史窗口不足，则不参与当期优化。本文绩效评价区间自 2019-01-01 起，30 支 ETF 中最早上市者于 2018-01-30 开始交易，评价起点设定于此以确保多数资产同时可投。逐点时间宇宙过滤在每个再平衡日自动排除历史数据不足的 ETF，确保无前视信息泄露。部分资产如中证1000 ETF 上市时间较晚，其历史统计和模型参与频率与早上市 ETF 不完全一致，本文通过描述性统计和无前视设计予以披露。
@@ -505,6 +532,57 @@ HERC Benchmark & 0.06\% \\
 
 表 \ref{tab:core_cvar} 展示了各模型的 CVaR 数值。CVaR 和最大回撤衡量的是不同的东西：最大回撤看整条净值路径上最深的跌幅，CVaR 是历史日度损失超过某分位点后的均值。两者都有参考价值，但不可替换。历史 CVaR 对历史中从未出现过的极端情景无能为力。
 
+\subsection{因子暴露与收益归因}
+为进一步理解各模型收益的来源结构，本文使用五个代理因子（权益、债券、大宗商品/黄金、防御性资产、全球风险）对主模型的日收益率进行时间序列回归，并分解各因子对总收益和总方差的贡献。
+
+\figmaybe{asset_pricing_factor_exposure.png}{核心模型因子暴露汇总（全样本回归）}{fig:factor_exposure}
+
+图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示全样本因子暴露回归结果。Global RRP 对债券因子的暴露显著（$\bar{\beta}_{bond}=1.682$），对权益因子暴露极低（$\bar{\beta}_{equity}=0.022$），$R^2=0.485$，全样本调整后年化 $\alpha=2.82\%$（$t=2.70$）。Improved Convex Adaptive Global RRP 的因子结构更为均衡：债券因子暴露降至 $\bar{\beta}_{bond}=0.901$，商品/黄金因子暴露上升至 $\bar{\beta}_{commodity}=0.175$，权益因子暴露约为 $\bar{\beta}_{equity}=0.119$；模型 $R^2=0.895$，年化 $\alpha=1.87\%$（$t=3.51$），说明五因子能较好解释其收益变动，且存在统计上显著的正截距。
+
+\begin{table}[H]
+\centering
+\small
+\caption{核心模型全样本因子暴露与 $\alpha$（五因子时间序列回归）}
+\label{tab:factor_exposure}
+\begin{tabular}{lrrrrrrr}
+\toprule
+模型 & $\beta_{eq}$ & $\beta_{bond}$ & $\beta_{com}$ & $\beta_{def}$ & $\beta_{global}$ & $R^2$ & $\alpha$（年化） \\
+\midrule
+Global RRP & 0.022 & 1.682 & 0.058 & $-$0.014 & 0.248 & 0.485 & 2.82\% \\
+Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
+\bottomrule
+\multicolumn{8}{l}{\footnotesize 因子均为代理因子，不对应特定标准化指数。} \\
+\end{tabular}
+\end{table}
+
+\figmaybe{asset_pricing_rolling_betas.png}{Improved Convex Adaptive Global RRP 滚动因子暴露（252日窗口）}{fig:rolling_betas}
+
+图 \ref{fig:rolling_betas} 展示 Improved Convex Adaptive Global RRP 与 Global RRP 在 252 日滚动窗口下的因子暴露时序变化。Improved Convex 的债券暴露范围为 $[-0.16, 2.06]$，商品暴露范围为 $[0.11, 0.22]$，相对稳定；全球风险因子暴露维持在 $[0.15, 0.31]$，表明模型对全球权益系统性风险有持续但适度的暴露。Global RRP 的债券暴露均值更高（$\bar{\beta}_{bond}=1.682$），时序波动也更大，范围 $[-0.71, 4.11]$，反映其在没有换手约束情况下对协方差变化的更直接响应。
+
+\figmaybe{asset_pricing_return_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{fig:return_attr}
+\figmaybe{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:risk_attr}
+
+表 \ref{tab:return_risk_attr} 整理了 Improved Convex Adaptive Global RRP 的收益与方差归因结果。从收益来源看，商品/黄金因子贡献最大（43.2\%），其次为债券（27.0\%）和权益（25.3\%），防御性资产贡献约 4.6\%。这一格局与权重路径一致：黄金和大宗商品 ETF 在样本期表现突出，是净收益的主要来源。从风险来源（方差份额）看，权益因子贡献最大（59.1\%），商品/黄金次之（33.8\%），债券方差贡献极低（0.8\%），反映债券端整体波动较低。
+
+\begin{table}[H]
+\centering
+\small
+\caption{Improved Convex Adaptive Global RRP 收益与方差归因（五因子分解）}
+\label{tab:return_risk_attr}
+\begin{tabular}{lrr}
+\toprule
+因子 & 收益贡献份额 & 方差贡献份额 \\
+\midrule
+权益 & 25.3\% & 59.1\% \\
+债券 & 27.0\% & 0.8\% \\
+商品/黄金 & 43.2\% & 33.8\% \\
+防御性 & 4.6\% & 6.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+收益与风险归因结果说明 Improved Convex Adaptive Global RRP 的多资产分散是真实的：收益来源分布在权益、债券和商品三个方向，方差的主要承担者是权益和商品，债券的风险贡献极低但收益贡献约 27\%，这正是把低波动债券纳入风险预算的本意。与 HRP/HERC 比较，后者几乎全仓债券，收益和风险都高度集中于单一来源，在因子归因上并不构成真正的多资产分散。
+
 \subsection{小结}
 各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内收益、回撤和换手三个维度上都没有明显短板；HRP 和 HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
 
@@ -520,7 +598,37 @@ HERC Benchmark & 0.06\% \\
 
 \subsection{交易成本与参数敏感性}
 \figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
-图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。CVaR 参数敏感性分析（12 个变体跨 $\beta$ 与回望窗口维度）的均值夏普为 1.12，范围 1.08--1.15。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
+图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
+
+CVaR 参数敏感性分析在 $\beta \in \{0.90, 0.95, 0.975, 0.99\}$ 和回望窗口 $\in \{126, 252, 504\}$ 两个维度上共测试 12 个变体，以 Improved Convex Adaptive Global RRP 为基础模型，其余参数保持一致。表 \ref{tab:cvar_sensitivity} 汇报各变体均值指标。
+
+\begin{table}[H]
+\centering
+\small
+\caption{CVaR 参数敏感性分析（12 变体，基于 Improved Convex Adaptive Global RRP）}
+\label{tab:cvar_sensitivity}
+\begin{tabular}{llrrrr}
+\toprule
+维度 & 参数值 & 夏普均值 & 净年化收益 & 最大回撤均值 & 月度换手均值 \\
+\midrule
+\multirow{4}{*}{置信水平 $\beta$}
+ & 0.90  & 1.119 & 6.80\% & $-$5.80\% & 1.51\% \\
+ & 0.95  & 1.117 & 6.78\% & $-$5.80\% & 1.51\% \\
+ & 0.975 & 1.117 & 6.76\% & $-$5.78\% & 1.51\% \\
+ & 0.99  & 1.130 & 6.80\% & $-$5.80\% & 1.50\% \\
+\midrule
+\multirow{3}{*}{回望窗口（交易日）}
+ & 126   & 1.131 & 6.59\% & $-$5.68\% & 1.68\% \\
+ & 252   & 1.082 & 6.66\% & $-$5.83\% & 1.46\% \\
+ & 504   & 1.149 & 7.09\% & $-$5.87\% & 1.39\% \\
+\midrule
+全部 12 变体均值 & --- & 1.121 & 6.78\% & $-$5.79\% & 1.51\% \\
+\bottomrule
+\multicolumn{6}{l}{\footnotesize 各行为对应参数水平下的多个变体均值，评价区间与主模型一致。} \\
+\end{tabular}
+\end{table}
+
+12 个变体的夏普比率范围为 1.08--1.15，净年化收益范围为 6.59\%--7.09\%，最大回撤均在 -5.68\% 至 -5.87\% 之间，整体结论对 CVaR 参数选择不敏感。回望窗口的影响略大于置信水平：504 日长窗口的净年化收益最高（7.09\%），但换手率也最低，反映更长历史窗口使协方差估计更稳定，调仓幅度更小。
 
 \figmaybe{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
 参数扰动采用单因素变化方式，观察模型是否对某一个参数过度敏感。在已测试的扰动范围内较为稳定；测试范围以外是未知的。
@@ -535,6 +643,35 @@ HERC Benchmark & 0.06\% \\
 CSCV/PBO 用于估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选、35 个区块分割，PBO 为 0.429。PBO 低于 0.5 表明样本内优胜候选在样本外排名中位居中位数以上，是有利信号；中位逻辑秩为 0.288，高于随机基准零点。这是个有利信号，但不是保证——CSCV 只是估计参数选择偏差的程度，不代表样本外表现可以预测。
 
 滚动前向验证（Walk-Forward）包含 23 个测试切片，测试窗口平均净年化收益为 7.18\%，平均夏普比率为 1.12，平均最大回撤为 -2.07\%。切片较短，指标波动较大，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，候选 candidate\_09 净年化收益为 13.56\%，夏普比率为 2.48，最大回撤为 -3.32\%。该结果受到样本期内全球权益修复、黄金等分散资产支撑等因素的共同影响，应理解为特定市场背景下的条件性外样本证据。
+
+\subsection{分块自助法检验}
+移动分块自助法（Moving Block Bootstrap）通过对历史收益率时间序列进行有放回的随机分块重抽样，生成保留序列自相关结构的伪样本，从而检验绩效指标的抽样分布特征。本文使用 200 个自助样本，分块长度 21 个交易日（约等于一个月度调仓周期），所有检验仅在验证区间内进行。
+
+\figmaybe{robustness_bootstrap_sharpe_distribution.png}{分块自助法夏普比率分布（200 个自助样本）}{fig:boot_sharpe}
+\figmaybe{robustness_bootstrap_drawdown_distribution.png}{分块自助法最大回撤分布（200 个自助样本）}{fig:boot_drawdown}
+
+表 \ref{tab:bootstrap_summary} 汇报各主要模型分块自助法的夏普比率和最大回撤分布统计量。
+
+\begin{table}[H]
+\centering
+\small
+\caption{分块自助法绩效分布（200 次重抽样，块长 21 日）}
+\label{tab:bootstrap_summary}
+\begin{tabular}{lrrrrrr}
+\toprule
+模型 & Sharpe 均值 & Sharpe P5 & Sharpe P50 & Sharpe P95 & MDD 均值 & MDD P5 \\
+\midrule
+Global RRP & 0.506 & $-$0.156 & 0.524 & 1.144 & $-$6.89\% & $-$11.65\% \\
+Convex Adaptive & 0.843 & 0.262 & 0.818 & 1.494 & $-$5.81\% & $-$8.87\% \\
+Improved Convex & 1.096 & 0.510 & 1.101 & 1.712 & $-$6.45\% & $-$9.76\% \\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize P5/P50/P95 为对应分位数，MDD P5 为最大回撤的第 5 百分位（最差情形）。} \\
+\end{tabular}
+\end{table}
+
+图 \ref{fig:boot_sharpe}--\ref{fig:boot_drawdown} 和表 \ref{tab:bootstrap_summary} 的关键发现有两点。第一，Improved Convex Adaptive Global RRP 的夏普比率 P5 分位为 0.510，在 200 个自助样本中最差的 5\% 情形下仍保持正值；Global RRP 的 P5 分位为 $-$0.156，表明在不利抽样区间下存在一定亏损风险。第二，Improved Convex 的 Sharpe P50 中位数（1.101）与全样本结果（1.326）的差距反映了样本外泛化折扣，属于正常幅度。Convex Adaptive 的自助 P5 为 0.262，也全程保持正值，说明凸化约束对下尾绩效有一定保护作用。
+
+分块自助法的局限在于，重抽样保留了历史数据的自相关结构，但无法生成历史中从未出现过的极端情景，也不能替代真实样本外检验。它的作用是估计历史数据抽样变异性对结论的影响程度，而非预测未来绩效分布。
 
 \subsection{小结}
 以上检验共同做的事情是把结论限定在具体条件下——特定评价区间、特定成本假设、特定参数选择。没有哪项检验能消除过拟合的可能性，只能说目前的证据在已测试的多个维度上是自洽的。
