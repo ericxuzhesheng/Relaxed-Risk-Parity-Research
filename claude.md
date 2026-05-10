@@ -11,11 +11,18 @@ Every time any agent (human or AI) updates documentation in this repository — 
 - **State the current numbers, not the delta.** Instead of "performance improved from 5.10% to 5.62%", write "net annualized return is 5.62%".
 - **Describe what exists now.** Every section should read as a complete, accurate description of the current state: what models are included, what results they produce, what validation was run.
 
+### Thesis Title
+
+The official thesis title is: **宽松风险平价在全球 ETF 资产配置中的改进与实证研究**
+English: *Improvements and Empirical Study of Relaxed Risk Parity in Global ETF Asset Allocation*
+
+This title is set in `report/thesis_latex/main.tex` via `\covertitle{}` and `pdftitle`. Any documentation referencing the thesis must use this exact title.
+
 ### Documentation Sections That Need This Treatment
 
 | Section | What to Include |
 |---|---|
-| README 本科论文初稿 / Thesis Draft | Chapter structure, asset universe, current performance table, robustness coverage |
+| README 本科论文初稿 / Thesis Draft | Thesis title, chapter structure, asset universe, current performance table, robustness coverage |
 | README 绩效看板 / Performance Dashboard | Latest numbers from `results/tables/convex_adaptive_performance_summary.csv` |
 | README ETF 资产池 / ETF Pool | Current 30-ETF list with tickers, categories, full names |
 | Thesis abstract (Chinese & English) | Current model results, current ETF count, current evaluation window |

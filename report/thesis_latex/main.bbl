@@ -1,4 +1,4 @@
-\begin{thebibliography}{35}
+\begin{thebibliography}{48}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -11,36 +11,12 @@
   \let\eprint\href
 \fi
 
-\bibitem[Markowitz(1959)]{markowitz1959portfolio}
-MARKOWITZ H~M.
-\newblock Portfolio selection: efficient diversification of
-  investments\allowbreak[M].
-\newblock New York: John Wiley \& Sons, 1959.
-
-\bibitem[Sharpe(1964)]{sharpe1964capital}
-SHARPE W~F.
-\newblock Capital asset prices: a theory of market equilibrium under conditions
-  of risk\allowbreak[J].
-\newblock The Journal of Finance, 1964, 19\allowbreak (3): 425-442.
-
-\bibitem[Jorion(1986)]{jorion1986bayes}
-JORION P.
-\newblock Bayes-stein estimation for portfolio analysis\allowbreak[J].
-\newblock Journal of Financial and Quantitative Analysis, 1986, 21\allowbreak
-  (3): 279-292.
-
-\bibitem[Chopra et~al.(1993)Chopra and Ziemba]{chopra1993effect}
-CHOPRA V~K, ZIEMBA W~T.
-\newblock The effect of errors in means, variances, and covariances on optimal
-  portfolio choice\allowbreak[J].
-\newblock The Journal of Portfolio Management, 1993, 19\allowbreak (2): 6-11.
-
-\bibitem[DeMiguel et~al.(2009)DeMiguel, Garlappi, and
-  Uppal]{demiguel2009optimal}
-DEMIGUEL V, GARLAPPI L, UPPAL R.
-\newblock Optimal versus naive diversification: how inefficient is the 1/N
-  portfolio strategy?\allowbreak[J].
-\newblock The Review of Financial Studies, 2009, 22\allowbreak (5): 1915-1953.
+\bibitem[Brinson et~al.(1986)Brinson, Hood, and
+  Beebower]{brinson1986determinants}
+BRINSON G~P, HOOD L~R, BEEBOWER G~L.
+\newblock Determinants of portfolio performance\allowbreak[J/OL].
+\newblock Financial Analysts Journal, 1986, 42\allowbreak (4): 39-44.
+\newblock DOI: \doi{10.2469/faj.v42.n4.39}.
 
 \bibitem[Qian(2005)]{qian2005risk}
 QIAN E.
@@ -55,20 +31,67 @@ MAILLARD S, RONCALLI T, TEILETCHE J.
   portfolios\allowbreak[J].
 \newblock The Journal of Portfolio Management, 2010, 36\allowbreak (4): 60-70.
 
-\bibitem[Roncalli(2013)]{roncalli2013introduction}
-RONCALLI T.
-\newblock Introduction to risk parity and budgeting\allowbreak[M].
-\newblock Boca Raton: Chapman and Hall/CRC, 2013.
+\bibitem[Markowitz(1959)]{markowitz1959portfolio}
+MARKOWITZ H~M.
+\newblock Portfolio selection: efficient diversification of
+  investments\allowbreak[M].
+\newblock New York: John Wiley \& Sons, 1959.
+
+\bibitem[Sharpe(1964)]{sharpe1964capital}
+SHARPE W~F.
+\newblock Capital asset prices: a theory of market equilibrium under conditions
+  of risk\allowbreak[J].
+\newblock The Journal of Finance, 1964, 19\allowbreak (3): 425-442.
 
 \bibitem[Black et~al.(1992)Black and Litterman]{black1992global}
 BLACK F, LITTERMAN R.
 \newblock Global portfolio optimization\allowbreak[J].
 \newblock Financial Analysts Journal, 1992, 48\allowbreak (5): 28-43.
 
+\bibitem[Jorion(1986)]{jorion1986bayes}
+JORION P.
+\newblock Bayes-stein estimation for portfolio analysis\allowbreak[J].
+\newblock Journal of Financial and Quantitative Analysis, 1986, 21\allowbreak
+  (3): 279-292.
+
+\bibitem[Chopra et~al.(1993)Chopra and Ziemba]{chopra1993effect}
+CHOPRA V~K, ZIEMBA W~T.
+\newblock The effect of errors in means, variances, and covariances on optimal
+  portfolio choice\allowbreak[J].
+\newblock The Journal of Portfolio Management, 1993, 19\allowbreak (2): 6-11.
+
 \bibitem[Grinold et~al.(1999)Grinold and Kahn]{grinold1999active}
 GRINOLD R~C, KAHN R~N.
 \newblock Active portfolio management\allowbreak[M].
 \newblock New York: McGraw-Hill, 1999.
+
+\bibitem[DeMiguel et~al.(2009)DeMiguel, Garlappi, and
+  Uppal]{demiguel2009optimal}
+DEMIGUEL V, GARLAPPI L, UPPAL R.
+\newblock Optimal versus naive diversification: how inefficient is the 1/N
+  portfolio strategy?\allowbreak[J].
+\newblock The Review of Financial Studies, 2009, 22\allowbreak (5): 1915-1953.
+
+\bibitem[Michaud(1989)]{michaud1989enigma}
+MICHAUD R~O.
+\newblock The {M}arkowitz optimization enigma: {I}s `{O}ptimized'
+  optimal?\allowbreak[J/OL].
+\newblock Financial Analysts Journal, 1989, 45\allowbreak (1): 31-42.
+\newblock DOI: \doi{10.2469/faj.v45.n1.31}.
+
+\bibitem[Jagannathan et~al.(2003)Jagannathan and Ma]{jagannathan2003risk}
+JAGANNATHAN R, MA T.
+\newblock Risk reduction in large portfolios: {W}hy imposing the wrong
+  constraints helps\allowbreak[J/OL].
+\newblock The Journal of Finance, 2003, 58\allowbreak (4): 1651-1683.
+\newblock DOI: \doi{10.1111/1540-6261.00580}.
+
+\bibitem[Laloux et~al.(1999)Laloux, Cizeau, Bouchaud, and
+  Potters]{laloux1999noise}
+LALOUX L, CIZEAU P, BOUCHAUD J~P, et~al.
+\newblock Noise dressing of financial correlation matrices\allowbreak[J/OL].
+\newblock Physical Review Letters, 1999, 83\allowbreak (7): 1467-1470.
+\newblock DOI: \doi{10.1103/PhysRevLett.83.1467}.
 
 \bibitem[Herculano(2026)]{herculano2026bayesian}
 HERCULANO M~C.
@@ -81,6 +104,29 @@ HERCULANO M~C.
 HELLUM O, JENSEN T~I, KELLY B~T, et~al.
 \newblock Complex modern portfolio theory\allowbreak[J].
 \newblock SSRN Working Paper, 2026.
+
+\bibitem[Roncalli(2013)]{roncalli2013introduction}
+RONCALLI T.
+\newblock Introduction to risk parity and budgeting\allowbreak[M].
+\newblock Boca Raton: Chapman and Hall/CRC, 2013.
+
+\bibitem[Bruder et~al.(2012)Bruder and Roncalli]{bruder2012managing}
+BRUDER B, RONCALLI T.
+\newblock Managing risk exposures using the risk budgeting
+  approach\allowbreak[R].
+\newblock Lyxor Asset Management, 2012.
+
+\bibitem[Asness et~al.(2012)Asness, Frazzini, and Pedersen]{asness2012leverage}
+ASNESS C~S, FRAZZINI A, PEDERSEN L~H.
+\newblock Leverage aversion and risk parity\allowbreak[J/OL].
+\newblock Financial Analysts Journal, 2012, 68\allowbreak (1): 47-59.
+\newblock DOI: \doi{10.2469/faj.v68.n1.1}.
+
+\bibitem[Chaves et~al.(2011)Chaves, Hsu, Li, and Shakernia]{chaves2011risk}
+CHAVES D~B, HSU J~C, LI F, et~al.
+\newblock Risk parity portfolio vs. other asset allocation heuristic
+  portfolios\allowbreak[J].
+\newblock The Journal of Investing, 2011, 20\allowbreak (1): 108-118.
 
 \bibitem[林晓明\ 等(2020)林晓明, 黄晓彬, and
   源洁莹]{htsc2020misunderstanding}
@@ -124,40 +170,30 @@ ROCKAFELLAR R~T, URYASEV S.
 \newblock Optimization of conditional value-at-risk\allowbreak[J].
 \newblock Journal of Risk, 2000, 2\allowbreak (3): 21-41.
 
+\bibitem[Rockafellar et~al.(2002)Rockafellar and
+  Uryasev]{rockafellar2002conditional}
+ROCKAFELLAR R~T, URYASEV S.
+\newblock Conditional {V}alue-at-{R}isk for general loss
+  distributions\allowbreak[J/OL].
+\newblock Journal of Banking \& Finance, 2002, 26\allowbreak (7): 1443-1471.
+\newblock DOI: \doi{10.1016/S0378-4266(02)00271-6}.
+
 \bibitem[Boyd et~al.(2004)Boyd and Vandenberghe]{boyd2004convex}
 BOYD S, VANDENBERGHE L.
 \newblock Convex optimization\allowbreak[M].
 \newblock Cambridge: Cambridge University Press, 2004.
+
+\bibitem[Almgren et~al.(2001)Almgren and Chriss]{almgren2001optimal}
+ALMGREN R, CHRISS N.
+\newblock Optimal execution of portfolio transactions\allowbreak[J/OL].
+\newblock Journal of Risk, 2001, 3\allowbreak (2): 5-39.
+\newblock DOI: \doi{10.21314/JOR.2001.041}.
 
 \bibitem[Uhl et~al.(2024)Uhl, Jurt, and Walliser]{uhl2024aitail}
 UHL M~W, JURT F, WALLISER S.
 \newblock Can {AI} detect tail events? {S}tock performance around tail events
   during different sentiment regimes\allowbreak[J].
 \newblock Journal of Behavioral Finance, 2024.
-
-\bibitem[张继强\ 等(2025)张继强, 陶冶, and 何颖雯]{htsc2025lowrate}
-张继强, 陶冶, 何颖雯.
-\newblock 低利率环境下的绝对收益路径:
-  资产配置方法论系列\allowbreak[R].
-\newblock 华泰证券研究所, 2025.
-
-\bibitem[Ledoit et~al.(2004)Ledoit and Wolf]{ledoit2004well}
-LEDOIT O, WOLF M.
-\newblock A well-conditioned estimator for large-dimensional covariance
-  matrices\allowbreak[J].
-\newblock Journal of Multivariate Analysis, 2004, 88\allowbreak (2): 365-411.
-
-\bibitem[Laloux et~al.(1999)Laloux, Cizeau, Bouchaud, and
-  Potters]{laloux1999noise}
-LALOUX L, CIZEAU P, BOUCHAUD J~P, et~al.
-\newblock Noise dressing of financial correlation matrices\allowbreak[J/OL].
-\newblock Physical Review Letters, 1999, 83\allowbreak (7): 1467-1470.
-\newblock DOI: \doi{10.1103/PhysRevLett.83.1467}.
-
-\bibitem[林晓明\ 等(2021)林晓明, 黄晓彬, and 张泽]{htsc2021hrp}
-林晓明, 黄晓彬, 张泽.
-\newblock 风险平价之标的优选与层次化风险估计\allowbreak[R].
-\newblock 华泰证券研究所, 2021.
 
 \bibitem[Alouadi et~al.(2026)]{alouadi2026sbbts}
 ALOUADI A, et~al.
@@ -184,29 +220,64 @@ CICIRETTI V, PALLOTTA A.
 \newblock Journal of Asset Management, 2024, 25\allowbreak (2): 136-146.
 \newblock DOI: \doi{10.1057/s41260-023-00347-8}.
 
+\bibitem[Lohre et~al.(2020)Lohre, Rother, and
+  Sch{\"a}fer]{lohre2020hierarchical}
+LOHRE H, ROTHER C, SCH{\"A}FER K~A.
+\newblock Hierarchical risk parity: {A}ccounting for tail dependencies in
+  multi-asset multi-factor allocations\allowbreak[M/OL]//\allowbreak
+JURCZENKO E.
+\newblock Machine Learning for Asset Management: New Developments and Financial
+  Applications.
+\newblock Wiley, 2020: 329-368.
+\newblock DOI: \doi{10.1002/9781119751182.ch9}.
+
+\bibitem[Cho et~al.(2023)Cho and Song]{cho2023hierarchical}
+CHO Y, SONG J~W.
+\newblock Hierarchical risk parity using security selection based on peripheral
+  assets of correlation-based minimum spanning trees\allowbreak[J/OL].
+\newblock Finance Research Letters, 2023, 53: 103608.
+\newblock DOI: \doi{10.1016/j.frl.2022.103608}.
+
+\bibitem[林晓明\ 等(2021)林晓明, 黄晓彬, and 张泽]{htsc2021hrp}
+林晓明, 黄晓彬, 张泽.
+\newblock 风险平价之标的优选与层次化风险估计\allowbreak[R].
+\newblock 华泰证券研究所, 2021.
+
 \bibitem[陈果\ 等(2025)陈果 and 王程畅]{csc2025chinaallocation}
 陈果, 王程畅.
 \newblock 大类资产配置方法在中国市场实践:
   大类资产配置策略系列\allowbreak[R].
 \newblock 中信建投证券股份有限公司, 2025.
 
-\bibitem[{华泰证券研究所}(2025)]{htsc2025factor}
-{华泰证券研究所}.
-\newblock
-  从资产配置走向因子配置：中国版全天候增强策略\allowbreak[R].
+\bibitem[张继强\ 等(2025)张继强, 陶冶, and 何颖雯]{htsc2025lowrate}
+张继强, 陶冶, 何颖雯.
+\newblock 低利率环境下的绝对收益路径:
+  资产配置方法论系列\allowbreak[R].
 \newblock 华泰证券研究所, 2025.
 
-\bibitem[{广发证券研究所}(2025)]{gf2025allweather}
-{广发证券研究所}.
-\newblock
-  全天候多元配置ETF组合：低风险绝对收益解决方案\allowbreak[R].
-\newblock 广发证券股份有限公司, 2025.
+\bibitem[Ledoit et~al.(2004)Ledoit and Wolf]{ledoit2004well}
+LEDOIT O, WOLF M.
+\newblock A well-conditioned estimator for large-dimensional covariance
+  matrices\allowbreak[J].
+\newblock Journal of Multivariate Analysis, 2004, 88\allowbreak (2): 365-411.
 
-\bibitem[{兴业证券研究所}(2026)]{xyzq2026multifactor}
-{兴业证券研究所}.
-\newblock
-  多因子选基五：从因子到模型，全新的定量选基策略构建\allowbreak[R].
-\newblock 兴业证券股份有限公司, 2026.
+\bibitem[Ledoit et~al.(2022)Ledoit and Wolf]{ledoit2022quadratic}
+LEDOIT O, WOLF M.
+\newblock Quadratic shrinkage for large covariance matrices\allowbreak[J/OL].
+\newblock Bernoulli, 2022, 28\allowbreak (3): 1519-1547.
+\newblock DOI: \doi{10.3150/20-BEJ1315}.
+
+\bibitem[White(2000)]{white2000reality}
+WHITE H.
+\newblock A reality check for data snooping\allowbreak[J/OL].
+\newblock Econometrica, 2000, 68\allowbreak (5): 1097-1126.
+\newblock DOI: \doi{10.1111/1468-0262.00152}.
+
+\bibitem[Harvey et~al.(2015)Harvey and Liu]{harvey2015backtesting}
+HARVEY C~R, LIU Y.
+\newblock Backtesting\allowbreak[J/OL].
+\newblock The Journal of Portfolio Management, 2015, 42\allowbreak (1): 13-28.
+\newblock DOI: \doi{10.3905/jpm.2015.42.1.013}.
 
 \bibitem[Bailey et~al.(2014)Bailey, Borwein, L{\'o}pez~de Prado, and
   Zhu]{bailey2014probability}
@@ -220,10 +291,32 @@ BAILEY D~H, L{\'O}PEZ~DE PRADO M.
   overfitting, and non-normality\allowbreak[J].
 \newblock The Journal of Portfolio Management, 2014, 40\allowbreak (5): 94-107.
 
-\bibitem[Campbell et~al.(2002)Campbell and Viceira]{campbell2002strategic}
-CAMPBELL J~Y, VICEIRA L~M.
-\newblock Strategic asset allocation: portfolio choice for long-term
-  investors\allowbreak[M].
-\newblock Oxford: Oxford University Press, 2002.
+\bibitem[{华泰证券研究所}(2025)]{htsc2025factor}
+{华泰证券研究所}.
+\newblock
+  从资产配置走向因子配置：中国版全天候增强策略\allowbreak[R].
+\newblock 华泰证券研究所, 2025.
+
+\bibitem[Millea et~al.(2023)Millea and Edalat]{millea2023drl}
+MILLEA A, EDALAT A.
+\newblock Using deep reinforcement learning with hierarchical risk parity for
+  portfolio optimization\allowbreak[J/OL].
+\newblock International Journal of Financial Studies, 2023, 11\allowbreak (1):
+  10.
+\newblock DOI: \doi{10.3390/ijfs11010010}.
+
+\bibitem[Yang(2023)]{yang2023drl}
+YANG S.
+\newblock Deep reinforcement learning for portfolio
+  management\allowbreak[J/OL].
+\newblock Knowledge-Based Systems, 2023, 278: 110905.
+\newblock DOI: \doi{10.1016/j.knosys.2023.110905}.
+
+\bibitem[Agal et~al.(2025)Agal, Raulji, and Odedra]{agal2025ml}
+AGAL S, RAULJI K, ODEDRA N~D.
+\newblock A machine learning approach to risk based asset allocation in
+  portfolio optimization\allowbreak[J/OL].
+\newblock Scientific Reports, 2025, 15: 42263.
+\newblock DOI: \doi{10.1038/s41598-025-26337-x}.
 
 \end{thebibliography}
