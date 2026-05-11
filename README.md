@@ -519,6 +519,23 @@ python -m pytest
 
 > 脚本源码：[`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
 
+### 可靠性与诊断
+
+本仓库新增一套独立的可靠性诊断层，目的是把过去隐藏在求解器内部的失败、协方差不稳健与可投资集合变化显式记录下来，不影响任何模型参数与排序。诊断结果集中输出到 [`results/tables/`](results/tables/)，由 [`scripts/run_reliability_diagnostics.py`](scripts/run_reliability_diagnostics.py) 一键生成。
+
+- **求解器诊断（solver diagnostics）**：[`src/risk_parity.py`](src/risk_parity.py) 中 `solve_standard_rp` / `solve_relaxed_rp` / `optimize_with_leverage` 删除了 `except: pass` 写法，改为捕获具体的 `ValueError` / `LinAlgError` / `RuntimeError`，并通过可选的 `diagnostics` 字典向上回传 `solver_success`、`solver_status`、`solver_message`、`objective_value`、`fallback_used`、`fallback_method` 与异常信息。SLSQP 未收敛时使用与原实现一致的兜底（标准 RP 退化为等权、宽松 RP 退化为标准 RP 解、带杠杆求解退化为等权且杠杆为 1），仅会被显式打上 fallback 标签并写入日志。`results/tables/static_backtest_solver_diagnostics.csv` 与已有的 `results/tables/convex_adaptive_solver_diagnostics.csv` 分别覆盖静态回测路径和凸自适应路径。
+- **协方差诊断（covariance diagnostics）**：[`src/backtest.py`](src/backtest.py) 在每个再平衡日通过 [`src/covariance_estimators.py`](src/covariance_estimators.py) 的 `estimate_covariance(..., return_diagnostics=True)` 收集 `covariance_observations`、`covariance_assets`、`covariance_condition_number`、`covariance_psd_repaired`、`covariance_method` 等字段，并附加 `n_obs_to_n_assets_ratio` 以及两个旗标：`low_sample_warning`（`n_obs/n_assets < 3` 时触发）与 `ill_conditioned_warning`（PSD 修复后条件数 > 1e8 时触发）。诊断结果写入 `results/tables/static_backtest_covariance_diagnostics.csv`，作为稳健性披露层，不参与模型选择与官方排序。
+- **可投资资产池冻结（universe freezing）**：再平衡时使用的窗口为 `returns.index < d` 切片，仅基于该窗口的非空观测数与正方差判定纳入集合，决策不依赖未来观测；纳入集合在下一次再平衡前保持不变。每个再平衡日的纳入与剔除明细及剔除原因写入 `results/tables/static_backtest_universe_diagnostics.csv`。
+- **adjusted Sharpe / penalized Sharpe 的定位**：[`src/validation.py`](src/validation.py) 中的 `adjusted_sharpe` 实为 `penalized_sharpe`（保留兼容别名）。该函数对 Sharpe 施加 `0.10·sqrt(log(n_trials))` 的多重检验惩罚和 `0.025·|skew| + 0.005·max(kurtosis-3, 0)` 的非正态性惩罚，系数为本仓库内的启发式权重，**并非 Bailey & López de Prado (2014) 的 Deflated Sharpe Ratio**。该指标仅用于本仓库内候选参数集合的相对比较，不在论文主结果中引用，也不应跨论文/跨仓库引用为标准 DSR。
+- **`return_reward` 的定位**：[`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py) 中的 `return_reward` 系数默认 0.05，相对 `variance_penalty=1.0` 与 `budget_penalty=0.35` 小一到两个量级。该项在目标函数中只构成弱收益倾斜（weak return-tilt），凸优化主体仍由方差约束、风险预算靠近项与可实施性项主导。论文与本说明因此将该模型表述为带弱收益倾斜的受约束风险预算优化器（constrained risk-budgeting framework），而不是强 return-aware 优化器。
+- **复现命令**：
+
+  ```powershell
+  python scripts/run_reliability_diagnostics.py
+  ```
+
+  脚本会在 `results/tables/` 写入 `static_backtest_solver_diagnostics.csv`、`static_backtest_covariance_diagnostics.csv`、`static_backtest_universe_diagnostics.csv` 和聚合表 `reliability_summary.csv`。新增的回归测试位于 [`tests/test_solver_diagnostics.py`](tests/test_solver_diagnostics.py)。本轮改动仅暴露已有失败、不修改求解器的回退行为，因此核心绩效表数字不变。
+
 ### 复现与审计说明
 
 为提高论文复现性和文本一致性，本文在最终整理阶段使用自动化检查与大模型辅助审稿，对图表编号、结果数字一致性、路径残留、过强表述和无前视说明进行交叉检查。该过程仅用于文本审阅与质量控制，不参与模型参数选择、回测结果生成或实证结论判断。
@@ -1009,6 +1026,23 @@ python -m pytest
 ```
 
 > Script sources: [`scripts/update_etf_data.py`](scripts/update_etf_data.py) · [`scripts/run_rrp_pipeline.py`](scripts/run_rrp_pipeline.py) · [`scripts/run_convex_adaptive_rrp.py`](scripts/run_convex_adaptive_rrp.py) · [`scripts/run_walkforward_validation.py`](scripts/run_walkforward_validation.py) · [`scripts/run_benchmark_suite.py`](scripts/run_benchmark_suite.py) · [`scripts/run_covariance_robustness.py`](scripts/run_covariance_robustness.py) · [`scripts/run_full_research_pipeline.py`](scripts/run_full_research_pipeline.py) · [`tests/`](tests/)
+
+### Reliability and Diagnostics
+
+A dedicated reliability layer surfaces previously-hidden solver failures, covariance instability, and changes to the investable universe. Diagnostics are written to [`results/tables/`](results/tables/) and produced by [`scripts/run_reliability_diagnostics.py`](scripts/run_reliability_diagnostics.py). The layer is intentionally additive: it does not modify any model parameters, model ordering, or headline performance numbers.
+
+- **Solver diagnostics.** `solve_standard_rp`, `solve_relaxed_rp`, and `optimize_with_leverage` in [`src/risk_parity.py`](src/risk_parity.py) no longer use `except: pass`. They catch the specific numerical exceptions (`ValueError`, `LinAlgError`, `RuntimeError`), and on either an exception or a non-converged SLSQP exit they emit a `logging.WARNING` and populate an optional `diagnostics` dict with `solver_success`, `solver_status`, `solver_message`, `objective_value`, `fallback_used`, `fallback_method`, and exception details. Fallback behaviour is unchanged (standard RP → equal weights; relaxed RP → standard RP solution; leverage solver → equal weights with unit leverage), so the headline numbers are unchanged. Outputs live in `results/tables/static_backtest_solver_diagnostics.csv` (static path) and the existing `results/tables/convex_adaptive_solver_diagnostics.csv` (convex path).
+- **Covariance diagnostics.** [`src/backtest.py`](src/backtest.py) now calls [`src/covariance_estimators.py`](src/covariance_estimators.py) with `return_diagnostics=True` and stores `covariance_observations`, `covariance_assets`, `covariance_condition_number`, `covariance_psd_repaired`, `covariance_method`, plus a derived `n_obs_to_n_assets_ratio` and two warning flags: `low_sample_warning` (triggered when `n_obs/n_assets < 3`) and `ill_conditioned_warning` (triggered when the post-repair condition number exceeds 1e8). The output (`results/tables/static_backtest_covariance_diagnostics.csv`) is a disclosure layer only and never feeds back into model selection or model ordering.
+- **Investable universe freezing.** Each rebalance uses the strictly prior window `returns.index < d`; inclusion is determined only by non-missing observation count and positive within-window variance, so no future information leaks. The universe is frozen between rebalance dates. Per-rebalance inclusion and exclusion details (with reasons) are written to `results/tables/static_backtest_universe_diagnostics.csv`.
+- **`adjusted_sharpe` / `penalized_sharpe` positioning.** The function in [`src/validation.py`](src/validation.py) has been clearly documented and renamed to `penalized_sharpe` (with `adjusted_sharpe` retained as a backwards-compatible alias). It applies hand-chosen heuristic penalties (`0.10·sqrt(log(n_trials))` for multiple testing; `0.025·|skew| + 0.005·max(kurtosis-3, 0)` for non-normality) and is **not** the Deflated Sharpe Ratio of Bailey & López de Prado (2014). It is used only as an internal comparator across candidate parameter sets and is not cited in the thesis main results.
+- **`return_reward` positioning.** The default `return_reward = 0.05` in [`src/convex_adaptive_rrp.py`](src/convex_adaptive_rrp.py) is one to two orders of magnitude smaller than the variance penalty (1.0) and budget penalty (0.35). The return term therefore acts only as a weak return-tilt; the convex program is best described as a constrained risk-budgeting / variance-minimization optimizer with a weak return tilt, not a strong return-aware optimizer. The README and the in-code comment have been aligned on this language.
+- **Reproduction.**
+
+  ```powershell
+  python scripts/run_reliability_diagnostics.py
+  ```
+
+  This writes `static_backtest_solver_diagnostics.csv`, `static_backtest_covariance_diagnostics.csv`, `static_backtest_universe_diagnostics.csv`, and an aggregate `reliability_summary.csv` under `results/tables/`. The regression tests for this layer are in [`tests/test_solver_diagnostics.py`](tests/test_solver_diagnostics.py). Because no fallback rule was changed, the model performance dashboard remains untouched.
 
 ### Reproducibility and Audit Note
 
