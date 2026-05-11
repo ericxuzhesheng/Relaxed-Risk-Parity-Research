@@ -70,36 +70,71 @@ def solve_rrp_window_weights(
     return weights, state
 
 
+def _evaluate_score(
+    weights: np.ndarray,
+    evaluation_returns: pd.DataFrame,
+    overlay: RiskOverlayConfig,
+    config_base: dict,
+    selection_metric: str,
+) -> float:
+    """Score a weight vector on the supplied evaluation return window.
+
+    Factored out so the scoring logic is identical whether scoring on the
+    training window (legacy behaviour) or on a separate held-out validation
+    window (when ``selection_validation_months`` is set).
+    """
+    aligned = evaluation_returns.dropna(how="any")
+    if aligned.empty:
+        return -999.0
+    port_ret = aligned @ weights
+    scalar = min(
+        1.0,
+        overlay.target_vol / (port_ret.std() * np.sqrt(overlay.trading_days_per_year) + 1e-12),
+    )
+    port_ret = port_ret * scalar
+    nav = (1.0 + port_ret).cumprod()
+    metrics = calculate_metrics(
+        nav,
+        risk_free_rate=config_base.get("risk_free_rate", 0.0),
+        trading_days=config_base["trading_days_per_year"],
+    )
+    diversification_bonus = 0.001 / (np.std(weights) + 1e-6)
+    if selection_metric == "utility":
+        return (
+            metrics["annualized_return"]
+            - 2.0 * abs(metrics["max_drawdown"])
+            + 0.25 * metrics.get("sortino_ratio", 0.0)
+            + diversification_bonus
+        )
+    return float(metrics.get(selection_metric, metrics.get("sharpe_ratio", -999.0))) + diversification_bonus
+
+
 def score_params(
     df_train: pd.DataFrame,
     params: dict[str, Any],
     config_base: dict,
     selection_metric: str = "utility",
+    df_validation: pd.DataFrame | None = None,
 ) -> float:
+    """Score a candidate parameter set.
+
+    By default (``df_validation=None``) the scoring is performed on the same
+    training window used to fit the weights — the legacy behaviour. Pass a
+    separate ``df_validation`` slice (typically a held-out tail of the
+    training window) to enable proper train/validation separation: weights
+    are fit on ``df_train`` but scored on ``df_validation``. This is the
+    opt-in path exposed by ``run_dynamic_rrp_selection`` via
+    ``selection_validation_months``.
+    """
     try:
         overlay = RiskOverlayConfig.from_config(config_base)
         weights, _ = solve_rrp_window_weights(df_train, params, config_base, overlay)
-        aligned = df_train.dropna(how="any")
-        if aligned.empty:
-            return -999.0
-        port_ret = aligned @ weights
-        scalar = min(1.0, overlay.target_vol / (port_ret.std() * np.sqrt(overlay.trading_days_per_year) + 1e-12))
-        port_ret = port_ret * scalar
-        nav = (1.0 + port_ret).cumprod()
-        metrics = calculate_metrics(
-            nav,
-            risk_free_rate=config_base.get("risk_free_rate", 0.0),
-            trading_days=config_base["trading_days_per_year"],
-        )
-        diversification_bonus = 0.001 / (np.std(weights) + 1e-6)
-        if selection_metric == "utility":
-            return (
-                metrics["annualized_return"]
-                - 2.0 * abs(metrics["max_drawdown"])
-                + 0.25 * metrics.get("sortino_ratio", 0.0)
-                + diversification_bonus
-            )
-        return float(metrics.get(selection_metric, metrics.get("sharpe_ratio", -999.0))) + diversification_bonus
+        evaluation = df_validation if df_validation is not None else df_train
+        # Re-align the validation window onto the same columns as the
+        # training window so the matrix multiply uses matching positions.
+        if df_validation is not None:
+            evaluation = evaluation.reindex(columns=df_train.columns)
+        return _evaluate_score(weights, evaluation, overlay, config_base, selection_metric)
     except Exception:
         return -999.0
 
@@ -113,9 +148,31 @@ def run_dynamic_rrp_selection(
     selection_metric: str = "utility",
     top_k: int = 2,
     config_base: dict | None = None,
+    selection_validation_months: int = 0,
 ) -> pd.DataFrame:
+    """Run the rolling dynamic-RRP selection.
+
+    Parameters
+    ----------
+    selection_validation_months
+        When zero (default, legacy behaviour) candidate parameter sets are
+        scored on the full training window. When positive the training
+        window is split into a fitting tail of size
+        ``train_window_months - selection_validation_months`` and a held-out
+        validation tail of size ``selection_validation_months``: weights are
+        fit on the fitting tail and scored on the validation tail. This is
+        the proper train/validation separation called out in the audit; it
+        is opt-in so the published Defensive Dynamic RRP dashboard numbers
+        stay bit-for-bit stable under the default config.
+    """
     if config_base is None:
         raise ValueError("config_base is required")
+    if selection_validation_months < 0:
+        raise ValueError("selection_validation_months must be non-negative")
+    if selection_validation_months >= train_window_months:
+        raise ValueError(
+            "selection_validation_months must be strictly less than train_window_months"
+        )
 
     overlay = RiskOverlayConfig.from_config(config_base)
     cost_rate = transaction_cost_rate(overlay)
@@ -142,7 +199,26 @@ def run_dynamic_rrp_selection(
         if len(df_train) < max(40, overlay.momentum_lookback) or len(active_cols) < 2:
             continue
 
-        scores = [(score_params(df_train, params, config_base, selection_metric), params) for params in param_grid]
+        if selection_validation_months > 0:
+            # Split the training window into a fitting tail and a strictly
+            # later validation tail. Candidate weights are fit on the
+            # fitting tail; the score is realised on the validation tail
+            # so the selection cannot trivially overfit the in-sample
+            # objective. Default (months=0) preserves legacy behaviour.
+            validation_start = curr_date - pd.DateOffset(months=selection_validation_months)
+            df_fit = df_train[df_train.index < validation_start]
+            df_validation = df_train[df_train.index >= validation_start]
+            if len(df_fit) < max(40, overlay.momentum_lookback) or df_validation.empty:
+                # Not enough data to honour the split; fall back to the
+                # legacy single-window scoring for this rebalance.
+                df_fit, df_validation = df_train, None
+        else:
+            df_fit, df_validation = df_train, None
+
+        scores = [
+            (score_params(df_fit, params, config_base, selection_metric, df_validation), params)
+            for params in param_grid
+        ]
         scores.sort(key=lambda item: item[0], reverse=True)
         top = scores[: max(1, top_k)]
         top_params = [params for _, params in top]

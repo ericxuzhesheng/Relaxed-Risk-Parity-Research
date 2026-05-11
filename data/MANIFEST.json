@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-05-11T05:22:28.014104+00:00",
+  "source_label": "test:roundtrip",
+  "source_path": "C:\\Users\\12510\\AppData\\Local\\Temp\\pytest-of-12510\\pytest-59\\test_read_data_manifest_round_0\\fake_prices.csv",
+  "source_mtime_utc": "2026-05-11T05:22:28.011287+00:00",
+  "source_sha256": "cd7d64dad3d57df7e8dce069ad8d0a8e503f988f1033d2513d6a9c2c979bfb46",
+  "row_count": 60,
+  "asset_count": 3,
+  "first_date": "2024-01-02",
+  "last_date": "2024-03-25",
+  "asset_observations": {
+    "asset_0": 60,
+    "asset_1": 60,
+    "asset_2": 60
+  },
+  "asset_nan_ratio": {
+    "asset_0": 0.0,
+    "asset_1": 0.0,
+    "asset_2": 0.0
+  },
+  "asset_first_valid": {
+    "asset_0": "2024-01-02",
+    "asset_1": "2024-01-02",
+    "asset_2": "2024-01-02"
+  },
+  "asset_last_valid": {
+    "asset_0": "2024-03-25",
+    "asset_1": "2024-03-25",
+    "asset_2": "2024-03-25"
+  }
+}

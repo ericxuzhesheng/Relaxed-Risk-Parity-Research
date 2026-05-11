@@ -96,8 +96,14 @@ def solve_convex_rrp(
     sigma = cov.values
     # mu_t is estimated only from the historical window available before rebalance.
     # It is an annualized sample mean of returns_window rather than a forward-looking forecast.
-    # The signal enters the objective only through the small return_reward coefficient.
-    # This keeps the convex program anchored on risk budgeting and implementability terms.
+    #
+    # The signal enters the objective only through the small ``return_reward``
+    # coefficient (default 0.05). Relative to the variance penalty (default 1.0)
+    # and the budget penalty (default 0.35) the return-tilt magnitude is one
+    # to two orders of magnitude smaller. Empirically the program is therefore
+    # a constrained risk-budgeting / variance-minimization optimizer with a
+    # *weak* return tilt rather than a strong return-aware optimizer. This is
+    # also reflected in the README "Reliability and Diagnostics" section.
     mu = returns_window.mean().fillna(0.0).values * cfg.trading_days_per_year
     if budget_target is None:
         target = adaptive_budget_target(returns_window, graph_features, regime_label).values

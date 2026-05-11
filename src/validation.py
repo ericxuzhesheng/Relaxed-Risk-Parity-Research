@@ -20,15 +20,38 @@ VALIDATION_NOTE = (
 )
 
 
-def adjusted_sharpe(
+def penalized_sharpe(
     sharpe: float,
     n_trials: int,
     skew: float = 0.0,
     kurtosis: float = 3.0,
 ) -> float:
+    """Custom penalized Sharpe used as a robustness diagnostic.
+
+    This is **not** the Deflated Sharpe Ratio of Bailey & López de Prado (2014)
+    and should not be cited as such. It applies two hand-chosen heuristic
+    penalties to the observed Sharpe ratio:
+
+    * A multiple-testing penalty proportional to ``sqrt(log(n_trials))`` with a
+      fixed scale of 0.10. The motivation is to discount Sharpe values picked
+      from a larger parameter search, but the constant is not calibrated
+      against a null distribution.
+    * A non-normality penalty linear in the absolute skewness and excess
+      kurtosis, with weights 0.025 and 0.005 respectively. These weights are
+      heuristic and not derived from moment-adjusted Sharpe asymptotics.
+
+    The function is therefore retained as a diagnostic comparator across
+    candidate parameter sets within this codebase. Cross-codebase or cross-
+    paper comparisons should use a standard adjustment (e.g., DSR or PSR).
+    """
     multiple_testing_penalty = 0.10 * np.sqrt(max(np.log(max(n_trials, 1)), 0.0))
     non_normality_penalty = 0.025 * abs(skew) + 0.005 * max(kurtosis - 3.0, 0.0)
     return float(sharpe - multiple_testing_penalty - non_normality_penalty)
+
+
+# Backwards-compatible alias for downstream callers that imported the old name.
+# Marked explicitly as a custom metric in the new name above.
+adjusted_sharpe = penalized_sharpe
 
 
 def ensure_datetime_index(returns: pd.DataFrame) -> pd.DataFrame:

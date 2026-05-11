@@ -441,7 +441,25 @@ def main() -> None:
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
 
     print("Running baseline Global Relaxed Risk Parity...")
-    global_rrp = run_static_backtest(returns, model_type="relaxed", config_overrides=config)
+    static_diagnostics: dict = {}
+    global_rrp = run_static_backtest(
+        returns,
+        model_type="relaxed",
+        config_overrides=config,
+        diagnostics_out=static_diagnostics,
+    )
+    # Reliability layer: write the per-rebalance solver / covariance / universe
+    # diagnostics for the Global RRP path. These artifacts are additive — they
+    # do not affect any model parameters or the headline performance table.
+    static_diagnostics["solver"].to_csv(
+        resolve_path("results/tables/static_backtest_solver_diagnostics.csv"), index=False
+    )
+    static_diagnostics["covariance"].to_csv(
+        resolve_path("results/tables/static_backtest_covariance_diagnostics.csv"), index=False
+    )
+    static_diagnostics["universe"].to_csv(
+        resolve_path("results/tables/static_backtest_universe_diagnostics.csv"), index=False
+    )
     print("Running Defensive Dynamic Relaxed Risk Parity...")
     dynamic = run_dynamic_rrp_selection(
         returns,
