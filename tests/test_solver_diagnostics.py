@@ -219,6 +219,41 @@ def test_static_backtest_universe_uses_only_prior_data():
         assert all("asset_3" in row for row in early["excluded_assets"].tolist())
 
 
+def test_universe_diagnostic_invariant_under_future_perturbation():
+    """Mutating returns AFTER rebalance date d must not change the universe
+    or solver diagnostics computed AT date d. This is the strict
+    point-in-time invariant the audit asked for: inclusion decisions depend
+    only on data strictly preceding d.
+    """
+    base = _synthetic_returns(n_assets=4, n_obs=300, seed=99)
+    diag_base: dict = {}
+    run_static_backtest(base, model_type="relaxed", diagnostics_out=diag_base)
+    universe_base = diag_base["universe"].copy()
+
+    # Build a perturbed series that is byte-identical for all dates < pivot
+    # and totally different (random noise, possibly NaN) for dates >= pivot.
+    pivot = base.index[200]
+    rng = np.random.default_rng(0)
+    perturbed = base.copy()
+    mask = perturbed.index >= pivot
+    perturbed.loc[mask, :] = rng.normal(0.0, 0.05, size=(mask.sum(), perturbed.shape[1]))
+    # Sprinkle some NaNs into the future too.
+    perturbed.loc[mask, perturbed.columns[0]] = np.where(
+        rng.random(mask.sum()) < 0.3, np.nan, perturbed.loc[mask, perturbed.columns[0]].values
+    )
+
+    diag_pert: dict = {}
+    run_static_backtest(perturbed, model_type="relaxed", diagnostics_out=diag_pert)
+    universe_pert = diag_pert["universe"]
+
+    # For every rebalance date strictly before the pivot, the universe rows
+    # must be identical between the two runs.
+    cols = ["asset_count", "min_observations_required", "included_assets", "excluded_assets"]
+    a = universe_base[universe_base["date"] < pivot][cols].reset_index(drop=True)
+    b = universe_pert[universe_pert["date"] < pivot][cols].reset_index(drop=True)
+    pd.testing.assert_frame_equal(a, b)
+
+
 # --- guardrail: no bare excepts ---------------------------------------------
 
 def test_risk_parity_source_has_no_bare_except_pass():
