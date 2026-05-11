@@ -110,6 +110,34 @@ def test_optimize_with_leverage_returns_two_arrays_and_records_diag():
     assert diag["solver_name"] == "scipy_slsqp"
 
 
+def test_optimize_with_leverage_retry_disabled_by_default():
+    """Default config must yield a single attempt with uniform x0.
+
+    This guards the published Global RRP / Defensive Dynamic RRP headline
+    numbers against accidental drift if the retry layer is enabled by
+    accident in a future change.
+    """
+    cov = _wellposed_cov(4)
+    diag: dict = {}
+    optimize_with_leverage(
+        cov, 4, bond_indices=[0], config=get_config(), diagnostics=diag
+    )
+    assert diag.get("retry_count", 0) == 0
+    assert diag.get("retry_jitter_strength", 0.0) == 0.0
+
+
+def test_optimize_with_leverage_retry_enabled_records_flag():
+    """When the retry flag is set the diagnostics surface the x0 source."""
+    cov = _wellposed_cov(4)
+    cfg = get_config({"optim_leverage_retry_enabled": True})
+    diag: dict = {}
+    optimize_with_leverage(
+        cov, 4, bond_indices=[0], config=cfg, diagnostics=diag
+    )
+    # First attempt with retry layer on uses the warm start.
+    assert diag.get("retry_x0_source") == "warm"
+
+
 # --- src.convex_adaptive_rrp -----------------------------------------------
 
 def test_solve_convex_rrp_returns_feasible_simplex_with_max_weight():
