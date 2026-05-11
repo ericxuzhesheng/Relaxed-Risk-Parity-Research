@@ -24,14 +24,14 @@
 \contentsline {subsection}{\numberline {4.5}评价指标体系}{14}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}回测流程与无前视设计}{14}{subsection.4.6}%
 \contentsline {subsection}{\numberline {4.7}可靠性与诊断层}{15}{subsection.4.7}%
-\contentsline {subsection}{\numberline {4.8}描述性统计与资产特征分析}{15}{subsection.4.8}%
-\contentsline {section}{\numberline {5}实证结果分析}{17}{section.5}%
-\contentsline {subsection}{\numberline {5.1}主模型绩效比较}{17}{subsection.5.1}%
+\contentsline {subsection}{\numberline {4.8}描述性统计与资产特征分析}{16}{subsection.4.8}%
+\contentsline {section}{\numberline {5}实证结果分析}{18}{section.5}%
+\contentsline {subsection}{\numberline {5.1}主模型绩效比较}{18}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}HRP/HERC 基准模型对比}{18}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}净值路径与回撤分析}{19}{subsection.5.3}%
 \contentsline {subsection}{\numberline {5.4}换手率与权重结构分析}{20}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}CVaR 尾部风险分析}{22}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}因子暴露与收益归因}{23}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.5}CVaR 尾部风险分析}{23}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}因子暴露与收益归因}{24}{subsection.5.6}%
 \contentsline {subsection}{\numberline {5.7}小结}{26}{subsection.5.7}%
 \contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{27}{section.6}%
 \contentsline {subsection}{\numberline {6.1}子区间与压力期检验}{27}{subsection.6.1}%

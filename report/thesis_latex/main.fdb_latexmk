@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex main"] 1778476886.43563 "main.aux" "main.bbl" "main" 1778476892.46022 0
+["bibtex main"] 1778477314.72346 "main.aux" "main.bbl" "main" 1778477320.71877 0
   "./references.bib" 1778472508 15404 637e75869cc535c69328b0d1d6caff05 ""
   "c:/texlive/2025/texmf-dist/bibtex/bst/gbt7714/gbt7714-numerical.bst" 1771077930 58899 d0fae0cf8d28654026c4bf03972fb16c ""
-  "main.aux" 1778476888 24515 19734c5ce80bdc478ef052d78b62e443 "xelatex"
+  "main.aux" 1778477317 24692 1a604ed8c8fc2ca846f5a0040fce0200 "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1778476889.7867 "main.xdv" "main.pdf" "main" 1778476892.472 0
-  "main.xdv" 1778476888 564152 5bfcd4bc700714fee4d3afd91b438e5c "xelatex"
+["xdvipdfmx"] 1778477318.09291 "main.xdv" "main.pdf" "main" 1778477320.73075 0
+  "main.xdv" 1778477317 572392 cc1f214178d7d153aea982a61f3679ff "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1778476887.06991 "main.tex" "main.xdv" "main" 1778476892.46058 0
+["xelatex"] 1778477315.37594 "main.tex" "main.xdv" "main" 1778477320.71923 0
   "../../results/figures/asset_graph_stress_timeline.png" 1778472508 69343 64b9cdb88927c545b7dee4782e18261a ""
   "../../results/figures/asset_pricing_factor_exposure.png" 1778472508 51672 4f0a779ffff99ebc7618bbdf321dc805 ""
   "../../results/figures/asset_pricing_return_attribution.png" 1778472508 52512 c9af41ed7872d9f6f17bbaaf8166f660 ""
@@ -262,11 +262,11 @@
   "c:/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt" 1771081124 5948047 f6225a9155c25e6ad2961513b3db643e ""
   "c:/texlive/2025/texmf.cnf" 1771080957 713 e69b156964470283e0530f5060668171 ""
   "generated_numbers.tex" 1778476789 3724 b38d364514d8113bb5226e1875f67964 ""
-  "main.aux" 1778476888 24515 19734c5ce80bdc478ef052d78b62e443 "xelatex"
-  "main.bbl" 1778476887 13105 6b2afe7bef50de5bb760226e63cf5f9f "bibtex main"
-  "main.out" 1778476888 5907 da05458a192cef09b5f9bf2deebf2934 "xelatex"
-  "main.tex" 1778476875 67618 37b5d72ef31af690c01fe4414ca5dddf ""
-  "main.toc" 1778476888 4279 811fbf64f8f20212fb2ef5866decf424 "xelatex"
+  "main.aux" 1778477317 24692 1a604ed8c8fc2ca846f5a0040fce0200 "xelatex"
+  "main.bbl" 1778477315 13105 6b2afe7bef50de5bb760226e63cf5f9f "bibtex main"
+  "main.out" 1778477317 5907 da05458a192cef09b5f9bf2deebf2934 "xelatex"
+  "main.tex" 1778477287 68915 347fec8cca6134dbf72f8185e82b43c4 ""
+  "main.toc" 1778477317 4279 ac94d24bfb26866bf326e588aecf3045 "xelatex"
   "swufe/swufe_logo.pdf" 1778472508 21747 25c6b35d3214d3b73c8d0ae5418092ee ""
   "swufe/swufe_title.pdf" 1778472508 26987 3664d0b96d125f169d400104ba63d6a3 ""
   "thesisSWUFE.cls" 1778472508 8698 304806db46fe1ce401666d45b866d561 ""
