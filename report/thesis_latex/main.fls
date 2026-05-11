@@ -347,6 +347,9 @@ INPUT c:/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/enumitem/enumitem.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/cleveref/cleveref.sty
 INPUT c:/texlive/2025/texmf-dist/tex/latex/cleveref/cleveref.sty
+INPUT ./generated_numbers.tex
+INPUT ./generated_numbers.tex
+INPUT generated_numbers.tex
 INPUT ./main.aux
 INPUT ./main.aux
 INPUT main.aux

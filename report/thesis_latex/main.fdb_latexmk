@@ -1,18 +1,18 @@
 # Fdb version 4
-["bibtex main"] 1778475755.12591 "main.aux" "main.bbl" "main" 1778475761.25869 0
+["bibtex main"] 1778476886.43563 "main.aux" "main.bbl" "main" 1778476892.46022 0
   "./references.bib" 1778472508 15404 637e75869cc535c69328b0d1d6caff05 ""
   "c:/texlive/2025/texmf-dist/bibtex/bst/gbt7714/gbt7714-numerical.bst" 1771077930 58899 d0fae0cf8d28654026c4bf03972fb16c ""
-  "main.aux" 1778475757 23929 0076c89baf0771ca9ca9260b5d4a615e "xelatex"
+  "main.aux" 1778476888 24515 19734c5ce80bdc478ef052d78b62e443 "xelatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["xdvipdfmx"] 1778475758.48303 "main.xdv" "main.pdf" "main" 1778475761.27046 0
-  "main.xdv" 1778475757 545604 24c1a3efa87d2e843ddfeb1f46d2647c "xelatex"
+["xdvipdfmx"] 1778476889.7867 "main.xdv" "main.pdf" "main" 1778476892.472 0
+  "main.xdv" 1778476888 564152 5bfcd4bc700714fee4d3afd91b438e5c "xelatex"
   (generated)
   "main.pdf"
   (rewritten before read)
-["xelatex"] 1778475755.77516 "main.tex" "main.xdv" "main" 1778475761.25901 0
+["xelatex"] 1778476887.06991 "main.tex" "main.xdv" "main" 1778476892.46058 0
   "../../results/figures/asset_graph_stress_timeline.png" 1778472508 69343 64b9cdb88927c545b7dee4782e18261a ""
   "../../results/figures/asset_pricing_factor_exposure.png" 1778472508 51672 4f0a779ffff99ebc7618bbdf321dc805 ""
   "../../results/figures/asset_pricing_return_attribution.png" 1778472508 52512 c9af41ed7872d9f6f17bbaaf8166f660 ""
@@ -261,11 +261,12 @@
   "c:/texlive/2025/texmf-dist/web2c/texmf.cnf" 1771076280 42213 4e2ca030e8e2640502016e9e45868dcb ""
   "c:/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt" 1771081124 5948047 f6225a9155c25e6ad2961513b3db643e ""
   "c:/texlive/2025/texmf.cnf" 1771080957 713 e69b156964470283e0530f5060668171 ""
-  "main.aux" 1778475757 23929 0076c89baf0771ca9ca9260b5d4a615e "xelatex"
-  "main.bbl" 1778475755 13105 6b2afe7bef50de5bb760226e63cf5f9f "bibtex main"
-  "main.out" 1778475757 5761 feea209fcd665d2753c620bda7e9e6db "xelatex"
-  "main.tex" 1778475739 63733 ffc3d47f1dab87cf3a8b1021a7ec853b ""
-  "main.toc" 1778475757 4179 68a86a5c72dfd7b8506e314747d27ba0 "xelatex"
+  "generated_numbers.tex" 1778476789 3724 b38d364514d8113bb5226e1875f67964 ""
+  "main.aux" 1778476888 24515 19734c5ce80bdc478ef052d78b62e443 "xelatex"
+  "main.bbl" 1778476887 13105 6b2afe7bef50de5bb760226e63cf5f9f "bibtex main"
+  "main.out" 1778476888 5907 da05458a192cef09b5f9bf2deebf2934 "xelatex"
+  "main.tex" 1778476875 67618 37b5d72ef31af690c01fe4414ca5dddf ""
+  "main.toc" 1778476888 4279 811fbf64f8f20212fb2ef5866decf424 "xelatex"
   "swufe/swufe_logo.pdf" 1778472508 21747 25c6b35d3214d3b73c8d0ae5418092ee ""
   "swufe/swufe_title.pdf" 1778472508 26987 3664d0b96d125f169d400104ba63d6a3 ""
   "thesisSWUFE.cls" 1778472508 8698 304806db46fe1ce401666d45b866d561 ""
