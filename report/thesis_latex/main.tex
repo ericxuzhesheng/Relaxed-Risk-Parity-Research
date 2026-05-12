@@ -738,12 +738,13 @@ Improved Convex & 1.096 & 0.510 & 1.101 & 1.712 & $-$6.45\% & $-$9.76\% \\
 
 \begin{table}[H]
 \centering
-\small
+\footnotesize
 \caption{成对夏普差异分块自助法检验（2000 次重抽，块长 21 日，95\% 置信水平）}
 \label{tab:sharpe_diff}
-\begin{tabular}{llrrrl}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xrrrr@{}}
 \toprule
-Model A & Model B & Observed Diff. & CI Low & CI High & $p$ Value (Two-Sided) \\
+Model A & Model B & Observed Diff. & CI Low & CI High & $p$ Value \\
 \midrule
 Improved Convex Adaptive RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
 Improved Convex Adaptive RRP & Defensive Dynamic RRP & \improvedVsDefensiveDiff & \improvedVsDefensiveCILow & \improvedVsDefensiveCIHigh & \improvedVsDefensivePValue \\
@@ -751,8 +752,8 @@ Improved Convex Adaptive RRP & Equal Weight & \improvedVsEqualDiff & \improvedVs
 Global RRP & Equal Weight & \globalVsEqualDiff & \globalVsEqualCILow & \globalVsEqualCIHigh & \globalVsEqualPValue \\
 Defensive Dynamic RRP & Equal Weight & \defensiveVsEqualDiff & \defensiveVsEqualCILow & \defensiveVsEqualCIHigh & \defensiveVsEqualPValue \\
 \bottomrule
-\multicolumn{6}{l}{\footnotesize 区间不跨过 0 视为在 95\% 水平显著。} \\
-\end{tabular}
+\multicolumn{6}{@{}p{\textwidth}@{}}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
+\end{tabularx}
 \end{table}
 
 该检验并不替代过拟合诊断和无前视设计，因为它回答的是另一类问题：在给定评价区间内，主模型相对于参照系的夏普优势是否足以超过抽样噪声。结果表明，Improved Convex Adaptive Global RRP 相对于各参照系的夏普优势在 95\% 水平上均具有显著性；相比之下，未加约束的 Global RRP 相对于等权基准的夏普差并不显著，这与表 \ref{tab:core_perf} 的点估计结论一致。

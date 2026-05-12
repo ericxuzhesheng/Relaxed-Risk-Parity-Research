@@ -1,4 +1,4 @@
-\begin{thebibliography}{48}
+\begin{thebibliography}{49}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -266,6 +266,11 @@ LEDOIT O, WOLF M.
 \newblock Quadratic shrinkage for large covariance matrices\allowbreak[J/OL].
 \newblock Bernoulli, 2022, 28\allowbreak (3): 1519-1547.
 \newblock DOI: \doi{10.3150/20-BEJ1315}.
+
+\bibitem[{中国人民银行}(2026)]{chinabond2026}
+{中国人民银行}.
+\newblock 中国国债收益率曲线（1 年期）历史数据\allowbreak[Z].
+\newblock 2026.
 
 \bibitem[White(2000)]{white2000reality}
 WHITE H.
