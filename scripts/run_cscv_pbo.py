@@ -33,6 +33,40 @@ def block_score(metrics_by_block: dict[int, dict], block_ids: tuple[int, ...]) -
     return float(np.mean(scores)) if scores else np.nan
 
 
+def dump_candidate_grid(candidates, output_dir: Path) -> Path:
+    """Write the (candidate_id, parameters) grid to a CSV for thesis appendix B.
+
+    The CSCV diagnostic exercises a parameter grid that is constructed
+    procedurally in ``scripts/run_convex_adaptive_rrp.candidate_configurations``.
+    Persisting the grid as a flat table makes the appendix reproducible and
+    lets reviewers correlate ``candidate_09`` (referenced by the frozen-OOS
+    validation) with the parameters it actually represents.
+    """
+    rows = []
+    for candidate_id, cfg in candidates:
+        rows.append(
+            {
+                "candidate_id": candidate_id,
+                "lookback_days": cfg.lookback_days,
+                "covariance_method": cfg.covariance_method,
+                "max_weight": cfg.max_weight,
+                "turnover_cap": cfg.turnover_cap if cfg.turnover_cap is not None else "无上限",
+                "turnover_penalty": cfg.turnover_penalty,
+                "budget_penalty": cfg.budget_penalty,
+                "cvar_penalty": cfg.cvar_penalty,
+                "cvar_beta": cfg.cvar_beta,
+                "return_reward": cfg.return_reward,
+                "vol_target_enabled": cfg.vol_target_enabled,
+                "vol_target": cfg.vol_target,
+                "portfolio_vol_cap_enabled": cfg.portfolio_vol_cap_enabled,
+                "portfolio_vol_cap": cfg.portfolio_vol_cap,
+            }
+        )
+    grid_path = output_dir / "cscv_candidate_grid.csv"
+    pd.DataFrame(rows).to_csv(grid_path, index=False)
+    return grid_path
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run CSCV/PBO diagnostics for convex adaptive candidates.")
     parser.add_argument("--output-dir", default="results/tables")
@@ -120,7 +154,9 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     detail.to_csv(output_dir / "cscv_pbo_results.csv", index=False)
     summary.to_csv(output_dir / "cscv_pbo_summary.csv", index=False)
+    grid_path = dump_candidate_grid(candidates, output_dir)
     print(f"Saved CSCV/PBO diagnostics for {len(combos)} splits to {output_dir}")
+    print(f"Saved candidate parameter grid -> {grid_path}")
     print(f"Validation kind: {validation_kind}")
 
 

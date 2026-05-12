@@ -14,6 +14,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.asset_graph_features import graph_feature_frame
 from src.backtest import run_static_backtest
+from src.benchmarks import run_benchmark_backtest
 from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
@@ -473,6 +474,14 @@ def main() -> None:
     hrp = run_hrp_like(returns, "hrp", config["transaction_cost_bps"])
     herc = run_hrp_like(returns, "herc", config["transaction_cost_bps"])
 
+    print("Running Equal Weight and 60/40 baselines...")
+    equal_weight_result = run_benchmark_backtest(
+        returns, "Equal Weight Benchmark", transaction_cost_bps=config["transaction_cost_bps"]
+    )
+    sixty_forty_result = run_benchmark_backtest(
+        returns, "60/40 Benchmark", transaction_cost_bps=config["transaction_cost_bps"]
+    )
+
     print(f"Running {BASE_CONVEX_MODEL_NAME}...")
     base_cfg = ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55)
     base_result, base_solver, _, _ = run_convex_adaptive_backtest(returns, base_cfg)
@@ -493,6 +502,8 @@ def main() -> None:
         IMPROVED_MODEL_NAME: improved_result,
         "HRP Benchmark": hrp,
         "HERC Benchmark": herc,
+        "Equal Weight Benchmark": equal_weight_result,
+        "60/40 Benchmark": sixty_forty_result,
     }
     public_order = list(models)
     summary = pd.DataFrame([summarize_result(name, result, eval_start_date, config) for name, result in models.items()])
