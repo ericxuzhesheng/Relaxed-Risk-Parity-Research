@@ -21,6 +21,10 @@ PUBLIC_MODEL_LABELS = {
     "HRP_Benchmark": "HRP Benchmark",
     "HERC": "HERC Benchmark",
     "HERC_Benchmark": "HERC Benchmark",
+    "Equal Weight": "Equal Weight",
+    "Equal Weight Benchmark": "Equal Weight",
+    "60/40 Benchmark": "60/40 Benchmark",
+    "Sixty Forty": "60/40 Benchmark",
 }
 
 

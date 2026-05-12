@@ -36,7 +36,7 @@ Always read these files before writing any performance numbers — never copy fr
 - [ ] No sentences describe the update process ("这次修改了…", "this version adds…")
 - [ ] The ETF pool description matches the current `src/asset_universe.py`
 - [ ] Data range matches `data/processed/etf_prices_updated.csv` (first and last valid dates)
-- [ ] Evaluation window matches the pipeline start date (currently `2021-01-01`)
+- [ ] Evaluation window matches the pipeline start date (currently `2019-01-01`)
 
 ---
 

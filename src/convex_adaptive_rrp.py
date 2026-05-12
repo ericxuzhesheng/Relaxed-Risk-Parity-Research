@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -12,10 +13,34 @@ from src.covariance_estimators import estimate_covariance
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.utils import infer_asset_class
 
+logger = logging.getLogger(__name__)
+
 try:
     import cvxpy as cp
-except Exception:  # pragma: no cover - exercised when dependency is absent
+except ImportError as exc:  # pragma: no cover - exercised when dependency is absent
     cp = None
+    logger.warning(
+        "cvxpy import failed (%s); convex solver path is disabled. Install cvxpy to enable "
+        "Convex Adaptive RRP. Calls that require the solver will raise RuntimeError.",
+        exc,
+    )
+
+
+def _require_cvxpy() -> None:
+    """Raise a clear error if cvxpy is not importable.
+
+    Call this from any code path that needs to construct a cvxpy problem. The
+    historical behaviour of silently falling back to ``cp = None`` masked
+    environment misconfiguration; raising here surfaces it at the first
+    actual use rather than producing an obscure ``AttributeError`` deep
+    inside the solver.
+    """
+    if cp is None:
+        raise RuntimeError(
+            "cvxpy is not installed in this environment. "
+            "Run `pip install cvxpy` (and reinstall its solver backends) before using "
+            "the Convex Adaptive RRP optimizer."
+        )
 
 
 @dataclass

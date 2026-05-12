@@ -32,7 +32,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from src.utils import resolve_path
+from src.utils import RISK_FREE_RATE_ANNUAL, resolve_path
 
 
 logger = logging.getLogger("generate_thesis_numbers")
@@ -46,6 +46,8 @@ MODEL_SLUGS: dict[str, str] = {
     "Improved Convex Adaptive Global Relaxed Risk Parity": "improved",
     "HRP Benchmark": "hrp",
     "HERC Benchmark": "herc",
+    "Equal Weight": "equalWeight",
+    "60/40 Benchmark": "sixtyForty",
 }
 
 # Map of model name -> LaTeX command prefix for sharpe-difference results.
@@ -101,6 +103,147 @@ def _manifest_dates() -> tuple[str | None, str | None]:
     return data.get("first_date"), data.get("last_date")
 
 
+def _walkforward_rows() -> list[str]:
+    path = resolve_path("results/tables/walkforward_validation_summary.csv")
+    if not Path(path).exists():
+        logger.info("walkforward_validation_summary.csv missing — skipping dispersion macros")
+        return []
+    df = pd.read_csv(path)
+    # The summary may be either long-form (metric column) or wide-form (one row per model).
+    # We pick rows for the improved model when present, otherwise the first row.
+    if "metric" in df.columns:
+        rows = df.set_index("metric")
+    elif "model" in df.columns:
+        rows = df.set_index("model")
+    else:
+        return []
+    lines = ["% --- Walk-forward dispersion (results/tables/walkforward_validation_summary.csv) ---"]
+    candidates = {
+        "sharpe": ("test_sharpe", "validation_sharpe", "sharpe_ratio", "sharpe"),
+        "netReturn": ("test_net_annual_return", "validation_net_annual_return", "net_annual_return"),
+        "maxDD": ("test_max_drawdown", "validation_max_drawdown", "max_drawdown"),
+    }
+    stat_columns = ("mean", "std", "min", "max", "p05", "p95", "median")
+    for tex_key, metric_names in candidates.items():
+        target = None
+        for name in metric_names:
+            if name in rows.index:
+                target = name
+                break
+        if target is None:
+            continue
+        row = rows.loc[target]
+        if hasattr(row, "iloc") and getattr(row, "ndim", 1) > 1:
+            row = row.iloc[0]
+        for stat in stat_columns:
+            if stat not in row.index:
+                continue
+            value = float(row[stat])
+            formatter = _pct if tex_key != "sharpe" else _num
+            digits = 2 if formatter is _pct else 3
+            stat_tex = stat.upper() if stat.startswith("p") else stat.title()
+            lines.append(
+                f"\\newcommand{{\\walkforward{tex_key.title()}{stat_tex}}}"
+                f"{{{formatter(value, digits)}}}"
+            )
+    lines.append("")
+    return lines
+
+
+def _frozen_oos_rows() -> list[str]:
+    path = resolve_path("results/tables/frozen_oos_validation.csv")
+    if not Path(path).exists():
+        return []
+    df = pd.read_csv(path)
+    if df.empty:
+        return []
+    row = df.iloc[0]
+    lines = ["% --- Frozen OOS candidate parameters (results/tables/frozen_oos_validation.csv) ---"]
+    param_map = {
+        "frozenOosCandidate": ("selected_candidate_id", lambda v: str(v).replace("_", r"\_")),
+        "frozenOosLookback": ("lookback_days", lambda v: str(int(float(v)))),
+        "frozenOosCovariance": ("covariance_method", str),
+        "frozenOosMaxWeight": ("max_weight", lambda v: _pct(float(v))),
+        "frozenOosTurnoverCap": (
+            "turnover_cap",
+            lambda v: _pct(float(v)) if str(v).lower() not in {"nan", "none", ""} else "无上限",
+        ),
+        "frozenOosTurnoverPenalty": ("turnover_penalty", lambda v: _num(float(v))),
+        "frozenOosCvarPenalty": ("cvar_penalty", lambda v: _num(float(v))),
+        "frozenOosBudgetPenalty": ("budget_penalty", lambda v: _num(float(v))),
+        "frozenOosCvarBeta": ("cvar_beta", lambda v: _num(float(v))),
+        "frozenOosReturnReward": ("return_reward", lambda v: _num(float(v))),
+        "frozenOosNetReturn": ("net_annual_return", lambda v: _pct(float(v))),
+        "frozenOosSharpe": ("sharpe_ratio", lambda v: _num(float(v))),
+        "frozenOosMaxDD": ("max_drawdown", lambda v: _pct(float(v))),
+    }
+    for tex_name, (column, fmt) in param_map.items():
+        if column not in row.index:
+            continue
+        try:
+            value = fmt(row[column])
+        except (TypeError, ValueError):
+            continue
+        lines.append(f"\\newcommand{{\\{tex_name}}}{{{value}}}")
+    lines.append("")
+    return lines
+
+
+def _breakeven_rows() -> list[str]:
+    path = resolve_path("results/tables/transaction_cost_breakeven.csv")
+    if not Path(path).exists():
+        return []
+    df = pd.read_csv(path)
+    if df.empty:
+        return []
+    lines = ["% --- Transaction-cost break-even (results/tables/transaction_cost_breakeven.csv) ---"]
+    for _, row in df.iterrows():
+        slug = str(row.get("slug", "")).strip()
+        if not slug:
+            continue
+        if "breakeven_bps" in row.index:
+            if pd.notna(row["breakeven_bps"]):
+                lines.append(
+                    f"\\newcommand{{\\costBreakeven{slug}}}{{{_num(float(row['breakeven_bps']), 2)} bps}}"
+                )
+            else:
+                # Advantage persists beyond the tested sweep; emit a ">max" macro.
+                max_tested = str(row.get("cost_levels_tested_bps", "50")).split(",")[-1].strip()
+                lines.append(
+                    f"\\newcommand{{\\costBreakeven{slug}}}{{>{max_tested} bps}}"
+                )
+    lines.append("")
+    return lines
+
+
+def _vol_aligned_rows() -> list[str]:
+    path = resolve_path("results/tables/vol_aligned_comparison.csv")
+    if not Path(path).exists():
+        return []
+    df = pd.read_csv(path)
+    if df.empty:
+        return []
+    lines = ["% --- Vol-aligned HRP comparison (results/tables/vol_aligned_comparison.csv) ---"]
+    for _, row in df.iterrows():
+        slug = str(row.get("slug", "")).strip()
+        if not slug:
+            continue
+        if "net_annual_return" in row.index:
+            lines.append(
+                f"\\newcommand{{\\{slug}NetReturn}}{{{_pct(float(row['net_annual_return']))}}}"
+            )
+        if "sharpe_ratio" in row.index:
+            lines.append(
+                f"\\newcommand{{\\{slug}Sharpe}}{{{_num(float(row['sharpe_ratio']))}}}"
+            )
+        if "annualized_volatility" in row.index:
+            lines.append(
+                f"\\newcommand{{\\{slug}Volatility}}{{{_pct(float(row['annualized_volatility']))}}}"
+            )
+    lines.append("")
+    return lines
+
+
 def _sharpe_diff_rows() -> list[str]:
     path = resolve_path("results/tables/sharpe_difference_tests.csv")
     if not Path(path).exists():
@@ -152,9 +295,18 @@ def main() -> None:
         header.append(f"\\newcommand{{\\dataFirstDate}}{{{first_date}}}")
     if last_date is not None:
         header.append(f"\\newcommand{{\\dataLastDate}}{{{last_date}}}")
+    header.append(f"\\newcommand{{\\riskFreeRate}}{{{_pct(RISK_FREE_RATE_ANNUAL)}}}")
     header.append("")
 
-    content = header + _percent_summary_rows(summary) + _sharpe_diff_rows()
+    content = (
+        header
+        + _percent_summary_rows(summary)
+        + _walkforward_rows()
+        + _frozen_oos_rows()
+        + _breakeven_rows()
+        + _vol_aligned_rows()
+        + _sharpe_diff_rows()
+    )
     out_path = resolve_path("report/thesis_latex/generated_numbers.tex")
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     Path(out_path).write_text("\n".join(content) + "\n", encoding="utf-8")

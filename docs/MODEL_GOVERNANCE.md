@@ -50,7 +50,7 @@ The base model uses a single configuration (`budget_penalty=0.55`). The improved
 |---|---|
 | `transaction_cost_bps` | 3.0 |
 | Rebalance frequency | Monthly |
-| Evaluation start | 2021-01-01 |
+| Evaluation start | 2019-01-01 |
 | Extended sample start | 2018-01-02 |
 
 ## Selection Rule

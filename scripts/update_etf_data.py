@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 import time
 from pathlib import Path
@@ -14,6 +15,28 @@ if str(ROOT_DIR) not in sys.path:
 from src.asset_universe import asset_mapping_frame, etf_names
 from src.data_loader import fetch_from_tushare
 from src.utils import resolve_path
+
+
+def _ensure_tushare_token(provider: str) -> None:
+    """Fail fast with a clear message when the Tushare token is missing.
+
+    Tushare is the default upstream for this pipeline. Without an explicit
+    token the SDK returns opaque server-side errors that look like
+    network failures, so the previous behavior was to retry through the
+    AkShare/yfinance fallback chain — which both masked the misconfiguration
+    and silently degraded data quality. This check surfaces the problem
+    immediately so the operator can set the variable before any work happens.
+    """
+    if provider in {"akshare", "yfinance"}:
+        return
+    token = os.environ.get("TUSHARE_TOKEN", "").strip()
+    if not token:
+        raise EnvironmentError(
+            "TUSHARE_TOKEN is not set. Configure it before running update_etf_data.py.\n"
+            "  PowerShell:  $env:TUSHARE_TOKEN = '<your token>'\n"
+            "  bash:        export TUSHARE_TOKEN=<your token>\n"
+            "Or run with --provider akshare / --provider yfinance to skip Tushare."
+        )
 
 
 LEGACY_NAMES = {"0-5中高信用票", "中证转债", "豆粕连续"}
@@ -108,6 +131,8 @@ def main() -> None:
     parser.add_argument("--end-date", default=None, help="Inclusive Tushare end date, YYYYMMDD. Defaults to today.")
     parser.add_argument("--provider", choices=["auto", "tushare", "akshare", "yfinance"], default="auto", help="Use Tushare, AkShare, yfinance, or automatic fallback.")
     args = parser.parse_args()
+
+    _ensure_tushare_token(args.provider)
 
     mapping = asset_mapping_frame()
     mapping_path = resolve_path("data/processed/etf_asset_mapping.csv")

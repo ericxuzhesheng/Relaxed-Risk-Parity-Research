@@ -258,6 +258,94 @@ def subperiod_summary(models: dict[str, pd.DataFrame], config: dict) -> pd.DataF
     return pd.DataFrame(rows)
 
 
+def subperiod_dispersion_summary(subperiod: pd.DataFrame) -> pd.DataFrame:
+    """Aggregate fixed-window subperiod rows into per-model dispersion stats.
+
+    For each model, reports min/max/std of the Sharpe ratio across the fixed
+    subperiod windows and the label of the worst window. The 36-month rolling
+    rows are excluded because they overlap heavily with the fixed windows and
+    would distort the dispersion estimate.
+    """
+    if subperiod.empty:
+        return pd.DataFrame()
+    fixed = subperiod[~subperiod["window"].astype(str).str.startswith("rolling_36m")]
+    if fixed.empty:
+        return pd.DataFrame()
+    rows = []
+    for model, group in fixed.groupby("model"):
+        if group["sharpe_ratio"].dropna().empty:
+            continue
+        worst_idx = group["sharpe_ratio"].idxmin()
+        best_idx = group["sharpe_ratio"].idxmax()
+        rows.append(
+            {
+                "model": model,
+                "windows_count": int(group.shape[0]),
+                "sharpe_min": float(group["sharpe_ratio"].min()),
+                "sharpe_max": float(group["sharpe_ratio"].max()),
+                "sharpe_mean": float(group["sharpe_ratio"].mean()),
+                "sharpe_std": float(group["sharpe_ratio"].std(ddof=0)),
+                "worst_window": str(group.loc[worst_idx, "window"]),
+                "best_window": str(group.loc[best_idx, "window"]),
+                "negative_sharpe_window_share": float((group["sharpe_ratio"] <= 0).mean()),
+                "max_drawdown_min": float(group["max_drawdown"].min()),
+                "max_drawdown_max": float(group["max_drawdown"].max()),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
+def transaction_cost_breakeven(costs: pd.DataFrame) -> pd.DataFrame:
+    """Locate the per-bp cost level at which Improved Convex no longer beats Global RRP.
+
+    Uses linear interpolation across the existing `[0, 5, 10, 20, 50] bps`
+    sweep produced by :func:`transaction_cost_summary`. The result tells
+    reviewers how much execution-cost headroom the headline result has.
+    """
+    if costs.empty:
+        return pd.DataFrame()
+    pivot = costs.pivot_table(
+        index="transaction_cost_bps", columns="model", values="annualized_return", aggfunc="mean"
+    ).sort_index()
+    pairs = [
+        ("ImprovedVsGlobal", IMPROVED_DISPLAY, GLOBAL_RRP),
+        ("ImprovedVsHrp", IMPROVED_DISPLAY, "HRP Benchmark"),
+        ("ImprovedVsHerc", IMPROVED_DISPLAY, "HERC Benchmark"),
+    ]
+    rows = []
+    for slug, model_a, model_b in pairs:
+        if model_a not in pivot.columns or model_b not in pivot.columns:
+            continue
+        diff = pivot[model_a] - pivot[model_b]
+        breakeven = None
+        prev_bps, prev_diff = None, None
+        for bps, value in diff.items():
+            if pd.isna(value):
+                continue
+            if prev_diff is not None and prev_diff * value < 0:
+                # Linear interpolation: solve prev_diff + (value - prev_diff) * t = 0
+                t = prev_diff / (prev_diff - value)
+                breakeven = float(prev_bps + t * (bps - prev_bps))
+                break
+            prev_bps, prev_diff = bps, value
+        rows.append(
+            {
+                "slug": slug,
+                "model_a": model_a,
+                "model_b": model_b,
+                "breakeven_bps": breakeven if breakeven is not None else float("nan"),
+                "diff_at_zero_bps": float(diff.iloc[0]) if not diff.empty else float("nan"),
+                "diff_at_max_bps": float(diff.iloc[-1]) if not diff.empty else float("nan"),
+                "cost_levels_tested_bps": ",".join(str(int(b)) for b in pivot.index),
+                "notes": (
+                    "Break-even cost where model_a's net annualized return equals model_b's. "
+                    "NaN indicates the advantage does not cross zero within the tested sweep range."
+                ),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def covariance_summary(returns: pd.DataFrame, config: dict, improved_cfg: ConvexRRPConfig, smoke: bool) -> pd.DataFrame:
     methods = ["sample", "ewma", "ledoit_wolf"]
     if smoke:
@@ -668,10 +756,16 @@ def main() -> None:
     solver = solver_stability(solver_diag)
     overall = overall_summary(sub, costs, cov, stress, perturb, bootstrap, overfit)
 
+    print("Aggregating subperiod dispersion and transaction-cost break-even...")
+    sub_dispersion = subperiod_dispersion_summary(sub)
+    breakeven = transaction_cost_breakeven(costs)
+
     frames = {
         "robustness_subperiod_summary.csv": sub,
+        "robustness_subperiod_dispersion.csv": sub_dispersion,
         "robustness_covariance_summary.csv": cov,
         "robustness_transaction_cost_summary.csv": costs,
+        "transaction_cost_breakeven.csv": breakeven,
         "robustness_stress_period_summary.csv": stress,
         "robustness_parameter_perturbation.csv": perturb,
         "robustness_no_lookahead_audit.csv": audit,
