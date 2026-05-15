@@ -32,8 +32,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Mid-cap China equity ETF tracking the CSI 500 index."),
     AssetMapping("中证1000ETF",   "中证1000ETF", "512100.SH", "china equity",
                  "Small-cap China equity ETF tracking the CSI 1000 index."),
-    AssetMapping("科创50ETF",     "科创50ETF",   "588000.SH", "china equity",
-                 "STAR 50 ETF providing dedicated exposure to mainland-listed innovation companies."),
+    AssetMapping("创业板ETF",     "创业板ETF",   "159915.SZ", "china equity",
+                 "ChiNext GEB ETF covering established growth companies with longer listing history than STAR board."),
     AssetMapping("红利ETF",       "红利ETF",     "510880.SH", "china equity dividend",
                  "Dividend equity ETF tilting toward high-yield, defensive A-share names."),
     # ── 中国科技与增长 ─────────────────────────────────────────────────────────
@@ -45,8 +45,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Robotics and intelligent manufacturing ETF capturing industrial automation growth."),
     AssetMapping("新能源ETF",     "新能源ETF",   "516160.SH", "china new energy",
                  "Broad new-energy ETF covering electric vehicles, energy storage, and solar."),
-    AssetMapping("消费电子ETF",   "消费电子ETF", "159839.SZ", "china tech equity",
-                 "Consumer electronics ETF covering smartphone components, displays, and wearables."),
+    AssetMapping("半导体设备ETF", "半导体设备ETF", "159516.SZ", "china tech equity",
+                 "Semiconductor equipment ETF targeting upstream chip manufacturing supply chain."),
     AssetMapping("通信ETF",       "通信ETF",     "159695.SZ", "china tech equity",
                  "Telecom and 5G ETF covering network equipment, base stations, and fiber optics."),
     AssetMapping("云计算ETF",     "云计算ETF",   "516980.SH", "china tech equity",
@@ -61,8 +61,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
     # ── 港股 ──────────────────────────────────────────────────────────────────
     AssetMapping("恒生ETF",       "恒生ETF",     "159920.SZ", "hong kong equity",
                  "Hang Seng Index ETF providing broad Hong Kong equity exposure."),
-    AssetMapping("恒生科技ETF",   "恒生科技ETF", "513180.SH", "hong kong equity",
-                 "Hang Seng TECH ETF covering Hong Kong-listed China internet and tech leaders."),
+    AssetMapping("白银LOF",       "白银LOF",     "161226.SZ", "commodity",
+                 "Silver LOF providing precious-metal inflation hedge with low equity correlation."),
     # ── 全球股票 ──────────────────────────────────────────────────────────────
     AssetMapping("纳指ETF",       "纳指ETF",     "159941.SZ", "global equity",
                  "Nasdaq-100 ETF providing US growth and technology exposure."),

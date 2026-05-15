@@ -70,58 +70,58 @@ Do claim where appropriate:
 | Per-ETF statistics | `results/tables/asset_descriptive_statistics.csv` |
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 
-Current results (evaluation from `2019-01-01` to `2026-05-07`, 3 bps transaction cost, monthly rebalancing; earliest ETFs entered trading 2018-01-30, evaluation begins 2019-01-01 when full 30-ETF universe is investable; point-in-time universe filtering applied):
+Current results (evaluation from `2019-01-01` to `2026-04-30`, 3 bps transaction cost, monthly rebalancing; earliest ETFs entered trading 2018-01-30, evaluation begins 2019-01-01 when full 30-ETF universe is investable; point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | **7.79%** | 4.50% | **1.326** | 1.976 | -5.83% | 1.336 | **0.51%** |
-| Convex Adaptive Global RRP | 6.43% | 3.94% | 1.166 | 1.674 | -5.22% | 1.229 | 0.22% |
-| Global RRP | 4.71% | 4.17% | 0.693 | 0.804 | -6.83% | 0.690 | 0.90% |
-| Defensive Dynamic RRP | 4.09% | 4.20% | 0.541 | 0.655 | -7.47% | 0.548 | 0.89% |
-| HERC Benchmark | 2.37% | 0.47% | 1.184 | 1.767 | -0.39% | 6.011 | 1.12% |
-| HRP Benchmark | 1.81% | 0.17% | -0.042 | -0.065 | -0.08% | 22.12 | 0.68% |
-| Equal Weight | 9.89% | 11.23% | 0.719 | 1.142 | -20.24% | 0.488 | — |
+| **Improved Convex Adaptive Global RRP** | **5.84%** | **2.72%** | **1.480** | **2.181** | **-3.90%** | **1.499** | **3.28%** |
+| Convex Adaptive Global RRP | 7.09% | 5.23% | 1.007 | 1.541 | -6.65% | 1.065 | 1.03% |
+| Global RRP | 4.57% | 4.07% | 0.677 | 0.797 | -6.43% | 0.711 | 19.90% |
+| Defensive Dynamic RRP | 3.81% | 4.08% | 0.488 | 0.576 | -6.51% | 0.586 | 17.91% |
+| HERC Benchmark | 2.26% | 0.54% | 0.828 | 1.261 | -0.58% | 3.891 | 5.24% |
+| HRP Benchmark | 1.69% | 0.18% | -0.761 | -1.199 | -0.08% | 20.69 | 0.88% |
+| Equal Weight | 11.05% | 11.04% | 0.836 | 1.323 | -14.32% | 0.772 | 1.26% |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.326 and Sortino 1.976, delivering 7.79% net annual return with max drawdown -5.83% at 0.51% average monthly turnover. CVaR sensitivity analysis (β ∈ {0.90, 0.95, 0.975, 0.99}, lookbacks ∈ {126, 252, 504} days) yields mean Sharpe 1.12 with range 1.08–1.15, confirming parameter stability. CSCV/PBO = 0.429 across 36 candidates (35 splits) indicates below-0.5 PBO, meaning the in-sample selected candidate tends to outperform the out-of-sample median—a favorable indicator. The evaluation window runs from 2019-01-01 through 2026-05-07 because the earliest ETFs in the 30-asset universe entered trading 2018-01-30; before January 2019, not all 30 assets were simultaneously available for portfolio construction. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves minimal opportunity for excess return.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.480 and Sortino 2.181, delivering 5.84% net annual return with max drawdown -3.90% at 3.28% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-04-30 because the earliest ETFs in the 30-asset universe entered trading 2018-01-30; before January 2019, not all 30 assets were simultaneously available for portfolio construction. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.18%) drives its minimal downside but also leaves minimal opportunity for excess return.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-30` to `2026-05-07`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Data range: `2018-01-26` to `2026-04-30`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
-| 短融ETF | 511360.SH | short-duration credit |
 | 可转债ETF | 511380.SH | convertible bond |
 | 国债ETF | 511010.SH | government bond |
 | 信用债ETF | 511030.SH | credit bond |
-| 银华日利ETF | 511880.SH | money market |
+| 日利ETF | 511880.SH | money market |
 | 沪深300ETF | 510300.SH | china equity |
 | 中证500ETF | 510500.SH | china equity |
 | 中证1000ETF | 512100.SH | china equity |
-| 科创50ETF | 588000.SH | china equity |
+| 创业板ETF | 159915.SZ | china equity |
 | 红利ETF | 510880.SH | china equity dividend |
 | 半导体ETF | 512480.SH | china tech equity |
-| 芯片ETF | 159995.SZ | china tech equity |
-| 机器人ETF | 562500.SH | china advanced manufacturing |
 | 人工智能ETF | 159819.SZ | china tech equity |
-| 卫星ETF | 159206.SZ | china tech equity |
-| 光伏ETF | 515790.SH | china new energy |
+| 机器人ETF | 562500.SH | china advanced manufacturing |
 | 新能源ETF | 516160.SH | china new energy |
+| 半导体设备ETF | 159516.SZ | china tech equity |
+| 通信ETF | 159695.SZ | china tech equity |
+| 云计算ETF | 516980.SH | china tech equity |
 | 证券ETF | 512880.SH | china finance |
-| 恒生ETF | 159920.SZ | hong kong equity |
-| 创新药ETF | 516080.SH | china pharma |
-| 纳指ETF | 159941.SZ | global equity |
 | 军工ETF | 512660.SH | china defense |
+| 消费ETF | 159928.SZ | china consumer |
+| 恒生ETF | 159920.SZ | hong kong equity |
+| 白银LOF | 161226.SZ | commodity |
+| 纳指ETF | 159941.SZ | global equity |
 | 标普500ETF | 513500.SH | global equity |
 | 日经225ETF | 513880.SH | global equity |
-| 道琼斯ETF | 513400.SH | global equity |
+| 欧洲ETF | 513030.SH | global equity |
 | 黄金ETF | 518880.SH | commodity |
 | 有色ETF | 159980.SZ | commodity equity |
 | 豆粕ETF | 159985.SZ | commodity |
-| 油气ETF | 513350.SH | commodity |
 | 煤炭ETF | 515220.SH | commodity |
+| 原油ETF | 162411.SZ | commodity |
 
 ---
 
