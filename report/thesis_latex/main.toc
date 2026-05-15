@@ -19,7 +19,7 @@
 \contentsline {section}{\numberline {4}数据、变量与研究设计}{11}{section.4}%
 \contentsline {subsection}{\numberline {4.1}ETF 资产池构建原则}{11}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}样本构造与预处理}{13}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}收益率、权重、交易成本与换手率定义}{14}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.3}收益率、权重、交易成本与换手率定义}{13}{subsection.4.3}%
 \contentsline {subsection}{\numberline {4.4}组合约束与调仓规则}{14}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}评价指标体系}{14}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}回测流程与无前视设计}{15}{subsection.4.6}%
