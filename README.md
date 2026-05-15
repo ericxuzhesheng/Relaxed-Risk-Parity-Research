@@ -34,14 +34,14 @@ Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize S
 评估区间从 `2019-01-01` 开始，截至 `2026-04-30`，数据来源 `results/tables/convex_adaptive_performance_summary.csv`。
 | 模型 | 净年化收益 | 年化波动 | Sharpe | Sortino | 最大回撤 | Calmar | 月度换手率 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 4.57% | 4.07% | 0.677 | 0.797 | -6.43% | 0.711 | 19.90% |
-| Defensive Dynamic RRP | 3.81% | 4.08% | 0.488 | 0.576 | -6.51% | 0.586 | 17.91% |
-| Convex Adaptive Global RRP | 7.09% | 5.23% | 1.007 | 1.541 | -6.65% | 1.065 | 1.03% |
-| **Improved Convex Adaptive Global RRP** | **5.84%** | **2.72%** | **1.480** | **2.181** | **-3.90%** | **1.499** | **3.28%** |
-| HRP Benchmark | 1.69% | 0.18% | -0.761 | -1.199 | -0.08% | 20.69 | 0.88% |
-| HERC Benchmark | 2.26% | 0.54% | 0.828 | 1.261 | -0.58% | 3.891 | 5.24% |
+| Global RRP | 4.64% | 0.70 | -6.43% | 0.72 | 19.06% |
+| Defensive Dynamic RRP | 3.73% | 0.47 | -6.86% | 0.54 | 18.45% |
+| Convex Adaptive Global Relaxed Risk Parity | 7.02% | 0.98 | -6.65% | 1.06 | 1.06% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.98% | 1.53 | -3.90% | 1.53 | 3.29% |
+| HRP Benchmark | 1.69% | -0.77 | -0.08% | 20.71 | 0.88% |
+| HERC Benchmark | 2.36% | 0.98 | -0.58% | 4.06 | 5.62% |
 
-Improved Convex Adaptive Global RRP 是对凸自适应优化器的受约束参数细化版本，采用回撤与换手约束感知的选择标准，在净年化收益、Sharpe 比率与最大回撤之间取得最均衡的结果。
+Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
 <a id="en"></a>
 
@@ -65,14 +65,14 @@ Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize S
 Evaluation window: `2019-01-01` to `2026-04-30`. Source: `results/tables/convex_adaptive_performance_summary.csv`.
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 4.57% | 4.07% | 0.677 | 0.797 | -6.43% | 0.711 | 19.90% |
-| Defensive Dynamic RRP | 3.81% | 4.08% | 0.488 | 0.576 | -6.51% | 0.586 | 17.91% |
-| Convex Adaptive Global RRP | 7.09% | 5.23% | 1.007 | 1.541 | -6.65% | 1.065 | 1.03% |
-| **Improved Convex Adaptive Global RRP** | **5.84%** | **2.72%** | **1.480** | **2.181** | **-3.90%** | **1.499** | **3.28%** |
-| HRP Benchmark | 1.69% | 0.18% | -0.761 | -1.199 | -0.08% | 20.69 | 0.88% |
-| HERC Benchmark | 2.26% | 0.54% | 0.828 | 1.261 | -0.58% | 3.891 | 5.24% |
+| Global RRP | 4.64% | 0.70 | -6.43% | 0.72 | 19.06% |
+| Defensive Dynamic RRP | 3.73% | 0.47 | -6.86% | 0.54 | 18.45% |
+| Convex Adaptive Global Relaxed Risk Parity | 7.02% | 0.98 | -6.65% | 1.06 | 1.06% |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.98% | 1.53 | -3.90% | 1.53 | 3.29% |
+| HRP Benchmark | 1.69% | -0.77 | -0.08% | 20.71 | 0.88% |
+| HERC Benchmark | 2.36% | 0.98 | -0.58% | 4.06 | 5.62% |
 
-Improved Convex Adaptive Global RRP is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria. It achieves Sharpe 1.480 and Sortino 2.181 with 3.28% average monthly turnover and maximum drawdown limited to -3.90%.
+Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
 ## License
 MIT License.

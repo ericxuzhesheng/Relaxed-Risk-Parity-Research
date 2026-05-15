@@ -97,9 +97,9 @@
 \begin{abstract}
 长期资产配置面对的根本问题不是预测单一资产的短期涨跌，而是在市场不确定时如何维持合理的风险分散。风险平价以风险预算为基础，降低了对预期收益估计的依赖，但当资产池扩展至全球多资产 ETF 时，相关结构动态变化、严格等风险贡献约束的非凸性以及交易成本的累积都构成实际问题。
 
-本文围绕宽松风险平价思想，以 30 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。资产池覆盖债券、A 股宽基、中国科技、中国行业与消费、港股、全球股票和大宗商品七大类风险来源，其中中国科技板块细分为半导体、人工智能、机器人、新能源、半导体设备、通信和云计算共七支主题 ETF。绩效评价区间为 2019-01-01 至 2026-04-30，共 88 个按月观察点，采用月度调仓、3 bps 交易成本扣减和无前视设计。在同一回测框架下，本文比较了 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 以及层次化基准 HRP、HERC 的表现。
+本文围绕宽松风险平价思想，以 30 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。资产池覆盖债券、A 股宽基、中国科技、中国行业与消费、港股、全球股票和大宗商品七大类风险来源，其中中国科技板块细分为半导体、人工智能、机器人、新能源、芯片设计、卫星和云计算共七支主题 ETF。绩效评价区间为 2019-01-01 至 2026-04-30，共 88 个按月观察点，采用月度调仓、3 bps 交易成本扣减和无前视设计。在同一回测框架下，本文比较了 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 以及层次化基准 HRP、HERC 的表现。
 
-Global RRP 净年化收益为 4.57\%，夏普比率为 0.677，最大回撤为 -6.43\%，平均月度换手率为 19.9\%，是宽松风险预算在全球 ETF 资产池中的基础版本。Improved Convex Adaptive Global RRP 净年化收益为 5.84\%，年化波动率为 2.72\%，夏普比率为 1.480，Sortino 比率为 2.181，最大回撤为 -3.90\%，平均月度换手率仅为 3.28\%。HRP 与 HERC 净年化收益分别为 1.69\% 与 2.26\%，夏普比率分别为 -0.76 与 0.828。Improved Convex Adaptive Global RRP 在收益、回撤与换手控制之间取得了较为均衡的结果，但这并不意味着它在每个指标上都占优。
+Global RRP 净年化收益为 4.64\%，夏普比率为 0.700，最大回撤为 -6.43\%，平均月度换手率为 19.1\%，是宽松风险预算在全球 ETF 资产池中的基础版本。Improved Convex Adaptive Global RRP 净年化收益为 5.98\%，年化波动率为 2.72\%，夏普比率为 1.529，Sortino 比率为 2.257，最大回撤为 -3.90\%，平均月度换手率仅为 3.29\%。HRP 与 HERC 净年化收益分别为 1.69\% 与 2.36\%，夏普比率分别为 -0.77 与 0.977。Improved Convex Adaptive Global RRP 在收益、回撤与换手控制之间取得了较为均衡的结果，但这并不意味着它在每个指标上都占优。
 
 本文所有实证结论均基于特定历史评价区间和约束设定，不构成对未来收益的保证。
 
@@ -111,9 +111,9 @@ Global RRP 净年化收益为 4.57\%，夏普比率为 0.677，最大回撤为 -
 \begin{abstract}
 Long-term asset allocation is fundamentally a problem of managing risk over time, not predicting returns. Risk parity sidesteps expected-return estimation by budgeting risk instead, but when the universe expands to global multi-asset ETFs, practical complications multiply: correlations shift across regimes, exact equal-risk-contribution constraints are non-convex, and transaction costs erode enough of net return to matter at monthly rebalancing frequency.
 
-This undergraduate thesis studies a Relaxed Risk Parity framework using 30 tradable global multi-asset ETFs. The universe spans seven asset groups: bonds, China broad equity, China technology and growth (seven thematic ETFs covering semiconductors, artificial intelligence, robotics, new energy, semiconductor equipment, telecommunications, and cloud computing), China sector and consumption, Hong Kong equity, global equity (US, Japan, Europe), and commodities. The evaluation window runs from 2019-01-01 to 2026-04-30 (88 monthly observations) with monthly rebalancing, a 3-basis-point transaction cost, and no-lookahead controls. Models compared include Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, HRP, and HERC.
+This undergraduate thesis studies a Relaxed Risk Parity framework using 30 tradable global multi-asset ETFs. The universe spans seven asset groups: bonds, China broad equity, China technology and growth (seven thematic ETFs covering semiconductors, artificial intelligence, robotics, new energy, chip/IC design, commercial satellite, and cloud computing), China sector and consumption, Hong Kong equity, global equity (US, Japan, Europe), and commodities. The evaluation window runs from 2019-01-01 to 2026-04-30 (88 monthly observations) with monthly rebalancing, a 3-basis-point transaction cost, and no-lookahead controls. Models compared include Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, HRP, and HERC.
 
-Global RRP produces a 4.57\% net annual return, a Sharpe ratio of 0.677, and a maximum drawdown of -6.43\%. Average monthly turnover of 19.9\% creates a visible cost drag. In Improved Convex Adaptive Global RRP, the addition of CVaR constraints, a low-turnover penalty, and group weight limits reduces turnover to 3.28\% while raising net annual return to 5.84\%, Sharpe to 1.480, Sortino to 2.181, and limiting drawdown to -3.90\%. HRP and HERC post Sharpe ratios of -0.76 and 0.83 respectively, but both keep most of the portfolio in bonds throughout the sample, so their risk-adjusted performance mainly reflects low volatility rather than broad diversification. Improved Convex Adaptive Global RRP does not lead on every metric, but it remains the most balanced specification among the implementable alternatives considered here.
+Global RRP produces a 4.64\% net annual return, a Sharpe ratio of 0.700, and a maximum drawdown of -6.43\%. Average monthly turnover of 19.1\% creates a visible cost drag. In Improved Convex Adaptive Global RRP, the addition of CVaR constraints, a low-turnover penalty, and group weight limits reduces turnover to 3.29\% while raising net annual return to 5.98\%, Sharpe to 1.529, Sortino to 2.257, and limiting drawdown to -3.90\%. HRP and HERC post Sharpe ratios of -0.77 and 0.98 respectively, but both keep most of the portfolio in bonds throughout the sample, so their risk-adjusted performance mainly reflects low volatility rather than broad diversification. Improved Convex Adaptive Global RRP does not lead on every metric, but it remains the most balanced specification among the implementable alternatives considered here.
 
 All empirical findings are conditional on the historical evaluation period and constraint settings reported here, and do not constitute a guarantee of future performance.
 
@@ -348,8 +348,8 @@ ETF & Ticker & Asset Class \\
 人工智能ETF & 159819.SZ & china tech equity \\
 机器人ETF & 562500.SH & china advanced manufacturing \\
 新能源ETF & 516160.SH & china new energy \\
-半导体设备ETF & 159516.SZ & china tech equity \\
-通信ETF & 159695.SZ & china tech equity \\
+芯片ETF & 159995.SZ & china tech equity \\
+卫星ETF & 159206.SZ & china tech equity \\
 云计算ETF & 516980.SH & china tech equity \\
 % 中国行业与消费
 证券ETF & 512880.SH & china finance \\
@@ -372,7 +372,7 @@ ETF & Ticker & Asset Class \\
 \bottomrule
 \end{longtable}
 
-资产池包含 30 支可交易 ETF，覆盖七大类风险来源。债券类包含可转债、国债、信用债和日利 ETF，提供久期与流动性梯度。A 股宽基涵盖大、中、小盘及创业板与红利风格五支 ETF。中国科技与增长类包含半导体、人工智能、机器人、新能源、半导体设备、通信和云计算 ETF 共七支，分别捕捉硬件、软件、自动化、清洁能源、芯片制造装备、通信基础设施和云服务等独立成长因子。中国行业与消费类补充证券、军工和消费 ETF，覆盖金融周期、国防制造与内需主线。港股类纳入恒生 ETF，代表香港整体市场。全球股票类包含纳指、标普500、日经225和欧洲 ETF，使全球地区暴露覆盖美国、日本与欧洲。大宗商品类通过黄金、白银、有色金属、豆粕、煤炭和原油 ETF 提供贵金属、工业金属、农产品与传统能源的多元暴露。
+资产池包含 30 支可交易 ETF，覆盖七大类风险来源。债券类包含可转债、国债、信用债和日利 ETF，提供久期与流动性梯度。A 股宽基涵盖大、中、小盘及创业板与红利风格五支 ETF。中国科技与增长类包含半导体、人工智能、机器人、新能源、芯片设计、卫星和云计算 ETF 共七支，分别捕捉硬件、软件、自动化、清洁能源、IC 设计、商业航天和云服务等独立成长因子。中国行业与消费类补充证券、军工和消费 ETF，覆盖金融周期、国防制造与内需主线。港股类纳入恒生 ETF，代表香港整体市场。全球股票类包含纳指、标普500、日经225和欧洲 ETF，使全球地区暴露覆盖美国、日本与欧洲。大宗商品类通过黄金、白银、有色金属、豆粕、煤炭和原油 ETF 提供贵金属、工业金属、农产品与传统能源的多元暴露。
 
 \figmaybe{asset_graph_stress_timeline.png}{资产池跨类别相关结构（平静期与压力期对比）}{fig:asset_graph}
 
@@ -443,8 +443,8 @@ ETF & Obs. & Ann. Return & Ann. Vol. & Max DD \\
 人工智能ETF & 1355 & 11.25\% & 27.79\% & -45.21\% \\
 机器人ETF & 1049$^*$ & 1.01\% & 26.29\% & -45.42\% \\
 新能源ETF & 1266 & 0.92\% & 27.76\% & -67.31\% \\
-半导体设备ETF & 668$^*$ & 29.63\% & 30.80\% & -34.00\% \\
-通信ETF & 722$^*$ & 43.77\% & 28.66\% & -30.03\% \\
+芯片ETF & 1511 & 11.96\% & 31.61\% & -61.55\% \\
+卫星ETF & 275$^*$ & 72.31\% & 32.14\% & -28.90\% \\
 云计算ETF & 1173$^*$ & 1.09\% & 20.40\% & -38.73\% \\
 % 中国行业与消费
 证券ETF & 2000 & 0.00\% & 24.12\% & -45.00\% \\
