@@ -6,20 +6,20 @@
 沪深300ETF,沪深300ETF,510300.SH,china equity,Broad China large-cap equity ETF tracking the CSI 300 index.,adj_close
 中证500ETF,中证500ETF,510500.SH,china equity,Mid-cap China equity ETF tracking the CSI 500 index.,adj_close
 中证1000ETF,中证1000ETF,512100.SH,china equity,Small-cap China equity ETF tracking the CSI 1000 index.,adj_close
-科创50ETF,科创50ETF,588000.SH,china equity,STAR 50 ETF providing dedicated exposure to mainland-listed innovation companies.,adj_close
+创业板ETF,创业板ETF,159915.SZ,china equity,ChiNext GEB ETF covering established growth companies with longer listing history than STAR board.,adj_close
 红利ETF,红利ETF,510880.SH,china equity dividend,"Dividend equity ETF tilting toward high-yield, defensive A-share names.",adj_close
 半导体ETF,半导体ETF,512480.SH,china tech equity,Semiconductor ETF capturing core hardware factor across the China chip value chain.,adj_close
 人工智能ETF,人工智能ETF,159819.SZ,china tech equity,"Artificial intelligence ETF covering software, algorithms, and applied AI services.",adj_close
 机器人ETF,机器人ETF,562500.SH,china advanced manufacturing,Robotics and intelligent manufacturing ETF capturing industrial automation growth.,adj_close
 新能源ETF,新能源ETF,516160.SH,china new energy,"Broad new-energy ETF covering electric vehicles, energy storage, and solar.",adj_close
-消费电子ETF,消费电子ETF,159839.SZ,china tech equity,"Consumer electronics ETF covering smartphone components, displays, and wearables.",adj_close
+半导体设备ETF,半导体设备ETF,159516.SZ,china tech equity,Semiconductor equipment ETF targeting upstream chip manufacturing supply chain.,adj_close
 通信ETF,通信ETF,159695.SZ,china tech equity,"Telecom and 5G ETF covering network equipment, base stations, and fiber optics.",adj_close
 云计算ETF,云计算ETF,516980.SH,china tech equity,"Cloud computing ETF covering SaaS, cloud infrastructure, and digital services.",adj_close
 证券ETF,证券ETF,512880.SH,china finance,China brokerage and securities sector ETF for market-cyclical beta.,adj_close
 军工ETF,军工ETF,512660.SH,china defense,"China defense and military industry ETF for aerospace, shipbuilding, and high-end equipment.",adj_close
 消费ETF,消费ETF,159928.SZ,china consumer,"CSI Main Consumer ETF covering food, beverages, and household goods — domestic demand factor.",adj_close
 恒生ETF,恒生ETF,159920.SZ,hong kong equity,Hang Seng Index ETF providing broad Hong Kong equity exposure.,adj_close
-恒生科技ETF,恒生科技ETF,513180.SH,hong kong equity,Hang Seng TECH ETF covering Hong Kong-listed China internet and tech leaders.,adj_close
+白银LOF,白银LOF,161226.SZ,commodity,Silver LOF providing precious-metal inflation hedge with low equity correlation.,adj_close
 纳指ETF,纳指ETF,159941.SZ,global equity,Nasdaq-100 ETF providing US growth and technology exposure.,adj_close
 标普500ETF,标普500ETF,513500.SH,global equity,S&P 500 ETF providing US large-cap blue-chip exposure.,adj_close
 日经225ETF,日经225ETF,513880.SH,global equity,Nikkei 225 ETF providing Japanese equity exposure.,adj_close
