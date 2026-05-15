@@ -32,7 +32,7 @@ GROUP_DISPLAY = {
 }
 
 KEY_ASSETS = [
-    "短融ETF",
+    "日利ETF",
     "红利ETF",
     "黄金ETF",
     "恒生ETF",
@@ -58,12 +58,24 @@ def output_dirs(root: Path) -> tuple[Path, Path]:
 def load_asset_groups() -> dict[str, str]:
     mapping = pd.read_csv(ROOT_DIR / "data" / "processed" / "etf_asset_mapping.csv")
     grouped: dict[str, str] = {}
+    bond_classes = {"short-duration credit", "convertible bond", "government bond", "credit bond", "money market"}
+    china_equity_classes = {
+        "china equity",
+        "china equity dividend",
+        "china tech equity",
+        "china advanced manufacturing",
+        "china new energy",
+        "china finance",
+        "china defense",
+        "china consumer",
+        "china pharma",
+    }
     for _, row in mapping.iterrows():
         asset_name = str(row["new_name"])
         asset_class = str(row["asset_class"])
-        if asset_class in {"short-duration credit", "convertible bond"}:
+        if asset_class in bond_classes:
             grouped[asset_name] = "Bonds"
-        elif asset_class in {"china equity", "china equity dividend"}:
+        elif asset_class in china_equity_classes:
             grouped[asset_name] = "China Equity"
         elif asset_class == "hong kong equity":
             grouped[asset_name] = "Hong Kong Equity"

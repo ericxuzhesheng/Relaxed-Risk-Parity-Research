@@ -39,7 +39,7 @@ def _ensure_tushare_token(provider: str) -> None:
         )
 
 
-LEGACY_NAMES = {"0-5中高信用票", "中证转债", "豆粕连续"}
+LEGACY_NAMES = {"0-5中高信用票", "中证转债", "豆粕连续", "银华日利ETF"}
 
 
 def validate_prices(prices: pd.DataFrame) -> None:

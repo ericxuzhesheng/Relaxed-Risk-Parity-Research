@@ -8,11 +8,12 @@ from src.investable import investable_columns
 
 def test_asset_mapping_is_etf_only_and_complete():
     mapping = asset_mapping_frame()
-    assert set(mapping["old_name"]) >= {"0-5中高信用票", "中证转债", "豆粕连续"}
+    assert set(mapping["old_name"]) >= {"中证转债", "豆粕连续"}
     assert mapping["new_name"].tolist() == etf_names()
     assert mapping["ticker"].str.len().gt(0).all()
     assert mapping["ticker"].str.endswith((".SH", ".SZ")).all()
     assert not {"0-5中高信用票", "中证转债", "豆粕连续"}.intersection(mapping["new_name"])
+    assert len(mapping) == 30
 
 
 def test_price_to_returns_preserves_pre_listing_nan():
