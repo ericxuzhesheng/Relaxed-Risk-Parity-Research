@@ -1,4 +1,4 @@
-\begin{thebibliography}{49}
+\begin{thebibliography}{50}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -104,6 +104,14 @@ HERCULANO M~C.
 HELLUM O, JENSEN T~I, KELLY B~T, et~al.
 \newblock Complex modern portfolio theory\allowbreak[J].
 \newblock SSRN Working Paper, 2026.
+
+\bibitem[Tzikas et~al.(2026)Tzikas, Cand{\`e}s, Hastie, Boyd, Kochenderfer, and
+  Kahn]{tzikas2026transient}
+TZIKAS A~E, CAND{\`E}S E~J, HASTIE T, et~al.
+\newblock Enhancing a risk model by adding transient statistical
+  factors\allowbreak[A/OL].
+\newblock arXiv (2026).
+\newblock \url{https://arxiv.org/abs/2605.12977}.
 
 \bibitem[Roncalli(2013)]{roncalli2013introduction}
 RONCALLI T.
