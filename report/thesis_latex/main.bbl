@@ -1,4 +1,4 @@
-\begin{thebibliography}{55}
+\begin{thebibliography}{58}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -299,6 +299,24 @@ CHO Y, SONG J~W.
 \newblock 低利率环境下的绝对收益路径:
   资产配置方法论系列\allowbreak[R].
 \newblock 华泰证券研究所, 2025.
+
+\bibitem[{中信证券研究部}(2025)]{citic2025multiasset}
+{中信证券研究部}.
+\newblock 多资产 ETF 的海外经验与国内展望\allowbreak[R].
+\newblock 中信证券股份有限公司, 2025.
+
+\bibitem[陈宜筠\ 等(2026)陈宜筠, 郑文才, 周萧潇, and
+  刘均伟]{cicc2026quant}
+陈宜筠, 郑文才, 周萧潇, 等.
+\newblock
+  量化配置模型（一）：海内外大类资产配置量化实测\allowbreak[R].
+\newblock 中国国际金融股份有限公司, 2026.
+
+\bibitem[{兴业证券研究所}(2026)]{xyzq2026etf}
+{兴业证券研究所}.
+\newblock 年度复盘\&展望八——ETF
+  篇：鹏北海，凤朝阳，又携书剑路茫茫\allowbreak[R].
+\newblock 兴业证券股份有限公司, 2026.
 
 \bibitem[Ledoit et~al.(2004)Ledoit and Wolf]{ledoit2004well}
 LEDOIT O, WOLF M.
