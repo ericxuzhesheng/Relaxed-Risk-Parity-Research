@@ -15,44 +15,44 @@ Reallocated global_strs (elt_size=200001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: references.bib
-You've used 50 entries,
+You've used 55 entries,
             6859 wiz_defined-function locations,
-            1515 strings with 17481 characters,
-and the built_in function-call counts, 4282093 in all, are:
-= -- 448428
-> -- 41236
-< -- 338576
-+ -- 16703
-- -- 7717
-* -- 16866
-:= -- 67244
-add.period$ -- 173
-call.type$ -- 50
-change.case$ -- 90
-chr.to.int$ -- 305726
-cite$ -- 50
-duplicate$ -- 787579
-empty$ -- 4524
-format.name$ -- 1103
-if$ -- 832262
-int.to.chr$ -- 5853
-int.to.str$ -- 51
+            1545 strings with 18477 characters,
+and the built_in function-call counts, 4897086 in all, are:
+= -- 512684
+> -- 46924
+< -- 387310
++ -- 18980
+- -- 8810
+* -- 19198
+:= -- 76375
+add.period$ -- 193
+call.type$ -- 55
+change.case$ -- 102
+chr.to.int$ -- 349940
+cite$ -- 55
+duplicate$ -- 901148
+empty$ -- 5016
+format.name$ -- 1252
+if$ -- 951280
+int.to.chr$ -- 6722
+int.to.str$ -- 56
 missing$ -- 0
-newline$ -- 288
-num.names$ -- 151
-pop$ -- 80968
+newline$ -- 318
+num.names$ -- 166
+pop$ -- 92657
 preamble$ -- 1
-purify$ -- 408
+purify$ -- 464
 quote$ -- 0
-skip$ -- 98868
+skip$ -- 112563
 stack$ -- 0
-substring$ -- 659667
-swap$ -- 555870
-text.length$ -- 870
+substring$ -- 754978
+swap$ -- 636642
+text.length$ -- 983
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 538
+type$ -- 595
 warning$ -- 0
-while$ -- 9489
+while$ -- 10796
 width$ -- 0
-write$ -- 744
+write$ -- 823
