@@ -1,4 +1,4 @@
-\begin{thebibliography}{50}
+\begin{thebibliography}{55}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -113,6 +113,22 @@ TZIKAS A~E, CAND{\`E}S E~J, HASTIE T, et~al.
 \newblock arXiv (2026).
 \newblock \url{https://arxiv.org/abs/2605.12977}.
 
+\bibitem[Johansson et~al.(2023)Johansson, Ogut, Pelger, Schmelzer, and
+  Boyd]{johansson2023covpred}
+JOHANSSON K, OGUT M~G, PELGER M, et~al.
+\newblock A simple method for predicting covariance matrices of financial
+  returns\allowbreak[A/OL].
+\newblock arXiv (2023).
+\newblock \url{https://arxiv.org/abs/2305.19484}.
+
+\bibitem[Conlon et~al.(2025)Conlon, Cotter, and Kynigakis]{conlon2025factorcov}
+CONLON T, COTTER J, KYNIGAKIS I.
+\newblock Asset allocation with factor-based covariance
+  matrices\allowbreak[J/OL].
+\newblock European Journal of Operational Research, 2025, 325\allowbreak (1):
+  189-203.
+\newblock DOI: \doi{10.1016/j.ejor.2025.03.015}.
+
 \bibitem[Roncalli(2013)]{roncalli2013introduction}
 RONCALLI T.
 \newblock Introduction to risk parity and budgeting\allowbreak[M].
@@ -135,6 +151,14 @@ CHAVES D~B, HSU J~C, LI F, et~al.
 \newblock Risk parity portfolio vs. other asset allocation heuristic
   portfolios\allowbreak[J].
 \newblock The Journal of Investing, 2011, 20\allowbreak (1): 108-118.
+
+\bibitem[Paolella et~al.(2025)Paolella, Polak, and
+  Walker]{paolella2025riskparity}
+PAOLELLA M~S, POLAK P, WALKER P~S.
+\newblock Risk parity portfolio optimization under heavy-tailed returns and
+  dynamic correlations\allowbreak[J/OL].
+\newblock Journal of Time Series Analysis, 2025, 46\allowbreak (2): 353-377.
+\newblock DOI: \doi{10.1111/jtsa.12792}.
 
 \bibitem[林晓明\ 等(2020)林晓明, 黄晓彬, and
   源洁莹]{htsc2020misunderstanding}
@@ -171,6 +195,19 @@ BESSLER W, TAUSHANOV G, WOLFF D.
   factor versus sector optimization\allowbreak[J/OL].
 \newblock Journal of Asset Management, 2021, 22\allowbreak (6): 488-506.
 \newblock DOI: \doi{10.1057/s41260-021-00225-1}.
+
+\bibitem[Uysal et~al.(2024)Uysal, Li, and Mulvey]{uysal2024endtoend}
+UYSAL A~S, LI X, MULVEY J~M.
+\newblock End-to-end risk budgeting portfolio optimization with neural
+  networks\allowbreak[J/OL].
+\newblock Annals of Operations Research, 2024, 339\allowbreak (1--2): 397-426.
+\newblock DOI: \doi{10.1007/s10479-023-05539-4}.
+
+\bibitem[Fassino et~al.(2026)Fassino and Uberti]{fassino2026riskbudgeting}
+FASSINO C, UBERTI P.
+\newblock Some general results on risk budgeting portfolios\allowbreak[A/OL].
+\newblock arXiv (2026).
+\newblock \url{https://arxiv.org/abs/2603.15511}.
 
 \bibitem[Rockafellar et~al.(2000)Rockafellar and
   Uryasev]{rockafellar2000optimization}
