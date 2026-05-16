@@ -445,6 +445,10 @@ HERC Benchmark & \hercNetReturn & \hercSharpe & \hercMaxDD & \hercCalmar & \herc
 换手率直接影响交易费用总额，也关系到组合日常管理的复杂程度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别达到 \globalMonthlyTurnover 和 \defensiveMonthlyTurnover，说明在缺少换手约束时，基础风险预算模型的调仓频率往往较高。Improved Convex Adaptive Global RRP 在引入 $L_1$ 惩罚后，换手率控制在 \improvedMonthlyTurnover，显著低于 HRP（\hrpMonthlyTurnover）和 HERC（\hercMonthlyTurnover）。不过，低换手并非没有代价；当市场相关结构快速变化时，组合调整速度也会相应放慢。
 
 \figwide{weight_path_asset_group_comparison.png}{Improved Convex Adaptive Global RRP、Global RRP、HRP 基准模型与 HERC 基准模型的资产组权重路径}{fig:weight_path}
+
+\figwide{improved_weights_timeline.png}{改进型凸适应性全局宽松风险平价模型月末单 ETF 持仓权重变化（\evalStartDate{} 至 \evalEndDate{}，共 \rebalancingPoints{} 个再平衡日）。每条色带对应一只 ETF，颜色编码遵循资产类别分组：蓝色系为债券类，红色系为 A 股宽基，橙色系为中国科技与成长，绿色系为全球股票，黄色系为大宗商品。}{fig:weights_timeline}
+各色带宽度反映该 ETF 在当月末的实际配置权重，纵轴为持仓占比（0--100\%）。从图中可以观察到几个结构性特征：日利 ETF（货币市场层，最宽的淡蓝色带）长期占据约 40--45\% 底仓，承担现金管理与稳定器作用；黄金 ETF 维持稳定但有限的商品配置，平均权重约为 6--8\%；A 股和科技类 ETF 的权重在 2020--2021 年阶段相对较高，随后随市场波动上升而被压缩至接近零点。整体而言，权重路径呈现低频调整特征，换手惩罚有效限制了调仓幅度，避免了因协方差矩阵短期变动引发的过度交易。
+
 \begin{table}[htbp]
 \centering
 \small
