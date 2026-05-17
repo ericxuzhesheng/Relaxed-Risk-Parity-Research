@@ -1,0 +1,2 @@
+slug,model,reference_model,reference_volatility,scale_factor,net_annual_return,annualized_volatility,sharpe_ratio
+improvedVolAlignedHrp,Improved Convex Adaptive Global RRP (vol-aligned to HRP),HRP Benchmark,0.0017562411024512,0.0672103950841451,0.003806924860876154,0.0017562411024512,-8.195386794578098

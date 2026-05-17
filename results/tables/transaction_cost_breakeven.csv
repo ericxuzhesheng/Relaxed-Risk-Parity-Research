@@ -1,0 +1,4 @@
+slug,model_a,model_b,breakeven_bps,cost_levels_tested_bps
+ImprovedVsGlobal,Improved Convex Adaptive Global RRP,Global Relaxed Risk Parity,,"0,5,10,20,50"
+GlobalVsEqual,Global Relaxed Risk Parity,Improved Convex Adaptive Global RRP,,"0,5,10,20,50"
+DefensiveVsEqual,Defensive Dynamic Relaxed Risk Parity,Improved Convex Adaptive Global RRP,,"0,5,10,20,50"

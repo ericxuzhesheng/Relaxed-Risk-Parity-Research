@@ -109,6 +109,8 @@ results/quick/
 !results/tables/holdout_validation.csv
 !results/tables/holdout_validation_summary.csv
 !results/tables/sharpe_difference_tests.csv
+!results/tables/transaction_cost_breakeven.csv
+!results/tables/vol_aligned_comparison.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*
