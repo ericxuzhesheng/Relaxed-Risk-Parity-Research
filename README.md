@@ -35,10 +35,10 @@ Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize S
 
 | 模型 | 净年化收益 | 年化波动率 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手率 | 换手调整Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.06% | 4.15% | 0.78 | 0.91 | -7.13% | 0.71 | 23.12% | 1.22 |
-| Defensive Dynamic RRP | 5.23% | 4.53% | 0.75 | 0.96 | -7.11% | 0.74 | 24.87% | 1.15 |
+| Global RRP | 4.78% | 4.11% | 0.72 | 0.83 | -7.14% | 0.67 | 22.81% | 1.16 |
+| Defensive Dynamic RRP | 4.95% | 4.48% | 0.70 | 0.87 | -7.11% | 0.70 | 24.57% | 1.10 |
 | Convex Adaptive Global Relaxed Risk Parity | 6.96% | 5.25% | 0.98 | 1.50 | -6.65% | 1.05 | 1.21% | 1.32 |
-| Improved Convex Adaptive Global Relaxed Risk Parity | 4.25% | 2.06% | 1.18 | 1.67 | -3.66% | 1.16 | 0.39% | 2.06 |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.66% | 2.61% | 1.47 | 2.17 | -3.70% | 1.53 | 2.25% | 2.17 |
 | HRP Benchmark | 1.69% | 0.18% | -0.75 | -1.18 | -0.08% | 20.72 | 1.08% | 9.62 |
 | HERC Benchmark | 2.25% | 0.57% | 0.75 | 1.10 | -0.58% | 3.86 | 5.55% | 3.95 |
 
@@ -67,10 +67,10 @@ Evaluation period: `2019-01-01` to `2026-04-30` (88 months). Numbers are sourced
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly Turnover | Turnover-adj Sharpe |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.06% | 4.15% | 0.78 | 0.91 | -7.13% | 0.71 | 23.12% | 1.22 |
-| Defensive Dynamic RRP | 5.23% | 4.53% | 0.75 | 0.96 | -7.11% | 0.74 | 24.87% | 1.15 |
+| Global RRP | 4.78% | 4.11% | 0.72 | 0.83 | -7.14% | 0.67 | 22.81% | 1.16 |
+| Defensive Dynamic RRP | 4.95% | 4.48% | 0.70 | 0.87 | -7.11% | 0.70 | 24.57% | 1.10 |
 | Convex Adaptive Global Relaxed Risk Parity | 6.96% | 5.25% | 0.98 | 1.50 | -6.65% | 1.05 | 1.21% | 1.32 |
-| Improved Convex Adaptive Global Relaxed Risk Parity | 4.25% | 2.06% | 1.18 | 1.67 | -3.66% | 1.16 | 0.39% | 2.06 |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 5.66% | 2.61% | 1.47 | 2.17 | -3.70% | 1.53 | 2.25% | 2.17 |
 | HRP Benchmark | 1.69% | 0.18% | -0.75 | -1.18 | -0.08% | 20.72 | 1.08% | 9.62 |
 | HERC Benchmark | 2.25% | 0.57% | 0.75 | 1.10 | -0.58% | 3.86 | 5.55% | 3.95 |
 
