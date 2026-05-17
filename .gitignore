@@ -108,6 +108,7 @@ results/quick/
 !results/tables/cscv_pbo_enhanced_summary.csv
 !results/tables/holdout_validation.csv
 !results/tables/holdout_validation_summary.csv
+!results/tables/sharpe_difference_tests.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

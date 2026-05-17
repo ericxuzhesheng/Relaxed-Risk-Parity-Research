@@ -679,9 +679,9 @@ Defensive Dynamic RRP & Equal Weight & \defensiveVsEqualDiff & \defensiveVsEqual
 \subsection{主要结论}
 本文的四个研究问题都得到了相对明确的实证回答，不过每个答案都附带条件。
 
-宽松风险平价在可交易全球 ETF 资产池中确实可以建立一个风险来源清晰的配置框架。Global RRP 净年化收益 3.93\%，最大回撤 -5.89\%，在没有 CVaR 和换手约束的情况下已经可以运行，但 20.38\% 的月度换手是个实际问题。
+宽松风险平价在可交易全球 ETF 资产池中确实可以建立一个风险来源清晰的配置框架。Global RRP 净年化收益 \globalNetReturn，最大回撤 \globalMaxDD，在没有 CVaR 和换手约束的情况下已经可以运行，但 \globalMonthlyTurnover{} 的月度换手是个实际问题。
 
-加入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 净年化收益为 5.94\%，最大回撤 -3.74\%，换手 3.28\%，Sharpe 达到 1.511。这不是每项指标都领先，而是没有明显短板。
+加入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 净年化收益为 \improvedNetReturn，最大回撤 \improvedMaxDD，换手 \improvedMonthlyTurnover，Sharpe 达到 \improvedSharpe。这不是每项指标都领先，而是没有明显短板。
 
 HRP 和 HERC 在当前样本中夏普比率不低，但原因需要说清楚：两者几乎全仓债券，夏普比率来自极低的波动，而不是多资产分散。这和主模型是两种不同的配置思路，本文没有把它们放在同一个评价坐标上排序。
 
