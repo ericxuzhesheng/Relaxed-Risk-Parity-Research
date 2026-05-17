@@ -367,8 +367,10 @@ def plot_feature_timeline(df: pd.DataFrame, value_cols: list[str], title: str, s
 
 def readme_row(row: pd.Series) -> str:
     return (
-        f"| {public_model_label(row['model'])} | {row['net_annual_return']:.2%} | {row['sharpe_ratio']:.2f} | "
-        f"{row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} | {row['avg_monthly_turnover']:.2%} |"
+        f"| {public_model_label(row['model'])} | {row['net_annual_return']:.2%} | {row['annualized_volatility']:.2%} | "
+        f"{row['sharpe_ratio']:.2f} | {row['sortino_ratio']:.2f} | "
+        f"{row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} | "
+        f"{row['avg_monthly_turnover']:.2%} | {row['turnover_adjusted_sharpe']:.2f} |"
     )
 
 
@@ -377,9 +379,10 @@ def replace_latest_results_table(text: str, heading: str, rows: list[str], note:
         return text
     start = text.index(heading)
     table_start = text.index("|", start)
-    next_heading = text.find("\n## ", table_start)
+    next_h2 = text.find("\n## ", table_start)
+    next_h3 = text.find("\n### ", table_start)
     next_anchor = text.find("\n<a id=", table_start)
-    candidates = [idx for idx in [next_heading, next_anchor] if idx != -1]
+    candidates = [idx for idx in [next_h2, next_h3, next_anchor] if idx != -1]
     end = min(candidates) if candidates else len(text)
 
     block = text[start:end]
@@ -429,8 +432,8 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
     )
     readme_path = Path(resolve_path("README.md"))
     text = readme_path.read_text(encoding="utf-8")
-    text = replace_latest_results_table(text, "## 最新结果", rows, note_zh)
-    text = replace_latest_results_table(text, "## Latest Results", rows, note_en)
+    text = replace_latest_results_table(text, "### 最新结果看板", rows, note_zh)
+    text = replace_latest_results_table(text, "### Latest Results", rows, note_en)
     readme_path.write_text(text, encoding="utf-8")
 
 

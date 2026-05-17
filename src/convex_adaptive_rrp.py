@@ -322,6 +322,14 @@ def run_convex_adaptive_backtest(
                 solver_rows.append({"date": date, **diag})
                 regime_rows.append({"date": date, **regime_state})
 
+        # Fill any uninvested residual into 日利ETF so weights always sum to 100%.
+        # Skip fill during warmup (all-zero weights) to avoid corrupting the optimizer's
+        # previous-weight reference: _clean_weights normalises previous, so a 100%-in-日利ETF
+        # warmup vector would force w_rili >= 82.5% while max_weight=0.35 → infeasible.
+        _invested = float(np.abs(weights).sum())
+        _rili_residual = 1.0 - _invested
+        if _rili_residual > 1e-6 and _invested > 1e-6 and "日利ETF" in returns.columns:
+            weights[returns.columns.get_loc("日利ETF")] += _rili_residual
         daily_return = portfolio_return_for_available(returns.loc[date], weights)
         cost = cost_rate * turnover if is_rebalance else 0.0
         gross_return = daily_return
