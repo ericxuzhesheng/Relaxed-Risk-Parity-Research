@@ -339,6 +339,12 @@ def run_static_backtest(
                     risk_state = overlay_state.copy()
                     overlay_state["trend_positive_count"] = trend_positive_count
                     turnover = overlay_state["turnover"]
+                    # Fill any uninvested residual into 日利ETF so weights always sum to 100%
+                    _rili_residual = 1.0 - float(np.abs(current_weights).sum())
+                    if _rili_residual > 1e-6 and "日利ETF" in returns.columns:
+                        _rili_idx = returns.columns.get_loc("日利ETF")
+                        current_weights[_rili_idx] += _rili_residual
+                        overlay_state["defensive_cash_proxy_exposure"] = 0.0
                 else:
                     turnover = float(np.abs(current_weights - previous_weights).sum())
                     overlay_state["turnover"] = turnover

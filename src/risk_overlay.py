@@ -26,8 +26,9 @@ class RiskOverlayConfig:
     realized_vol_window: int | None = None
     ewma_decay: float = 0.94
     ewma_halflife: float | None = None
-    target_vol: float = 0.060
-    max_risk_scale: float = 1.0
+    target_vol: float = 0.080
+    max_risk_scale: float = 1.20
+    min_risk_scale: float = 0.30
     gross_exposure_cap: float = 1.50
     turnover_cap: float | None = 0.25
     reentry_speed: float = 1.0
@@ -78,6 +79,7 @@ class RiskOverlayConfig:
             ewma_halflife=ewma_halflife,
             target_vol=float(config.get("target_vol", cls.target_vol)),
             max_risk_scale=float(config.get("max_risk_scale", cls.max_risk_scale)),
+            min_risk_scale=float(config.get("min_risk_scale", cls.min_risk_scale)),
             gross_exposure_cap=float(config.get("gross_exposure_cap", cls.gross_exposure_cap)),
             turnover_cap=turnover_cap,
             reentry_speed=float(config.get("reentry_speed", cls.reentry_speed)),
@@ -311,7 +313,7 @@ def apply_risk_overlay(
         final_risk_scalar = ((persistence - 1) * previous_signal + reentry_state) / persistence
     else:
         final_risk_scalar = reentry_state
-    final_risk_scalar = min(cfg.max_risk_scale, max(0.0, final_risk_scalar))
+    final_risk_scalar = min(cfg.max_risk_scale, max(cfg.min_risk_scale, final_risk_scalar))
 
     weights = weights * final_risk_scalar
 

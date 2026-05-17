@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-05-16T16:14:15.689156+00:00",
+  "generated_at_utc": "2026-05-17T07:53:59.642398+00:00",
   "source_label": "tushare:etf_prices_updated.csv",
-  "source_path": "D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.claude\\worktrees\\sweet-yonath-fe9dc7\\data\\processed\\etf_prices_updated.csv",
-  "source_mtime_utc": "2026-05-16T14:21:35.171610+00:00",
+  "source_path": "D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.claude\\worktrees\\jolly-ardinghelli-8f3a0b\\data\\processed\\etf_prices_updated.csv",
+  "source_mtime_utc": "2026-05-17T07:30:55.896372+00:00",
   "source_sha256": "42e56a384ae565590b16fb27518c1f5923d7e956beec0722f766261419b50b2c",
   "row_count": 2027,
   "asset_count": 30,

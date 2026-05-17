@@ -24,7 +24,7 @@ DEFAULT_CONFIG = {
     "bond_keywords": ["国债", "信用票", "美债", "债"],
     "bond_leverage_upper": 1.4,
     "risk_free_rate": RISK_FREE_RATE_ANNUAL,
-    "target_vol": 0.060, # 激进型目标：6.0% (追求 Sharpe > 1)
+    "target_vol": 0.080, # 目标波动率：8.0%，提升平均仓位至 ~75%
     "gross_exposure_cap": 1.50,
     "turnover_cap": 0.25,
     "transaction_cost_bps": 3.0,
