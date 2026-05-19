@@ -151,19 +151,133 @@ All empirical findings are conditional on the historical evaluation period and c
 \section{文献综述与理论基础}
 
 \subsection{现代投资组合理论与估计误差}
-Markowitz 的均值--方差框架将资产配置转化为可计算优化问题\cite{markowitz1959portfolio}，Sharpe 的 CAPM 进一步联系资产收益与市场系统性风险\cite{sharpe1964capital}。然而实证研究表明，输入参数敏感性长期制约均值--方差方法的样本外表现：Michaud 将其概括为"马科维茨之谜"\cite{michaud1989enigma}，Jorion 和 Chopra 等研究进一步量化了收益估计误差的主导影响\cite{jorion1986bayes,chopra1993effect}。DeMiguel 等人发现有限样本下 1/N 组合常优于复杂优化\cite{demiguel2009optimal}，Jagannathan 和 Ma 则表明卖空约束可有效压制协方差噪声\cite{jagannathan2003risk}。协方差估计方面，Laloux 等人以随机矩阵理论揭示了样本协方差的噪声来源\cite{laloux1999noise}；Johansson 等人提出 CM-IEWMA 方法，通过凸优化组合多衰减 EWMA 系统优于多元 GARCH\cite{johansson2023covpred}；Tzikas 等人和 Conlon 等人则分别从时变因子和因子协方差视角改善样本外协方差稳健性\cite{tzikas2026transient,conlon2025factorcov}。上述证据表明收益预测的不确定性难以消除，本文因此以风险预算为主线，不引入显式收益预测。
+均值--方差框架将资产配置转化为可计算优化问题，但输入参数敏感性长期制约其样本外表现，相关研究从理论与实证两个方向持续推进。表~\ref{tab:lit_mvo} 梳理了这一脉络的代表性文献。
+
+\begin{table}[H]
+\centering
+\caption{现代投资组合理论与估计误差代表文献}
+\label{tab:lit_mvo}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}p{4.0cm}Xp{3.6cm}@{}}
+\toprule
+文献 & 核心贡献 & 与本文关联 \\
+\midrule
+Markowitz (1959)\cite{markowitz1959portfolio} & 均值--方差框架：期望收益与协方差矩阵刻画收益--风险权衡 & 优化语言基础 \\
+Sharpe (1964)\cite{sharpe1964capital} & CAPM：资产收益与市场系统性风险的线性定价关系 & 系统性风险背景 \\
+Black \& Litterman (1992)\cite{black1992global} & 结合市场均衡与主观观点，缓解均值输入的不稳定性 & 参数不稳定性动机 \\
+Michaud (1989)\cite{michaud1989enigma} & "马科维茨之谜"：输入微小误差导致权重剧烈变化，样本外退化 & 驱动转向风险预算 \\
+Jorion (1986); Chopra \& Ziemba (1993)\cite{jorion1986bayes,chopra1993effect} & Bayes-Stein 收缩与误差影响量化；收益误差影响显著大于协方差误差 & 不引入收益预测的依据 \\
+DeMiguel et al.\ (2009)\cite{demiguel2009optimal} & 有限样本下 1/N 组合常优于复杂优化 & 等权基准设置依据 \\
+Jagannathan \& Ma (2003)\cite{jagannathan2003risk} & 卖空约束在大规模资产池中压制样本协方差噪声 & 权重约束合理性 \\
+Laloux et al.\ (1999)\cite{laloux1999noise} & 随机矩阵理论揭示协方差矩阵特征值噪声来源 & 协方差稳健估计必要性 \\
+Johansson et al.\ (2023)\cite{johansson2023covpred} & CM-IEWMA：凸优化组合多衰减 EWMA，系统优于多元 GARCH & 本文 EWMA 方向一致 \\
+Tzikas et al.\ (2026)\cite{tzikas2026transient} & 瞬时统计因子叠加既有风险模型，适应时变相关结构 & 近期信息加权协方差参考 \\
+Conlon et al.\ (2025)\cite{conlon2025factorcov} & 因子协方差矩阵在样本外压制估计噪声、改善权重稳定性 & 协方差稳健性检验参考 \\
+Bongiorno et al.\ (2025)\cite{bongiorno2025e2ecov} & 神经网络端到端学习随机矩阵清洁的协方差估计器，直接最小化投资组合方差 & 协方差清洁神经网络路径；与本文凸框架形成对比 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+上述文献的共同含义是：协方差估计方法的选取对样本外表现有实质影响，而收益预测的不确定性更难控制。近期研究（Bongiorno et al., 2025）进一步表明，以神经网络端到端学习协方差清洁可在大规模资产池中提升方差最小化效果，但牺牲了约束灵活性与参数可解释性。本文以风险预算为主线，不引入显式收益预测，保留可解释的凸优化框架，并在稳健性检验中比较不同协方差估计器。
 
 \subsection{风险平价与宽松风险平价}
-风险平价以风险贡献而非资金比例定义分散化。Qian 阐释了这一配置思想的分散化逻辑\cite{qian2005risk}，Maillard 等人系统研究了等风险贡献组合的性质\cite{maillard2010properties}，Roncalli 给出完整风险预算框架并由 Bruder 和 Roncalli 发展为多约束数值求解策略\cite{roncalli2013introduction,bruder2012managing}。Asness 等人从杠杆厌恶视角解释了风险平价潜在超额收益的来源\cite{asness2012leverage}，Chaves 等人的实证研究则确认了其样本外有效性\cite{chaves2011risk}，Paolella 等人进一步表明胖尾模型下配置在压力期更为稳健\cite{paolella2025riskparity}。宽松风险平价将严格等式改为偏离惩罚：Gambeta 和 Kwon 的研究表明宽松形式可在保留预算特征的同时显式引入可量化偏离\cite{gambeta2020risk}；Cetingoz 和 Gu{\'e}ant 提供了资产层与因子层风险预算的统一框架\cite{cetingoz2024assetfactor}；Bessler 等人的实证则支持以资产类别作为风险预算分组单位\cite{bessler2021factor}；Fassino 和 Uberti 给出任意风险度量下的存在性与收敛保证\cite{fassino2026riskbudgeting}。本文采用宽松形式，目的是将 CVaR 约束、换手惩罚和资产组限制纳入可稳定求解的凸优化框架。
+风险平价的核心思想是以风险贡献而非资金比例定义分散化；宽松风险平价则将严格等式约束转化为偏离惩罚，使多目标权衡可纳入统一优化框架。表~\ref{tab:lit_rp} 梳理相关文献。
+
+\begin{table}[H]
+\centering
+\caption{风险平价与宽松风险平价代表文献}
+\label{tab:lit_rp}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}p{4.0cm}Xp{3.6cm}@{}}
+\toprule
+文献 & 核心贡献 & 与本文关联 \\
+\midrule
+Qian (2005)\cite{qian2005risk} & 风险贡献分散化是提升组合效率的配置思想 & 概念基础 \\
+Maillard et al.\ (2010)\cite{maillard2010properties} & 系统研究等风险贡献组合性质 & 分散化标准 \\
+Roncalli (2013)\cite{roncalli2013introduction} & 完整风险预算框架，风险贡献推广为可解释约束 & 本文理论框架 \\
+Bruder \& Roncalli (2012)\cite{bruder2012managing} & 多约束条件下风险预算的数值求解策略 & 模型求解基础 \\
+Asness et al.\ (2012)\cite{asness2012leverage} & 杠杆厌恶导致低波动资产定价偏低，风险平价可获取该溢价 & 超额收益来源解释 \\
+Chaves et al.\ (2011)\cite{chaves2011risk} & 风险平价在多数样本外时段优于等权与市值加权 & 样本外有效性参照 \\
+Paolella et al.\ (2025)\cite{paolella2025riskparity} & 胖尾与机制切换假设下 RP 权重更不敏感，压力期回撤更小 & 压力期分析支撑 \\
+Gambeta \& Kwon (2020)\cite{gambeta2020risk} & 宽松风险平价在保留预算特征的同时允许可量化偏离 & 本文核心方法依据 \\
+Cetingoz \& Gu{\'e}ant (2024)\cite{cetingoz2024assetfactor} & 资产层与因子层风险预算的统一平衡框架 & 框架理论支撑 \\
+Bessler et al.\ (2021)\cite{bessler2021factor} & 资产类别框架在样本外鲁棒性上不弱于因子分解 & 资产类别分组依据 \\
+Fassino \& Uberti (2026)\cite{fassino2026riskbudgeting} & 任意风险度量下风险预算的存在性与单纯形收敛理论 & 凸求解收敛保证 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+本文采用宽松形式而非严格等风险贡献，目的是将 CVaR 约束、换手惩罚和资产组限制纳入可稳定求解的凸优化框架，而非放弃风险预算逻辑。
 
 \subsection{CVaR、交易成本与组合约束}
-Rockafellar 和 Uryasev 通过引入辅助变量将 CVaR 约束转化为可计算的线性规划，并推广至一般损失分布\cite{rockafellar2000optimization,rockafellar2002conditional}。Boyd 和 Vandenberghe 的凸优化理论为同时纳入线性约束、范数惩罚和辅助变量提供了数学基础\cite{boyd2004convex}。交易成本方面，Almgren 和 Chriss 建立了将市场冲击成本纳入调仓决策的最优执行模型\cite{almgren2001optimal}。本文以 CVaR 作为尾部约束和风险诊断工具，并对交易成本采用固定费率近似；CVaR 的主要局限是无法覆盖历史中从未发生的极端情景\cite{uhl2024aitail,alouadi2026sbbts}。
+凸优化框架为同时处理尾部风险约束与换手惩罚提供了统一数学语言。表~\ref{tab:lit_cvar} 列出本文约束设计的主要文献依据。
+
+\begin{table}[H]
+\centering
+\caption{CVaR、交易成本与组合约束代表文献}
+\label{tab:lit_cvar}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}p{4.0cm}Xp{3.6cm}@{}}
+\toprule
+文献 & 核心贡献 & 与本文关联 \\
+\midrule
+Rockafellar \& Uryasev (2000; 2002)\cite{rockafellar2000optimization,rockafellar2002conditional} & 引入辅助变量将 CVaR 约束转化为线性规划；推广至一般损失分布 & 本文尾部约束实现 \\
+Boyd \& Vandenberghe (2004)\cite{boyd2004convex} & 凸目标与凸约束集合便于纳入线性约束、范数惩罚和辅助变量 & 本文凸框架数学基础 \\
+Almgren \& Chriss (2001)\cite{almgren2001optimal} & 最优组合执行模型，将市场冲击成本纳入调仓决策 & 交易成本建模基础 \\
+Uhl et al.\ (2024)\cite{uhl2024aitail} & NLP 构建 AI 尾部风险情境识别框架 & 极端情景识别补充参考 \\
+Alouadi et al.\ (2026)\cite{alouadi2026sbbts} & SBBTS：Schrödinger Bridge 生成合成时间序列，不依赖历史分布 & 压力情景模拟参考 \\
+Bajo Traver (2026)\cite{bajo2026regret} & 以机会成本（遗憾值）及其离散程度最小化替代方差或 CVaR 作为组合目标 & 替代风险度量参考；本文沿用 CVaR 约束，保持凸框架可解释性 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+本文以 CVaR 作为尾部约束和风险诊断工具，而非收益承诺；其局限在于无法覆盖历史中从未发生的极端情景。以遗憾值最小化（Bajo Traver, 2026）为代表的替代目标同样关注机会成本，但 CVaR 的线性重表述与本文的凸优化框架直接兼容，具备更强的约束可扩展性。
 
 \subsection{HRP/HERC 与国内实践}
-López de Prado 提出的 HRP 利用层次聚类和递归二分生成权重，避免直接求逆协方差矩阵\cite{lopezdeprado2016building}；Raffinot 的 HERC 在此基础上引入簇内风险贡献分配\cite{raffinot2018hierarchical}。后续研究在层次化框架中分别引入尾部依赖结构\cite{lohre2020hierarchical}、最小生成树预筛选\cite{cho2023hierarchical}和网络风险平价\cite{ciciretti2024network}以改善样本外稳健性，但这类方法均难以直接表达 CVaR 和换手约束。国内实践研究指出，风险平价在中国市场须面对工具约束与执行频率等现实问题\cite{htsc2020misunderstanding,htsc2021hrp,htsc2024practice,htsc2025lowrate}；中信、中金和兴业证券分别从产品层、量化方法比较和 ETF 品类扩容角度提供了多资产配置的落地背景\cite{citic2025multiasset,cicc2026quant,xyzq2026etf,csc2025chinaallocation}。本文将 HRP 与 HERC 纳入统一回测框架，作为同等评价口径下的基准模型。
+层次化风险平价方法绕过协方差矩阵直接求逆，但难以显式处理 CVaR 和换手约束；国内实践研究则为 ETF 工具选择和市场约束提供了落地背景。表~\ref{tab:lit_hrp} 列出代表文献。
+
+\begin{table}[H]
+\centering
+\caption{HRP/HERC 与国内实践代表文献}
+\label{tab:lit_hrp}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}p{4.0cm}Xp{3.6cm}@{}}
+\toprule
+文献 & 核心贡献 & 与本文关联 \\
+\midrule
+López de Prado (2016)\cite{lopezdeprado2016building} & HRP：层次聚类＋准对角化＋递归二分生成权重 & 本文基准模型一 \\
+Raffinot (2018)\cite{raffinot2018hierarchical} & HERC：在簇间和簇内引入风险贡献分配逻辑 & 本文基准模型二 \\
+Lohre et al.\ (2020)\cite{lohre2020hierarchical} & 层次化框架引入尾部依赖结构，改善压力期稳健性 & 压力期聚类参考 \\
+Cho \& Song (2023)\cite{cho2023hierarchical} & MST 外围节点预筛选＋HRP，改善聚类质量与集中度 & 资产网络结构参考 \\
+Ciciretti \& Pallotta (2024)\cite{ciciretti2024network} & 最小生成树网络风险平价，资产数量多时样本外表现突出 & 资产结构可视化参考 \\
+华泰证券 (2020--2024)\cite{htsc2020misunderstanding,htsc2021hrp,htsc2024practice,htsc2025lowrate} & 国内低利率环境下风险平价理论与 HRP 落地实践 & 国内市场背景与约束 \\
+中信/中金/兴业 (2025--2026)\cite{citic2025multiasset,cicc2026quant,xyzq2026etf,csc2025chinaallocation} & 多资产 ETF 发展经验、量化方法实证比较及 ETF 品类扩容记录 & ETF 资产池构建依据 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+本文将 HRP 与 HERC 纳入统一回测框架，与宽松风险平价系列模型在相同评价口径下比较夏普比率、最大回撤与权重集中度。
 
 \subsection{文献评述与本文切入点}
-上述文献各有贡献，但也各有结构性局限：均值--方差方法对收益预测高度敏感；严格等风险贡献在多约束场景下难以直接求解；HRP/HERC 无法显式处理 CVaR 和换手约束；国内已有实践缺乏跨类别统一风险预算框架。本文的做法是把上述方法置于同一可交易 ETF 回测环境中，以宽松风险平价为主线将 CVaR 约束和换手惩罚纳入凸优化，同时以等权、HRP 和 HERC 作为基准，用多维度实证验证各方法在当前样本中的适用边界。
+各方法各有贡献，也各有结构性局限。表~\ref{tab:lit_gap} 梳理局限与本文应对方式，说明本文切入点的必要性。
+
+\begin{table}[H]
+\centering
+\caption{主要文献流派的局限与本文处理方式}
+\label{tab:lit_gap}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\linewidth}{@{}p{3.2cm}Xp{4.0cm}@{}}
+\toprule
+方法流派 & 核心局限 & 本文处理方式 \\
+\midrule
+均值--方差优化 & 对收益预测高度敏感；样本外权重不稳定 & 不引入收益预测，转向风险预算 \\
+严格等风险贡献 & 多约束（上下限、资产组、换手）下难以直接求解 & 宽松偏离惩罚，纳入凸优化框架 \\
+HRP/HERC 层次化 & 无法显式表达 CVaR 约束和换手惩罚 & 作为等评价口径的基准模型 \\
+国内单资产 ETF 配置 & 缺乏跨类别统一风险预算框架 & 30 支 ETF 八大资产类别全局风险预算 \\
+端到端神经网络优化 & 参数不可解释、依赖大样本、难以纳入硬约束（资产组上限、CVaR 上界） & 坚持凸优化框架，以可解释约束和稳健协方差估计为核心 \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \section{理论框架与模型方法}
 

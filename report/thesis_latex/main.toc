@@ -7,44 +7,44 @@
 \contentsline {subsection}{\numberline {2.1}现代投资组合理论与估计误差}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}风险平价与宽松风险平价}{4}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}CVaR、交易成本与组合约束}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}HRP/HERC 与国内实践}{5}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.4}HRP/HERC 与国内实践}{6}{subsection.2.4}%
 \contentsline {subsection}{\numberline {2.5}文献评述与本文切入点}{6}{subsection.2.5}%
-\contentsline {section}{\numberline {3}理论框架与模型方法}{6}{section.3}%
-\contentsline {subsection}{\numberline {3.1}统一符号}{6}{subsection.3.1}%
+\contentsline {section}{\numberline {3}理论框架与模型方法}{7}{section.3}%
+\contentsline {subsection}{\numberline {3.1}统一符号}{7}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}标准风险平价}{8}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}宽松风险平价与 Global RRP}{8}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.3}宽松风险平价与 Global RRP}{9}{subsection.3.3}%
 \contentsline {subsection}{\numberline {3.4}凸优化改进模型}{9}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}协方差估计方法}{10}{subsection.3.5}%
 \contentsline {subsection}{\numberline {3.6}HRP 与 HERC 基准模型}{11}{subsection.3.6}%
 \contentsline {section}{\numberline {4}数据、变量与研究设计}{12}{section.4}%
 \contentsline {subsection}{\numberline {4.1}ETF 资产池构建原则}{12}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}样本构造与预处理}{14}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.2}样本构造与预处理}{15}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}收益率、权重、交易成本与换手率定义}{15}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}组合约束与调仓规则}{15}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}评价指标体系}{15}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.4}组合约束与调仓规则}{16}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}评价指标体系}{16}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}回测流程与无前视设计}{16}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}可靠性与诊断层}{16}{subsection.4.7}%
+\contentsline {subsection}{\numberline {4.7}可靠性与诊断层}{17}{subsection.4.7}%
 \contentsline {subsection}{\numberline {4.8}描述性统计与资产特征分析}{17}{subsection.4.8}%
-\contentsline {section}{\numberline {5}实证结果分析}{19}{section.5}%
-\contentsline {subsection}{\numberline {5.1}主模型绩效比较}{19}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}HRP/HERC 基准模型对比}{20}{subsection.5.2}%
+\contentsline {section}{\numberline {5}实证结果分析}{20}{section.5}%
+\contentsline {subsection}{\numberline {5.1}主模型绩效比较}{20}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}HRP/HERC 基准模型对比}{21}{subsection.5.2}%
 \contentsline {subsection}{\numberline {5.3}净值路径与回撤分析}{21}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}换手率与权重结构分析}{22}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}CVaR 尾部风险分析}{25}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}因子暴露与收益归因}{26}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.4}换手率与权重结构分析}{23}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}CVaR 尾部风险分析}{26}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}因子暴露与收益归因}{27}{subsection.5.6}%
 \contentsline {subsection}{\numberline {5.7}小结}{29}{subsection.5.7}%
-\contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{31}{section.6}%
-\contentsline {subsection}{\numberline {6.1}子区间与压力期检验}{31}{subsection.6.1}%
+\contentsline {section}{\numberline {6}稳健性检验与过拟合诊断}{30}{section.6}%
+\contentsline {subsection}{\numberline {6.1}子区间与压力期检验}{30}{subsection.6.1}%
 \contentsline {subsection}{\numberline {6.2}交易成本与参数敏感性}{32}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}协方差估计与过拟合诊断}{34}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}分块自助法检验}{36}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.3}协方差估计与过拟合诊断}{33}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}分块自助法检验}{35}{subsection.6.4}%
 \contentsline {subsection}{\numberline {6.5}成对夏普差异显著性检验}{37}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}小结}{39}{subsection.6.6}%
-\contentsline {section}{\numberline {7}结论与展望}{39}{section.7}%
-\contentsline {subsection}{\numberline {7.1}主要结论}{39}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}研究不足}{40}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}后续研究方向}{40}{subsection.7.3}%
-\contentsline {section}{\numberline {A}主要指标定义汇总}{41}{appendix.A}%
-\contentsline {section}{\numberline {B}CSCV 候选参数网格}{42}{appendix.B}%
-\contentsline {section}{参考文献}{44}{section*.33}%
+\contentsline {subsection}{\numberline {6.6}小结}{38}{subsection.6.6}%
+\contentsline {section}{\numberline {7}结论与展望}{38}{section.7}%
+\contentsline {subsection}{\numberline {7.1}主要结论}{38}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}研究不足}{39}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}后续研究方向}{39}{subsection.7.3}%
+\contentsline {section}{\numberline {A}主要指标定义汇总}{40}{appendix.A}%
+\contentsline {section}{\numberline {B}CSCV 候选参数网格}{41}{appendix.B}%
+\contentsline {section}{参考文献}{43}{section*.38}%
 \contentsfinish 
