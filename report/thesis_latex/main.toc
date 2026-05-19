@@ -7,7 +7,7 @@
 \contentsline {subsection}{\numberline {2.1}现代投资组合理论与估计误差}{2}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}风险平价与宽松风险平价}{4}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}CVaR、交易成本与组合约束}{5}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}HRP/HERC 与国内实践}{6}{subsection.2.4}%
+\contentsline {subsection}{\numberline {2.4}HRP/HERC 与国内实践}{5}{subsection.2.4}%
 \contentsline {subsection}{\numberline {2.5}文献评述与本文切入点}{6}{subsection.2.5}%
 \contentsline {section}{\numberline {3}理论框架与模型方法}{7}{section.3}%
 \contentsline {subsection}{\numberline {3.1}统一符号}{7}{subsection.3.1}%
@@ -46,5 +46,5 @@
 \contentsline {subsection}{\numberline {7.3}后续研究方向}{39}{subsection.7.3}%
 \contentsline {section}{\numberline {A}主要指标定义汇总}{40}{appendix.A}%
 \contentsline {section}{\numberline {B}CSCV 候选参数网格}{41}{appendix.B}%
-\contentsline {section}{参考文献}{43}{section*.38}%
+\contentsline {section}{参考文献}{43}{section*.33}%
 \contentsfinish 
