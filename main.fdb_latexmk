@@ -1,0 +1,19 @@
+# Fdb version 4
+["xdvipdfmx"] 0 "main.xdv" "main.pdf" "main" 0 -1
+  "main.xdv" 0 -1 0 "xelatex"
+  (generated)
+  "main.pdf"
+  (rewritten before read)
+["xelatex"] 1778478534.18501 "D:/Github Repository/Relaxed-Risk-Parity-Research/report/thesis_latex/main.tex" "main.xdv" "main" 1778478534.70371 2
+  "D:/Github Repository/Relaxed-Risk-Parity-Research/report/thesis_latex/main.tex" 1778478504 67047 22dd4905ff8663668bf6d04ad0729ba8 ""
+  "c:/texlive/2025/texmf-dist/web2c/texmf.cnf" 1771076280 42213 4e2ca030e8e2640502016e9e45868dcb ""
+  "c:/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt" 1771081124 5948047 f6225a9155c25e6ad2961513b3db643e ""
+  "c:/texlive/2025/texmf.cnf" 1771080957 713 e69b156964470283e0530f5060668171 ""
+  "d:/Github Repository/Relaxed-Risk-Parity-Research/report/thesis_latex/main.tex" 1778478504 67047 22dd4905ff8663668bf6d04ad0729ba8 ""
+  "main.aux" 1778478526 32 3985256e7290058c681f74d7a3565a19 "xelatex"
+  "thesisSWUFE.cls" 0 -1 0 ""
+  (generated)
+  "main.aux"
+  "main.log"
+  "main.xdv"
+  (rewritten before read)

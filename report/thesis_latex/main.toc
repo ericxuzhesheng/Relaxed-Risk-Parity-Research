@@ -42,9 +42,10 @@
 \contentsline {subsection}{\numberline {6.6}小结}{40}{subsection.6.6}%
 \contentsline {section}{\numberline {7}结论与展望}{40}{section.7}%
 \contentsline {subsection}{\numberline {7.1}主要结论}{40}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}研究不足}{41}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}后续研究方向}{41}{subsection.7.3}%
-\contentsline {section}{\numberline {A}主要指标定义汇总}{42}{appendix.A}%
-\contentsline {section}{\numberline {B}CSCV 候选参数网格}{44}{appendix.B}%
-\contentsline {section}{参考文献}{46}{section*.33}%
+\contentsline {subsection}{\numberline {7.2}研究不足}{42}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}后续研究方向}{42}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}与桥水全天候策略的横向对比}{43}{subsection.7.4}%
+\contentsline {section}{\numberline {A}主要指标定义汇总}{45}{appendix.A}%
+\contentsline {section}{\numberline {B}CSCV 候选参数网格}{47}{appendix.B}%
+\contentsline {section}{参考文献}{49}{section*.35}%
 \contentsfinish 

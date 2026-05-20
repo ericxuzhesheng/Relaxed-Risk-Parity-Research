@@ -1,0 +1,6 @@
+PWD D:/Github Repository/Relaxed-Risk-Parity-Research
+INPUT c:/texlive/2025/texmf.cnf
+INPUT c:/texlive/2025/texmf-dist/web2c/texmf.cnf
+INPUT c:/texlive/2025/texmf-var/web2c/xetex/xelatex.fmt
+INPUT d:/Github Repository/Relaxed-Risk-Parity-Research/report/thesis_latex/main.tex
+OUTPUT main.log
