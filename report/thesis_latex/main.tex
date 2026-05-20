@@ -166,7 +166,7 @@ All empirical findings are conditional on the historical evaluation period and c
 
 从实证角度，Asness 等（2012）\cite{asness2012leverage} 从杠杆厌恶的行为金融视角解释了风险平价潜在超额收益的来源：低波动率资产长期被市场低估，风险平价通过加杠杆持有债券类资产可捕获这一定价偏差。Chaves 等（2011）\cite{chaves2011risk} 的跨资产类别回测则确认，风险平价在多数样本外时段优于等权与市值加权组合，验证了其样本外有效性。Paolella 等（2025）\cite{paolella2025riskparity} 在重尾分布与机制切换假设下进一步表明，风险平价权重对参数扰动的敏感性低于均值--方差最优解，在市场压力期呈现更小的回撤幅度。
 
-宽松风险平价将严格等式约束替换为二次惩罚项，以允许可量化的预算偏离换取约束灵活性。Gambeta 与 Kwon（2020）\cite{gambeta2020risk} 系统研究了这一形式在保留风险预算逻辑的同时显式引入偏离惩罚的数学性质，构成本文模型设计的核心依据。Cetingoz 与 Gu{\'e}ant（2024）\cite{cetingoz2024assetfactor} 提出资产层与因子层风险预算的统一平衡框架，为多层级预算约束提供了理论支撑。Bessler 等（2021）\cite{bessler2021factor} 的实证研究表明，以资产类别为分组单位的风险预算在样本外鲁棒性上不弱于更精细的因子分解，支持了本文以大类资产为风险预算单位的设计选择。Fassino 与 Uberti（2026）\cite{fassino2026riskbudgeting} 在一般风险度量下给出了风险预算解的存在性证明与基于单纯形的收敛保证，为本文凸求解过程的数学完备性提供依据。本文采用宽松风险平价形式，目的在于将 CVaR 约束、换手惩罚和资产组上限统一纳入可稳定求解的凸优化框架，而非放弃风险预算的逻辑内核。
+宽松风险平价将严格等式约束替换为二次惩罚项，以允许可量化的预算偏离换取约束灵活性。Gambeta 与 Kwon（2020）\cite{gambeta2020risk} 系统分析了偏离惩罚形式的数学性质，包括解的存在唯一性与惩罚参数对权重稳定性的影响，其框架是本文模型设计的核心出发点。Cetingoz 与 Gu{\'e}ant（2024）\cite{cetingoz2024assetfactor} 提出资产层与因子层风险预算的统一平衡框架，将多层级预算约束纳入同一凸规划体系。Bessler 等（2021）\cite{bessler2021factor} 的实证研究表明，以资产类别为分组单位的风险预算在样本外鲁棒性上不弱于更精细的因子分解。Fassino 与 Uberti（2026）\cite{fassino2026riskbudgeting} 在一般风险度量下给出了风险预算解的存在性证明与基于单纯形的收敛保证。本文将 CVaR 约束、换手惩罚和资产组上限统一纳入宽松风险平价框架，在保留风险预算逻辑内核的同时兼顾约束多样性与求解稳定性。
 
 \subsection{CVaR、交易成本与组合约束}
 
