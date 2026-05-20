@@ -180,7 +180,7 @@ All empirical findings are conditional on the historical evaluation period and c
 
 层次风险平价（HRP）由 López de Prado（2016）\cite{lopezdeprado2016building} 提出，利用相关矩阵的层次聚类结构对资产进行准对角化排列，再通过递归二分将风险预算分配至叶节点，从根本上回避了对协方差矩阵求逆的数值不稳定问题。Raffinot（2018）\cite{raffinot2018hierarchical} 在 HRP 框架基础上提出层次等风险贡献（HERC），在簇间分配阶段引入风险贡献逻辑，使各聚类的风险暴露更为均衡。此后，多项研究对层次化框架进行了扩展：Lohre 等（2020）\cite{lohre2020hierarchical} 将尾部依赖结构引入聚类距离矩阵，改善了压力期的聚类稳健性；Cho 与 Song（2023）\cite{cho2023hierarchical} 通过最小生成树（MST）对外围节点进行预筛选，在优化聚类质量的同时降低权重集中度；Ciciretti 与 Pallotta（2024）\cite{ciciretti2024network} 则将最小生成树网络直接用于权重生成，在资产数量较多时取得突出的样本外表现。这类方法有一个共同制约：层次化分配机制难以直接纳入 CVaR 上界约束或换手惩罚，在多目标约束场景下适用范围因此较为有限。
 
-国内实践研究为本文提供了重要的市场背景与工具约束依据。华泰证券系列研究（2020—2024）\cite{htsc2020misunderstanding,htsc2021hrp,htsc2024practice,htsc2025lowrate} 系统梳理了风险平价理论在国内低利率环境下的实施难点，涵盖工具约束、再平衡频率与杠杆可得性等现实问题，并对 HRP 在国内多资产组合中的落地效果进行了实证评估。中信建投（2025）\cite{citic2025multiasset} 从大类资产配置的产品层面比较了各类配置方法；中金公司（2026）\cite{cicc2026quant} 的量化研究对国内主流配置策略进行了系统的方法论比较；兴业证券（2026）\cite{xyzq2026etf} 则记录了国内 ETF 品类扩容的最新进展，为本文 30 支 ETF 覆盖八大资产类别的资产池构建提供了品种选择依据。本文将 HRP 与 HERC 纳入统一回测框架，在相同评价口径下与宽松风险平价系列模型就夏普比率、最大回撤与权重集中度展开系统比较。
+国内实践研究为本文提供了重要的市场背景与工具约束依据。华泰证券系列研究（2020—2024）\cite{htsc2020misunderstanding,htsc2021hrp,htsc2024practice,htsc2025lowrate} 系统梳理了风险平价理论在国内低利率环境下的实施难点，涵盖工具约束、再平衡频率与杠杆可得性等现实问题，并对 HRP 在国内多资产组合中的落地效果进行了实证评估。中信建投（2025）\cite{citic2025multiasset} 从大类资产配置的产品层面比较了各类配置方法；中金公司（2026）\cite{cicc2026quant} 的量化研究对国内主流配置策略进行了系统的方法论比较；兴业证券（2026）\cite{xyzq2026etf} 则系统梳理了国内 ETF 市场品类扩容的最新进展，本文 30 支 ETF 覆盖八大资产类别的资产池构建参考了其中的品种统计。本文将 HRP 与 HERC 纳入统一回测框架，在相同评价口径下与宽松风险平价系列模型就夏普比率、最大回撤与权重集中度展开系统比较。
 
 \subsection{文献评述与本文切入点}
 
