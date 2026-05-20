@@ -170,7 +170,7 @@ All empirical findings are conditional on the historical evaluation period and c
 
 \subsection{CVaR、交易成本与组合约束}
 
-条件风险价值（CVaR）在风险度量理论中兼具次可加性与凸性，是尾部损失约束的自然选择。Rockafellar 与 Uryasev（2000；2002）\cite{rockafellar2000optimization,rockafellar2002conditional} 通过引入辅助变量，将原本涉及分位数的非光滑 CVaR 约束等价转化为关于损失场景的线性规划，并将这一结果推广至一般损失分布，从而使尾部风险约束在大规模优化中具备计算可行性。Boyd 与 Vandenberghe（2004）\cite{boyd2004convex} 的凸优化理论则为同时纳入线性不等式约束、$\ell_1$ 范数换手惩罚与辅助变量的混合优化问题提供了统一数学框架，是本文模型构建的方法论基础。
+条件风险价值（CVaR）在风险度量理论中兼具次可加性与凸性，是尾部损失约束的自然选择。Rockafellar 与 Uryasev（2000；2002）\cite{rockafellar2000optimization,rockafellar2002conditional} 通过引入辅助变量，将原本涉及分位数的非光滑 CVaR 约束等价转化为关于损失场景的线性规划，并将这一结果推广至一般损失分布，从而使尾部风险约束在大规模优化中具备计算可行性。Boyd 与 Vandenberghe（2004）\cite{boyd2004convex} 的凸优化理论则为同时纳入线性不等式约束、$\ell_1$ 范数换手惩罚与辅助变量的混合优化问题提供了统一数学框架。
 
 交易成本方面，Almgren 与 Chriss（2001）\cite{almgren2001optimal} 建立了将价格冲击与时间价值权衡纳入调仓决策的最优执行模型，揭示了换手速率与市场冲击成本之间的根本张力。本文对交易成本采用固定费率线性近似，以保持模型的凸结构；这一近似在月频调仓、资产规模适中的情境下具有合理性，但在高频或大规模执行场景下需进一步精细化。
 
