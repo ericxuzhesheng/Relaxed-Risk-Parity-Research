@@ -854,7 +854,7 @@ R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
 \end{tabular}%
 }
 \par\smallskip
-{\footnotesize 注：期货品种经由 Tushare 接入，覆盖中金所（CFX）国债期货 T/TF 与股指期货 IF/IC/IH/IM、大商所（DCE）豆粕 M、上期能源（INE）原油 SC、上期所（SHF）黄金 AU/白银 AG/铜 CU、郑商所（ZCE）动力煤 ZC。8 支 ETF（固收/商品类）替换为对应期货，权益 ETF（沪深300/中证500/中证1000 ETF）保留并与股指期货共存于资产池，构成 portable alpha 叠加层设计；合计约 44 资产。动力煤期货（ZC）因郑商所于 2022 年 5 月暂停交易，历史数据仅至 2022-05-11；中证1000股指期货（IM）于 2022-07-22 上市，历史较短；两者均可能被优化器因数据不足而自动排除。8\% 保证金假设基于主要品种平均初始保证金比率的保守估算。}
+{\footnotesize 注：期货品种经由 Tushare 接入，覆盖中金所（CFFEX）、大商所（DCE）、上期所（SHFE）、上期能源（INE）、郑商所（ZCE）五所。8\% 保证金假设基于主要品种平均初始保证金比率的保守估算；ZC 与 IM 数据可用性限制详见表~\ref{tab:pool_comparison} 注。}
 \end{table}
 
 表中有两个值得单独说明的结果。
