@@ -710,12 +710,9 @@ Improved Convex & 1.096 & 0.510 & 1.101 & 1.712 & $-$6.45\% & $-$9.76\% \\
 \end{tabular}
 \end{table}
 
-图 \ref{fig:boot_sharpe}--\ref{fig:boot_drawdown} 和表 \ref{tab:bootstrap_summary} 的关键发现有两点。第一，Improved Convex Adaptive Global RRP 的夏普比率 P5 分位为 0.510，在 200 个自助样本中最差的 5\% 情形下仍保持正值；Global RRP 的 P5 分位为 $-$0.156，表明在不利抽样区间下存在一定亏损风险。第二，Improved Convex 的 Sharpe P50 中位数（1.101）与全样本结果（1.511）的差距反映了样本外泛化折扣，属于正常幅度。Convex Adaptive 的自助 P5 为 0.262，也全程保持正值，说明凸化约束对下尾绩效有一定保护作用。
+关键发现：Improved Convex Adaptive Global RRP 的 Sharpe P5 分位为 0.510，最差 5\% 情形仍为正值；Global RRP 的 P5 为 $-$0.156，不利区间存在亏损风险。Improved Convex 的 P50 中位数（1.101）与全样本（1.511）的差距属于正常泛化折扣。分块自助法不能替代真实样本外检验，它估计的是历史数据抽样变异对结论的影响幅度。
 
-分块自助法的局限在于，重抽样保留了历史数据的自相关结构，但无法生成历史中从未出现过的极端情景，也不能替代真实样本外检验。它的作用是估计历史数据抽样变异性对结论的影响程度，而非预测未来绩效分布。
-
-\subsection{成对夏普差异显著性检验}\label{sec:sharpe_diff_test}
-单一路径上的夏普比率受抽样误差影响较大，仅根据点估计宣称模型间夏普差异需附带显著性检验。本文对头条声明使用移动分块自助法（Politis \& Romano 1994）做配对差异检验，对每一对模型在共同评价日上抽取 21 日块（≈1 个月度调仓周期），重抽 2000 次，分别计算每次重抽下两模型的夏普比率差，并据此估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型在评价区间内的真实夏普差为 0；当区间不跨过 0 时拒绝原假设。
+\textbf{成对夏普差异检验。}\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
 
 表 \ref{tab:sharpe_diff} 展示主要配对的结果。Improved Convex Adaptive Global RRP 相对于 Global RRP 的观察夏普差为 \improvedVsGlobalDiff，95\% CI 为 [\improvedVsGlobalCILow, \improvedVsGlobalCIHigh]，双侧 $p$ 值 \improvedVsGlobalPValue，在 95\% 水平上 \improvedVsGlobalSignificant；相对于 Defensive Dynamic RRP 的观察夏普差为 \improvedVsDefensiveDiff，CI [\improvedVsDefensiveCILow, \improvedVsDefensiveCIHigh]，$p$ 值 \improvedVsDefensivePValue，\improvedVsDefensiveSignificant；相对于等权基准的观察夏普差为 \improvedVsEqualDiff，CI [\improvedVsEqualCILow, \improvedVsEqualCIHigh]，$p$ 值 \improvedVsEqualPValue，\improvedVsEqualSignificant。作为反例，Global RRP 与等权基准的差为 \globalVsEqualDiff，CI [\globalVsEqualCILow, \globalVsEqualCIHigh]，$p$ 值 \globalVsEqualPValue，\globalVsEqualSignificant，与"未加约束的宽松风险平价的夏普并未显著高于等权"的预期一致。
 
