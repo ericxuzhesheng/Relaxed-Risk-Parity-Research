@@ -677,10 +677,9 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 收益倾斜项 $\lambda_{return}$ 的零值测试需要单独说明，因为第三章已承诺在此处提供实证证据。将 $\lambda_{return}$ 完全设为 0（即从目标函数中彻底移除历史均值输入项），在 2019-01-01 至评价期末的完整评价窗口内，夏普比率从基准的 1.471 降至 1.391（降幅约 0.08），净年化收益从 5.66\% 降至 5.02\%，最大回撤从 $-3.70\%$ 扩大至 $-4.48\%$，求解器回退率与基准一致（1.0\%）。模型在 $\lambda_{return}=0$ 下绩效有所下降但并未坍塌，夏普比率 1.391 仍处于合理可用范围，这一结果支持第三章的定性判断：$\lambda_{return}=0.06$ 对组合产生温和的方向性修正，但模型的风险调整收益基础主要来自方差控制、风险预算跟踪、CVaR 约束和换手惩罚四项风险端设计，而非历史收益的主动追踪。
 
 \subsection{协方差估计与过拟合诊断}
-\figmaybe{covariance_robustness_sharpe.png}{不同协方差估计下的夏普比率}{fig:cov_sharpe}
-\figmaybe{covariance_robustness_drawdown.png}{不同协方差估计下的回撤表现}{fig:cov_drawdown}
+\figpair{covariance_robustness_sharpe.png}{covariance_robustness_drawdown.png}{不同协方差估计下的夏普比率}{不同协方差估计下的回撤表现}{fig:cov_sharpe}{fig:cov_drawdown}
 \figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
-本文比较了 sample covariance、Ledoit-Wolf 收缩估计以及不同半衰期的 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 表明，主要结论并不依赖单一协方差估计方法，但估计器的选择仍会影响权重细节和换手水平。至于哪一种估计器在未来环境中更优，现有样本尚不足以下定论。
+本文比较了 sample covariance、Ledoit-Wolf 收缩以及不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 显示主要结论不依赖单一协方差估计器，但选择不同估计器会影响权重细节和换手水平。
 
 \figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
 回测中的多重假设检验问题长期存在。White 的现实检验法通过自助法比较最优策略与随机基准的胜出概率，是处理数据窥探偏差的早期统计框架\cite{white2000reality}；Harvey 和 Liu 进一步梳理了多次回测搜索造成统计显著性失真的机制\cite{harvey2015backtesting}。本文采用 CSCV/PBO 来估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选和 35 个区块分割，得到的 PBO 为 0.429。PBO 低于 0.5，说明样本内表现靠前的候选在样本外排序中仍大致位于中位数以上；中位逻辑秩为 0.288，也高于随机基准。这一结果支持主模型结论具有一定稳健性，但它仍然只是对参数选择偏差程度的估计，不能被理解为对未来样本外表现的保证。\footnote{本文 PBO 计算在 CSCV 排名前设置了两项拒绝门：最大回撤超过 $-7.5\%$ 或月均换手超过 3\% 的候选被剔除后才进入 CSCV 候选池。这与 Bailey et al.（2016）\cite{bailey2014probability} 要求的全集 CSCV 计算存在差异，拒绝门的使用会使报告的 PBO 低于全集 PBO。此外，冻结样本外窗口仅约 16 个月，统计功效有限。上述两点局限意味着本文的 PBO 估计应理解为参考值而非严格的过拟合概率上界。}
