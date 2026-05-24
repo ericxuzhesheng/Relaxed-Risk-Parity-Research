@@ -766,14 +766,26 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 
 从资产端风险预算扩展到因子层面是另一条路径，华泰证券对此已有框架性讨论\cite{htsc2025factor}。机器学习和深度强化学习方法也开始进入这一领域（Millea \& Edalat\cite{millea2023drl}；Yang\cite{yang2023drl}；Agal et al.\cite{agal2025ml}），但这类方法在低换手约束和样本外稳健性方面的系统检验，是与本文框架进行有意义比较的前提。对于不受公募杠杆限制的券商自营或私募资金，用国债期货替代国债 ETF、借助保证金制度建立债券端风险暴露，是本模型向更高绝对收益演进的关键路径。表 \ref{tab:futures_universe} 汇总了可用于替代或扩展本文资产池的主要期货品种。
 
-\begin{table}[htbp]
-\centering
-\caption{可替代/扩展资产池的主要期货品种}\label{tab:futures_universe}
-{\small\setlength{\tabcolsep}{4pt}%
-\begin{tabular}{p{2.0cm}p{0.8cm}p{2.8cm}p{2.4cm}p{1.4cm}}
+\begingroup
+\small\setlength{\tabcolsep}{4pt}
+\begin{longtable}{p{2.0cm}p{0.8cm}p{2.8cm}p{2.4cm}p{1.4cm}}
+\caption{可替代/扩展资产池的主要期货品种}\label{tab:futures_universe}\\
 \toprule
 类别 & 代码 & 合约名称 & 对应 ETF/现货 & 交易所 \\
 \midrule
+\endfirsthead
+\multicolumn{5}{c}{\small\itshape（续表）} \\[2pt]
+\toprule
+类别 & 代码 & 合约名称 & 对应 ETF/现货 & 交易所 \\
+\midrule
+\endhead
+\midrule
+\multicolumn{5}{r}{\small\itshape（接下页）} \\
+\endfoot
+\bottomrule
+\multicolumn{5}{@{}p{13cm}@{}}{\footnotesize $^{a}$ 股指期货：以股票价格指数为标的的标准化期货合约，通过保证金制度建立多空方向性权益敞口，无需持有一揽子现货股票。\newline
+  $^{b}$ 商品期货：以大宗商品为标的的标准化合约，可提供实物商品价格敞口，并通过主动展期管理（Roll Management）捕获或规避展期收益/损耗。} \\
+\endlastfoot
 \multirow{4}{*}{股指期货$^{a}$} & IH & 上证50股指期货   & 上证50ETF    & 中金所 \\
                           & IF & 沪深300股指期货  & 沪深300ETF   & 中金所 \\
                           & IC & 中证500股指期货  & 中证500ETF   & 中金所 \\
@@ -791,11 +803,8 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
                           & M  & 豆粕期货   & 豆粕ETF   & 大商所 \\
                           & LH & 生猪期货   & 农产品    & 大商所 \\
                           & FG & 玻璃期货   & 建材      & 郑商所 \\
-\bottomrule
-\multicolumn{5}{@{}p{13cm}@{}}{\footnotesize $^{a}$ 股指期货：以股票价格指数为标的的标准化期货合约，通过保证金制度建立多空方向性权益敞口，无需持有一揽子现货股票。\newline
-  $^{b}$ 商品期货：以大宗商品为标的的标准化合约，可提供实物商品价格敞口，并通过主动展期管理（Roll Management）捕获或规避展期收益/损耗。} \\
-\end{tabular}}
-\end{table}
+\end{longtable}
+\endgroup
 
 本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将固收与商品 ETF 替换为对应期货连续合约——国债期货 TS/TF/T/TL 覆盖完整利率曲线，商品端以黄金 AU、白银 AG、原油 SC、铜 CU、豆粕 M、生猪 LH、玻璃 FG 七个品种替换现货 ETF——同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）\footnote{Portable alpha overlay：在保留原有贝塔敞口（此处为权益 ETF）的基础上，通过叠加衍生品合约在组合层面独立嵌入超额收益来源；股指期货与对应 ETF 同时存在于资产池，优化器自动确定两者配比以实现风险预算下的最优组合。}加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成约 45 个资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
 
