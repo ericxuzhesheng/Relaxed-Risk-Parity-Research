@@ -40,12 +40,12 @@ logger = logging.getLogger(__name__)
 # Each entry: (exchange, [delivery months], roll_days_before_expiry, use_akshare)
 #
 # Data source by exchange:
-#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL
-#   DCE  (大商所)     — Tushare  ✓  M/LH/I/C/Y
-#   INE  (上期能源)   — Tushare  ✓  SC
-#   GFEX (广期所)     — Tushare  ✓  SI/LC (2022+/2023+)
-#   SFE  (上期所)     — akshare  ✓  AU/AG/CU/RB
-#   CZCE (郑商所)     — akshare  ✓  CF/OI/SR  (ZC not available via Sina)
+#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL  → ts_code suffix .CFX
+#   DCE  (大商所)     — Tushare  ✓  M/LH/I/C/Y               → ts_code suffix .DCE
+#   INE  (上期能源)   — Tushare  ✓  SC                        → ts_code suffix .INE
+#   GFEX (广期所)     — Tushare  ✓  SI/LC (2022+/2023+)       → ts_code suffix .GFEX
+#   SHF  (上期所)     — Tushare  ✓  AU/AG/CU/RB               → ts_code suffix .SHF
+#   ZCE  (郑商所)     — Tushare  ✓  SR/CF/OI                  → ts_code suffix .ZCE
 #
 FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     # ── CFX bond futures (Tushare) ────────────────────────────────────────────
@@ -64,15 +64,15 @@ FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     # ── GFEX new energy materials (Tushare) ──────────────────────────────────
     "工业硅期货": ("GFEX", [1, 3, 5, 7, 9, 11],     15, False),  # SI (2022+)
     "碳酸锂期货": ("GFEX", [1, 3, 5, 7, 9, 11],     15, False),  # LC (2023+)
-    # ── SFE precious/industrial metals (akshare Sina) ────────────────────────
-    "黄金期货":   ("SFE",  [2, 4, 6, 8, 10, 12],    15, True),   # AU
-    "白银期货":   ("SFE",  list(range(1, 13)),       15, True),   # AG
-    "铜期货":     ("SFE",  list(range(1, 13)),       15, True),   # CU
-    "螺纹钢期货": ("SFE",  list(range(1, 13)),       15, True),   # RB
-    # ── CZCE agricultural (akshare Sina) ─────────────────────────────────────
-    "白糖期货":   ("CZCE", list(range(1, 13)),       15, True),   # SR
-    "棉花期货":   ("CZCE", list(range(1, 13)),       15, True),   # CF
-    "菜籽油期货": ("CZCE", list(range(1, 13)),       15, True),   # OI
+    # ── SHF precious/industrial metals (Tushare, suffix .SHF) ────────────────
+    "黄金期货":   ("SHF",  [2, 4, 6, 8, 10, 12],    15, False),  # AU
+    "白银期货":   ("SHF",  list(range(1, 13)),       15, False),  # AG
+    "铜期货":     ("SHF",  list(range(1, 13)),       15, False),  # CU
+    "螺纹钢期货": ("SHF",  list(range(1, 13)),       15, False),  # RB
+    # ── ZCE agricultural (Tushare, suffix .ZCE) ──────────────────────────────
+    "白糖期货":   ("ZCE",  list(range(1, 13)),       15, False),  # SR
+    "棉花期货":   ("ZCE",  list(range(1, 13)),       15, False),  # CF
+    "菜籽油期货": ("ZCE",  list(range(1, 13)),       15, False),  # OI
 }
 
 # Product code prefix (before YYMM)
