@@ -806,7 +806,7 @@ R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
 \text{Sharpe}(\lambda) = \frac{\lambda(R - r_f)}{\lambda\sigma} = \frac{R - r_f}{\sigma} = \text{Sharpe}(1)
 \label{eq:sharpe_invariance}
 \end{equation}
-实证结果与理论一致：场景2（$\lambda=1.5$）Sharpe 为 1.261，场景3（$\lambda=2.0$）为 1.265，两者几乎相同，印证了尺度不变性（scale-invariance）。需要注意的是，杠杆放大也线性放大最大回撤（$-4.71\% \to -9.16\% \to -12.54\%$），实际应用中须结合保证金充足率和压力测试确定适宜杠杆水平。
+实证结果与理论一致：场景2（$\lambda=1.5$）Sharpe 为 1.227，场景3（$\lambda=2.0$）为 1.229，两者几乎相同，印证了尺度不变性（scale-invariance）。需要注意的是，杠杆放大也线性放大最大回撤（$-4.66\% \to -9.06\% \to -12.40\%$），实际应用中须结合保证金充足率和压力测试确定适宜杠杆水平。
 
 综合而言，当资金形态允许采用名义敞口分配时，期货路径在 $\lambda=1$ 时（场景1）即可实现 Sharpe 1.660，远超 ETF 基准，且无需承担额外杠杆风险；$\lambda=2$ 时（场景3）净年化收益达 13.23\%，Sharpe 维持在 1.265，是具备保证金管理能力的专业机构资金的有效扩展路径。
 
