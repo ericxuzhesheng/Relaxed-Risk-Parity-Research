@@ -284,6 +284,41 @@ CVaR_\alpha(L)=\min_\eta\left[\eta+\frac{1}{(1-\alpha)T}\sum_{s=1}^{T}\max(L_s-\
 \]
 在当前样本中，Improved Convex Adaptive Global RRP 的平均月度换手率为 \improvedMonthlyTurnover{}。相比 Global RRP 的 \globalMonthlyTurnover{}，$L_1$ 换手惩罚将月度调仓幅度压缩至较低水平，在长期配置语境下有助于降低执行摩擦成本，但相应地，当市场相关结构快速变化时，组合调整速度也会放慢。
 
+\subsection{防御型风险覆盖层（Risk Overlay）}
+防御型动态 RRP 在标准优化框架之外叠加了一个\textbf{事后规则层}（Risk Overlay），该层独立于优化器运行，对优化器输出权重 $\hat{w}_t$ 进行比例缩放：
+\[
+w_t = s_t \cdot \hat{w}_t,\qquad 1 - s_t \text{ 部分分配至货币市场 ETF（511880.SH）}
+\]
+缩放系数 $s_t \in [0.5, 1.0]$ 由当期最大回撤深度 $\mathrm{DD}_t$ 决定，映射规则如表~\ref{tab:overlay_dd} 所示。
+
+\begin{table}[H]
+\centering
+\small
+\caption{回撤缩放映射表}
+\label{tab:overlay_dd}
+\begin{tabular}{lcc}
+\toprule
+回撤区间 & 缩放系数 $s_t$ & 降仓幅度 \\
+\midrule
+$\mathrm{DD}_t < 2.5\%$ & 1.00 & 不降仓 \\
+$2.5\% \leq \mathrm{DD}_t < 4.0\%$ & 0.75 & 降仓 25\% \\
+$4.0\% \leq \mathrm{DD}_t < 8.0\%$ & （线性插值）& —\\
+$\mathrm{DD}_t \geq 8.0\%$ & 0.50 & 降仓 50\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+需要强调的是：回撤控制\textbf{并非}作为约束变量写入优化目标函数，而是作为事后规则在优化完成后独立执行。这一设计使优化器维持凸性与完整投资约束（$\sum w_i=1$），同时通过外部规则层对极端下行期的组合暴露进行动态收缩。
+
+额外的趋势动量过滤和 EMA 偏差信号也在同一覆盖层中处理：EMA 偏差 $d_i = \ln p_i - \ln \mathrm{EMA}_i$ 在优化\textbf{调用前}将超买或止损资产的权重上界（$u_i$）收紧，作为绑定约束参与 KKT 条件求解，而非作为独立事后过滤：
+\begin{itemize}
+\item $d_i > 15\%$（超买）：$u_i$ 压至 20\%
+\item $d_i < -5\%$（止损信号）：$u_i$ 压至 5\%
+\item 其余区间：保持默认上界 45\%
+\end{itemize}
+
+本文第五章中防御型动态 RRP 的低最大回撤部分来自该覆盖层的降仓操作，其效果与 CVaR 约束驱动的尾部控制在机制上不同，二者不应混同。
+
 \subsection{协方差估计方法}
 协方差矩阵的质量直接影响风险预算分配和权重求解。本文在不同模型和稳健性检验中使用三类估计器。
 
