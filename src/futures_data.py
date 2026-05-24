@@ -61,8 +61,10 @@ FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     "国债期货TF": ("CFX",  [3, 6, 9, 12],           15, False),  # 5Y
     "国债期货TS": ("CFX",  [3, 6, 9, 12],           15, False),  # 2Y (2018+)
     # ── CFX stock index futures (Tushare) ─────────────────────────────────────
-    "沪深300股指IF": ("CFX", list(range(1, 13)),    15, False),  # IF (current+next month + quarterly)
-    "中证500股指IC": ("CFX", list(range(1, 13)),    15, False),  # IC
+    "沪深300股指IF":   ("CFX", list(range(1, 13)), 15, False),  # IF
+    "中证500股指IC":   ("CFX", list(range(1, 13)), 15, False),  # IC
+    "上证50股指IH":    ("CFX", list(range(1, 13)), 15, False),  # IH
+    "中证1000股指IM":  ("CFX", list(range(1, 13)), 15, False),  # IM (2022+)
     # ── DCE commodity futures (Tushare) ──────────────────────────────────────
     "豆粕期货":   ("DCE",  [1, 3, 5, 7, 8, 9, 11, 12], 15, False),  # M
     "生猪期货":   ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # LH (2021+)
