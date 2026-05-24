@@ -764,7 +764,36 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \subsection{后续研究方向}
 最直接的改进是成本建模和样本延伸：引入买卖价差和基于成交量的冲击成本函数比固定费率更贴近机构执行环境；当更多 ETF 积累足够历史数据后，跨越更长经济周期重复当前比较也有价值。将研究推进到负债端（现金流预测、久期缺口、资本占用规则）是自然的扩展方向，但超出了本科论文范围。
 
-从资产端风险预算扩展到因子层面是另一条路径，华泰证券对此已有框架性讨论\cite{htsc2025factor}。机器学习和深度强化学习方法也开始进入这一领域（Millea \& Edalat\cite{millea2023drl}；Yang\cite{yang2023drl}；Agal et al.\cite{agal2025ml}），但这类方法在低换手约束和样本外稳健性方面的系统检验，是与本文框架进行有意义比较的前提。对于不受公募杠杆限制的券商自营或私募资金，用国债期货替代国债 ETF、借助保证金制度建立债券端风险暴露，是本模型向更高绝对收益演进的关键路径。
+从资产端风险预算扩展到因子层面是另一条路径，华泰证券对此已有框架性讨论\cite{htsc2025factor}。机器学习和深度强化学习方法也开始进入这一领域（Millea \& Edalat\cite{millea2023drl}；Yang\cite{yang2023drl}；Agal et al.\cite{agal2025ml}），但这类方法在低换手约束和样本外稳健性方面的系统检验，是与本文框架进行有意义比较的前提。对于不受公募杠杆限制的券商自营或私募资金，用国债期货替代国债 ETF、借助保证金制度建立债券端风险暴露，是本模型向更高绝对收益演进的关键路径。表 \ref{tab:futures_universe} 汇总了可用于替代或扩展本文资产池的主要期货品种。
+
+\begin{table}[htbp]
+\centering
+\caption{可替代/扩展资产池的主要期货品种}\label{tab:futures_universe}
+{\small\setlength{\tabcolsep}{4pt}%
+\begin{tabular}{p{1.6cm}p{0.8cm}p{3.2cm}p{2.4cm}p{1.4cm}}
+\toprule
+类别 & 代码 & 合约名称 & 对应 ETF/现货 & 交易所 \\
+\midrule
+\multirow{4}{*}{股指期货} & IH & 上证50股指期货   & 上证50ETF    & 中金所 \\
+                          & IF & 沪深300股指期货  & 沪深300ETF   & 中金所 \\
+                          & IC & 中证500股指期货  & 中证500ETF   & 中金所 \\
+                          & IM & 中证1000股指期货 & 中证1000ETF  & 中金所 \\
+\midrule
+\multirow{4}{*}{国债期货} & TS & 2年期国债期货  & 短端利率     & 中金所 \\
+                          & TF & 5年期国债期货  & 信用债ETF    & 中金所 \\
+                          & T  & 10年期国债期货 & 国债ETF      & 中金所 \\
+                          & TL & 30年期国债期货 & 超长债       & 中金所 \\
+\midrule
+\multirow{7}{*}{商品期货} & AU & 黄金期货   & 黄金ETF   & 上期所 \\
+                          & AG & 白银期货   & 白银LOF   & 上期所 \\
+                          & SC & 原油期货   & 原油ETF   & 上期所 \\
+                          & CU & 铜期货     & 有色ETF   & 上期所 \\
+                          & M  & 豆粕期货   & 豆粕ETF   & 大商所 \\
+                          & LH & 生猪期货   & 农产品    & 大商所 \\
+                          & FG & 玻璃期货   & 建材      & 郑商所 \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将 8 支固收与商品 ETF 替换为对应期货连续合约（国债 T/TF、黄金 AU、白银 AG、铜 CU、豆粕 M、原油 SC、动力煤 ZC），同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成 44 资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
 
