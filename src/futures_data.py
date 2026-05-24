@@ -85,6 +85,8 @@ FUTURES_CODES: dict[str, str] = {
     "国债期货T":  "T",
     "国债期货TF": "TF",
     "国债期货TS": "TS",
+    "沪深300股指IF": "IF",
+    "中证500股指IC": "IC",
     "豆粕期货":   "M",
     "生猪期货":   "LH",
     "铁矿石期货": "I",
@@ -100,6 +102,7 @@ FUTURES_CODES: dict[str, str] = {
     "白糖期货":   "SR",
     "棉花期货":   "CF",
     "菜籽油期货": "OI",
+    "动力煤期货": "ZC",
 }
 
 # First listing dates for products with limited history
