@@ -715,7 +715,7 @@ Improved Convex & 1.096 & 0.510 & 1.101 & 1.712 & $-$6.45\% & $-$9.76\% \\
 
 关键发现：Improved Convex Adaptive Global RRP 的 Sharpe P5 分位为 0.510，最差 5\% 情形仍为正值；Global RRP 的 P5 为 $-$0.156，不利区间存在亏损风险。Improved Convex 的 P50 中位数（1.101）与全样本（1.511）的差距属于正常泛化折扣。分块自助法不能替代真实样本外检验，它估计的是历史数据抽样变异对结论的影响幅度。
 
-\textbf{成对夏普差异检验。}\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
+第二个是成对夏普差异检验。\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
 
 表 \ref{tab:sharpe_diff} 展示主要配对的结果。Improved Convex Adaptive Global RRP 相对于 Global RRP 的观察夏普差为 \improvedVsGlobalDiff，95\% CI 为 [\improvedVsGlobalCILow, \improvedVsGlobalCIHigh]，双侧 $p$ 值 \improvedVsGlobalPValue，在 95\% 水平上 \improvedVsGlobalSignificant；相对于 Defensive Dynamic RRP 的观察夏普差为 \improvedVsDefensiveDiff，CI [\improvedVsDefensiveCILow, \improvedVsDefensiveCIHigh]，$p$ 值 \improvedVsDefensivePValue，\improvedVsDefensiveSignificant；相对于等权基准的观察夏普差为 \improvedVsEqualDiff，CI [\improvedVsEqualCILow, \improvedVsEqualCIHigh]，$p$ 值 \improvedVsEqualPValue，\improvedVsEqualSignificant。作为反例，Global RRP 与等权基准的差为 \globalVsEqualDiff，CI [\globalVsEqualCILow, \globalVsEqualCIHigh]，$p$ 值 \globalVsEqualPValue，\globalVsEqualSignificant，与"未加约束的宽松风险平价的夏普并未显著高于等权"的预期一致。
 
