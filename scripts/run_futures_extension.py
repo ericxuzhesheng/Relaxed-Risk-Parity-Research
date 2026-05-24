@@ -1,11 +1,17 @@
-"""Futures extension experiment — Bridgewater-style comparison.
+"""Futures extension experiment — Bridgewater Notional Allocation comparison.
 
-Runs three scenarios and saves a comparison table + NAV chart:
-  Scenario 0 (ETF Baseline): loads the pre-computed improved convex returns CSV.
-  Scenario 1 (Futures Substitution): replaces bond/commodity ETFs with futures
-              continuous contracts, same Improved Convex config, no leverage.
-  Scenario 2 (Futures + 1.5x Leverage): scales Scenario 1 portfolio returns by
-              1.5 and deducts borrowing cost at 2.5% p.a. on the 0.5x excess.
+Runs four scenarios under the Notional Allocation framework and saves a
+comparison table + NAV chart:
+  Scenario 0  (ETF Baseline):      pre-computed improved convex returns CSV.
+  Scenario 1B (Cash Overlay):      10 ETFs → futures; freed margin earns r_f.
+  Scenario 2B (1.5x Notional):     same positions scaled to 1.5x notional.
+  Scenario 3B (2.0x Notional):     same positions scaled to 2.0x notional.
+
+Replaced ETFs (10 total):
+  国债ETF → T (CFX), 信用债ETF → TF (CFX), 沪深300ETF → IF (CFX),
+  中证500ETF → IC (CFX), 黄金ETF → AU (SHF), 白银LOF → AG (SHF),
+  有色ETF → CU (SHF), 豆粕ETF → M (DCE), 原油ETF → SC (INE),
+  煤炭ETF → ZC (ZCE).
 
 Usage
 -----
