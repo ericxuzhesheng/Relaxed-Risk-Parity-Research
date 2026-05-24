@@ -596,7 +596,7 @@ Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
 
 \figwide{asset_pricing_rolling_betas.png}{Improved Convex Adaptive Global RRP 滚动因子暴露（252日窗口）}{fig:rolling_betas}
 
-图 \ref{fig:rolling_betas} 展示 Improved Convex Adaptive Global RRP 与 Global RRP 在 252 日滚动窗口下的因子暴露时序变化。Improved Convex 的债券暴露范围为 $[-0.16, 2.06]$，商品暴露范围为 $[0.11, 0.22]$，相对稳定；全球风险因子暴露维持在 $[0.15, 0.31]$，表明模型对全球权益系统性风险有持续但适度的暴露。Global RRP 的债券暴露均值更高（$\bar{\beta}_{bond}=1.682$），时序波动也更大，范围 $[-0.71, 4.11]$，反映其在没有换手约束情况下对协方差变化的更直接响应。
+图 \ref{fig:rolling_betas} 展示两模型在 252 日滚动窗口下的因子暴露时序。Improved Convex 的债券暴露范围 $[-0.16, 2.06]$，商品暴露稳定在 $[0.11, 0.22]$。Global RRP 债券暴露均值更高（$\bar{\beta}_{bond}=1.682$），波动更大（$[-0.71, 4.11]$），反映无换手约束时对协方差变化的直接响应。
 
 \figpair{asset_pricing_return_attribution.png}{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:return_attr}{fig:risk_attr}
 
