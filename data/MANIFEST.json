@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-05-24T12:49:23.565026+00:00",
+  "generated_at_utc": "2026-05-24T13:52:00.724448+00:00",
   "source_label": "tushare:etf_prices_updated.csv",
   "source_path": "D:\\Github Repository\\Relaxed-Risk-Parity-Research\\data\\processed\\etf_prices_updated.csv",
   "source_mtime_utc": "2026-05-16T16:16:33.535802+00:00",

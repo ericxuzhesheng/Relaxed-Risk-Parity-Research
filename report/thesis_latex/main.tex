@@ -85,6 +85,31 @@
   }
 }
 
+% 并排双图宏：#1/#2 文件名，#3/#4 caption，#5/#6 label
+\newcommand{\figpair}[6]{%
+  \begin{figure}[tbp]
+    \centering
+    \begin{minipage}[t]{0.48\textwidth}
+      \IfFileExists{../../results/figures/#1}{%
+        \includegraphics[width=\linewidth]{#1}%
+      }{%
+        \fbox{\parbox{\linewidth}{\centering 图文件未找到：#1}}%
+      }
+      \captionof{figure}{#3}
+      \label{#5}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.48\textwidth}
+      \IfFileExists{../../results/figures/#2}{%
+        \includegraphics[width=\linewidth]{#2}%
+      }{%
+        \fbox{\parbox{\linewidth}{\centering 图文件未找到：#2}}%
+      }
+      \captionof{figure}{#4}
+      \label{#6}
+    \end{minipage}
+  \end{figure}
+}
+
 \begin{document}
 
 \makecover
