@@ -910,6 +910,36 @@ candidate\_36 & 120 & sample & 40\% & --- & 0.020 & 0.100 & 0.100 & 0.95 & 0.050
 \end{longtable}
 
 \clearpage
+\section{自适应风险预算超参数}
+\label{app:adaptive_budget_params}
+
+自适应风险预算模块（\texttt{src/adaptive\_risk\_budget.py}）通过合成压力评分动态调整各模型期间的风险预算目标。表 \ref{tab:adaptive_params} 列出全部超参数的取值与含义。这些参数在开发阶段通过先验判断设定，不依赖回测窗口内的收益数据调优。
+
+\begin{table}[H]
+\centering
+\small
+\caption{自适应风险预算超参数汇总}
+\label{tab:adaptive_params}
+\begin{tabular}{llp{7cm}}
+\toprule
+参数 & 取值 & 含义 \\
+\midrule
+波动率压力权重 & 0.45 & 合成压力评分中，年化波动率分项的权重 \\
+损失压力权重   & 0.30 & 合成压力评分中，21 日累积损失分项的权重 \\
+图压力权重     & 0.25 & 合成压力评分中，相关性集中度（图统计量）分项的权重 \\
+状态平滑系数   & 0.80 & 上期压力状态在合成评分中的惯性权重，用于抑制状态频繁切换 \\
+波动率压力阈值 & 18\%  & 对应最大压力（评分 = 1.0）的年化波动率上界 \\
+损失压力阈值   & 8\%   & 对应最大压力（评分 = 1.0）的 21 日累积损失上界 \\
+低风险状态乘数 & 0.75 & 低压力状态下各资产风险预算目标的缩放系数 \\
+中风险状态乘数 & 1.00 & 基准状态（无调整），风险预算维持等风险 \\
+高风险状态乘数 & 1.35 & 高压力状态下，对低波动资产（债券/货币市场）的预算偏移系数 \\
+图压力合成方式 & $0.65\times\rho_{\text{avg}} + 0.35\times\text{HHI}$ & 图统计量由资产平均相关系数和赫芬达尔集中度指数线性合成 \\
+\bottomrule
+\multicolumn{3}{l}{\footnotesize 所有参数在回测启动前固定，评价区间内不更新。} \\
+\end{tabular}
+\end{table}
+
+\clearpage
 \phantomsection
 \addcontentsline{toc}{section}{参考文献}
 \bibliographystyle{gbt7714-numerical}
