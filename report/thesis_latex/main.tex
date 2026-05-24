@@ -795,7 +795,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \end{tabular}}
 \end{table}
 
-本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将 8 支固收与商品 ETF 替换为对应期货连续合约（国债 T/TF、黄金 AU、白银 AG、铜 CU、豆粕 M、原油 SC、动力煤 ZC），同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成 44 资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
+本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将固收与商品 ETF 替换为对应期货连续合约——国债期货 TS/TF/T/TL 覆盖完整利率曲线，商品端以黄金 AU、白银 AG、原油 SC、铜 CU、豆粕 M、生猪 LH、玻璃 FG 七个品种替换现货 ETF——同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成约 45 个资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
 
 \begin{small}
 \begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.6cm}%
@@ -815,17 +815,17 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \multicolumn{3}{r}{\small\itshape （接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{3}{@{}p{14cm}@{}}{\footnotesize 注：动力煤期货（ZC）因 2022 年 5 月起暂停交易，历史数据截至 2022-05-11；中证1000股指期货（IM）于 2022-07-22 上市，历史较短；两者在数据不足阶段被优化器自动排除。} \\
+\multicolumn{3}{@{}p{14cm}@{}}{\footnotesize 注：中证1000股指期货（IM）于 2022-07-22 上市，历史较短，在数据不足阶段被优化器自动排除。} \\
 \endlastfoot
-资产数量 & 30 支 & 约 44 个 \\
+资产数量 & 30 支 & 约 45 个 \\
 \addlinespace
 固收工具 &
   国债 ETF（含短、中、长久期）、日利 ETF（货币市场） &
-  国债期货 T（10 年）/ TF（5 年）替换对应 ETF；日利 ETF 保留作现金管理 \\
+  国债期货 TS（2年）/ TF（5年）/ T（10年）/ TL（30年）覆盖完整利率曲线替换对应 ETF；日利 ETF 保留作现金管理 \\
 \addlinespace
 商品工具 &
   黄金 ETF、豆粕 ETF、白银 LOF、原油 ETF 等现货 ETF，不含展期收益 &
-  黄金 AU、白银 AG、铜 CU、豆粕 M、原油 SC、动力煤 ZC 期货替换；可精细管理展期 \\
+  黄金 AU、白银 AG、原油 SC、铜 CU、豆粕 M、生猪 LH、玻璃 FG 期货替换；可精细管理展期 \\
 \addlinespace
 权益工具 &
   沪深300 / 中证500 / 上证50 / 中证1000 ETF 及行业/主题 ETF &
