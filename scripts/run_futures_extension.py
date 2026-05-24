@@ -251,7 +251,11 @@ def main() -> None:
 
     s2 = run_scenario2(s1["result"], config, eval_start)
     all_metrics.append(s2["metrics"])
-    nav_dict[f"Futures + {LEVERAGE_MULTIPLE}x Leverage"] = s2["nav"]
+    nav_dict["Futures + 1.5x Leverage"] = s2["nav"]
+
+    s3 = run_scenario3(s1["result"], config, eval_start)
+    all_metrics.append(s3["metrics"])
+    nav_dict["Futures + 2.0x Leverage"] = s3["nav"]
 
     # ── Output ───────────────────────────────────────────────────────────────
     save_comparison_table(all_metrics)
