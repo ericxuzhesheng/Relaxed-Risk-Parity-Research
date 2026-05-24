@@ -287,7 +287,11 @@ def save_comparison_table(all_metrics: list[dict]) -> None:
 
 def save_nav_chart(nav_dict: dict[str, pd.Series]) -> None:
     out = resolve_path("results/figures/futures_extension_nav.png")
-    plot_nav_comparison(nav_dict, "Futures Extension: ETF vs Futures vs 1.5x vs 2.0x Leverage", out)
+    plot_nav_comparison(
+        nav_dict,
+        "Futures Extension: Capital Allocation vs Bridgewater Notional Allocation",
+        out,
+    )
     logger.info("Saved NAV chart → %s", out)
 
 
