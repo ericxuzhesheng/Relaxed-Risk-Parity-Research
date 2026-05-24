@@ -689,8 +689,7 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \subsection{分块自助法检验}
 移动分块自助法（Moving Block Bootstrap）通过对历史收益率时间序列进行有放回的随机分块重抽样，生成保留序列自相关结构的伪样本，从而检验绩效指标的抽样分布特征。本文使用 200 个自助样本，分块长度 21 个交易日（约等于一个月度调仓周期），所有检验仅在验证区间内进行。
 
-\fignarrow{robustness_bootstrap_sharpe_distribution.png}{分块自助法夏普比率分布（200 个自助样本）}{fig:boot_sharpe}
-\fignarrow{robustness_bootstrap_drawdown_distribution.png}{分块自助法最大回撤分布（200 个自助样本）}{fig:boot_drawdown}
+\figpair{robustness_bootstrap_sharpe_distribution.png}{robustness_bootstrap_drawdown_distribution.png}{分块自助法夏普比率分布（200 个自助样本）}{分块自助法最大回撤分布（200 个自助样本）}{fig:boot_sharpe}{fig:boot_drawdown}
 
 表 \ref{tab:bootstrap_summary} 汇报各主要模型分块自助法的夏普比率和最大回撤分布统计量。
 
