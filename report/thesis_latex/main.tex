@@ -690,7 +690,7 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 滚动前向验证（Walk-Forward）包含 23 个测试切片，净年化收益为 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}（P5：\walkforwardNetreturnMin，P95：\walkforwardNetreturnMax），夏普比率为 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}（P5：\walkforwardSharpeMin，P95：\walkforwardSharpeMax），最大回撤均值为 \walkforwardMaxddMean。切片较短，指标波动较大，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，所用参数配置（\frozenOosCandidate）为：历史窗口 \frozenOosLookback 日、协方差方法 \frozenOosCovariance、单资产权重上限 \frozenOosMaxWeight、换手上限 \frozenOosTurnoverCap、换手惩罚 $\lambda_{to}=\frozenOosTurnoverPenalty$、CVaR 惩罚 $\lambda_{cvar}=\frozenOosCvarPenalty$、预算惩罚 $\lambda_{budget}=\frozenOosBudgetPenalty$、CVaR 置信水平 $\beta=\frozenOosCvarBeta$、收益倾斜 $\lambda_{return}=\frozenOosReturnReward$。该结果受到样本期内全球权益修复、黄金等分散资产支撑等因素的共同影响，应理解为特定市场背景下的条件性外样本证据。
 
 \subsection{统计显著性检验}
-\textbf{分块自助法。}使用移动分块自助法（Moving Block Bootstrap）对历史收益率进行有放回随机分块重抽样（200 个样本，块长 21 日，仅在验证区间内进行），检验绩效指标的抽样分布。
+本节用两个互补的检验方法评估绩效指标的抽样稳定性。第一个是移动分块自助法（Moving Block Bootstrap）：对历史收益率进行有放回随机分块重抽样（200 个样本，块长 21 日，仅在验证区间内进行），检验绩效指标的抽样分布。
 
 \figpair{robustness_bootstrap_sharpe_distribution.png}{robustness_bootstrap_drawdown_distribution.png}{分块自助法夏普比率分布（200 个自助样本）}{分块自助法最大回撤分布（200 个自助样本）}{fig:boot_sharpe}{fig:boot_drawdown}
 
