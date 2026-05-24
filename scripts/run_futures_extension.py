@@ -1,10 +1,11 @@
-"""Futures extension experiment — Capital Allocation leverage comparison.
+"""Futures extension experiment — Notional Allocation (Bridgewater-style) comparison.
 
-Runs four scenarios and saves a comparison table + NAV chart:
-  Scenario 0 (ETF Baseline):    pre-computed improved convex returns CSV.
-  Scenario 1 (Futures 1x):      10 ETFs → futures, same Improved Convex config.
-  Scenario 2 (Futures 1.5x):    Scenario 1 returns × 1.5, borrow 2.5% p.a.
-  Scenario 3 (Futures 2.0x):    Scenario 1 returns × 2.0, borrow 2.5% p.a.
+Runs four scenarios under the Notional Allocation framework and saves a
+comparison table + NAV chart:
+  Scenario 0 (ETF Baseline): pre-computed improved convex returns CSV.
+  Scenario 1 (Cash Overlay):  10 ETFs → futures; freed margin capital earns r_f.
+  Scenario 2 (1.5x Notional): same positions at 1.5x notional, opp. cost = r_f.
+  Scenario 3 (2.0x Notional): same positions at 2.0x notional, opp. cost = r_f.
 
 Replaced ETFs (10 total):
   国债ETF → T (CFX), 信用债ETF → TF (CFX), 沪深300ETF → IF (CFX),
