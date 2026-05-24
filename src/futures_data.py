@@ -2,9 +2,10 @@
 
 Constructs a daily continuous return series for each futures product by:
 1. Generating the set of quarterly/monthly contract codes for the study period.
-2. Fetching daily close prices for each contract via Tushare pro.fut_daily().
+2. Fetching daily close prices for each contract via Tushare (CFX/DCE/INE/GFEX)
+   or via akshare Sina (SHFE/CZCE — Tushare token permissions not required).
 3. Rolling to the next contract 15 calendar days before expiry (the roll window).
-4. Splicing RETURNS (not prices) at roll dates to avoid gap jumps.
+4. Splicing prices proportionally at roll dates to avoid gap jumps.
 
 The resulting DataFrame has the same format as ETF returns from data_loader.py
 and can be directly merged into the combined asset universe.
@@ -22,6 +23,12 @@ import numpy as np
 import pandas as pd
 import tushare as ts
 
+try:
+    import akshare as ak
+    _AKSHARE_AVAILABLE = True
+except ImportError:
+    _AKSHARE_AVAILABLE = False
+
 from src.data_loader import price_to_returns
 from src.utils import get_config, resolve_path
 
@@ -29,27 +36,46 @@ from src.utils import get_config, resolve_path
 logger = logging.getLogger(__name__)
 
 # ── Contract specifications ────────────────────────────────────────────────────
-
-# Each entry: (exchange, [delivery month numbers], roll_days_before_expiry)
-# Quarterly bond futures: March, June, September, December
-# Gold (AU/AG): bi-monthly (even months) for AU, all months for AG
-# Industrial metals/commodities: main active months
-# Accessible exchanges with current Tushare token:
-#   CFX (中金所): bond futures T/TF/TS/TL  ✓
-#   DCE (大商所): soybean meal M, hog LH    ✓
-#   INE (上期能源): crude oil SC             ✓
-# Excluded (no data permissions): SHFE (AU/AG/CU/RB), CZCE (ZC)
-FUTURES_SPECS: dict[str, tuple[str, list[int], int]] = {
-    "国债期货TL": ("CFX", [3, 6, 9, 12], 15),          # 30Y bond futures (2023+)
-    "国债期货T":  ("CFX", [3, 6, 9, 12], 15),           # 10Y bond futures
-    "国债期货TF": ("CFX", [3, 6, 9, 12], 15),           # 5Y bond futures
-    "国债期货TS": ("CFX", [3, 6, 9, 12], 15),           # 2Y bond futures (2018+)
-    "豆粕期货":   ("DCE", [1, 3, 5, 7, 8, 9, 11, 12], 15),  # M
-    "生猪期货":   ("DCE", [1, 3, 5, 7, 9, 11], 15),     # LH — odd months (2021+)
-    "原油期货":   ("INE", list(range(1, 13)), 15),       # SC — all months
+#
+# Each entry: (exchange, [delivery months], roll_days_before_expiry, use_akshare)
+#
+# Data source by exchange:
+#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL
+#   DCE  (大商所)     — Tushare  ✓  M/LH/I/C/Y
+#   INE  (上期能源)   — Tushare  ✓  SC
+#   GFEX (广期所)     — Tushare  ✓  SI/LC (2022+/2023+)
+#   SFE  (上期所)     — akshare  ✓  AU/AG/CU/RB
+#   CZCE (郑商所)     — akshare  ✓  CF/OI/SR  (ZC not available via Sina)
+#
+FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
+    # ── CFX bond futures (Tushare) ────────────────────────────────────────────
+    "国债期货TL": ("CFX",  [3, 6, 9, 12],           15, False),  # 30Y (2023+)
+    "国债期货T":  ("CFX",  [3, 6, 9, 12],           15, False),  # 10Y
+    "国债期货TF": ("CFX",  [3, 6, 9, 12],           15, False),  # 5Y
+    "国债期货TS": ("CFX",  [3, 6, 9, 12],           15, False),  # 2Y (2018+)
+    # ── DCE commodity futures (Tushare) ──────────────────────────────────────
+    "豆粕期货":   ("DCE",  [1, 3, 5, 7, 8, 9, 11, 12], 15, False),  # M
+    "生猪期货":   ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # LH (2021+)
+    "铁矿石期货": ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # I
+    "玉米期货":   ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # C
+    "豆油期货":   ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # Y
+    # ── INE energy (Tushare) ─────────────────────────────────────────────────
+    "原油期货":   ("INE",  list(range(1, 13)),       15, False),  # SC (2018+)
+    # ── GFEX new energy materials (Tushare) ──────────────────────────────────
+    "工业硅期货": ("GFEX", [1, 3, 5, 7, 9, 11],     15, False),  # SI (2022+)
+    "碳酸锂期货": ("GFEX", [1, 3, 5, 7, 9, 11],     15, False),  # LC (2023+)
+    # ── SFE precious/industrial metals (akshare Sina) ────────────────────────
+    "黄金期货":   ("SFE",  [2, 4, 6, 8, 10, 12],    15, True),   # AU
+    "白银期货":   ("SFE",  list(range(1, 13)),       15, True),   # AG
+    "铜期货":     ("SFE",  list(range(1, 13)),       15, True),   # CU
+    "螺纹钢期货": ("SFE",  list(range(1, 13)),       15, True),   # RB
+    # ── CZCE agricultural (akshare Sina) ─────────────────────────────────────
+    "白糖期货":   ("CZCE", list(range(1, 13)),       15, True),   # SR
+    "棉花期货":   ("CZCE", list(range(1, 13)),       15, True),   # CF
+    "菜籽油期货": ("CZCE", list(range(1, 13)),       15, True),   # OI
 }
 
-# Tushare product codes (prefix before YY+MM)
+# Product code prefix (before YYMM)
 FUTURES_CODES: dict[str, str] = {
     "国债期货TL": "TL",
     "国债期货T":  "T",
@@ -57,51 +83,64 @@ FUTURES_CODES: dict[str, str] = {
     "国债期货TS": "TS",
     "豆粕期货":   "M",
     "生猪期货":   "LH",
+    "铁矿石期货": "I",
+    "玉米期货":   "C",
+    "豆油期货":   "Y",
     "原油期货":   "SC",
+    "工业硅期货": "SI",
+    "碳酸锂期货": "LC",
+    "黄金期货":   "AU",
+    "白银期货":   "AG",
+    "铜期货":     "CU",
+    "螺纹钢期货": "RB",
+    "白糖期货":   "SR",
+    "棉花期货":   "CF",
+    "菜籽油期货": "OI",
 }
 
-# Expected first trading dates for products with limited history
+# First listing dates for products with limited history
 PRODUCT_LIST_DATE: dict[str, str] = {
-    "国债期货TL": "2023-04-21",   # 30Y bond futures listed 2023-04-21
-    "国债期货TS": "2018-08-17",   # 2Y bond futures listed 2018-08-17
-    "生猪期货":   "2021-01-08",   # Live hog futures listed 2021-01-08
-    "原油期货":   "2018-03-26",   # Crude oil futures listed 2018-03-26
+    "国债期货TL": "2023-04-21",
+    "国债期货TS": "2018-08-17",
+    "生猪期货":   "2021-01-08",
+    "原油期货":   "2018-03-26",
+    "工业硅期货": "2022-12-26",
+    "碳酸锂期货": "2023-07-21",
 }
 
 FUTURES_CACHE_PATH = resolve_path("data/processed/futures_prices.csv")
 FUTURES_UNIVERSE = list(FUTURES_SPECS.keys())
 
 
-def _contract_expiry_date(year: int, month: int, exchange: str) -> datetime:
-    """Approximate expiry date for a futures contract.
+# ── Contract code generation ───────────────────────────────────────────────────
 
-    Bond futures (CFX): last Friday of the delivery month.
-    SHFE/DCE/INE/CZCE: typically the 15th or last business day of the month;
-    we use the 15th as a conservative lower bound.
-    """
+def _contract_expiry_date(year: int, month: int, exchange: str) -> datetime:
+    """Approximate expiry date for a futures contract."""
     if exchange == "CFX":
-        # CFX bond futures (T/TF/TS/TL): actual last trading day is the SECOND Friday
-        # of the delivery month (not month-end). Using month-end caused the roll window
-        # to be triggered only after the contract had already stopped trading.
+        # Bond futures: second Friday of the delivery month
         first_day = datetime(year, month, 1)
         days_to_friday = (4 - first_day.weekday()) % 7
         first_friday = first_day + timedelta(days=days_to_friday)
-        second_friday = first_friday + timedelta(weeks=1)
-        return second_friday
+        return first_friday + timedelta(weeks=1)
     if exchange == "INE":
-        # SC crude oil: last trading day is in the month BEFORE delivery (not delivery month).
-        # Use the last calendar day of the preceding month as a conservative expiry bound.
+        # SC crude oil: last trading day is in the preceding month
         prev_month = month - 1 if month > 1 else 12
         prev_year = year if month > 1 else year - 1
         last_day = calendar.monthrange(prev_year, prev_month)[1]
         return datetime(prev_year, prev_month, last_day)
-    # For other commodity futures use the 15th of the month as approximate expiry
+    # SHFE/DCE/CZCE/GFEX: use the 15th as a conservative expiry bound
     return datetime(year, month, 15)
 
 
 def _generate_contract_codes(name: str, start_year: int, end_year: int) -> list[tuple[str, datetime]]:
-    """Return list of (ts_code, expiry_date) for all contracts in the period."""
-    exchange, months, _ = FUTURES_SPECS[name]
+    """Return (ts_code, expiry_date) pairs for all delivery months in the period.
+
+    All codes use the 2-digit year format (YYMM) which works for both Tushare
+    and akshare Sina. For Tushare products the exchange suffix (.CFX/.DCE/etc.)
+    is appended; for akshare products the suffix is also appended but stripped
+    later in _fetch_contract_akshare().
+    """
+    exchange, months, _roll, _use_ak = FUTURES_SPECS[name]
     code = FUTURES_CODES[name]
     list_date_str = PRODUCT_LIST_DATE.get(name)
     list_date = pd.Timestamp(list_date_str) if list_date_str else pd.Timestamp("2010-01-01")
@@ -113,17 +152,46 @@ def _generate_contract_codes(name: str, start_year: int, end_year: int) -> list[
             expiry = _contract_expiry_date(year, month, exchange)
             if pd.Timestamp(expiry) < list_date:
                 continue
-            if exchange == "CZCE":
-                # CZCE uses 3-digit year + 2-digit month: ZC401.CZCE (2024 Jan)
-                ts_code = f"{code}{str(year)[1:]}{month:02d}.{exchange}"
-            else:
-                ts_code = f"{code}{yy}{month:02d}.{exchange}"
+            ts_code = f"{code}{yy}{month:02d}.{exchange}"
             contracts.append((ts_code, expiry))
     return contracts
 
 
-def _fetch_contract(pro, ts_code: str, start_date: str, end_date: str) -> pd.Series | None:
-    """Fetch daily close price for one contract; return None on failure."""
+# ── Data fetching ──────────────────────────────────────────────────────────────
+
+def _tushare_to_sina_code(ts_code: str) -> str:
+    """Strip the exchange suffix to get the Sina futures symbol.
+
+    e.g. AU2412.SFE → AU2412, CF2401.CZCE → CF2401
+    """
+    return ts_code.split(".")[0]
+
+
+def _fetch_contract_akshare(ts_code: str) -> pd.Series | None:
+    """Fetch daily close price for one contract via akshare (Sina Finance)."""
+    if not _AKSHARE_AVAILABLE:
+        logger.warning("akshare not installed — cannot fetch %s", ts_code)
+        return None
+    sina_code = _tushare_to_sina_code(ts_code)
+    try:
+        df = ak.futures_zh_daily_sina(symbol=sina_code)
+    except Exception as exc:
+        logger.debug("akshare.futures_zh_daily_sina(%s): %s", sina_code, exc)
+        return None
+    if df is None or df.empty:
+        return None
+    df = df.copy()
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.set_index("date").sort_index()
+    if "volume" in df.columns:
+        df = df[df["volume"].fillna(0) > 0]
+    if df.empty:
+        return None
+    return df["close"].astype(float).rename(ts_code)
+
+
+def _fetch_contract_tushare(pro, ts_code: str, start_date: str, end_date: str) -> pd.Series | None:
+    """Fetch daily close price for one contract via Tushare pro.fut_daily()."""
     try:
         df = pro.fut_daily(ts_code=ts_code, start_date=start_date, end_date=end_date)
         time.sleep(0.2)
@@ -142,22 +210,33 @@ def _fetch_contract(pro, ts_code: str, start_date: str, end_date: str) -> pd.Ser
     return df["close"].astype(float).rename(ts_code)
 
 
+def _fetch_contract(
+    pro,
+    ts_code: str,
+    start_date: str,
+    end_date: str,
+    use_akshare: bool = False,
+) -> pd.Series | None:
+    """Dispatch to Tushare or akshare based on the use_akshare flag."""
+    if use_akshare:
+        return _fetch_contract_akshare(ts_code)
+    return _fetch_contract_tushare(pro, ts_code, start_date, end_date)
+
+
+# ── Continuous contract construction ──────────────────────────────────────────
+
 def build_continuous_price(
     name: str,
     contracts: list[tuple[str, datetime]],
     all_prices: dict[str, pd.Series],
     roll_days: int = 15,
 ) -> pd.Series | None:
-    """Build a continuous price series by stitching contracts at roll dates.
+    """Build a proportionally back-adjusted continuous price series.
 
     Roll occurs when the front contract is within ``roll_days`` calendar days
-    of its expiry. Prices are back-adjusted at each roll using the ratio of
-    the two contracts' close prices on the roll date (proportional adjustment).
+    of its expiry. At each roll the cumulative adjustment factor is updated
+    using the ratio of the two contracts' close prices on the roll date.
     """
-    if not all_prices:
-        return None
-
-    # Build date-indexed DataFrame of all available contracts
     available = {code: s for code, s in all_prices.items() if s is not None and len(s) > 0}
     if not available:
         return None
@@ -165,7 +244,6 @@ def build_continuous_price(
     price_df = pd.concat(list(available.values()), axis=1).sort_index()
     all_dates = price_df.index
 
-    # Sort contracts by expiry
     sorted_contracts = sorted(
         [(c, e) for c, e in contracts if c in available],
         key=lambda x: x[1],
@@ -175,16 +253,14 @@ def build_continuous_price(
 
     continuous_prices: list[float] = []
     continuous_index: list[pd.Timestamp] = []
-    cumulative_adj = 1.0  # multiplier applied to older prices
+    cumulative_adj = 1.0
     current_contract_idx = 0
 
     for date in all_dates:
-        # Advance to the front contract that has data and hasn't expired + roll window
         while current_contract_idx < len(sorted_contracts) - 1:
             curr_code, curr_expiry = sorted_contracts[current_contract_idx]
             roll_date = curr_expiry - timedelta(days=roll_days)
             if date.to_pydatetime() >= roll_date:
-                # Roll: check if next contract has data on this date
                 next_code, _ = sorted_contracts[current_contract_idx + 1]
                 curr_price = price_df.loc[date, curr_code] if curr_code in price_df.columns else np.nan
                 next_price = price_df.loc[date, next_code] if next_code in price_df.columns else np.nan
@@ -207,17 +283,22 @@ def build_continuous_price(
         return None
 
     series = pd.Series(continuous_prices, index=continuous_index, name=name)
-    # Normalize so the series starts at 100
-    series = series / series.iloc[0] * 100.0
-    return series
+    return series / series.iloc[0] * 100.0
 
+
+# ── Top-level fetch / load ─────────────────────────────────────────────────────
 
 def fetch_futures_prices(
     start_date: str = "20180101",
     end_date: str | None = None,
     names: list[str] | None = None,
 ) -> pd.DataFrame:
-    """Fetch and construct continuous contract prices for all futures."""
+    """Fetch and construct continuous contract prices for all futures products.
+
+    Tushare-based products (CFX/DCE/INE/GFEX) and akshare-based products
+    (SFE/CZCE) are handled transparently. Products for which data is unavailable
+    are skipped with a warning rather than raising an error.
+    """
     config = get_config()
     token = config.get("tushare_token", "")
     if not token:
@@ -233,18 +314,18 @@ def fetch_futures_prices(
 
     frames: list[pd.Series] = []
     for name in target_names:
-        print(f"Building continuous contract for {name}...")
+        _exchange, _months, roll_days, use_akshare = FUTURES_SPECS[name]
+        print(f"Building continuous contract for {name} "
+              f"({'akshare' if use_akshare else 'tushare'})...")
         contracts = _generate_contract_codes(name, start_year, end_year)
         all_prices: dict[str, pd.Series] = {}
-        roll_days = FUTURES_SPECS[name][2]
 
         for ts_code, expiry in contracts:
-            # Only fetch if the contract was active in our window
             if expiry < datetime.strptime(start_date, "%Y%m%d"):
                 continue
             contract_start = (expiry - timedelta(days=365)).strftime("%Y%m%d")
             contract_start = max(contract_start, start_date)
-            s = _fetch_contract(pro, ts_code, contract_start, end_date)
+            s = _fetch_contract(pro, ts_code, contract_start, end_date, use_akshare=use_akshare)
             if s is not None and not s.empty:
                 all_prices[ts_code] = s
                 logger.debug("  Fetched %s: %d rows", ts_code, len(s))
@@ -262,12 +343,15 @@ def fetch_futures_prices(
             logger.warning("Failed to build continuous series for %s.", name)
 
     if not frames:
-        raise RuntimeError("No futures data fetched. Check Tushare token and permissions.")
+        raise RuntimeError("No futures data fetched. Check token and permissions.")
 
     prices = pd.concat(frames, axis=1).sort_index()
     FUTURES_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
     prices.to_csv(FUTURES_CACHE_PATH)
-    logger.info("Saved futures prices → %s (%d rows, %d assets)", FUTURES_CACHE_PATH, len(prices), prices.shape[1])
+    logger.info(
+        "Saved futures prices → %s (%d rows, %d assets)",
+        FUTURES_CACHE_PATH, len(prices), prices.shape[1],
+    )
     return prices
 
 
