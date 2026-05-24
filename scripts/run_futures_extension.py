@@ -7,11 +7,10 @@ comparison table + NAV chart:
   Scenario 2 (1.5x Notional): same positions at 1.5x notional, opp. cost = r_f.
   Scenario 3 (2.0x Notional): same positions at 2.0x notional, opp. cost = r_f.
 
-Replaced ETFs (10 total):
-  国债ETF → T (CFX), 信用债ETF → TF (CFX), 沪深300ETF → IF (CFX),
-  中证500ETF → IC (CFX), 黄金ETF → AU (SHF), 白银LOF → AG (SHF),
-  有色ETF → CU (SHF), 豆粕ETF → M (DCE), 原油ETF → SC (INE),
-  煤炭ETF → ZC (ZCE).
+Replaced ETFs (8 fixed-income/commodity): 国债ETF→T, 信用债ETF→TF,
+  黄金ETF→AU, 白银LOF→AG, 有色ETF→CU, 豆粕ETF→M, 原油ETF→SC, 煤炭ETF→ZC.
+Equity ETF overlay (portable alpha): 沪深300ETF/中证500ETF/中证1000ETF kept;
+  IF/IC/IH/IM added as additional assets alongside corresponding ETFs.
 
 Usage
 -----
