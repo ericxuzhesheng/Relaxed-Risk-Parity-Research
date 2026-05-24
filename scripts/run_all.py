@@ -32,7 +32,6 @@ logger = logging.getLogger("run_all")
 PIPELINE: list[tuple[str, list[str]]] = [
     ("update_etf_data", ["python", "scripts/update_etf_data.py"]),
     ("convex_adaptive_rrp", ["python", "scripts/run_convex_adaptive_rrp.py"]),
-    ("hrp_comparison", ["python", "scripts/run_hrp_comparison.py"]),
     ("benchmark_suite", ["python", "scripts/run_benchmark_suite.py"]),
     ("walkforward_validation", ["python", "scripts/run_walkforward_validation.py"]),
     ("cscv_pbo", ["python", "scripts/run_cscv_pbo.py"]),
