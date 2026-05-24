@@ -360,23 +360,18 @@ def main() -> None:
         all_metrics.append(s0["metrics"])
         nav_dict["ETF Baseline"] = s0["nav"]
 
-    # S1 is computed but not reported — its result feeds the BW scenarios
+    # ── Capital Allocation scenarios ─────────────────────────────────────────
     s1 = run_scenario1(combined_returns, config, eval_start)
+    all_metrics.append(s1["metrics"])
+    nav_dict["S1: Futures 1x"] = s1["nav"]
 
-    # ── Bridgewater Notional Allocation scenarios (reported) ─────────────────
-    s1b = run_scenario_bw_cash_overlay(s1["result"], config, eval_start)
-    all_metrics.append(s1b["metrics"])
-    nav_dict["S1B: Futures 1x + Cash Overlay (BW)"] = s1b["nav"]
+    s2 = run_scenario2(s1["result"], config, eval_start)
+    all_metrics.append(s2["metrics"])
+    nav_dict["S2: Futures 1.5x (borrow 2.5%)"] = s2["nav"]
 
-    s2b = run_scenario_bw_notional(s1["result"], config, eval_start,
-                                   notional_factor=1.5, scenario_label="2B")
-    all_metrics.append(s2b["metrics"])
-    nav_dict["S2B: Futures 1.5x Notional (BW)"] = s2b["nav"]
-
-    s3b = run_scenario_bw_notional(s1["result"], config, eval_start,
-                                   notional_factor=2.0, scenario_label="3B")
-    all_metrics.append(s3b["metrics"])
-    nav_dict["S3B: Futures 2.0x Notional (BW)"] = s3b["nav"]
+    s3 = run_scenario3(s1["result"], config, eval_start)
+    all_metrics.append(s3["metrics"])
+    nav_dict["S3: Futures 2.0x (borrow 2.5%)"] = s3["nav"]
 
     # ── Output ───────────────────────────────────────────────────────────────
     save_comparison_table(all_metrics)
