@@ -40,12 +40,12 @@ logger = logging.getLogger(__name__)
 # Each entry: (exchange, [delivery months], roll_days_before_expiry, use_akshare)
 #
 # Data source by exchange:
-#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL  → ts_code suffix .CFX
+#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL, stock index IF/IC/IH  → ts_code suffix .CFX
 #   DCE  (大商所)     — Tushare  ✓  M/LH/I/C/Y               → ts_code suffix .DCE
 #   INE  (上期能源)   — Tushare  ✓  SC                        → ts_code suffix .INE
 #   GFEX (广期所)     — Tushare  ✓  SI/LC (2022+/2023+)       → ts_code suffix .GFEX
 #   SHF  (上期所)     — Tushare  ✓  AU/AG/CU/RB               → ts_code suffix .SHF
-#   ZCE  (郑商所)     — Tushare  ✓  SR/CF/OI                  → ts_code suffix .ZCE
+#   ZCE  (郑商所)     — Tushare  ✓  SR/CF/OI/ZC               → ts_code suffix .ZCE
 #
 FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     # ── CFX bond futures (Tushare) ────────────────────────────────────────────
@@ -53,6 +53,9 @@ FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     "国债期货T":  ("CFX",  [3, 6, 9, 12],           15, False),  # 10Y
     "国债期货TF": ("CFX",  [3, 6, 9, 12],           15, False),  # 5Y
     "国债期货TS": ("CFX",  [3, 6, 9, 12],           15, False),  # 2Y (2018+)
+    # ── CFX stock index futures (Tushare) ─────────────────────────────────────
+    "沪深300股指IF": ("CFX", list(range(1, 13)),    15, False),  # IF (current+next month + quarterly)
+    "中证500股指IC": ("CFX", list(range(1, 13)),    15, False),  # IC
     # ── DCE commodity futures (Tushare) ──────────────────────────────────────
     "豆粕期货":   ("DCE",  [1, 3, 5, 7, 8, 9, 11, 12], 15, False),  # M
     "生猪期货":   ("DCE",  [1, 3, 5, 7, 9, 11],     15, False),  # LH (2021+)
