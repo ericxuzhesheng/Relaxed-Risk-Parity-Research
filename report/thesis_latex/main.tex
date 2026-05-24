@@ -508,11 +508,8 @@ HERC Benchmark & \hercNetReturn & \hercSharpe & \hercMaxDD & \hercCalmar & \herc
 \end{table}
 
 \subsection{净值路径与回撤分析}
-\figwide{convex_adaptive_nav_comparison.png}{核心模型累计净值路径比较}{fig:nav}
-图 \ref{fig:nav} 给出了六个核心模型在统一评价区间内的累计净值路径。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段都保持更高的累计净值，其中后者的路径更平稳。HERC 的曲线则更接近斜率较缓的直线，这与其近乎全仓债券的配置结构一致。净值路径能够直观呈现收益积累过程，但若要判断模型优劣，仍需结合回撤深度和换手成本一并考察。
-
-\figwide{convex_adaptive_drawdown_comparison.png}{核心模型回撤路径比较}{fig:drawdown}
-最大回撤反映投资者在历史净值曲线上所经历的峰值到谷值的最大跌幅，长期资金对此指标关注程度较高。Improved Convex Adaptive Global RRP 的最大回撤为 \improvedMaxDD，相比 Global RRP 的 \globalMaxDD 有所改善。两个模型最深的回撤都出现在 2022 年市场下行期间。
+\figpair{convex_adaptive_nav_comparison.png}{convex_adaptive_drawdown_comparison.png}{核心模型累计净值路径比较}{核心模型回撤路径比较}{fig:nav}{fig:drawdown}
+图 \ref{fig:nav} 展示了六个核心模型在评价区间内的累计净值路径。Convex Adaptive 与 Improved Convex Adaptive Global RRP 在多数阶段净值较高，后者路径更平稳；HERC 的曲线接近缓斜直线，与其近乎全仓债券的结构一致。图 \ref{fig:drawdown} 中，Improved Convex Adaptive Global RRP 最大回撤为 \improvedMaxDD，优于 Global RRP 的 \globalMaxDD，两者最深回撤均发生于 2022 年市场下行期。
 
 \subsection{换手率与权重结构分析}
 \figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
