@@ -598,10 +598,9 @@ Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
 
 图 \ref{fig:rolling_betas} 展示 Improved Convex Adaptive Global RRP 与 Global RRP 在 252 日滚动窗口下的因子暴露时序变化。Improved Convex 的债券暴露范围为 $[-0.16, 2.06]$，商品暴露范围为 $[0.11, 0.22]$，相对稳定；全球风险因子暴露维持在 $[0.15, 0.31]$，表明模型对全球权益系统性风险有持续但适度的暴露。Global RRP 的债券暴露均值更高（$\bar{\beta}_{bond}=1.682$），时序波动也更大，范围 $[-0.71, 4.11]$，反映其在没有换手约束情况下对协方差变化的更直接响应。
 
-\figmaybe{asset_pricing_return_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{fig:return_attr}
-\figmaybe{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:risk_attr}
+\figpair{asset_pricing_return_attribution.png}{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:return_attr}{fig:risk_attr}
 
-表 \ref{tab:return_risk_attr} 整理了 Improved Convex Adaptive Global RRP 的收益与方差归因结果。从收益来源看，商品/黄金因子贡献最大（43.2\%），其次为债券（27.0\%）和权益（25.3\%），防御性资产贡献约 4.6\%。这一格局与权重路径一致：黄金和大宗商品 ETF 在样本期表现突出，是净收益的主要来源。从风险来源（方差份额）看，权益因子贡献最大（59.1\%），商品/黄金次之（33.8\%），债券方差贡献极低（0.8\%），反映债券端整体波动较低。
+表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，商品/黄金贡献最大（43.2\%），债券（27.0\%）和权益（25.3\%）次之——黄金 ETF 在样本期表现突出是主因。风险方面，权益因子方差份额最高（59.1\%），债券仅 0.8\%，债券端以低波动换取了近 27\% 的收益贡献。
 
 \begin{table}[H]
 \centering
