@@ -267,12 +267,12 @@ Convex Adaptive Global RRP 将风险预算思想转化为凸化近似，使模�
 J(w)=\lambda_{var} w^T\Sigma_t w+\lambda_{budget}||w-b_t||_2^2
 \]
 \[
-\quad+\lambda_{turnover}||w-w_{t-1}^{+}||_1+\lambda_{cvar}CVaR_{\alpha}(w)-\lambda_{return}\mu_t^T w
+\quad+(\lambda_{turnover}+\lambda_{tc}\cdot c)\,||w-w_{t-1}^{+}||_1+\lambda_{cvar}CVaR_{\alpha}(w)-\lambda_{return}\mu_t^T w
 \]
 \[
 \sum_i w_i=1,\quad 0\leq w_i\leq u_i,\quad L_g\leq \sum_{i\in g}w_i\leq U_g
 \]
-目标函数中各项分工明确：方差项控制整体波动；预算跟踪项让权重不偏离风险预算太远；$L_1$ 换手惩罚项直接压低交易频率；CVaR 项把历史尾部损失纳入考量。需特别指出：Convex Adaptive Global RRP 默认设 $\lambda_{cvar}=0$，CVaR 惩罚项实际上并未启用；CVaR 约束在 Improved Convex Adaptive Global RRP 中才被显式激活（$\lambda_{cvar}=\frozenOosCvarPenalty$），这是后者相对前者的关键差异之一。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。
+目标函数中各项分工明确：方差项控制整体波动；预算跟踪项让权重不偏离风险预算太远；换手惩罚项直接压低交易频率；CVaR 项把历史尾部损失纳入考量。其中，换手惩罚由两个同方向的 $L_1$ 分量叠加而成：一是正则化换手惩罚 $\lambda_{turnover}$，用于约束调仓幅度；二是交易成本代理项 $\lambda_{tc}\cdot c$，其中 $\lambda_{tc}=1$，$c$ 为单边交易成本（默认 $3$ bps），使优化器在内生化交易摩擦的同时保持求解器凸性。在冻结样本外配置（candidate\_09）中，$\lambda_{turnover}=0.010$，$\lambda_{tc}\cdot c=0.0003$，合并有效系数约为 $0.0103$。需特别指出：Convex Adaptive Global RRP 默认设 $\lambda_{cvar}=0$，CVaR 惩罚项实际上并未启用；CVaR 约束在 Improved Convex Adaptive Global RRP 中才被显式激活（$\lambda_{cvar}=\frozenOosCvarPenalty$），这是后者相对前者的关键差异之一。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。
 
 关于收益倾斜项 $-\lambda_{return}\mu_t^T w$，其定位需要在哲学层面加以说明。风险平价的核心思想是放弃对收益率的精确预测、将配置决策的依据完全置于风险端，第二章文献综述亦援引 Chopra 与 Ziemba（1993）\cite{chopra1993effect} 的研究——收益率估计误差对组合效用的损耗约为协方差估计误差的十倍——作为"放弃收益预测"这一设计选择的计量依据。在此背景下，目标函数中保留历史均值输入项在逻辑链条上存在内在张力，需要明确解释。
 
