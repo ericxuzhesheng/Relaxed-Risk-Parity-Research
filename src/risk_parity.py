@@ -200,61 +200,52 @@ def solve_relaxed_rp(
     config: dict,
     diagnostics: dict | None = None,
 ) -> np.ndarray:
-    """Solve the relaxed risk-parity (Model C) program.
+    """Solve the Global Relaxed Risk Parity program (Section 3.3 of thesis).
 
-    On SLSQP failure the fallback is the standard RP solution (already a
-    feasible point of the relaxed program); this is preferred over equal
-    weights because it preserves the risk-budget anchor.
+    Implements the quadratic-penalty form:
+
+        min_w  Σ_i (RC_i/σ_p − b_i)²  +  λ_reg · ‖w − w_0‖²
+
+    where RC_i = w_i·(Σw)_i/σ_p is asset i's risk contribution, b_i = 1/n
+    is the equal risk budget, w_0 is the standard-RP anchor, and
+    λ_reg = config["lambda_pen"].
+
+    Constraints: Σwᵢ = 1, wᵢ ≥ 0, wᵢ ≤ max_weight.
+
+    Parameters mu, Theta, R_base are unused; retained for API compatibility
+    with callers in backtest.py and dynamic_selection.py.
+
+    On SLSQP failure the fallback is the standard RP solution.
     """
     if diagnostics is not None:
         _record(diagnostics, _new_diag())
 
     rp_diag = _new_diag()
     x_rp = solve_standard_rp(Sigma, n_assets, config, diagnostics=rp_diag)
-    zeta0 = Sigma @ x_rp
-    sigma0 = np.sqrt(x_rp @ Sigma @ x_rp)
-    psi0 = sigma0 / np.sqrt(n_assets)
-    gamma0 = np.min(x_rp * zeta0)
-    rho0 = 0.1
-    v0 = np.concatenate((x_rp, zeta0, [psi0, gamma0, rho0]))
+    x0 = x_rp.copy()
+    b = np.ones(n_assets) / n_assets
+    lambda_reg = float(config.get("lambda_pen", 1.9))
+    w0 = x_rp.copy()
 
-    R_target = config["m"] * max(R_base, 0)
+    def objective(x: np.ndarray) -> float:
+        sigma_p = np.sqrt(x @ Sigma @ x)
+        if sigma_p < 1e-12:
+            return 1e10
+        # Fractional risk contributions: RC_i / σ_p = w_i·(Σw)_i / σ_p²
+        rc_frac = x * (Sigma @ x) / (sigma_p * sigma_p)
+        budget_dev = float(np.sum((rc_frac - b) ** 2))
+        reg = lambda_reg * float(np.sum((x - w0) ** 2))
+        return budget_dev + reg
 
-    def objective(v):
-        return v[2 * n_assets] - v[2 * n_assets + 1]
-
-    def eq_constraints(v):
-        x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-        return np.concatenate([zeta - Sigma @ x, [np.sum(x) - 1]])
-
-    def ineq_constraints(v):
-        x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-        psi, gamma, rho = (
-            v[2 * n_assets],
-            v[2 * n_assets + 1],
-            v[2 * n_assets + 2],
-        )
-        con1 = x * zeta - gamma**2
-        con2 = rho**2 - config["lambda_pen"] * (x @ Theta @ x)
-        con3 = n_assets * (psi**2 - rho**2) - x @ Sigma @ x
-        con4 = mu @ x - R_target
-        return np.concatenate([con1, [con2, con3, con4]])
-
-    bounds = (
-        [config["asset_weight_bounds"]] * n_assets
-        + [(0, None)] * n_assets
-        + [(0, 10)] * 3
-    )
+    constraints = [{"type": "eq", "fun": lambda x: np.sum(x) - 1.0}]
+    bounds = [config["asset_weight_bounds"]] * n_assets
 
     try:
         res = minimize(
             objective,
-            v0,
+            x0,
             method="SLSQP",
-            constraints=[
-                {"type": "eq", "fun": eq_constraints},
-                {"type": "ineq", "fun": ineq_constraints},
-            ],
+            constraints=constraints,
             bounds=bounds,
             options={"ftol": config["optim_tol"], "maxiter": config["optim_maxiter"]},
         )
@@ -274,7 +265,7 @@ def solve_relaxed_rp(
             solver_message=str(res.message),
             objective_value=float(res.fun),
         )
-        return res.x[:n_assets]
+        return res.x
 
     _record_failure(
         diagnostics,
