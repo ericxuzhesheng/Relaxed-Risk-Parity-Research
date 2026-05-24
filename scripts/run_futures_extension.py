@@ -44,17 +44,21 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 # ETFs replaced by futures in the mixed universe (new_name column values).
-# Tushare (CFX/DCE/INE/GFEX): T, TF, M, SC + new I, C, Y, SI, LC, LH
-# akshare Sina (SFE/CZCE):    AU, AG, CU, RB, SR, CF, OI
-# ZC (thermal coal, CZCE) not available via Sina — 煤炭ETF kept as ETF.
+# CFX: T, TF (bond), IF (沪深300股指), IC (中证500股指)
+# DCE: M (豆粕), SC via INE (原油)
+# SHF: AU (黄金), AG (白银), CU (铜)
+# ZCE: ZC (动力煤)
 REPLACED_ETFS = {
-    "国债ETF",    # → 国债期货T   (CFX, Tushare)
-    "信用债ETF",  # → 国债期货TF  (CFX, Tushare)
-    "豆粕ETF",    # → 豆粕期货M   (DCE, Tushare)
-    "原油ETF",    # → 原油期货SC  (INE, Tushare)
-    "黄金ETF",    # → 黄金期货AU  (SFE, akshare)
-    "白银LOF",    # → 白银期货AG  (SFE, akshare)
-    "有色ETF",    # → 铜期货CU    (SFE, akshare)
+    "国债ETF",    # → 国债期货T   (CFX)
+    "信用债ETF",  # → 国债期货TF  (CFX)
+    "豆粕ETF",    # → 豆粕期货M   (DCE)
+    "原油ETF",    # → 原油期货SC  (INE)
+    "黄金ETF",    # → 黄金期货AU  (SHF)
+    "白银LOF",    # → 白银期货AG  (SHF)
+    "有色ETF",    # → 铜期货CU    (SHF)
+    "沪深300ETF", # → 沪深300股指IF (CFX)
+    "中证500ETF", # → 中证500股指IC (CFX)
+    "煤炭ETF",    # → 动力煤期货ZC  (ZCE)
 }
 
 # candidate_09 configuration (the "improved" model's winning parameters)
