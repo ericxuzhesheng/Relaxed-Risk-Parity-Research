@@ -128,7 +128,7 @@ def _contract_expiry_date(year: int, month: int, exchange: str) -> datetime:
         prev_year = year if month > 1 else year - 1
         last_day = calendar.monthrange(prev_year, prev_month)[1]
         return datetime(prev_year, prev_month, last_day)
-    # SHFE/DCE/CZCE/GFEX: use the 15th as a conservative expiry bound
+    # SHF/DCE/ZCE/GFEX: use the 15th as a conservative expiry bound
     return datetime(year, month, 15)
 
 
