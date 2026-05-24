@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 # Each entry: (exchange, [delivery months], roll_days_before_expiry, use_akshare)
 #
 # Data source by exchange:
-#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL, stock index IF/IC/IH  → ts_code suffix .CFX
+#   CFX  (中金所)     — Tushare  ✓  bond futures T/TF/TS/TL, stock index IF/IC/IH/IM → ts_code suffix .CFX
 #   DCE  (大商所)     — Tushare  ✓  M/LH/I/C/Y               → ts_code suffix .DCE
 #   INE  (上期能源)   — Tushare  ✓  SC                        → ts_code suffix .INE
 #   GFEX (广期所)     — Tushare  ✓  SI/LC (2022+/2023+)       → ts_code suffix .GFEX
