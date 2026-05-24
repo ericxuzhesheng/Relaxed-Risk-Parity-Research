@@ -491,7 +491,7 @@ HERC Benchmark & \hercNetReturn & \hercSharpe & \hercMaxDD & \hercCalmar & \herc
 
 \subsection{换手率与权重结构分析}
 \figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
-换手率直接影响交易费用总额，也关系到组合日常管理的复杂程度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别达到 \globalMonthlyTurnover 和 \defensiveMonthlyTurnover，说明在缺少换手约束时，基础风险预算模型的调仓频率往往较高。Improved Convex Adaptive Global RRP 在引入 $L_1$ 惩罚后，换手率控制在 \improvedMonthlyTurnover，显著低于 HRP（\hrpMonthlyTurnover）和 HERC（\hercMonthlyTurnover）。不过，低换手并非没有代价；当市场相关结构快速变化时，组合调整速度也会相应放慢。
+换手率直接影响交易费用总额，也关系到组合日常管理的复杂程度。Global RRP 和 Defensive Dynamic RRP 的平均月度换手率分别达到 \globalMonthlyTurnover 和 \defensiveMonthlyTurnover，说明在缺少换手约束时，基础风险预算模型的调仓频率往往较高。Improved Convex Adaptive Global RRP 在引入 $L_1$ 惩罚后，换手率控制在 \improvedMonthlyTurnover，显著低于 HERC（\hercMonthlyTurnover）。不过，低换手并非没有代价；当市场相关结构快速变化时，组合调整速度也会相应放慢。
 
 \figwide{weight_path_asset_group_comparison.png}{Improved Convex Adaptive Global RRP、Global RRP、HRP 基准模型与 HERC 基准模型的资产组权重路径}{fig:weight_path}
 
