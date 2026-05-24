@@ -174,6 +174,104 @@ def run_scenario3(scenario1_result: pd.DataFrame, config: dict, eval_start: str)
     return run_leveraged_scenario(scenario1_result, config, eval_start, leverage=2.0, scenario_idx=3)
 
 
+# ── Bridgewater Notional Allocation scenarios ──────────────────────────────────
+
+def apply_cash_overlay(
+    base_returns: pd.Series,
+    risk_free_rate_pa: float,
+    margin_ratio: float = MARGIN_RATIO,
+    trading_days: int = 243,
+) -> pd.Series:
+    """Add freed-margin cash yield to futures portfolio returns.
+
+    With futures, only margin_ratio of notional is posted as collateral.
+    The remaining (1 - margin_ratio) capital earns r_f in MMF/repo daily.
+    This is the key mechanism behind Bridgewater's capital efficiency.
+    """
+    daily_cash_yield = (1.0 - margin_ratio) * risk_free_rate_pa / trading_days
+    return base_returns + daily_cash_yield
+
+
+def apply_notional_allocation(
+    base_returns: pd.Series,
+    notional_factor: float,
+    risk_free_rate_pa: float,
+    trading_days: int = 243,
+) -> pd.Series:
+    """Bridgewater Notional Allocation: r_f on full capital + leveraged excess return.
+
+    Economic model:
+      - All capital C sits in MMF → earns r_f per year
+      - Futures provide notional_factor × C exposure → adds notional_factor × excess_return
+      - No external borrowing; financing cost is only the opportunity cost r_f
+
+    Return = r_f + notional_factor × (R_futures - r_f)
+           = notional_factor × R_futures - (notional_factor - 1) × r_f
+    """
+    r_f_daily = risk_free_rate_pa / trading_days
+    return base_returns * notional_factor - (notional_factor - 1.0) * r_f_daily
+
+
+def run_scenario_bw_cash_overlay(
+    scenario1_result: pd.DataFrame,
+    config: dict,
+    eval_start: str,
+) -> dict:
+    """Scenario 1B: same futures positions as S1 + freed margin earns r_f.
+
+    Demonstrates that even at 1x notional, futures outperform ETFs because
+    the non-margin capital earns risk-free return — no leverage required.
+    """
+    eval_df = scenario1_result[pd.to_datetime(scenario1_result["date"]) >= pd.Timestamp(eval_start)].copy()
+    r_f = config.get("risk_free_rate", 0.0)
+    enhanced_returns = apply_cash_overlay(
+        eval_df["portfolio_return"].fillna(0.0),
+        risk_free_rate_pa=r_f,
+        margin_ratio=MARGIN_RATIO,
+        trading_days=config["trading_days_per_year"],
+    )
+    nav = (1.0 + enhanced_returns).cumprod()
+    nav.index = pd.to_datetime(eval_df["date"])
+    metrics = calculate_metrics(nav, r_f, config["trading_days_per_year"])
+    metrics["model"] = (
+        f"Scenario 1B: Futures + Cash Overlay "
+        f"({MARGIN_RATIO*100:.0f}% margin / {r_f*100:.2f}% cash yield)"
+    )
+    metrics["avg_monthly_turnover"] = float(eval_df["turnover"].fillna(0.0).mean())
+    return {"metrics": metrics, "nav": nav}
+
+
+def run_scenario_bw_notional(
+    scenario1_result: pd.DataFrame,
+    config: dict,
+    eval_start: str,
+    notional_factor: float,
+    scenario_label: str,
+) -> dict:
+    """Bridgewater Notional Allocation at a given leverage factor.
+
+    Capital sits in MMF at r_f; futures add notional_factor × excess return.
+    Financing cost = r_f (opportunity cost), not a spread above r_f.
+    """
+    eval_df = scenario1_result[pd.to_datetime(scenario1_result["date"]) >= pd.Timestamp(eval_start)].copy()
+    r_f = config.get("risk_free_rate", 0.0)
+    bw_returns = apply_notional_allocation(
+        eval_df["portfolio_return"].fillna(0.0),
+        notional_factor=notional_factor,
+        risk_free_rate_pa=r_f,
+        trading_days=config["trading_days_per_year"],
+    )
+    nav = (1.0 + bw_returns).cumprod()
+    nav.index = pd.to_datetime(eval_df["date"])
+    metrics = calculate_metrics(nav, r_f, config["trading_days_per_year"])
+    metrics["model"] = (
+        f"Scenario {scenario_label}: Futures {notional_factor}x Notional Alloc "
+        f"(opp. cost {r_f*100:.2f}%)"
+    )
+    metrics["avg_monthly_turnover"] = float(eval_df["turnover"].fillna(0.0).mean())
+    return {"metrics": metrics, "nav": nav}
+
+
 def save_comparison_table(all_metrics: list[dict]) -> None:
     df = pd.DataFrame(all_metrics)
     cols_order = ["model", "annualized_return", "annualized_volatility", "sharpe_ratio",
