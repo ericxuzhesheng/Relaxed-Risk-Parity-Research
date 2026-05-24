@@ -71,7 +71,10 @@ IMPROVED_CFG_PARAMS = dict(
 )
 
 LEVERAGE_MULTIPLE = 1.5
-BORROW_RATE_PA = 0.025  # 2.5% annual borrowing cost on excess notional
+BORROW_RATE_PA = 0.025  # 2.5% annual borrowing cost on excess notional (Capital Alloc model)
+MARGIN_RATIO = 0.08     # avg initial margin as fraction of notional (conservative estimate)
+# Bridgewater Notional Allocation: capital sits in MMF at r_f; futures add
+# notional_factor × (R_futures - r_f) on top.  Financing cost = r_f only, no spread.
 
 
 def load_scenario0_returns(eval_start: str, config: dict) -> dict:
