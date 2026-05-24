@@ -627,9 +627,8 @@ Factor & Return Share & Variance Share \\
 \section{稳健性检验与过拟合诊断}
 
 \subsection{子区间与压力期检验}
-\fignarrow{robustness_subperiod_sharpe.png}{子区间夏普比率稳健性}{fig:sub_sharpe}
-\fignarrow{robustness_subperiod_drawdown.png}{子区间最大回撤稳健性}{fig:sub_drawdown}
-图 \ref{fig:sub_sharpe} 和图 \ref{fig:sub_drawdown} 展示了不同子区间下的夏普比率和最大回撤。与全样本结果相比，子区间指标通常波动更大，因为短样本更容易受到市场状态变化的影响。这组图的意义在于观察结论在哪些阶段较为稳固、在哪些阶段有所减弱，而不是据此反向寻找所谓的”最优子区间”。
+\figpair{robustness_subperiod_sharpe.png}{robustness_subperiod_drawdown.png}{子区间夏普比率稳健性}{子区间最大回撤稳健性}{fig:sub_sharpe}{fig:sub_drawdown}
+图 \ref{fig:sub_sharpe}--\ref{fig:sub_drawdown} 展示各子区间的夏普比率和最大回撤。子区间指标通常比全样本波动更大，这里的用途是观察结论在哪些阶段有所减弱，而非寻找”最优子区间”。
 
 跨 5 个子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [0.959, 1.741]，均值 1.246，无一子区间出现负值。其最弱子区间为 2021 年后的收紧期（post\_2021），对应全球权益和债券双杀的市场环境；在该子区间内 Global RRP 的夏普比率降至 0.162，而 Improved Convex 仍维持在 0.959，展示出较强的下行防护能力，但这也是主模型在子区间内表现最逊色的阶段，需要明确披露。
 
