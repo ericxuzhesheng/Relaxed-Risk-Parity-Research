@@ -72,10 +72,11 @@ FUTURES_SPECS: dict[str, tuple[str, list[int], int, bool]] = {
     "白银期货":   ("SHF",  list(range(1, 13)),       15, False),  # AG
     "铜期货":     ("SHF",  list(range(1, 13)),       15, False),  # CU
     "螺纹钢期货": ("SHF",  list(range(1, 13)),       15, False),  # RB
-    # ── ZCE agricultural (Tushare, suffix .ZCE) ──────────────────────────────
+    # ── ZCE agricultural + energy (Tushare, suffix .ZCE) ────────────────────
     "白糖期货":   ("ZCE",  list(range(1, 13)),       15, False),  # SR
     "棉花期货":   ("ZCE",  list(range(1, 13)),       15, False),  # CF
     "菜籽油期货": ("ZCE",  list(range(1, 13)),       15, False),  # OI
+    "动力煤期货": ("ZCE",  [1, 3, 5, 7, 9, 11],     15, False),  # ZC (coal)
 }
 
 # Product code prefix (before YYMM)
