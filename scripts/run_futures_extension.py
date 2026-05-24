@@ -137,21 +137,38 @@ def apply_leverage(
     return base_returns * leverage - daily_borrow_cost
 
 
-def run_scenario2(scenario1_result: pd.DataFrame, config: dict, eval_start: str) -> dict:
-    """Apply 1.5x leverage to Scenario 1 portfolio returns."""
+def run_leveraged_scenario(
+    scenario1_result: pd.DataFrame,
+    config: dict,
+    eval_start: str,
+    leverage: float,
+    scenario_idx: int,
+) -> dict:
+    """Apply a given leverage multiplier to Scenario 1 portfolio returns."""
     eval_df = scenario1_result[pd.to_datetime(scenario1_result["date"]) >= pd.Timestamp(eval_start)].copy()
     leveraged_returns = apply_leverage(
         eval_df["portfolio_return"].fillna(0.0),
-        leverage=LEVERAGE_MULTIPLE,
+        leverage=leverage,
         borrow_rate_pa=BORROW_RATE_PA,
         trading_days=config["trading_days_per_year"],
     )
     nav = (1.0 + leveraged_returns).cumprod()
     nav.index = pd.to_datetime(eval_df["date"])
     metrics = calculate_metrics(nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
-    metrics["model"] = f"Scenario 2: Futures + {LEVERAGE_MULTIPLE}x Leverage ({BORROW_RATE_PA*100:.1f}% borrow)"
+    metrics["model"] = (
+        f"Scenario {scenario_idx}: Futures + {leverage}x Leverage "
+        f"({BORROW_RATE_PA*100:.1f}% borrow)"
+    )
     metrics["avg_monthly_turnover"] = float(eval_df["turnover"].fillna(0.0).mean())
     return {"metrics": metrics, "nav": nav}
+
+
+def run_scenario2(scenario1_result: pd.DataFrame, config: dict, eval_start: str) -> dict:
+    return run_leveraged_scenario(scenario1_result, config, eval_start, leverage=1.5, scenario_idx=2)
+
+
+def run_scenario3(scenario1_result: pd.DataFrame, config: dict, eval_start: str) -> dict:
+    return run_leveraged_scenario(scenario1_result, config, eval_start, leverage=2.0, scenario_idx=3)
 
 
 def save_comparison_table(all_metrics: list[dict]) -> None:
