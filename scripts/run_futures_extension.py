@@ -243,7 +243,7 @@ def run_scenario_bw_cash_overlay(
     nav.index = pd.to_datetime(eval_df["date"])
     metrics = calculate_metrics(nav, r_f, config["trading_days_per_year"])
     metrics["model"] = (
-        f"Scenario 1B: Futures + Cash Overlay "
+        f"Scenario 1: Futures + Cash Overlay "
         f"({MARGIN_RATIO*100:.0f}% margin / {r_f*100:.2f}% cash yield)"
     )
     metrics["avg_monthly_turnover"] = float(eval_df["turnover"].fillna(0.0).mean())
