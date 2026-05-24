@@ -635,9 +635,7 @@ Factor & Return Share & Variance Share \\
 \figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
 图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。在已测试的 $[0, 50]$ bps 月单边费率扫描范围内，Improved Convex Adaptive Global RRP 相对于 Global RRP 的净年化收益优势始终为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal；本文 3 bps 的设定显著低于该阈值，说明主要结论对成本假设的合理变动具有稳健性。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
 
-主模型 CVaR 参数的选取遵循先验惯例，而非来自回测调优。置信水平 $\alpha=0.95$ 是金融风险管理的行业基准：巴塞尔协议将 99\% VaR 作为市场风险资本要求的标准计量基准，而 95\% CVaR 在期望损失覆盖上与之接近，同时在 Rockafellar 与 Uryasev（2000）\cite{rockafellar2000optimization} 的凸化 CVaR 优化框架中具有良好的数值性质，是组合优化文献中最常用的置信水平。回望窗口 252 日对应一个自然历年的标准交易日数，是时间序列分析中"一年"的惯用代理变量，选取该值无需任何样本期绩效信息。换言之，若在回测启动前即确定 $\alpha=0.95$、窗口 252 日，所得结果与当前完全一致——这两个参数不依赖结果反向校准。
-
-CVaR 参数敏感性分析在 $\beta \in \{0.90, 0.95, 0.975, 0.99\}$ 和回望窗口 $\in \{126, 252, 504\}$ 两个维度上共测试 12 个变体，以 Improved Convex Adaptive Global RRP 为基础模型，其余参数保持一致。表 \ref{tab:cvar_sensitivity} 汇报各变体均值指标。
+主模型的 CVaR 置信水平 $\alpha=0.95$（组合优化文献惯用水平）和回望窗口 252 日（自然年交易日数）均依先验惯例确定，不依赖回测结果反向校准\cite{rockafellar2000optimization}。敏感性分析在 $\beta \in \{0.90, 0.95, 0.975, 0.99\}$ 和窗口 $\in \{126, 252, 504\}$ 上共测试 12 个变体，结果见表~\ref{tab:cvar_sensitivity}。
 
 \begin{table}[H]
 \centering
