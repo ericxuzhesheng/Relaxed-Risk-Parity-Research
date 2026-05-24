@@ -1,11 +1,18 @@
 """Futures continuous contract data for the Bridgewater-style extension experiment.
 
 Constructs a daily continuous return series for each futures product by:
-1. Generating the set of quarterly/monthly contract codes for the study period.
-2. Fetching daily close prices for each contract via Tushare (CFX/DCE/INE/GFEX)
-   or via akshare Sina (SHFE/CZCE — Tushare token permissions not required).
+1. Generating the set of contract codes for the study period (2018–present).
+2. Fetching daily close prices for each contract via Tushare (all exchanges).
 3. Rolling to the next contract 15 calendar days before expiry (the roll window).
 4. Splicing prices proportionally at roll dates to avoid gap jumps.
+
+Exchanges covered (all via Tushare):
+  CFX  (中金所)  — bond futures T/TF/TS/TL, stock index futures IF/IC
+  DCE  (大商所)  — M, LH, I, C, Y
+  INE  (上期能源) — SC
+  GFEX (广期所)  — SI, LC (2022+/2023+)
+  SHF  (上期所)  — AU, AG, CU, RB
+  ZCE  (郑商所)  — SR, CF, OI, ZC
 
 The resulting DataFrame has the same format as ETF returns from data_loader.py
 and can be directly merged into the combined asset universe.
