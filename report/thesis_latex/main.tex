@@ -99,9 +99,9 @@
 \begin{abstract}
 长期资产配置面对的根本问题不是预测单一资产的短期涨跌，而是在市场不确定时如何维持合理的风险分散。风险平价以风险预算为基础，降低了对预期收益估计的依赖，但当资产池扩展至全球多资产 ETF 时，相关结构动态变化、严格等风险贡献约束的非凸性以及交易成本的累积都构成实际问题。
 
-本文围绕宽松风险平价思想，以 \etfCount 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。资产池覆盖债券、A 股宽基、中国科技、中国行业与消费、港股、全球股票和大宗商品七大类风险来源，其中中国科技板块细分为半导体、人工智能、机器人、新能源、中韩半导体、科创50和云计算共七支主题 ETF。绩效评价区间为 2019-01-01 至 \dataLastDate，共 \evalMonths 个按月观察点，采用月度调仓、\txCostBps{} bps 交易成本扣减和无前视设计。在同一回测框架下，本文比较了 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 以及层次化基准 HRP、HERC 的表现。
+本文围绕宽松风险平价思想，以 \etfCount 支可交易全球多资产 ETF 为研究对象，构建统一的回测框架。资产池覆盖债券、A 股宽基、中国科技、中国行业与消费、港股、全球股票和大宗商品七大类风险来源，其中中国科技板块细分为半导体、人工智能、机器人、新能源、中韩半导体、科创50和云计算共七支主题 ETF。绩效评价区间为 2019-01-01 至 \dataLastDate，共 \evalMonths 个按月观察点，采用月度调仓、\txCostBps{} bps 交易成本扣减和无前视设计。在同一回测框架下，本文比较了 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 以及层次化基准 HERC 的表现。
 
-Global RRP 净年化收益为 \globalNetReturn，夏普比率为 \globalSharpe，最大回撤为 \globalMaxDD，平均月度换手率为 \globalMonthlyTurnover，是宽松风险预算在全球 ETF 资产池中的基础版本。Improved Convex Adaptive Global RRP 净年化收益为 \improvedNetReturn，年化波动率为 \improvedVolatility，夏普比率为 \improvedSharpe，Sortino 比率为 \improvedSortino，最大回撤为 \improvedMaxDD，平均月度换手率仅为 \improvedMonthlyTurnover。HRP 与 HERC 净年化收益分别为 \hrpNetReturn{} 与 \hercNetReturn，夏普比率分别为 \hrpSharpe{} 与 \hercSharpe。Improved Convex Adaptive Global RRP 在收益、回撤与换手控制之间取得了较为均衡的结果，但这并不意味着它在每个指标上都占优。
+Global RRP 净年化收益为 \globalNetReturn，夏普比率为 \globalSharpe，最大回撤为 \globalMaxDD，平均月度换手率为 \globalMonthlyTurnover，是宽松风险预算在全球 ETF 资产池中的基础版本。Improved Convex Adaptive Global RRP 净年化收益为 \improvedNetReturn，年化波动率为 \improvedVolatility，夏普比率为 \improvedSharpe，Sortino 比率为 \improvedSortino，最大回撤为 \improvedMaxDD，平均月度换手率仅为 \improvedMonthlyTurnover。HERC 净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe。Improved Convex Adaptive Global RRP 在收益、回撤与换手控制之间取得了较为均衡的结果，但这并不意味着它在每个指标上都占优。
 
 本文所有实证结论均基于特定历史评价区间和约束设定，不构成对未来收益的保证。
 
