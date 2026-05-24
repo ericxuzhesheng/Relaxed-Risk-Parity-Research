@@ -49,22 +49,23 @@ from src.visualization import plot_nav_comparison
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
-# ETFs replaced by futures in the mixed universe (new_name column values).
-# CFX: T, TF (bond), IF (沪深300股指), IC (中证500股指)
+# ETFs replaced by futures in the mixed universe.
+# Equity index ETFs (沪深300/中证500/中证1000) are NOT replaced — they stay in the
+# portfolio alongside IF/IC/IH/IM which act as portable alpha overlay assets.
+# CFX: T, TF (bond futures — still replace fixed-income ETFs)
 # DCE: M (豆粕), SC via INE (原油)
 # SHF: AU (黄金), AG (白银), CU (铜)
-# ZCE: ZC (动力煤)
+# ZCE: ZC (动力煤, data ends 2022-05)
 REPLACED_ETFS = {
-    "国债ETF",    # → 国债期货T   (CFX)
-    "信用债ETF",  # → 国债期货TF  (CFX)
-    "豆粕ETF",    # → 豆粕期货M   (DCE)
-    "原油ETF",    # → 原油期货SC  (INE)
-    "黄金ETF",    # → 黄金期货AU  (SHF)
-    "白银LOF",    # → 白银期货AG  (SHF)
-    "有色ETF",    # → 铜期货CU    (SHF)
-    "沪深300ETF", # → 沪深300股指IF (CFX)
-    "中证500ETF", # → 中证500股指IC (CFX)
-    "煤炭ETF",    # → 动力煤期货ZC  (ZCE)
+    "国债ETF",   # → 国债期货T   (CFX)
+    "信用债ETF", # → 国债期货TF  (CFX)
+    "豆粕ETF",   # → 豆粕期货M   (DCE)
+    "原油ETF",   # → 原油期货SC  (INE)
+    "黄金ETF",   # → 黄金期货AU  (SHF)
+    "白银LOF",   # → 白银期货AG  (SHF)
+    "有色ETF",   # → 铜期货CU    (SHF)
+    "煤炭ETF",   # → 动力煤期货ZC (ZCE)
+    # 沪深300ETF / 中证500ETF kept: IF/IC/IH/IM are overlay, not substitutes
 }
 
 # candidate_09 configuration (the "improved" model's winning parameters)
