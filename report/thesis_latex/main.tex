@@ -768,21 +768,30 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 
 本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将 8 支固收与商品 ETF 替换为对应期货连续合约（国债 T/TF、黄金 AU、白银 AG、铜 CU、豆粕 M、原油 SC、动力煤 ZC），同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成 44 资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
 
-\begin{table}[H]
-\centering
-\small
-\caption{ETF 基准资产池与期货扩充资产池对比}
-\label{tab:pool_comparison}
-\begin{tabularx}{\textwidth}{@{}>{\bfseries\raggedright\arraybackslash}p{2.8cm}%
-  >{\raggedright\arraybackslash}X%
-  >{\raggedright\arraybackslash}X@{}}
+\begin{small}
+\begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.6cm}%
+  >{\raggedright\arraybackslash}p{5.7cm}%
+  >{\raggedright\arraybackslash}p{5.7cm}@{}}
+\caption{ETF 基准资产池与期货扩充资产池对比}\label{tab:pool_comparison}\\
 \toprule
 对比维度 & ETF 资产池（基准） & 期货扩充资产池（扩展） \\
 \midrule
+\endfirsthead
+\multicolumn{3}{c}{\small\itshape （续表）} \\[2pt]
+\toprule
+对比维度 & ETF 资产池（基准） & 期货扩充资产池（扩展） \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{\small\itshape （接下页）} \\
+\endfoot
+\bottomrule
+\multicolumn{3}{@{}p{14cm}@{}}{\footnotesize 注：动力煤期货（ZC）因 2022 年 5 月起暂停交易，历史数据截至 2022-05-11；中证1000股指期货（IM）于 2022-07-22 上市，历史较短；两者在数据不足阶段被优化器自动排除。} \\
+\endlastfoot
 资产数量 & 30 支 & 约 44 个 \\
 \addlinespace
 固收工具 &
-  国债 ETF（1Y/3Y/10Y 久期）、日利 ETF（货币市场） &
+  国债 ETF（含短、中、长久期）、日利 ETF（货币市场） &
   国债期货 T（10 年）/ TF（5 年）替换对应 ETF；日利 ETF 保留作现金管理 \\
 \addlinespace
 商品工具 &
@@ -791,7 +800,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \addlinespace
 权益工具 &
   沪深300 / 中证500 / 上证50 / 中证1000 ETF 及行业/主题 ETF &
-  原权益 ETF 全部保留，叠加 IF / IC / IH / IM 四个股指期货作 portable alpha 层 \\
+  原权益 ETF 全部保留，叠加 IF / IC / IH / IM 四个股指期货构成 portable alpha 层 \\
 \addlinespace
 交易所覆盖 &
   上交所（SSE）、深交所（SZSE） &
@@ -799,11 +808,11 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \addlinespace
 杠杆机制 &
   无杠杆（$\sum_i w_i = 1,\ w_i \geq 0$） &
-  名义敞口倍数 $\lambda \in \{1, 1.5, 2\}$；无需对外借款 \\
+  名义敞口倍数 $\lambda \in \{1,\ 1.5,\ 2\}$；全部资本留在货币市场基金，无需对外借款 \\
 \addlinespace
 资本利用范式 &
   Capital Allocation：100\% 资本映射至现货持仓，资金全额占用 &
-  Notional Allocation：保证金约占 8\%，余约 92\% 配置货币市场基金获取 $r_f$ 收益 \\
+  Notional Allocation：保证金约占 8\%，余约 92\% 配置货币市场基金，每日产生 $r_f$ 收益 \\
 \addlinespace
 现金增强收益 &
   无 &
@@ -811,16 +820,14 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \addlinespace
 月均换手率 &
   0.11\% &
-  0.22\%（各场景相同，换手来源于期货端而非杠杆） \\
+  0.22\%（三个场景相同；换手来源于期货调仓而非杠杆变化） \\
 \addlinespace
 代表性绩效 &
-  Sharpe 1.471，最大回撤 $-3.70\%$ &
-  Sharpe 1.620（$\lambda=1$），最大回撤 $-4.66\%$；\\
-  & & $\lambda=2$ 时年化收益 13.06\%，最大回撤 $-12.40\%$ \\
-\bottomrule
-\multicolumn{3}{@{}p{\textwidth}@{}}{\footnotesize 注：动力煤期货（ZC）因 2022 年 5 月起暂停交易，历史数据截至 2022-05-11；中证1000股指期货（IM）于 2022-07-22 上市，历史较短；两者在数据不足阶段被优化器自动排除。} \\
-\end{tabularx}
-\end{table}
+  Sharpe 1.471，最大回撤 $-3.70\%$，净年化 5.66\% &
+  $\lambda=1$：Sharpe 1.620，最大回撤 $-4.66\%$，净年化 9.22\%；
+  $\lambda=2$：净年化 13.06\%，最大回撤 $-12.40\%$ \\
+\end{longtable}
+\end{small}
 
 名义敞口分配框架的核心机制如下：全部资本 $C$ 放入货币市场基金赚取 $r_f = 1.82\%$，期货保证金约占名义价值的 8\%，剩余约 92\% 的资本既充当超额保证金缓冲又每日产生现金收益，无需对外借款，杠杆成本仅为机会成本 $r_f$。总回报可分解为：
 \begin{equation}
