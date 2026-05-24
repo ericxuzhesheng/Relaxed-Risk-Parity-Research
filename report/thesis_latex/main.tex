@@ -464,25 +464,21 @@ Equal Weight & \equalWeightNetReturn & \equalWeightSharpe & \equalWeightMaxDD & 
 \end{tabular}
 \end{table}
 
-\subsection{HRP/HERC 基准模型对比}
-表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。HRP 基准模型实现了 \hrpNetReturn 的净年化收益，夏普比率为 \hrpSharpe，最大回撤仅为 \hrpMaxDD，Calmar 比率达到 \hrpCalmar，平均月度换手率为 \hrpMonthlyTurnover。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
+\subsection{HERC 基准模型对比}
+表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HERC 基准模型绩效。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
 
-HRP 的负夏普比率主要源于其净年化收益（\hrpNetReturn）略低于同期无风险利率水平（约 \riskFreeRate），这并非真实亏损而是相对表现。HERC 基准模型的夏普比率为 \hercSharpe，在当前样本里是有实质意义的正值。
-
-不过，较高的夏普比率并不足以说明其可以替代主模型。HRP 和 HERC 的绝对年化收益分别只有 \hrpNetReturn 和 \hercNetReturn，与 Improved Convex Adaptive Global RRP 的 \improvedNetReturn 仍有明显差距。这一结果主要来自极低的波动水平，例如 HRP 的年化波动率仅为 \hrpVolatility，而不是来自更充分的多资产分散。后文的权重路径也表明，两者在大部分时间里几乎都维持债券重仓。与此同时，HRP 和 HERC 的月度换手率分别为 \hrpMonthlyTurnover 和 \hercMonthlyTurnover，同样显著高于 Improved Convex Adaptive Global RRP 的 \improvedMonthlyTurnover。
+HERC 的绝对年化收益（\hercNetReturn）与 Improved Convex Adaptive Global RRP 的 \improvedNetReturn 仍有明显差距。这一结果主要来自 HERC 的较低波动水平（年化波动率 \hercVolatility），背后是其在评价期内对债券类资产的较高集中度。权重路径分析表明，HERC 在多数时间内维持较高比例的债券配置；凸优化框架通过 CVaR 约束和资产组权重上限，将权益和商品的分散化维持在更高水平。
 
 \begin{table}[htbp]
 \centering
-\caption{HRP/HERC 基准模型绩效（评价区间 \evalStartDate{} 至 \evalEndDate）}
+\caption{HERC 基准模型绩效（评价区间 \evalStartDate{} 至 \evalEndDate）}
 \label{tab:benchmark_perf}
 \begin{tabular}{lrrrrr}
 \toprule
 Benchmark & Net Return & Sharpe & Max DD & Calmar & Monthly TO \\
 \midrule
-HRP Benchmark & \hrpNetReturn & \hrpSharpe & \hrpMaxDD & \hrpCalmar$^\ddagger$ & \hrpMonthlyTurnover \\
 HERC Benchmark & \hercNetReturn & \hercSharpe & \hercMaxDD & \hercCalmar & \hercMonthlyTurnover \\
 \bottomrule
-\multicolumn{6}{l}{\footnotesize $^\ddagger$ HRP 最大回撤分母（\hrpMaxDD）接近零，Calmar 比率数值极大，不可与其他模型直接比较。} \\
 \end{tabular}
 \end{table}
 
