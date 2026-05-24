@@ -29,11 +29,17 @@ def calculate_turnover(weights_df: pd.DataFrame) -> float:
     return diff.mean()
 
 
-def calculate_annualized_turnover(turnover: pd.Series, trading_days: int = 243) -> float:
+def calculate_annualized_turnover(turnover: pd.Series, rebalance_freq: int = 12) -> float:
+    """Annualize a per-rebalance turnover series.
+
+    Args:
+        turnover: one value per rebalance event (e.g. monthly series)
+        rebalance_freq: number of rebalance events per year (12 for monthly)
+    """
     turnover = pd.Series(turnover).fillna(0.0)
     if turnover.empty:
         return 0.0
-    return float(turnover.mean() * trading_days)
+    return float(turnover.mean() * rebalance_freq)
 
 
 def drawdown_series(nav_series: pd.Series) -> pd.Series:
@@ -45,10 +51,11 @@ def add_turnover_adjusted_metrics(
     turnover: pd.Series,
     transaction_cost_bps: float = 3.0,
     trading_days: int = 243,
+    rebalance_freq: int = 12,
 ) -> dict:
     adjusted = metrics.copy()
-    annual_cost = calculate_annualized_turnover(turnover, trading_days) * transaction_cost_bps / 10000.0
-    adjusted["annualized_turnover"] = calculate_annualized_turnover(turnover, trading_days)
+    annual_cost = calculate_annualized_turnover(turnover, rebalance_freq) * transaction_cost_bps / 10000.0
+    adjusted["annualized_turnover"] = calculate_annualized_turnover(turnover, rebalance_freq)
     adjusted["turnover_adjusted_return"] = adjusted["annualized_return"] - annual_cost
     vol = adjusted.get("annualized_volatility", 0.0)
     adjusted["turnover_adjusted_sharpe"] = (
