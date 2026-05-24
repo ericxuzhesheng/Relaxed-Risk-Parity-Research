@@ -489,21 +489,23 @@ Equal Weight & \equalWeightNetReturn & \equalWeightSharpe & \equalWeightMaxDD & 
 \end{tabular}
 \end{table}
 
-\subsection{HERC 基准模型对比}
-表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HERC 基准模型绩效。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
+\subsection{HRP 与 HERC 基准模型对比}
+表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。如第~\ref{sec:herc_baseline}~节所述，HRP 在本资产池中退化为准现金配置（组合年化波动率 0.18\%，Sharpe $-$0.748），仍列入此处供参照。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
 
-HERC 的绝对年化收益（\hercNetReturn）与 Improved Convex Adaptive Global RRP 的 \improvedNetReturn 仍有明显差距。这一结果主要来自 HERC 的较低波动水平（年化波动率 \hercVolatility），背后是其在评价期内对债券类资产的较高集中度。权重路径分析表明，HERC 在多数时间内维持较高比例的债券配置；凸优化框架通过 CVaR 约束和资产组权重上限，将权益和商品的分散化维持在更高水平。
+HERC 的绝对年化收益（\hercNetReturn）与 Improved Convex Adaptive Global RRP 的 \improvedNetReturn 仍有明显差距。HERC 年化波动率为 \hercVolatility，在评价期内维持较高比例的债券配置；凸优化框架通过 CVaR 约束和资产组权重上限，将权益和商品的分散化维持在更高水平。
 
 \begin{table}[htbp]
 \centering
-\caption{HERC 基准模型绩效（评价区间 \evalStartDate{} 至 \evalEndDate）}
+\caption{HRP 与 HERC 基准模型绩效（评价区间 \evalStartDate{} 至 \evalEndDate）}
 \label{tab:benchmark_perf}
-\begin{tabular}{lrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
-Benchmark & Net Return & Sharpe & Max DD & Calmar & Monthly TO \\
+Benchmark & Net Return & Volatility & Sharpe & Max DD & Calmar & Monthly TO \\
 \midrule
-HERC Benchmark & \hercNetReturn & \hercSharpe & \hercMaxDD & \hercCalmar & \hercMonthlyTurnover \\
+HRP Benchmark  & 1.69\% & 0.18\% & $-$0.748 & $-$0.08\% & 20.72 & 0.054\% \\
+HERC Benchmark & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD & \hercCalmar & \hercMonthlyTurnover \\
 \bottomrule
+\multicolumn{7}{l}{\footnotesize HRP 组合波动率极低（0.18\%），退化为准现金，Sharpe 为负，列此供结构对比参考。} \\
 \end{tabular}
 \end{table}
 
