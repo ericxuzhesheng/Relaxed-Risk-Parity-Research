@@ -44,20 +44,17 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 logger = logging.getLogger(__name__)
 
 # ETFs replaced by futures in the mixed universe (new_name column values).
-# Only includes ETFs for which Tushare provides accessible futures data:
-#   CFX (中金所) bond futures: T, TF, TS, TL  ✓
-#   DCE (大商所) agricultural: M (豆粕), LH (生猪)  ✓
-#   INE (上期能源): SC (原油)  ✓
-# SHFE (黄金/白银/铜/螺纹钢) and CZCE (动力煤) require higher token permissions — kept as ETF.
+# Tushare (CFX/DCE/INE/GFEX): T, TF, M, SC + new I, C, Y, SI, LC, LH
+# akshare Sina (SFE/CZCE):    AU, AG, CU, RB, SR, CF, OI
+# ZC (thermal coal, CZCE) not available via Sina — 煤炭ETF kept as ETF.
 REPLACED_ETFS = {
-    "国债ETF",    # → 国债期货T  (CFX ✓)
-    "信用债ETF",  # → 国债期货TF (CFX ✓)
-    "豆粕ETF",    # → 豆粕期货M  (DCE ✓)
-    "原油ETF",    # → 原油期货SC (INE ✓)
-    # "黄金ETF",  # → 黄金期货AU  (SHFE — no token access)
-    # "白银LOF",  # → 白银期货AG  (SHFE — no token access)
-    # "有色ETF",  # → 铜期货CU    (SHFE — no token access)
-    # "煤炭ETF",  # → 动力煤ZC    (CZCE — no token access)
+    "国债ETF",    # → 国债期货T   (CFX, Tushare)
+    "信用债ETF",  # → 国债期货TF  (CFX, Tushare)
+    "豆粕ETF",    # → 豆粕期货M   (DCE, Tushare)
+    "原油ETF",    # → 原油期货SC  (INE, Tushare)
+    "黄金ETF",    # → 黄金期货AU  (SFE, akshare)
+    "白银LOF",    # → 白银期货AG  (SFE, akshare)
+    "有色ETF",    # → 铜期货CU    (SFE, akshare)
 }
 
 # candidate_09 configuration (the "improved" model's winning parameters)
