@@ -724,7 +724,7 @@ Improved Convex Adaptive RRP & Equal Weight & \improvedVsEqualDiff & \improvedVs
 Global RRP & Equal Weight & \globalVsEqualDiff & \globalVsEqualCILow & \globalVsEqualCIHigh & \globalVsEqualPValue \\
 Defensive Dynamic RRP & Equal Weight & \defensiveVsEqualDiff & \defensiveVsEqualCILow & \defensiveVsEqualCIHigh & \defensiveVsEqualPValue \\
 \bottomrule
-\multicolumn{6}{@{}p{\textwidth}@{}}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
+\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{\textwidth}@{}}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
 \end{tabularx}
 \end{table}
 
@@ -768,7 +768,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 
 \begingroup
 \small\setlength{\tabcolsep}{4pt}
-\begin{longtable}{p{2.0cm}p{0.8cm}p{2.8cm}p{2.4cm}p{1.4cm}}
+\begin{longtable}{p{2.0cm}p{0.8cm}p{3.6cm}p{2.4cm}p{1.4cm}}
 \caption{可替代/扩展资产池的主要期货品种}\label{tab:futures_universe}\\
 \toprule
 类别 & 代码 & 合约名称 & 对应 ETF/现货 & 交易所 \\
@@ -783,7 +783,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \multicolumn{5}{r}{\small\itshape（接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{5}{@{}p{13cm}@{}}{\footnotesize $^{a}$ 股指期货：以股票价格指数为标的的标准化期货合约，通过保证金制度建立多空方向性权益敞口，无需持有一揽子现货股票。\newline
+\multicolumn{5}{@{}>{\raggedright\arraybackslash}p{13cm}@{}}{\footnotesize $^{a}$ 股指期货：以股票价格指数为标的的标准化期货合约，通过保证金制度建立多空方向性权益敞口，无需持有一揽子现货股票。\newline
   $^{b}$ 商品期货：以大宗商品为标的的标准化合约，可提供实物商品价格敞口，并通过主动展期管理（Roll Management）捕获或规避展期收益/损耗。} \\
 \endlastfoot
 \multirow{4}{*}{股指期货$^{a}$} & IH & 上证50股指期货   & 上证50ETF    & 中金所 \\
@@ -826,7 +826,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \multicolumn{3}{r}{\small\itshape （接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{3}{@{}p{14cm}@{}}{\footnotesize 注：中证1000股指期货（IM）于 2022-07-22 上市，历史较短，在数据不足阶段被优化器自动排除。} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14cm}@{}}{\footnotesize 注：中证1000股指期货（IM）于 2022-07-22 上市，历史较短，在数据不足阶段被优化器自动排除。} \\
 \endlastfoot
 资产数量 & 30 支 & 约 45 个 \\
 \addlinespace
@@ -935,7 +935,7 @@ R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
 \multicolumn{3}{r}{\small\itshape （接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{3}{@{}p{14.2cm}@{}}{\footnotesize $^{a}$~桥水全天候策略相关描述参考：Bridgewater Associates（2012）\cite{bridgewater2012allweather}。} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14.2cm}@{}}{\footnotesize $^{a}$~桥水全天候策略相关描述参考：Bridgewater Associates（2012）\cite{bridgewater2012allweather}。} \\
 \endlastfoot
 牌照与杠杆红线 &
 公募基金/银行理财子/保险委外受限资金。《公募基金运作管理办法》：开放式基金总资产不超过净资产 140\%；本文实证严格设定为无杠杆（$\sum w_i=1$，$w_i\geq 0$），主动对标监管红线以下运营。 &
