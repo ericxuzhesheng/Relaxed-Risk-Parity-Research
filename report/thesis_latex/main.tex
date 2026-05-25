@@ -713,19 +713,19 @@ Improved Convex & 1.096 & 0.510 & 1.101 & 1.712 & $-$6.45\% & $-$9.76\% \\
 \footnotesize
 \caption{成对夏普差异分块自助法检验（2000 次重抽，块长 21 日，95\% 置信水平）}
 \label{tab:sharpe_diff}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xrrrr@{}}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}p{3.2cm}p{4.0cm}rrrr@{}}
 \toprule
-Model A & Model B & Observed Diff. & CI Low & CI High & $p$ Value \\
+Model A & Model B & Obs.\ Diff. & CI Low & CI High & $p$ \\
 \midrule
-Improved Convex Adaptive RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
-Improved Convex Adaptive RRP & Defensive Dynamic RRP & \improvedVsDefensiveDiff & \improvedVsDefensiveCILow & \improvedVsDefensiveCIHigh & \improvedVsDefensivePValue \\
-Improved Convex Adaptive RRP & Equal Weight & \improvedVsEqualDiff & \improvedVsEqualCILow & \improvedVsEqualCIHigh & \improvedVsEqualPValue \\
+Improved Convex\newline Adaptive RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
+Improved Convex\newline Adaptive RRP & Defensive Dynamic RRP & \improvedVsDefensiveDiff & \improvedVsDefensiveCILow & \improvedVsDefensiveCIHigh & \improvedVsDefensivePValue \\
+Improved Convex\newline Adaptive RRP & Equal Weight & \improvedVsEqualDiff & \improvedVsEqualCILow & \improvedVsEqualCIHigh & \improvedVsEqualPValue \\
 Global RRP & Equal Weight & \globalVsEqualDiff & \globalVsEqualCILow & \globalVsEqualCIHigh & \globalVsEqualPValue \\
 Defensive Dynamic RRP & Equal Weight & \defensiveVsEqualDiff & \defensiveVsEqualCILow & \defensiveVsEqualCIHigh & \defensiveVsEqualPValue \\
 \bottomrule
-\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{\textwidth}@{}}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
-\end{tabularx}
+\multicolumn{6}{l}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
+\end{tabular}
 \end{table}
 
 Improved Convex Adaptive Global RRP 相对各参照系的夏普优势在 95\% 水平上均显著；Global RRP 相对等权基准的夏普差不显著，与表 \ref{tab:core_perf} 的点估计一致。该检验与过拟合诊断回答的是不同问题：前者检验评价区间内的抽样变异，后者估计参数选择偏差。
