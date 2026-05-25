@@ -670,10 +670,8 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 
 \subsection{协方差估计与过拟合诊断}
 \figpair{covariance_robustness_sharpe.png}{covariance_robustness_drawdown.png}{不同协方差估计下的夏普比率}{不同协方差估计下的回撤表现}{fig:cov_sharpe}{fig:cov_drawdown}
-\figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
 本文比较了 sample covariance、Ledoit-Wolf 收缩以及不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 显示主要结论不依赖单一协方差估计器，但选择不同估计器会影响权重细节和换手水平。
-
-\figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
+\figpair{covariance_robustness_turnover.png}{robustness_overfitting_diagnostic.png}{不同协方差估计下的换手表现}{过拟合诊断}{fig:cov_turnover}{fig:overfit}
 回测中的多重假设检验问题长期存在。White 的现实检验法通过自助法比较最优策略与随机基准的胜出概率，是处理数据窥探偏差的早期统计框架\cite{white2000reality}；Harvey 和 Liu 进一步梳理了多次回测搜索造成统计显著性失真的机制\cite{harvey2015backtesting}。本文采用 CSCV/PBO 来估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选和 35 个区块分割，得到的 PBO 为 0.429。PBO 低于 0.5，说明样本内表现靠前的候选在样本外排序中仍大致位于中位数以上；中位逻辑秩为 0.288，也高于随机基准。这一结果支持主模型结论具有一定稳健性，但它仍然只是对参数选择偏差程度的估计，不能被理解为对未来样本外表现的保证。\footnote{本文 PBO 计算在 CSCV 排名前设置了两项拒绝门：最大回撤超过 $-7.5\%$ 或月均换手超过 3\% 的候选被剔除后才进入 CSCV 候选池。这与 Bailey et al.（2016）\cite{bailey2014probability} 要求的全集 CSCV 计算存在差异，拒绝门的使用会使报告的 PBO 低于全集 PBO。此外，冻结样本外窗口仅约 16 个月，统计功效有限。上述两点局限意味着本文的 PBO 估计应理解为参考值而非严格的过拟合概率上界。}
 
 滚动前向验证（Walk-Forward）含 23 个测试切片，净年化收益 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}，夏普比率 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}，最大回撤均值 \walkforwardMaxddMean；切片较短，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，候选参数 \frozenOosCandidate，结果受样本期全球权益修复和黄金等分散资产支撑，应理解为特定市场背景下的条件性外样本证据。
