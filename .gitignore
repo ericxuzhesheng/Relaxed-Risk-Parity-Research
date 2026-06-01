@@ -49,6 +49,7 @@ results/quick/
 !results/figures/covariance_robustness_turnover.png
 !results/figures/weight_path_asset_group_comparison.png
 !results/figures/improved_weights_timeline.png
+!results/figures/improved_rrp_vs_hs300_monthly_comparison.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -111,6 +112,8 @@ results/quick/
 !results/tables/sharpe_difference_tests.csv
 !results/tables/transaction_cost_breakeven.csv
 !results/tables/vol_aligned_comparison.csv
+!results/tables/improved_rrp_vs_hs300_monthly_returns.csv
+!results/tables/improved_rrp_vs_hs300_monthly_summary.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

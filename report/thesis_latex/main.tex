@@ -483,6 +483,11 @@ Equal Weight & \equalWeightNetReturn & \equalWeightSharpe & \equalWeightMaxDD & 
 \end{tabular}
 \end{table}
 
+% BEGIN MONTHLY_HS300_COMPARISON
+\subsection{与沪深300ETF的月度收益对比}
+\IfFileExists{generated_hs300_monthly_comparison.tex}{\input{generated_hs300_monthly_comparison.tex}}{\textbf{[HS300 monthly comparison not found --- run scripts/run_monthly_hs300_comparison.py]}}
+% END MONTHLY_HS300_COMPARISON
+
 \subsection{HRP 与 HERC 基准模型对比}
 表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。如第~\ref{sec:herc_baseline}~节所述，HRP 在本资产池中退化为准现金配置（组合年化波动率 0.18\%，Sharpe $-$0.748），仍列入此处供参照。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
 

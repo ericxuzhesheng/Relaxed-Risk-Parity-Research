@@ -39,6 +39,7 @@ PIPELINE: list[tuple[str, list[str]]] = [
     ("robustness_tests", ["python", "scripts/run_robustness_tests.py"]),
     ("vol_aligned_comparison", ["python", "scripts/run_vol_aligned_comparison.py"]),
     ("sharpe_diff_tests", ["python", "scripts/run_sharpe_diff_tests.py"]),
+    ("monthly_hs300_comparison", ["python", "scripts/run_monthly_hs300_comparison.py"]),
     ("generate_thesis_numbers", ["python", "scripts/generate_thesis_numbers.py"]),
 ]
 

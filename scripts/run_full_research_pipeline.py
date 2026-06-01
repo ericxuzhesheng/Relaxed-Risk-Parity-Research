@@ -30,6 +30,7 @@ def steps(quick: bool) -> list[PipelineStep]:
         PipelineStep("showcase_optimization", [python, "scripts/optimize_showcase_rrp.py"], False, [ROOT_DIR / "results/tables/showcase_performance_summary.csv"] if quick else None),
         PipelineStep("hrp_comparison", [python, "scripts/run_hrp_comparison.py"], False, [ROOT_DIR / "results/tables/hrp_comparison.csv"] if quick else None),
         PipelineStep("convex_adaptive_rrp", [python, "scripts/run_convex_adaptive_rrp.py"], True, [ROOT_DIR / "results/tables/convex_adaptive_performance_summary.csv"] if quick else None),
+        PipelineStep("monthly_hs300_comparison", [python, "scripts/run_monthly_hs300_comparison.py"], False, [ROOT_DIR / "results/tables/improved_rrp_vs_hs300_monthly_returns.csv"] if quick else None),
         PipelineStep("extended_sample_robustness", [python, "scripts/run_extended_sample_robustness.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/extended_sample_robustness_summary.csv"] if quick else None),
         PipelineStep("cvar_sensitivity", [python, "scripts/run_cvar_sensitivity.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/cvar_sensitivity_summary.csv"] if quick else None),
         PipelineStep("enhanced_cscv_pbo", [python, "scripts/run_enhanced_cscv_pbo.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv"] if quick else None),

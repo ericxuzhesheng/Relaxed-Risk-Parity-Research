@@ -108,11 +108,11 @@ def _etf_pool_table(out_dir: Path) -> None:
         r"\begin{longtable}{p{3.2cm}p{3.0cm}p{4.8cm}}",
         r"\caption{ETF 资产池}\label{tab:etf_pool}\\",
         r"\toprule",
-        r"ETF & Ticker & Asset Class \\",
+        r"ETF & Ticker & 资产类别 \\",
         r"\midrule",
         r"\endfirsthead",
         r"\toprule",
-        r"ETF & Ticker & Asset Class \\",
+        r"ETF & Ticker & 资产类别 \\",
         r"\midrule",
         r"\endhead",
     ]
@@ -123,7 +123,7 @@ def _etf_pool_table(out_dir: Path) -> None:
         if section != current_section:
             current_section = section
             lines.append(f"% {section}")
-        lines.append(f"{etf.new_name} & {etf.ticker} & {etf.asset_class} \\\\")
+        lines.append(f"{etf.new_name} & {etf.ticker} & {section} \\\\")
 
     lines += [
         r"\bottomrule",

@@ -117,6 +117,15 @@
 - Global RRP 保持良好的风险收益均衡，是体现宽松风险平价核心逻辑的主展示模型；
 - Defensive Dynamic RRP 在回撤控制上与 Global RRP 相近，其价值体现在极端市场情境下的动态降仓能力。
 
+
+<!-- BEGIN MONTHLY_HS300_COMPARISON_CN -->
+### 与沪深300ETF的月度收益对比
+
+截至 `2026-05`，Improved Convex Adaptive Global RRP 与沪深300ETF的月度对比显示：策略累计收益为 **48.93%**，沪深300ETF为 **79.87%**；策略月度波动率 **0.77%**，显著低于沪深300ETF的 **4.57%**；日频最大回撤分别为 **-3.95%** 与 **-44.00%**。策略在 43/89 个月跑赢沪深300ETF，最近一个月（2026-05）策略收益 **-0.22%**，沪深300ETF **2.05%**。
+
+![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
+<!-- END MONTHLY_HS300_COMPARISON_CN -->
+
 ---
 
 ### 稳健性验证
@@ -295,6 +304,15 @@ Evaluation period: `2019-01-01` to `2026-05-29` (89 months). Transaction cost: 3
 - Convex Adaptive Global RRP delivers a higher net annual return (6.80%) among risk-managed strategies, suitable when higher volatility tolerance is acceptable;
 - Global RRP is the main showcase of the core relaxed risk parity logic, with a well-balanced risk-return profile;
 - Defensive Dynamic RRP is not a return-maximizing model; its value lies in dynamic de-risking capability during adverse market regimes.
+
+
+<!-- BEGIN MONTHLY_HS300_COMPARISON_EN -->
+### Monthly Return Comparison vs CSI 300 ETF
+
+Through `2026-05`, the Improved Convex Adaptive Global RRP delivered **48.93%** cumulative return versus **79.87%** for the CSI 300 ETF proxy. Its monthly volatility was **0.77%**, far below the CSI 300 ETF's **4.57%**; daily maximum drawdowns were **-3.95%** and **-44.00%**, respectively. The strategy outperformed in 43/89 months. In the latest month (2026-05), the strategy returned **-0.22%** versus **2.05%** for the CSI 300 ETF.
+
+![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
+<!-- END MONTHLY_HS300_COMPARISON_EN -->
 
 ---
 
