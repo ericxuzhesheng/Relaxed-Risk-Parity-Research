@@ -71,36 +71,40 @@ def test_pbo_summary_handles_small_score_table() -> None:
     assert 0.0 <= float(summary.loc[0, "pbo"]) <= 1.0
 
 
-def test_readme_references_validation_scripts_and_outputs() -> None:
+def test_readme_describes_current_validation_layer() -> None:
     text = Path("README.md").read_text(encoding="utf-8")
     for needle in [
-        "scripts/run_walkforward_validation.py",
-        "scripts/run_nested_validation.py",
-        "scripts/run_cscv_pbo.py",
-        "scripts/run_enhanced_cscv_pbo.py",
-        "scripts/run_frozen_oos_validation.py",
-        "scripts/run_holdout_validation.py",
-        "scripts/run_parameter_sensitivity.py",
-        "scripts/run_cvar_sensitivity.py",
-        "scripts/run_extended_sample_robustness.py",
-        "results/tables/walkforward_validation.csv",
-        "results/tables/nested_validation.csv",
-        "results/tables/cscv_pbo_results.csv",
-        "results/tables/cscv_pbo_enhanced_results.csv",
-        "results/tables/frozen_oos_validation.csv",
-        "results/tables/holdout_validation.csv",
-        "results/tables/parameter_sensitivity.csv",
-        "results/tables/cvar_sensitivity.csv",
-        "results/tables/extended_sample_robustness_summary.csv",
-        "docs/MODEL_GOVERNANCE.md",
+        "CSCV-PBO",
+        "Walk-Forward Validation",
+        "Holdout Validation",
+        "Block Bootstrap",
+        "Covariance Robustness",
+        "Parameter Perturbation",
+        "Stress Period Testing",
+        "validation.py",
+        "run_full_research_pipeline.py",
+        "run_robustness_tests.py",
+        "results/tables/",
+        "report/thesis_latex/",
     ]:
         assert needle in text
 
 
-def test_readme_references_governance_and_three_bucket_framing() -> None:
+def test_readme_uses_current_model_and_robustness_framing() -> None:
     text = Path("README.md").read_text(encoding="utf-8")
-    assert "pseudo-frozen" in text
-    assert "retrospective holdout" in text.lower() or "回顾性 holdout" in text
+    for needle in [
+        "Global RRP",
+        "Improved Convex Adaptive Global RRP",
+        "Defensive Dynamic RRP",
+        "HRP Benchmark",
+        "HERC Benchmark",
+        "CVaR",
+        "turnover controls",
+        "defensive dynamic risk overlay",
+        "overfitting risk",
+        "out-of-sample",
+    ]:
+        assert needle in text
 
 
 def test_holdout_split_generator_returns_chronological_splits() -> None:
@@ -135,22 +139,26 @@ def test_thesis_body_no_engineer_path() -> None:
     assert "\\path{python scripts/" not in body
 
 
-def test_thesis_limitations_no_abc_buckets() -> None:
+def test_thesis_limitations_match_current_structure() -> None:
     tex = Path("report/thesis_latex/main.tex").read_text(encoding="utf-8")
     for old_marker in ["A 类", "B 类", "C 类", "已被实证或诊断澄清"]:
-        assert old_marker not in tex  # A/B/C buckets intentionally removed
-    for new_marker in [
-        "真实流动性与资金容量数据不足",
-        "未纳入完整资产负债管理和负债端约束",
-        "ETF 与代理指数或期货的历史衔接仍需进一步研究",
-        "历史回测不能保证未来表现",
+        assert old_marker not in tex
+    assert "\\subsection{研究不足}" in tex
+    assert "\\subsection{后续研究方向}" in tex
+    for limitation_marker in [
+        "买卖价差",
+        "成交量",
+        "冲击成本",
+        "负债现金流预测",
+        "久期缺口",
+        "评价区间",
+        "市场相关性结构",
+        "不构成对未来长期表现的预测",
     ]:
-        assert new_marker in tex
+        assert limitation_marker in tex
 
 
 def test_stale_turnover_cvar_numbers_absent_from_readme_and_thesis() -> None:
-    import re
-
     for path in [Path("README.md"), Path("report/thesis_latex/main.tex")]:
         text = path.read_text(encoding="utf-8")
         for stale in ["22.45%", "20.22%", "1.03%", "0.52%"]:
