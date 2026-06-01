@@ -59,7 +59,7 @@
 
 ### 资产池：30 只 ETF，8 类资产
 
-评估区间所有 ETF 均通过时间点可投性过滤，最早入市 ETF 为 2018-01-30，全 30 只 ETF 均可投资的评估起始日为 2019-01-01。
+评估区间所有 ETF 均通过时间点可投性过滤，当前价格缓存最早有效观测日为 2018-02-28，绩效评价从 2019-01-01 开始；后上市 ETF 仅在形成足够历史观测后进入组合优化。
 
 | 类别 | ETF 名称 | 代码 | 资产说明 |
 |---|---|---|---|
@@ -98,22 +98,22 @@
 
 ### 最新绩效看板
 
-评估区间：`2019-01-01` 至 `2026-04-30`（88个月）。交易成本设定为单边 3bps，按月再平衡。数据来源：`results/tables/convex_adaptive_performance_summary.csv`。
+评估区间：`2019-01-01` 至 `2026-05-29`（89个月）。交易成本设定为单边 3bps，按月再平衡。数据来源：`results/tables/convex_adaptive_performance_summary.csv`。
 
 | 模型 | 净年化收益 | 年化波动率 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手率 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.66%** | **2.61%** | **1.47** | **2.17** | **-3.70%** | **1.53** | **2.25%** |
-| Convex Adaptive Global RRP | 6.96% | 5.25% | 0.98 | 1.50 | -6.65% | 1.05 | 1.21% |
-| Global RRP | 4.78% | 4.11% | 0.72 | 0.83 | -7.14% | 0.67 | 22.81% |
-| Defensive Dynamic RRP | 4.95% | 4.48% | 0.70 | 0.87 | -7.11% | 0.70 | 24.57% |
-| HRP Benchmark | 1.69% | 0.18% | -0.75 | -1.18 | -0.08% | 20.72 | 1.08% |
-| HERC Benchmark | 2.25% | 0.57% | 0.75 | 1.10 | -0.58% | 3.86 | 5.55% |
-| Equal Weight | 10.81% | 11.09% | 0.81 | 1.30 | -13.91% | 0.78 | 1.24% |
-| 60/40 Benchmark | 8.10% | 8.92% | 0.70 | 1.13 | -14.58% | 0.56 | 1.43% |
+| **Improved Convex Adaptive Global RRP** | **5.57%** | **2.62%** | **1.43** | **2.10** | **-3.95%** | **1.41** | **2.07%** |
+| Convex Adaptive Global RRP | 6.80% | 5.21% | 0.96 | 1.47 | -6.66% | 1.02 | 1.24% |
+| Global RRP | 4.59% | 4.11% | 0.67 | 0.77 | -7.14% | 0.64 | 22.30% |
+| Defensive Dynamic RRP | 4.59% | 4.45% | 0.62 | 0.78 | -7.11% | 0.65 | 24.58% |
+| HRP Benchmark | 1.68% | 0.17% | -0.78 | -1.29 | -0.08% | 20.66 | 1.05% |
+| HERC Benchmark | 2.23% | 0.57% | 0.72 | 1.05 | -0.58% | 3.83 | 5.78% |
+| Equal Weight | 10.66% | 11.08% | 0.80 | 1.28 | -13.91% | 0.77 | 1.24% |
+| 60/40 Benchmark | 8.02% | 8.91% | 0.70 | 1.12 | -14.71% | 0.55 | 1.43% |
 
 **核心结论：**
-- Improved Convex Adaptive Global RRP 以最低波动率（2.61%）和最小回撤（-3.70%）实现 Sharpe 1.47、Calmar 1.53，是兼顾实施成本与风险控制的最优模型；
-- Convex Adaptive Global RRP 实现最高净年化收益（6.96%），适合对波动容忍度较高的配置场景；
+- Improved Convex Adaptive Global RRP 以最低波动率（2.62%）和最小回撤（-3.95%）实现 Sharpe 1.43、Calmar 1.41，是兼顾实施成本与风险控制的最优风险管理模型；
+- Convex Adaptive Global RRP 实现较高净年化收益（6.80%），适合对波动容忍度较高的配置场景；
 - Global RRP 保持良好的风险收益均衡，是体现宽松风险平价核心逻辑的主展示模型；
 - Defensive Dynamic RRP 在回撤控制上与 Global RRP 相近，其价值体现在极端市场情境下的动态降仓能力。
 
@@ -238,7 +238,7 @@ Classical risk parity imposes strict equal risk contribution across all assets, 
 
 ### Asset Universe: 30 ETFs across 8 Categories
 
-All ETFs pass point-in-time investability filtering. The earliest ETF entered trading on 2018-01-30; the full 30-ETF universe becomes investable on 2019-01-01, which is used as the evaluation start date.
+All ETFs pass point-in-time investability filtering. The current price cache starts from the first valid observation on 2018-02-28, and performance evaluation starts on 2019-01-01; later-listed ETFs enter optimization only after sufficient valid history is available.
 
 | Category | ETF Name | Ticker | Description |
 |---|---|---|---|
@@ -277,22 +277,22 @@ All ETFs pass point-in-time investability filtering. The earliest ETF entered tr
 
 ### Latest Performance
 
-Evaluation period: `2019-01-01` to `2026-04-30` (88 months). Transaction cost: 3 bps one-way, monthly rebalancing. Source: `results/tables/convex_adaptive_performance_summary.csv`.
+Evaluation period: `2019-01-01` to `2026-05-29` (89 months). Transaction cost: 3 bps one-way, monthly rebalancing. Source: `results/tables/convex_adaptive_performance_summary.csv`.
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.66%** | **2.61%** | **1.47** | **2.17** | **-3.70%** | **1.53** | **2.25%** |
-| Convex Adaptive Global RRP | 6.96% | 5.25% | 0.98 | 1.50 | -6.65% | 1.05 | 1.21% |
-| Global RRP | 4.78% | 4.11% | 0.72 | 0.83 | -7.14% | 0.67 | 22.81% |
-| Defensive Dynamic RRP | 4.95% | 4.48% | 0.70 | 0.87 | -7.11% | 0.70 | 24.57% |
-| HRP Benchmark | 1.69% | 0.18% | -0.75 | -1.18 | -0.08% | 20.72 | 1.08% |
-| HERC Benchmark | 2.25% | 0.57% | 0.75 | 1.10 | -0.58% | 3.86 | 5.55% |
-| Equal Weight | 10.81% | 11.09% | 0.81 | 1.30 | -13.91% | 0.78 | 1.24% |
-| 60/40 Benchmark | 8.10% | 8.92% | 0.70 | 1.13 | -14.58% | 0.56 | 1.43% |
+| **Improved Convex Adaptive Global RRP** | **5.57%** | **2.62%** | **1.43** | **2.10** | **-3.95%** | **1.41** | **2.07%** |
+| Convex Adaptive Global RRP | 6.80% | 5.21% | 0.96 | 1.47 | -6.66% | 1.02 | 1.24% |
+| Global RRP | 4.59% | 4.11% | 0.67 | 0.77 | -7.14% | 0.64 | 22.30% |
+| Defensive Dynamic RRP | 4.59% | 4.45% | 0.62 | 0.78 | -7.11% | 0.65 | 24.58% |
+| HRP Benchmark | 1.68% | 0.17% | -0.78 | -1.29 | -0.08% | 20.66 | 1.05% |
+| HERC Benchmark | 2.23% | 0.57% | 0.72 | 1.05 | -0.58% | 3.83 | 5.78% |
+| Equal Weight | 10.66% | 11.08% | 0.80 | 1.28 | -13.91% | 0.77 | 1.24% |
+| 60/40 Benchmark | 8.02% | 8.91% | 0.70 | 1.12 | -14.71% | 0.55 | 1.43% |
 
 **Key takeaways:**
-- Improved Convex Adaptive Global RRP achieves Sharpe 1.47 and Calmar 1.53 with the lowest volatility (2.61%) and smallest drawdown (-3.70%) of all risk-managed models — the best risk-adjusted implementable choice;
-- Convex Adaptive Global RRP delivers the highest net annual return (6.96%) among risk-managed strategies, suitable when higher volatility tolerance is acceptable;
+- Improved Convex Adaptive Global RRP achieves Sharpe 1.43 and Calmar 1.41 with the lowest volatility (2.62%) and smallest drawdown (-3.95%) of all risk-managed models — the best risk-adjusted implementable choice;
+- Convex Adaptive Global RRP delivers a higher net annual return (6.80%) among risk-managed strategies, suitable when higher volatility tolerance is acceptable;
 - Global RRP is the main showcase of the core relaxed risk parity logic, with a well-balanced risk-return profile;
 - Defensive Dynamic RRP is not a return-maximizing model; its value lies in dynamic de-risking capability during adverse market regimes.
 

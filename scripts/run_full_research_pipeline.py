@@ -21,7 +21,7 @@ class PipelineStep:
 
 def steps(quick: bool) -> list[PipelineStep]:
     python = sys.executable
-    rrp_cmd = [python, "scripts/run_rrp_pipeline.py", "--mode", "full"]
+    rrp_cmd = [python, "scripts/run_rrp_pipeline.py", "--mode", "full", "--diagnostics", "full"]
     if quick:
         rrp_cmd.append("--fast-mode")
     quick_root = ROOT_DIR / "results" / "quick"

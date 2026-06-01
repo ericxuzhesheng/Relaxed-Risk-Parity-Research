@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"D:\\Github Repository\\Relaxed-Risk-Parity-Research\" add -A && git -C \"D:\\Github Repository\\Relaxed-Risk-Parity-Research\" diff --cached --quiet || git -C \"D:\\Github Repository\\Relaxed-Risk-Parity-Research\" commit -m \"docs: auto-save\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,8 +1,8 @@
 model,raw_sharpe,adjusted_sharpe_conservative,diagnostic_note
-Global RRP,0.7213319293754199,0.6035909271238724,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Defensive Dynamic RRP,0.7230675928509024,0.6053265905993549,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-HERC Benchmark,0.747941770375496,0.6302007681239485,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-HRP Benchmark,-0.7478125268533621,-0.8655535291049096,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Standard Risk Parity,1.1389670391111393,1.0212260368595918,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Local Relaxed Risk Parity,0.7827386876356387,0.6649976853840912,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
-Defensive Dynamic RRP overlay diagnostics,,,Turnover cap bound on 97.3% of rows; simplified diagnostic.
+Global RRP,0.674429370294496,0.5566883680429485,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Defensive Dynamic RRP,0.6638833037640927,0.5461423015125452,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+HERC Benchmark,0.7180396529465285,0.600298650694981,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+HRP Benchmark,-0.784834663032635,-0.9025756652841825,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Standard Risk Parity,1.290888322408641,1.1731473201570934,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Local Relaxed Risk Parity,0.7482154386514553,0.6304744363999079,Conservative multiple-testing adjustment; not full Deflated Sharpe Ratio.
+Defensive Dynamic RRP overlay diagnostics,,,Turnover cap bound on 93.9% of rows; simplified diagnostic.

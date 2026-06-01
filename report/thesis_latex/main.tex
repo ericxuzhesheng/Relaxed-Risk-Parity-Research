@@ -124,7 +124,7 @@
 \begin{abstract}
 长期资产配置要解决的问题不是预测下一期涨跌，而是在市场不确定时维持有效的风险分散。风险平价用风险预算替代收益预测，理论上更稳健，但在全球多资产 ETF 资产池中落地时，相关结构的时变性、等风险贡献约束的非凸性和月频调仓的成本积累，都是绕不开的实际问题。
 
-本文以 \etfCount 支可交易全球多资产 ETF 构建统一回测框架，资产池覆盖七大类风险来源：债券、A 股宽基、中国科技（半导体、人工智能、机器人、新能源等七支主题 ETF）、中国行业与消费、港股、全球股票和大宗商品。评价区间 2019-01-01 至 \evalEndDate（共 \evalMonths 个月度观察点），月度调仓，单边交易成本 \txCostBps{} bps，全程无前视。在统一框架下对比 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 和层次化基准 HERC。
+本文以 \etfCount 支可交易全球多资产 ETF 构建统一回测框架，资产池覆盖八大类风险来源：债券、A 股宽基、中国科技（半导体、人工智能、机器人、新能源等七支主题 ETF）、中国行业与消费、港股、全球股票、大宗商品权益和大宗商品。评价区间 2019-01-01 至 \evalEndDate（共 \evalMonths 个月度观察点），月度调仓，单边交易成本 \txCostBps{} bps，全程无前视。在统一框架下对比 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 和层次化基准 HERC。
 
 主要结果如下。Global RRP 净年化收益 \globalNetReturn、Sharpe \globalSharpe、最大回撤 \globalMaxDD，但月均换手率 \globalMonthlyTurnover 带来可见的成本拖累。引入 CVaR 约束、换手惩罚和资产组上限后，Improved Convex Adaptive Global RRP 将换手率压至 \improvedMonthlyTurnover，净年化收益升至 \improvedNetReturn，Sharpe \improvedSharpe，Sortino \improvedSortino，最大回撤 \improvedMaxDD。HERC 的 Sharpe 为 \hercSharpe，收益 \hercNetReturn，其高 Sharpe 来自近乎全仓债券的极低波动，而非多资产分散。Improved Convex Adaptive Global RRP 没有在每项指标上都领先，但在收益、回撤和换手三个维度上均无明显短板。
 
@@ -138,7 +138,7 @@
 \begin{abstract}
 Risk parity replaces expected-return estimation with risk budgeting, which makes it theoretically more robust. In practice, applying it to a global multi-asset ETF universe introduces three problems that don't go away: time-varying correlations, the non-convexity of exact equal-risk-contribution constraints, and transaction costs that add up meaningfully at monthly rebalancing frequency.
 
-This thesis tests a Relaxed Risk Parity framework on \etfCount{} tradable ETFs spanning seven asset groups---bonds, China broad equity, China technology (semiconductors, AI, robotics, new energy, and three others), China sector/consumption, Hong Kong equity, global equity, and commodities. The evaluation window is 2019-01-01 to \evalEndDate{} (\evalMonths{} monthly observations), with \txCostBps-bp one-way transaction costs and no lookahead. Four models are compared: Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, and HERC. HRP was implemented but dropped from the main comparison---with a money-market ETF in the universe, its unconstrained recursive bisection degenerates to near-cash (portfolio volatility $\approx$0.18\%), making a head-to-head comparison uninformative.
+This thesis tests a Relaxed Risk Parity framework on \etfCount{} tradable ETFs spanning eight asset groups---bonds, China broad equity, China technology (semiconductors, AI, robotics, new energy, and three others), China sector/consumption, Hong Kong equity, global equity, commodity equity, and commodities. The evaluation window is 2019-01-01 to \evalEndDate{} (\evalMonths{} monthly observations), with \txCostBps-bp one-way transaction costs and no lookahead. Four models are compared: Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, and HERC. HRP was implemented but dropped from the main comparison---with a money-market ETF in the universe, its unconstrained recursive bisection degenerates to near-cash (portfolio volatility $\approx$0.17\%), making a head-to-head comparison uninformative.
 
 Global RRP earns \globalNetReturn{} net annual return at a Sharpe of \globalSharpe{}, but its \globalMonthlyTurnover{} average monthly turnover creates a real cost drag. Adding CVaR constraints, a turnover penalty, and group weight bounds in Improved Convex Adaptive Global RRP cuts turnover to \improvedMonthlyTurnover{} while lifting net return to \improvedNetReturn{}, Sharpe to \improvedSharpe{}, Sortino to \improvedSortino{}, and capping drawdown at \improvedMaxDD{}. HERC posts a Sharpe of \hercSharpe{}---that number comes from near-zero portfolio volatility via heavy bond concentration, not from multi-asset diversification. Improved Convex does not win on every single metric, but it has no obvious weak spot across return, drawdown, and turnover.
 
@@ -397,7 +397,7 @@ HERC Benchmark & 层次化风险贡献基准模型 & 引入层次风险贡献 & 
 \IfFileExists{generated_etf_pool_table.tex}{\input{generated_etf_pool_table.tex}}{%
   \textbf{[ETF pool table not found — run scripts/generate\_thesis\_numbers.py]}}
 
-资产池包含 30 支可交易 ETF，覆盖七大类风险来源。债券类包含可转债、国债、信用债和日利 ETF，提供久期与流动性梯度。A 股宽基涵盖大、中、小盘及创业板与红利风格五支 ETF。中国科技与增长类包含半导体、人工智能、机器人、新能源、中韩半导体、科创50和云计算 ETF 共七支，分别捕捉硬件算力、软件服务、工业自动化、清洁能源、跨境存储芯片与韩元汇率分散、STAR板科技蓝筹和云服务等独立成长因子。中国行业与消费类补充证券、军工和消费 ETF，覆盖金融周期、国防制造与内需主线。港股类纳入恒生 ETF，代表香港整体市场。全球股票类包含纳指、标普500、日经225和欧洲 ETF，使全球地区暴露覆盖美国、日本与欧洲。大宗商品类通过黄金、白银、有色金属、豆粕、煤炭和原油 ETF 提供贵金属、工业金属、农产品与传统能源的多元暴露。
+资产池包含 30 支可交易 ETF，覆盖八大类风险来源。债券类包含可转债、国债、信用债和日利 ETF，提供久期与流动性梯度。A 股宽基涵盖大、中、小盘及创业板与红利风格五支 ETF。中国科技与增长类包含半导体、人工智能、机器人、新能源、中韩半导体、科创50和云计算 ETF 共七支，分别捕捉硬件算力、软件服务、工业自动化、清洁能源、跨境存储芯片与韩元汇率分散、STAR板科技蓝筹和云服务等独立成长因子。中国行业与消费类补充证券、军工和消费 ETF，覆盖金融周期、国防制造与内需主线。港股类纳入恒生 ETF，代表香港整体市场。全球股票类包含纳指、标普500、日经225和欧洲 ETF，使全球地区暴露覆盖美国、日本与欧洲。大宗商品权益类通过有色金属 ETF 捕捉工业商品权益敞口，大宗商品类通过黄金、白银、豆粕、煤炭和原油 ETF 提供贵金属、农产品与传统能源的多元暴露。
 
 \figmaybe{asset_graph_stress_timeline.png}{资产池跨类别相关结构（平静期与压力期对比）}{fig:asset_graph}
 
@@ -548,7 +548,7 @@ HERC 两个阶段的债券权重均维持在 95\% 以上，权益与商品合计
 \begin{table}[H]
 \centering
 \small
-\caption{核心模型95\%日度CVaR（评价区间2019-01-01至2026-04-30）}
+\caption{核心模型95\%日度CVaR（评价区间\evalStartDate{}至\evalEndDate{}）}
 \label{tab:core_cvar}
 \begin{tabular}{lr}
 \toprule
@@ -645,28 +645,28 @@ Factor & Return Share & Variance Share \\
 Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \midrule
 \multirow{4}{*}{置信水平 $\beta$}
- & 0.90  & 1.119 & 6.80\% & $-$5.80\% & 1.51\% \\
- & 0.95  & 1.117 & 6.78\% & $-$5.80\% & 1.51\% \\
- & 0.975 & 1.117 & 6.76\% & $-$5.78\% & 1.51\% \\
- & 0.99  & 1.130 & 6.80\% & $-$5.80\% & 1.50\% \\
+ & 0.90  & 1.251 & 5.12\% & $-$4.25\% & 3.81\% \\
+ & 0.95  & 1.249 & 5.12\% & $-$4.25\% & 3.80\% \\
+ & 0.975 & 1.247 & 5.11\% & $-$4.25\% & 3.80\% \\
+ & 0.99  & 1.251 & 5.12\% & $-$4.22\% & 3.78\% \\
 \midrule
 \multirow{3}{*}{回望窗口（交易日）}
- & 126   & 1.131 & 6.59\% & $-$5.68\% & 1.68\% \\
- & 252   & 1.082 & 6.66\% & $-$5.83\% & 1.46\% \\
- & 504   & 1.149 & 7.09\% & $-$5.87\% & 1.39\% \\
+ & 126   & 1.246 & 5.21\% & $-$4.18\% & 4.87\% \\
+ & 252   & 1.268 & 5.15\% & $-$4.29\% & 3.51\% \\
+ & 504   & 1.234 & 4.99\% & $-$4.26\% & 3.00\% \\
 \midrule
-全部 12 变体均值 & --- & 1.121 & 6.78\% & $-$5.79\% & 1.51\% \\
+全部 12 变体均值 & --- & 1.250 & 5.12\% & $-$4.24\% & 3.80\% \\
 \bottomrule
 \multicolumn{6}{l}{\footnotesize 各行为对应参数水平下的多个变体均值，评价区间与主模型一致。} \\
 \end{tabular}
 \end{table}
 
-12 个变体的夏普比率范围为 1.08--1.16，净年化收益范围为 6.59\%--7.09\%，最大回撤均在 -5.68\% 至 -5.87\% 之间，整体结论对 CVaR 参数选择不敏感。回望窗口的影响略大于置信水平：504 日长窗口的净年化收益最高（7.09\%），但换手率也最低，反映更长历史窗口使协方差估计更稳定，调仓幅度更小。
+12 个变体的夏普比率范围为 1.233--1.277，净年化收益范围为 4.99\%--5.22\%，最大回撤均在 -4.30\% 至 -4.15\% 之间，整体结论对 CVaR 参数选择不敏感。回望窗口的影响略大于置信水平：126 日窗口的净年化收益较高但换手率也较高，504 日长窗口换手率最低，反映更长历史窗口使协方差估计更稳定，调仓幅度更小。
 
 \figwide{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
 参数扰动采用单因素变化方式，用于观察模型是否对某一参数表现出过度敏感。在已测试的扰动范围内，主模型表现总体稳定；至于该范围之外的参数区域，本文不作外推判断。
 
-收益倾斜项 $\lambda_{return}$ 的零值测试需要单独说明，因为第三章已承诺在此处提供实证证据。将 $\lambda_{return}$ 完全设为 0（即从目标函数中彻底移除历史均值输入项），在 2019-01-01 至评价期末的完整评价窗口内，夏普比率从基准的 1.471 降至 1.391（降幅约 0.08），净年化收益从 5.66\% 降至 5.02\%，最大回撤从 $-3.70\%$ 扩大至 $-4.48\%$，求解器回退率与基准一致（1.0\%）。模型在 $\lambda_{return}=0$ 下绩效有所下降但并未坍塌，夏普比率 1.391 仍处于合理可用范围，这一结果支持第三章的定性判断：$\lambda_{return}=0.06$ 对组合产生温和的方向性修正，但模型的风险调整收益基础主要来自方差控制、风险预算跟踪、CVaR 约束和换手惩罚四项风险端设计，而非历史收益的主动追踪。
+收益倾斜项 $\lambda_{return}$ 的零值测试需要单独说明，因为第三章已承诺在此处提供实证证据。将 $\lambda_{return}$ 完全设为 0（即从目标函数中彻底移除历史均值输入项），在 2019-01-01 至评价期末的完整评价窗口内，夏普比率从基准的 \improvedSharpe{} 降至 1.283（降幅约 0.15），净年化收益从 \improvedNetReturn{} 降至 4.80\%，最大回撤从 \improvedMaxDD{} 扩大至 $-4.24\%$，求解器回退率约为 1.0\%。模型在 $\lambda_{return}=0$ 下绩效有所下降但并未坍塌，夏普比率 1.283 仍处于合理可用范围，这一结果支持第三章的定性判断：$\lambda_{return}=0.06$ 对组合产生温和的方向性修正，但模型的风险调整收益基础主要来自方差控制、风险预算跟踪、CVaR 约束和换手惩罚四项风险端设计，而非历史收益的主动追踪。
 
 \subsection{协方差估计与过拟合诊断}
 \figpair{covariance_robustness_sharpe.png}{covariance_robustness_drawdown.png}{不同协方差估计下的夏普比率}{不同协方差估计下的回撤表现}{fig:cov_sharpe}{fig:cov_drawdown}
@@ -676,7 +676,7 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
 回测中的多重假设检验问题长期存在。White 的现实检验法通过自助法比较最优策略与随机基准的胜出概率，是处理数据窥探偏差的早期统计框架\cite{white2000reality}；Harvey 和 Liu 进一步梳理了多次回测搜索造成统计显著性失真的机制\cite{harvey2015backtesting}。本文采用 CSCV/PBO 来估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选和 35 个区块分割，得到的 PBO 为 0.429。PBO 低于 0.5，说明样本内表现靠前的候选在样本外排序中仍大致位于中位数以上；中位逻辑秩为 0.288，也高于随机基准。这一结果支持主模型结论具有一定稳健性，但它仍然只是对参数选择偏差程度的估计，不能被理解为对未来样本外表现的保证。\footnote{本文 PBO 计算在 CSCV 排名前设置了两项拒绝门：最大回撤超过 $-7.5\%$ 或月均换手超过 3\% 的候选被剔除后才进入 CSCV 候选池。这与 Bailey et al.（2016）\cite{bailey2014probability} 要求的全集 CSCV 计算存在差异，拒绝门的使用会使报告的 PBO 低于全集 PBO。此外，冻结样本外窗口仅约 16 个月，统计功效有限。上述两点局限意味着本文的 PBO 估计应理解为参考值而非严格的过拟合概率上界。}
 
-滚动前向验证（Walk-Forward）含 23 个测试切片，净年化收益 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}，夏普比率 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}，最大回撤均值 \walkforwardMaxddMean；切片较短，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-04-30，候选参数 \frozenOosCandidate，结果受样本期全球权益修复和黄金等分散资产支撑，应理解为特定市场背景下的条件性外样本证据。
+滚动前向验证（Walk-Forward）含 23 个测试切片，净年化收益 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}，夏普比率 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}，最大回撤均值 \walkforwardMaxddMean；切片较短，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-05-29，候选参数 \frozenOosCandidate，结果受样本期全球权益修复和黄金等分散资产支撑，应理解为特定市场背景下的条件性外样本证据。
 
 \subsection{统计显著性检验}
 本节用两个互补的检验方法评估绩效指标的抽样稳定性。第一个是移动分块自助法（Moving Block Bootstrap）：对历史收益率进行有放回随机分块重抽样（200 个样本，块长 21 日，仅在验证区间内进行），检验绩效指标的抽样分布。
@@ -859,13 +859,13 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
   约 $0.92 \times 1.82\% \approx 1.68\%$/年（$\lambda=1$ 场景） \\
 \addlinespace
 月均换手率 &
-  0.11\% &
+  0.10\% &
   0.22\%（三个场景相同；换手来源于期货调仓而非杠杆变化） \\
 \addlinespace
 代表性绩效 &
-  Sharpe 1.471，最大回撤 $-3.70\%$，净年化 5.66\% &
-  $\lambda=1$：Sharpe 1.620，最大回撤 $-4.66\%$，净年化 9.22\%；
-  $\lambda=2$：净年化 13.06\%，最大回撤 $-12.40\%$ \\
+  Sharpe 1.431，最大回撤 $-3.95\%$，净年化 5.57\% &
+  $\lambda=1$：Sharpe 1.625，最大回撤 $-4.66\%$，净年化 9.28\%；
+  $\lambda=2$：净年化 13.17\%，最大回撤 $-12.40\%$ \\
 \end{longtable}
 \end{small}
 
@@ -886,10 +886,10 @@ R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
 \toprule
 场景 & 净年化收益 & 年化波动率 & Sharpe & Calmar & 最大回撤 & 月均换手率 \\
 \midrule
-场景0：ETF 基准（Improved Convex，30 支 ETF）           & 5.66\%  & 2.61\% & 1.471 & 1.531 & $-3.70\%$ & 0.11\% \\
-场景1：期货 1 倍 + 现金增强（$\lambda=1$，$r_f$ 收益）  & 9.22\%  & 4.57\% & \textbf{1.620} & \textbf{1.979} & $-4.66\%$ & 0.22\% \\
-场景2：期货 1.5 倍名义敞口（$\lambda=1.5$）             & 10.23\% & 6.85\% & 1.227 & 1.129 & $-9.06\%$ & 0.22\% \\
-场景3：期货 2.0 倍名义敞口（$\lambda=2.0$）             & 13.06\% & 9.14\% & 1.229 & 1.052 & $-12.40\%$ & 0.22\% \\
+场景0：ETF 基准（Improved Convex，30 支 ETF）           & 5.57\%  & 2.62\% & 1.431 & 1.410 & $-3.95\%$ & 0.10\% \\
+场景1：期货 1 倍 + 现金增强（$\lambda=1$，$r_f$ 收益）  & 9.28\%  & 4.59\% & \textbf{1.625} & \textbf{1.991} & $-4.66\%$ & 0.22\% \\
+场景2：期货 1.5 倍名义敞口（$\lambda=1.5$）             & 10.31\% & 6.89\% & 1.233 & 1.139 & $-9.06\%$ & 0.22\% \\
+场景3：期货 2.0 倍名义敞口（$\lambda=2.0$）             & 13.17\% & 9.18\% & 1.237 & 1.062 & $-12.40\%$ & 0.22\% \\
 \bottomrule
 \end{tabular}%
 }
@@ -899,16 +899,16 @@ R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
 
 表中有两个值得单独说明的结果。
 
-第一，现金增强效应（场景1）独立地大幅改善了风险调整后表现。场景1 将闲置保证金之外约 92\% 的资本配置于货币市场基金，每年额外获得约 $0.92 \times 1.82\% \approx 1.68\%$ 的现金收益，而波动率与纯期货场景相同（4.57\%）。净年化收益从 ETF 基准的 5.66\% 升至 9.22\%，Sharpe 从 1.471 升至 \textbf{1.620}，Calmar 达到 1.979。这说明保证金制度本身的资金效率，而非杠杆，是期货路径相对 ETF 基准取得效率优势的主要来源。
+第一，现金增强效应（场景1）独立地大幅改善了风险调整后表现。场景1 将闲置保证金之外约 92\% 的资本配置于货币市场基金，每年额外获得约 $0.92 \times 1.82\% \approx 1.68\%$ 的现金收益，而波动率与纯期货场景相同（4.59\%）。净年化收益从 ETF 基准的 5.57\% 升至 9.28\%，Sharpe 从 1.431 升至 \textbf{1.625}，Calmar 达到 1.991。这说明保证金制度本身的资金效率，而非杠杆，是期货路径相对 ETF 基准取得效率优势的主要来源。
 
 第二，提高名义倍数后 Sharpe 近似保持不变，绝对收益线性上升。由公式~\eqref{eq:notional_alloc}，超额收益 $\lambda(R - r_f)$ 与波动率 $\lambda\sigma$ 均按 $\lambda$ 等比放大，Sharpe 在理论上严格不变：
 \begin{equation}
 \text{Sharpe}(\lambda) = \frac{\lambda(R - r_f)}{\lambda\sigma} = \frac{R - r_f}{\sigma} = \text{Sharpe}(1)
 \label{eq:sharpe_invariance}
 \end{equation}
-实证结果与理论一致：场景2（$\lambda=1.5$）Sharpe 为 1.227，场景3（$\lambda=2.0$）为 1.229，两者几乎相同，印证了尺度不变性。杠杆也线性放大最大回撤（$-4.66\% \to -9.06\% \to -12.40\%$），实际应用中须结合保证金充足率和压力测试确定适宜的 $\lambda$。
+实证结果与理论一致：场景2（$\lambda=1.5$）Sharpe 为 1.233，场景3（$\lambda=2.0$）为 1.237，两者几乎相同，印证了尺度不变性。杠杆也线性放大最大回撤（$-4.66\% \to -9.06\% \to -12.40\%$），实际应用中须结合保证金充足率和压力测试确定适宜的 $\lambda$。
 
-当资金形态允许名义敞口分配时，$\lambda=1$（场景1）即可实现 Sharpe 1.620，无需承担额外杠杆风险；$\lambda=2$（场景3）净年化收益达 13.06\%，Sharpe 维持在 1.229，是具备保证金管理能力的专业机构资金的有效扩展路径。
+当资金形态允许名义敞口分配时，$\lambda=1$（场景1）即可实现 Sharpe 1.625，无需承担额外杠杆风险；$\lambda=2$（场景3）净年化收益达 13.17\%，Sharpe 维持在 1.237，是具备保证金管理能力的专业机构资金的有效扩展路径。
 
 本实验采用"portable alpha 叠加层"方案：沪深300ETF、中证500ETF、中证1000ETF 保留在组合中，IF/IC/IH/IM 四个股指期货作为额外资产与对应 ETF 同时可见于优化器。在风险平价框架下，股指期货年化波动率高达 20\%--25\%，若直接替换 ETF，优化器会将其权重压至极低；叠加层设计允许优化器利用 ETF 建立稳定的基础股指暴露，同时通过少量股指期货仓位（仅需 10\%--12\% 保证金）在不增加额外资本占用的前提下调整权益端风险贡献。在名义敞口分配框架（场景1--3）中，即使股指期货权重较小，其释放的现金也能为组合贡献 $r_f$ 收益；杠杆放大（场景2、3）进一步等比扩大全部期货头寸的名义暴露。
 

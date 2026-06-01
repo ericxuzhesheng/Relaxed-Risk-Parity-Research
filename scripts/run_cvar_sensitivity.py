@@ -57,12 +57,13 @@ def main() -> None:
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--eval-start", default="2019-01-01")
     parser.add_argument("--sample-start", default="2019-01-02")
+    parser.add_argument("--sample-end", default="2026-05-29")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
-    returns = returns[(returns.index >= pd.Timestamp(args.sample_start)) & (returns.index <= pd.Timestamp("2026-04-30"))]
+    returns = returns[(returns.index >= pd.Timestamp(args.sample_start)) & (returns.index <= pd.Timestamp(args.sample_end))]
     if returns.empty:
         raise ValueError("CVaR sensitivity returns are empty.")
 
