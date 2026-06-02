@@ -283,37 +283,29 @@
 \end{frame}
 
 \begin{frame}{四模型定位与参数冻结策略}
+  \footnotesize\renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{2.8cm}@{}}
+    \toprule
+    模型 & 核心特征 & 角色 \\
+    \midrule
+    Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
+    Convex Adaptive  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
+    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 参数冻结（candidate\_23）} & \textbf{主模型} \\
+    HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{0.4em}
   \begin{columns}[T]
-    \begin{column}{0.54\textwidth}
-      \renewcommand{\arraystretch}{1.3}
-      \footnotesize
-      \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{4.0cm}l@{}}
-        \toprule
-        模型 & 核心特征 & 角色 \\
-        \midrule
-        Global RRP & 基准宽松风险预算，无换手约束 & 出发点 \\
-        Convex Adaptive & $\ell_1$ 换手惩罚 + 资产组上限 & 降换手 \\
-        \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 参数冻结} & \textbf{主模型} \\
-        HERC & 层次聚类递归分配，无凸优化 & 层次化基准 \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.4em}
-      \footnotesize
-      所有模型：长仓、权重归一、月度调仓、\\
-      滚动估计、扣除 \txCostBps{} bps 单边成本
+    \begin{column}{0.52\textwidth}
+      \textbf{参数冻结：防止过拟合的关键}
+      \begin{enumerate}
+        \item 在\textbf{训练集}内网格搜索超参数候选
+        \item 筛选 OOS 期稳健的候选集
+        \item \textbf{冻结}后在 \evalStartDate{}—\evalEndDate{} 重跑
+        \item 所有结果来自冻结参数，不在 OOS 期重新优化
+      \end{enumerate}
     \end{column}
-    \begin{column}{0.43\textwidth}
-      \begin{block}{参数冻结：防止过拟合的关键}
-        \footnotesize
-        \begin{enumerate}
-          \item 在\textbf{训练集}内网格搜索超参数候选
-          \item 筛选 OOS 期稳健的候选集（candidate\_23）
-          \item \textbf{冻结参数}后在完整 \evalStartDate{}—\evalEndDate{} 重跑
-          \item 所有报告数字均来自冻结参数下的结果
-        \end{enumerate}
-      \end{block}
-      \vspace{0.3em}
-      \footnotesize
+    \begin{column}{0.44\textwidth}
       \begin{tabular}{@{}ll@{}}
         历史窗口 & 252 交易日 \\
         协方差估计 & EWMA \\
@@ -321,6 +313,8 @@
         换手上限 & 80\% \\
         CVaR 置信水平 & 95\% \\
       \end{tabular}
+      \vspace{0.2em}\\
+      \textit{所有模型}：长仓、归一、月度调仓、\txCostBps{} bps 成本
     \end{column}
   \end{columns}
 \end{frame}
@@ -330,39 +324,23 @@
 % ════════════════════════════════════════════════════════════════════════════
 
 \begin{frame}{\etfCount{} 支全球 ETF：8 大风险来源（来自 src/asset\_universe.py）}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.15}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \begin{tabular}{@{}lll@{}}
-        \toprule
-        类别 & 代表品种 & 数量 \\
-        \midrule
-        债券 & 国债、信用债、可转债、货币 & 4 \\
-        A 股宽基 & 沪深 300/500/1000、创业板、红利 & 5 \\
-        中国科技 & 半导体、AI、机器人、新能源 & 7 \\
-               & 中韩半导体、科创 50、云计算 & \\
-        \bottomrule
-      \end{tabular}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \begin{tabular}{@{}lll@{}}
-        \toprule
-        类别 & 代表品种 & 数量 \\
-        \midrule
-        行业与消费 & 证券、军工、消费 & 3 \\
-        港股与贵金属 & 恒生、白银 LOF & 2 \\
-        全球股票 & 纳指、标普 500、日经、欧洲 & 4 \\
-        大宗商品 & 黄金、有色、豆粕、煤炭、原油 & 5 \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.4em}
-      \small
-      数据起始 \dataFirstDate{}（含训练期）\\
-      评价区间 \evalStartDate{}—\evalEndDate{}\\
-      共 \evalMonths{} 个月度观察点
-    \end{column}
-  \end{columns}
+  \footnotesize\renewcommand{\arraystretch}{1.2}
+  \begin{center}
+    \begin{tabular}{@{}>{\bfseries}l>{\raggedright\arraybackslash}p{4.8cm}@{\hspace{0.5cm}}>{\bfseries}l>{\raggedright\arraybackslash}p{3.8cm}@{}}
+      \toprule
+      类别 & 代表品种 & 类别 & 代表品种 \\
+      \midrule
+      债券（4）     & 国债、信用债、可转债、货币      & 行业与消费（3） & 证券、军工、消费 \\
+      A股宽基（5）  & 沪深300/500/1000、创业板、红利  & 港股与贵金属（2）& 恒生ETF、白银LOF \\
+      中国科技（7） & 半导体、AI、机器人、新能源、     & 全球股票（4）  & 纳指、标普500、日经、欧洲 \\
+                  & 中韩半导体、科创50、云计算      & 大宗商品（5）  & 黄金、有色、豆粕、煤炭、原油 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \vspace{0.3em}
+  \small\centering
+  数据起始 \dataFirstDate{}（含训练期）\quad
+  评价区间 \evalStartDate{}—\evalEndDate{}，共 \evalMonths{} 个月度观察点，\txCostBps{} bps 单边成本
 \end{frame}
 
 \figframe{因子暴露结构：各 ETF 对主要风险因子的敞口}{asset_pricing_factor_exposure.png}{0.90}{}
@@ -915,9 +893,7 @@
         最大回撤  & \improvedMaxDD     \\
         月均换手  & \improvedMonthlyTurnover \\
       \end{tabular}};
-    \node[anchor=north west, opacity=0.6, inner sep=0pt, outer sep=0pt]
-      at ([xshift=1cm, yshift=-0.8cm]current page.north west){%
-      \includegraphics[height=1.2cm]{logo.png}};
+    % logo removed
   \end{tikzpicture}
 \end{frame}
 
