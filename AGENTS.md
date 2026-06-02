@@ -105,8 +105,8 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2018-02-28` 
 | 人工智能ETF | 159819.SZ | china tech equity |
 | 机器人ETF | 562500.SH | china advanced manufacturing |
 | 新能源ETF | 516160.SH | china new energy |
-| 芯片ETF | 159995.SZ | china tech equity |
-| 卫星ETF | 159206.SZ | china tech equity |
+| 中韩半导体ETF | 513310.SH | china tech equity |
+| 科创50ETF | 588000.SH | china tech equity |
 | 云计算ETF | 516980.SH | china tech equity |
 | 证券ETF | 512880.SH | china finance |
 | 军工ETF | 512660.SH | china defense |
