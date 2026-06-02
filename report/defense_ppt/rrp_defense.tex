@@ -20,8 +20,8 @@
 \author{许哲圣}
 \studentid{42353012}
 \school{特拉华数据科学学院}
-\major{金融数学（金融服务与量化分析方向）}
-\supervisor{王磊 讲师}
+\major{金融数学（量化分析方向）}
+\supervisor{王磊}
 \date{2026年5月}
 
 % ── 数值宏（全部来自 generated_numbers.tex）──────────────────────────────────
@@ -178,22 +178,21 @@
 \section{文献综述与理论基础}
 % ════════════════════════════════════════════════════════════════════════════
 
-\begin{frame}{从均值—方差到风险预算：理论脉络}
+\begin{frame}[shrink=3]{从均值—方差到风险预算：理论脉络}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
       \textbf{均值—方差与估计误差}
       \begin{itemize}
         \item Markowitz（1959）：奠基，二次规划
         \item Jorion（1986）：Bayes-Stein 收缩量化参数不确定性
-        \item Black-Litterman（1992）：市场均衡先验，仍需主观输入
-        \item \alert{共同结论}：收益率预测不确定性高，\textbf{难以持续击败简单基准}
+        \item \alert{共同结论}：收益预测不确定性高，\textbf{难以持续击败简单基准}
       \end{itemize}
-      \vspace{0.4em}
+      \vspace{0.35em}
       \textbf{协方差估计进展}
       \begin{itemize}
         \item 随机矩阵理论（Laloux 1999）：大量特征值为噪声
         \item CM-IEWMA（Johansson 2023）：凸组合多个 EWMA 估计器
-        \item 端到端深度学习（Bongiorno 2025）：性能优越但\alert{难纳入硬约束}
+        \item 端到端深度学习（Bongiorno 2025）：优越但\alert{难纳入硬约束}
       \end{itemize}
     \end{column}
     \begin{column}{0.47\textwidth}
@@ -201,15 +200,14 @@
       \begin{itemize}
         \item Qian（2005）：风险贡献平等 = 最优分散
         \item Maillard 等（2010）：ERC 唯一性证明
-        \item Roncalli（2013）：推广为完整风险预算框架
-        \item Gambeta \& Kwon（2020）：\textbf{宽松 RRP} 偏离惩罚的数学性质
+        \item Gambeta \& Kwon（2020）：\textbf{宽松 RRP} 数学性质
       \end{itemize}
-      \vspace{0.4em}
+      \vspace{0.35em}
       \textbf{层次化方法}
       \begin{itemize}
         \item HRP（López de Prado 2016）：层次聚类，回避矩阵求逆
         \item HERC（Raffinot 2018）：簇间引入风险贡献逻辑
-        \item \alert{共同局限}：难以直接纳入 CVaR 约束和换手惩罚
+        \item \alert{共同局限}：难以直接纳入 CVaR 和换手惩罚
       \end{itemize}
     \end{column}
   \end{columns}
@@ -661,8 +659,8 @@
 
 \begin{frame}{Sharpe 差异统计检验}
   \begin{columns}[T]
-    \begin{column}{0.54\textwidth}
-      \footnotesize\renewcommand{\arraystretch}{1.3}
+    \begin{column}{0.60\textwidth}
+      \footnotesize\renewcommand{\arraystretch}{1.35}
       \begin{tabular}{@{}lccc@{}}
         \toprule
         比较对 & $\Delta$Sharpe & $p$ 值 & 结论 \\
@@ -677,14 +675,13 @@
       \vspace{0.3em}
       \scriptsize 基于 Jobson-Korkie 检验，Bootstrap 95\% 置信区间
     \end{column}
-    \begin{column}{0.43\textwidth}
-      \begin{block}{统计检验的含义}
-        \small
+    \begin{column}{0.37\textwidth}
+      \begin{block}{核心含义}
+        \footnotesize
         \begin{itemize}
-          \item Improved Convex 的 Sharpe 优势\textbf{统计显著}（$p=\improvedVsGlobalPValue$）
-          \item 仅降低换手（Convex Adaptive）不产生显著 Sharpe 提升
-          \item \textbf{CVaR 约束 + 参数冻结}共同带来了真实的统计差异
-          \item Global/Defensive RRP 对等权的优势\textbf{统计不显著}
+          \item Improved Convex 优势\textbf{统计显著}（$p=\improvedVsGlobalPValue$）
+          \item 仅降换手不足以产生显著 Sharpe 提升
+          \item \textbf{CVaR + 参数冻结}是真实来源
         \end{itemize}
       \end{block}
     \end{column}
@@ -918,7 +915,7 @@
         最大回撤  & \improvedMaxDD     \\
         月均换手  & \improvedMonthlyTurnover \\
       \end{tabular}};
-    \node[anchor=north west, opacity=0.6]
+    \node[anchor=north west, opacity=0.6, inner sep=0pt, outer sep=0pt]
       at ([xshift=1cm, yshift=-0.8cm]current page.north west){%
       \includegraphics[height=1.2cm]{logo.png}};
   \end{tikzpicture}
