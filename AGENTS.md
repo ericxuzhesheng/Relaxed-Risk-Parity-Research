@@ -135,12 +135,14 @@ $env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
 python scripts/update_etf_data.py --provider tushare --start-date 20150101
 ```
 
-### After running — all three must be updated before any commit:
-1. **`AGENTS.md`** — update performance table and key interpretation (read CSV first)
-2. **`README.md`** — update both Chinese and English performance dashboards (read CSV first)
-3. **`report/thesis_latex/main.tex`** — update all tables and narrative numbers in abstracts, Chapter 5, robustness summary table (read CSV first), then recompile PDF with xelatex × 3 passes
+### After running — refresh artifacts in this order before any commit:
+1. **Regenerate thesis numbers and figure assets** — rerun the scripts that create `report/thesis_latex/generated_numbers.tex`, generated thesis tables, and all result figures used by README, thesis, and PPT. Treat generated files as the source for presentation/report numbers rather than manually copying stale values.
+2. **`AGENTS.md`** — update performance table, ETF universe, data window, and key interpretation (read CSV first).
+3. **`README.md`** — update both Chinese and English performance dashboards and figure explanations (read CSV first).
+4. **`report/thesis_latex/main.tex`** — update all tables and narrative numbers in abstracts, Chapter 5, robustness summary table, and appendices (read CSV/generated files first), then recompile PDF with xelatex × 3 passes.
+5. **`report/ppt/rrp_defense.tex`** — sync presentation numbers, figures, ETF universe, candidate ID, and explanatory text with the regenerated thesis numbers/figures and current CSV outputs, then recompile the PPT PDF.
 
-Do not commit until AGENTS.md + README.md + main.tex + main.pdf are all updated.
+Do not commit until AGENTS.md + README.md + main.tex + main.pdf + rrp_defense.tex + rrp_defense.pdf are all updated and mutually consistent.
 
 ---
 
