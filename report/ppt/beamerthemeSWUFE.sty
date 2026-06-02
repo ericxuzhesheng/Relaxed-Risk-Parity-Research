@@ -89,8 +89,8 @@
 \setbeamercolor{itemize item}{fg=swufeGold}
 \setbeamercolor{itemize subitem}{fg=swufeBlue}
 \setbeamercolor{enumerate item}{fg=swufeBlue}
-\setbeamerfont{title}{family=\sffamily,series=\bfseries,size=\LARGE}
-\setbeamerfont{subtitle}{family=\sffamily,size=\large}
+\setbeamerfont{title}{family=\sffamily,series=\bfseries,size=\Large}
+\setbeamerfont{subtitle}{family=\sffamily,size=\normalsize}
 \setbeamerfont{frametitle}{family=\sffamily,series=\bfseries,size=\large}
 \setbeamerfont{section title}{family=\sffamily,series=\bfseries,size=\LARGE}
 \setbeamerfont{footline}{family=\sffamily,size=\scriptsize}
@@ -135,16 +135,16 @@
     % Gold baseline accent.
     \fill[swufeGold] (current page.south west) rectangle ([yshift=0.16cm]current page.south east);
   \end{tikzpicture}
-  \vspace*{0.75cm}
+  \vspace*{0.4cm}
   {\sffamily\bfseries\normalsize\color{swufeGold}\rule[0.12em]{0.45em}{0.45em}\hspace{0.4em}}{\sffamily\bfseries\normalsize\color{white}\swufeUniversityCN\par}
-  \vspace{0.85cm}
+  \vspace{0.55cm}
   {\usebeamerfont{title}\color{white}\inserttitle\par}
   \vspace{0.35cm}
   {\color{swufeGold}\rule{2.6cm}{2.2pt}\par}
-  \vspace{0.4cm}
+  \vspace{0.3cm}
   {\usebeamerfont{subtitle}\color{white!88}\insertsubtitle\par}
   \vfill
-  {\sffamily\scriptsize\setlength{\extrarowheight}{2.5pt}%
+  {\sffamily\tiny\setlength{\extrarowheight}{1.0pt}%
     \begin{tabular}{@{}>{\bfseries\color{swufeGold}}l >{\color{white}}p{3.7cm} @{\hspace{0.5cm}}>{\bfseries\color{swufeGold}}l >{\color{white}}p{4.0cm}@{}}
       学生姓名 & \insertauthor & 学号 & \swufeStudentID \\
       学院/专业 & \swufeSchool\ /\ \swufeMajor & 指导老师 & \swufeSupervisor \\
@@ -195,8 +195,8 @@
     % Oversized ghost numeral for typographic depth.
     \node[anchor=east,inner sep=0pt,text=swufeBlue,opacity=0.06] at ([xshift=0.6cm,yshift=-0.2cm]current page.east)
       {\sffamily\bfseries\fontsize{150}{150}\selectfont \swufe@secnum};
-    \node[anchor=north east,inner sep=0pt] at ([xshift=-1.0cm,yshift=-0.95cm]current page.north east)
-      {\includegraphics[width=1.7cm]{logo}};
+    \node[anchor=north east,inner sep=0pt] at ([xshift=-0.58cm,yshift=-0.42cm]current page.north east)
+      {\includegraphics[width=1.55cm]{logo}};
   \end{tikzpicture}
   \vspace*{1.15cm}
   \hspace*{1.9cm}

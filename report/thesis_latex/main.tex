@@ -297,11 +297,11 @@ J(w)=\lambda_{var} w^T\Sigma_t w+\lambda_{budget}||w-b_t||_2^2
 \[
 \sum_i w_i=1,\quad 0\leq w_i\leq u_i,\quad L_g\leq \sum_{i\in g}w_i\leq U_g
 \]
-目标函数中各项分工明确：方差项控制整体波动；预算跟踪项让权重不偏离风险预算太远；换手惩罚项直接压低交易频率；CVaR 项把历史尾部损失纳入考量。其中，换手惩罚由两个同方向的 $L_1$ 分量叠加而成：一是正则化换手惩罚 $\lambda_{turnover}$，用于约束调仓幅度；二是交易成本代理项 $\lambda_{tc}\cdot c$，其中 $\lambda_{tc}=1$，$c$ 为单边交易成本（默认 $3$ bps），使优化器在内生化交易摩擦的同时保持求解器凸性。在冻结样本外配置（candidate\_09）中，$\lambda_{turnover}=0.010$，$\lambda_{tc}\cdot c=0.0003$，合并有效系数约为 $0.0103$。需特别指出：Convex Adaptive Global RRP 默认设 $\lambda_{cvar}=0$，CVaR 惩罚项实际上并未启用；CVaR 约束在 Improved Convex Adaptive Global RRP 中才被显式激活（$\lambda_{cvar}=\frozenOosCvarPenalty$），这是后者相对前者的关键差异之一。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。
+目标函数中各项分工明确：方差项控制整体波动；预算跟踪项让权重不偏离风险预算太远；换手惩罚项直接压低交易频率；CVaR 项把历史尾部损失纳入考量。其中，换手惩罚由两个同方向的 $L_1$ 分量叠加而成：一是正则化换手惩罚 $\lambda_{turnover}$，用于约束调仓幅度；二是交易成本代理项 $\lambda_{tc}\cdot c$，其中 $\lambda_{tc}=1$，$c$ 为单边交易成本（默认 $3$ bps），使优化器在内生化交易摩擦的同时保持求解器凸性。在冻结样本外配置（\frozenOosCandidate）中，$\lambda_{turnover}=\frozenOosTurnoverPenalty$，$\lambda_{tc}\cdot c=0.0003$，合并有效系数约为 $0.0203$。需特别指出：Convex Adaptive Global RRP 默认设 $\lambda_{cvar}=0$，CVaR 惩罚项实际上并未启用；CVaR 约束在 Improved Convex Adaptive Global RRP 中才被显式激活（$\lambda_{cvar}=\frozenOosCvarPenalty$），这是后者相对前者的关键差异之一。凸化表达的优点是可以加入线性约束、$L_1$ 换手惩罚和组别约束，便于稳定求解。
 
 关于收益倾斜项 $-\lambda_{return}\mu_t^T w$，其定位需要在哲学层面加以说明。风险平价的核心思想是放弃对收益率的精确预测、将配置决策的依据完全置于风险端，第二章文献综述亦援引 Chopra 与 Ziemba（1993）\cite{chopra1993effect} 的研究——收益率估计误差对组合效用的损耗约为协方差估计误差的十倍——作为"放弃收益预测"这一设计选择的计量依据。在此背景下，目标函数中保留历史均值输入项在逻辑链条上存在内在张力，需要明确解释。
 
-本文的处理方式如下：该项在目标函数中的定位是\textbf{方向性正则项}，而非均值—方差框架意义上的收益预测机制。其权重 $\lambda_{return}=0.05$ 远小于方差项（$\lambda_{var}$）和预算跟踪项（$\lambda_{budget}$），在数量级上不足以主导最优权重的走向；$\mu_t$ 仅为调仓日前历史窗口 $R_t$ 的样本均值年化值，既无前视性，也无择时意图，其作用在于轻微排除样本期内具有持续系统性负收益的极端配置方向，而非将组合积极拉向期望收益最大化的解。换言之，模型的主承重结构完整地建立在风险端四项约束之上，历史均值项仅作为防止解退化的辅助稳定机制存在。参数扰动检验中特别纳入了 $\lambda_{return}=0$ 的对照情形，若去除该项后主要绩效指标无实质变化，则可进一步确认上述定性判断；相关敏感性分析结果汇报于第六章。
+本文的处理方式如下：该项在目标函数中的定位是\textbf{方向性正则项}，而非均值—方差框架意义上的收益预测机制。其权重 $\lambda_{return}=\frozenOosReturnReward$ 远小于方差项（$\lambda_{var}$）和预算跟踪项（$\lambda_{budget}$），在数量级上不足以主导最优权重的走向；$\mu_t$ 仅为调仓日前历史窗口 $R_t$ 的样本均值年化值，既无前视性，也无择时意图，其作用在于轻微排除样本期内具有持续系统性负收益的极端配置方向，而非将组合积极拉向期望收益最大化的解。换言之，模型的主承重结构完整地建立在风险端四项约束之上，历史均值项仅作为防止解退化的辅助稳定机制存在。参数扰动检验中特别纳入了 $\lambda_{return}=0$ 的对照情形，若去除该项后主要绩效指标无实质变化，则可进一步确认上述定性判断；相关敏感性分析结果汇报于第六章。
 
 Improved Convex Adaptive Global RRP 是本文重点讨论的可实施改进，其改进体现在低换手、CVaR 约束、资产组约束和权重路径稳定四个方面。若历史情景损失为 $L_s=-r_s^T w$，CVaR 可表示为\cite{rockafellar2000optimization,boyd2004convex}：
 \[
@@ -994,8 +994,9 @@ CVaR & 给定置信水平下尾部损失均值，衡量历史尾部风险 \\
 \section{CSCV 候选参数网格}
 \label{app:candidate_grid}
 
-本文 CSCV/PBO 过拟合诊断共使用 36 个候选参数配置。表 \ref{tab:candidate_grid} 完整列出每个候选的核心参数，供验证时复现。其中 candidate\_09 即为冻结样本外检验（Frozen OOS）中使用的参数配置。列说明：Look.=回看窗口（日），Cov.=协方差方法（ewma/sample），MaxW=单资产权重上限，TO Cap=换手上限，$\lambda_{to}$=换手惩罚，$\lambda_{budget}$=预算惩罚，$\lambda_{cvar}$=CVaR 惩罚，$\beta$=CVaR 置信水平，$\lambda_{ret}$=收益倾斜权重。
+本文 CSCV/PBO 过拟合诊断共使用 36 个候选参数配置。表 \ref{tab:candidate_grid} 完整列出每个候选的核心参数，供验证时复现。其中 \frozenOosCandidate{} 即为冻结样本外检验（Frozen OOS）中使用的参数配置。列说明：Look.=回看窗口（日），Cov.=协方差方法（ewma/sample），MaxW=单资产权重上限，TO Cap=换手上限，$\lambda_{to}$=换手惩罚，$\lambda_{budget}$=预算惩罚，$\lambda_{cvar}$=CVaR 惩罚，$\beta$=CVaR 置信水平，$\lambda_{ret}$=收益倾斜权重。
 
+{\footnotesize
 \begin{longtable}{p{2.0cm}rp{1.1cm}rrrrrrr}
 \caption{CSCV 候选参数网格（共 36 个候选）}\label{tab:candidate_grid}\\
 \toprule
@@ -1014,7 +1015,7 @@ candidate\_05 & 252 & ewma & 40\% & 60\% & 0.020 & 0.250 & 0.150 & 0.95 & 0.060 
 candidate\_06 & 120 & ewma & 45\% & 80\% & 0.010 & 0.050 & 0.080 & 0.95 & 0.050 \\
 candidate\_07 & 120 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.050 \\
 candidate\_08 & 180 & ewma & 45\% & 80\% & 0.010 & 0.050 & 0.080 & 0.95 & 0.050 \\
-\textbf{candidate\_09} & \textbf{180} & \textbf{ewma} & \textbf{45\%} & \textbf{80\%} & \textbf{0.010} & \textbf{0.100} & \textbf{0.080} & \textbf{0.95} & \textbf{0.050} \\
+candidate\_09 & 180 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.050 \\
 candidate\_10 & 252 & ewma & 45\% & 80\% & 0.010 & 0.050 & 0.080 & 0.95 & 0.050 \\
 candidate\_11 & 252 & ewma & 45\% & 80\% & 0.000 & 0.100 & 0.080 & 0.95 & 0.050 \\
 candidate\_12 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.050 \\
@@ -1028,7 +1029,7 @@ candidate\_19 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.200 & 0.95 & 0.050 
 candidate\_20 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.060 \\
 candidate\_21 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.080 \\
 candidate\_22 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.100 \\
-candidate\_23 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.060 \\
+\textbf{candidate\_23} & \textbf{252} & \textbf{ewma} & \textbf{45\%} & \textbf{80\%} & \textbf{0.020} & \textbf{0.100} & \textbf{0.080} & \textbf{0.95} & \textbf{0.060} \\
 candidate\_24 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.060 \\
 candidate\_25 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
 candidate\_26 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
@@ -1043,8 +1044,9 @@ candidate\_34 & 120 & ewma & 45\% & 100\% & 0.000 & 0.050 & 0.050 & 0.95 & 0.060
 candidate\_35 & 252 & ewma & 40\% & 35\% & 0.030 & 0.350 & 0.200 & 0.90 & 0.050 \\
 candidate\_36 & 120 & sample & 40\% & --- & 0.020 & 0.100 & 0.100 & 0.95 & 0.050 \\
 \bottomrule
-\multicolumn{10}{l}{\footnotesize 加粗行为 Frozen OOS 使用的候选（candidate\_09）。"---" 表示换手上限无约束。} \\
+\multicolumn{10}{l}{\footnotesize 加粗行为 Frozen OOS 使用的候选（candidate\_23）。"---" 表示换手上限无约束。} \\
 \end{longtable}
+}
 
 \clearpage
 \section{自适应风险预算超参数}

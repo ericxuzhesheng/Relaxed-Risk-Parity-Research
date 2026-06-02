@@ -84,16 +84,16 @@
 \newcommand{\figframe}[4]{%
   \begin{frame}{#1}
     \begin{center}
-      \includegraphics[width=#3\textwidth,height=0.68\textheight,keepaspectratio]{#2}
+      \includegraphics[width=#3\textwidth,height=0.62\textheight,keepaspectratio]{#2}
     \end{center}
-    \begin{center}\footnotesize #4\end{center}
+    \begin{center}\scriptsize #4\end{center}
   \end{frame}%
 }
 
 \begin{document}
 
 % ════════════════════════════════════════════════════════════════════════════
-\begin{frame}\titlepage\end{frame}
+\begin{frame}[plain]\titlepage\end{frame}
 
 \begin{frame}{目录}\tableofcontents\end{frame}
 
@@ -103,21 +103,33 @@
 
 \begin{frame}{长期配置的核心挑战}
   \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
+    \begin{column}{0.50\textwidth}
       \textbf{为什么不能直接用均值—方差？}
       \begin{itemize}
-        \item Michaud（1989）：收益率估计误差约为协方差的 \textbf{10 倍}，微小扰动导致权重剧烈漂移
-        \item DeMiguel 等（2009）：14 种优化策略均未稳定击败 1/N 等权组合
-        \item 实务上：收益率预测本身高度不确定，机构更需要\textbf{风险可归因}的框架
-      \end{itemize}
-      \vspace{0.4em}
-      \textbf{全球 ETF 落地的三重难题}
-      \begin{itemize}
-        \item 相关结构\textbf{时变}，固定窗口协方差估计滞后
-        \item 严格 ERC + 组别上限 + CVaR → \textbf{非凸}，难以统一求解
-        \item 月频调仓 × \txCostBps{} bps 成本 × 长周期 → \textbf{净收益侵蚀}明显
+        \item Michaud（1989）：收益率估计误差远高于协方差估计误差
+        \item 微小预测扰动可能导致权重剧烈漂移
+        \item DeMiguel 等（2009）：多类优化策略未稳定击败 1/N
+        \item 机构配置更需要\textbf{风险可归因}的框架
       \end{itemize}
     \end{column}
+    \begin{column}{0.46\textwidth}
+      \textbf{全球 ETF 落地的三重难题}
+      \begin{itemize}
+        \item 相关结构\textbf{时变}：固定窗口协方差估计滞后
+        \item 严格 ERC + 组别上限 + CVaR：形成\textbf{非凸}约束
+        \item 月频调仓叠加 \txCostBps{} bps 成本：净收益被持续侵蚀
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{0.6em}
+  \begin{block}{本页要点}
+    \centering
+    长期资产配置的难点不是单期收益排序，而是如何在不确定环境下保持风险来源清晰、约束可执行、换手可控制。
+  \end{block}
+\end{frame}
+
+\begin{frame}{风险平价的核心逻辑与本文解法}
+  \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \begin{block}{风险平价的核心逻辑}
         \centering\large
@@ -133,10 +145,24 @@
         \textbf{统一可稳定求解的凸优化框架}
       \end{alertblock}
     \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{方法含义}
+      \begin{itemize}
+        \item 用风险预算偏离惩罚替代严格等式
+        \item 将 CVaR 尾部风险控制纳入约束
+        \item 用 $\ell_1$ 换手惩罚提高可实施性
+        \item 最终权重由透明优化问题生成
+      \end{itemize}
+      \vspace{0.5em}
+      \begin{block}{研究定位}
+        \small
+        本文关注长期机构配置中的可解释、可约束、可执行风险预算框架，不把模型解释为短期择时交易策略。
+      \end{block}
+    \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{研究问题与研究思路}
+\begin{frame}[shrink=3]{研究问题与研究思路}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
       \textbf{四个核心问题}
@@ -178,50 +204,73 @@
 \section{文献综述与理论基础}
 % ════════════════════════════════════════════════════════════════════════════
 
-\begin{frame}[shrink=3]{从均值—方差到风险预算：理论脉络}
+\begin{frame}{均值—方差与估计误差：理论起点}
   \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
+    \begin{column}{0.48\textwidth}
       \textbf{均值—方差与估计误差}
       \begin{itemize}
-        \item Markowitz（1959）：奠基，二次规划
+        \item Markowitz（1959）：均值—方差模型奠定现代组合选择基础
         \item Jorion（1986）：Bayes-Stein 收缩量化参数不确定性
-        \item \alert{共同结论}：收益预测不确定性高，\textbf{难以持续击败简单基准}
+        \item 核心问题：收益预测误差会被优化器放大
       \end{itemize}
-      \vspace{0.35em}
+    \end{column}
+    \begin{column}{0.48\textwidth}
       \textbf{协方差估计进展}
       \begin{itemize}
         \item 随机矩阵理论（Laloux 1999）：大量特征值为噪声
         \item CM-IEWMA（Johansson 2023）：凸组合多个 EWMA 估计器
-        \item 端到端深度学习（Bongiorno 2025）：优越但\alert{难纳入硬约束}
+        \item 端到端深度学习（Bongiorno 2025）：预测能力提升，但硬约束接口仍需处理
       \end{itemize}
     \end{column}
-    \begin{column}{0.47\textwidth}
+  \end{columns}
+  \vspace{0.6em}
+  \begin{alertblock}{共同结论}
+    收益预测不确定性高，单纯追求均值—方差最优容易产生不稳定权重，因此本文转向风险预算与约束优化框架。
+  \end{alertblock}
+\end{frame}
+
+\begin{frame}{风险预算与层次化方法：本文连接点}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
       \textbf{风险平价与宽松风险预算}
       \begin{itemize}
         \item Qian（2005）：风险贡献平等 = 最优分散
         \item Maillard 等（2010）：ERC 唯一性证明
         \item Gambeta \& Kwon（2020）：\textbf{宽松 RRP} 数学性质
       \end{itemize}
-      \vspace{0.35em}
+    \end{column}
+    \begin{column}{0.48\textwidth}
       \textbf{层次化方法}
       \begin{itemize}
         \item HRP（López de Prado 2016）：层次聚类，回避矩阵求逆
         \item HERC（Raffinot 2018）：簇间引入风险贡献逻辑
-        \item \alert{共同局限}：难以直接纳入 CVaR 和换手惩罚
+        \item 在本文中作为层次化风险分配基准
       \end{itemize}
     \end{column}
   \end{columns}
+  \vspace{0.6em}
+  \begin{block}{本文连接点}
+    \centering
+    风险预算提供可解释目标，凸优化框架提供 CVaR、换手率和资产组约束的统一实现方式。
+  \end{block}
 \end{frame}
 
-\begin{frame}{CVaR 约束与交易成本的理论依据}
+\begin{frame}[shrink=2]{CVaR 约束与交易成本的理论依据}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       \textbf{CVaR 的凸性与线性重表述}\\[0.3em]
       Rockafellar \& Uryasev（2000；2002）：
-      \[
-        \mathrm{CVaR}_\alpha(w) = \min_\eta \Bigl[\eta + \tfrac{1}{(1-\alpha)T}
-        \textstyle\sum_t\max(-r_t^\top w - \eta,\, 0)\Bigr]
-      \]
+      \begin{center}
+      \resizebox{0.98\linewidth}{!}{$
+      \begin{aligned}
+        \mathrm{CVaR}_\alpha(w)
+        &= \min_\eta \Bigl[
+        \eta + \tfrac{1}{(1-\alpha)T}
+        \sum_t \max(-r_t^\top w-\eta,0)
+        \Bigr]
+      \end{aligned}
+      $}
+      \end{center}
       \begin{itemize}
         \item 次可加性 + 凸性：\textbf{天然适合约束优化}
         \item 引入辅助变量 $\eta$ 后等价为\textbf{线性不等式组}
@@ -247,7 +296,7 @@
 \section{理论框架与模型方法}
 % ════════════════════════════════════════════════════════════════════════════
 
-\begin{frame}{从严格 ERC 到宽松风险平价}
+\begin{frame}[shrink=3]{从严格 ERC 到宽松风险平价}
   \begin{columns}[T]
     \begin{column}{0.46\textwidth}
       \textbf{标准风险平价（ERC）}\\[0.2em]
@@ -266,7 +315,7 @@
     \begin{column}{0.51\textwidth}
       \textbf{Convex Adaptive Global RRP}\\[0.3em]
       将风险预算思想凸化，统一纳入多个约束：
-      \small
+      \scriptsize
       \begin{align*}
         \min_w\; J(w)
           &= \underbrace{\lambda_v w^\top\Sigma_t w}_{\text{波动率项}}
@@ -275,14 +324,14 @@
            + \underbrace{\lambda_c\,\mathrm{CVaR}_\alpha(w)}_{\text{尾部约束}}
            - \underbrace{\lambda_r\,\mu_t^\top w}_{\text{收益奖励}}
       \end{align*}
-      \normalsize
+      \small
       \vspace{0.1em}
       约束集：$\sum_i w_i=1,\ 0\le w_i\le u_i,\ L_g\le\sum_{i\in g}w_i\le U_g$
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}{四模型定位与参数冻结策略}
+\begin{frame}[shrink=4]{四模型定位与参数冻结策略}
   \footnotesize\renewcommand{\arraystretch}{1.3}
   \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{2.8cm}@{}}
     \toprule
@@ -302,7 +351,7 @@
         \item 在\textbf{训练集}内网格搜索超参数候选
         \item 筛选 OOS 期稳健的候选集
         \item \textbf{冻结}后在 \evalStartDate{}—\evalEndDate{} 重跑
-        \item 所有结果来自冻结参数，不在 OOS 期重新优化
+        \item 评价期不重新优化，避免回看样本
       \end{enumerate}
     \end{column}
     \begin{column}{0.44\textwidth}
@@ -323,43 +372,43 @@
 \section{数据与回测设计}
 % ════════════════════════════════════════════════════════════════════════════
 
-\begin{frame}{\etfCount{} 支全球 ETF：8 大风险来源（来自 src/asset\_universe.py）}
-  \footnotesize\renewcommand{\arraystretch}{1.2}
+\begin{frame}[shrink=3]{\etfCount{} 支全球 ETF：8 大风险来源（来自 src/asset\_universe.py）}
+  \scriptsize\renewcommand{\arraystretch}{1.25}
   \begin{center}
-    \begin{tabular}{@{}>{\bfseries}l>{\raggedright\arraybackslash}p{4.8cm}@{\hspace{0.5cm}}>{\bfseries}l>{\raggedright\arraybackslash}p{3.8cm}@{}}
+    \begin{tabular}{@{}>{\bfseries}l>{\raggedright\arraybackslash}p{4.0cm}@{\hspace{0.15cm}}>{\bfseries}l>{\raggedright\arraybackslash}p{3.1cm}@{}}
       \toprule
       类别 & 代表品种 & 类别 & 代表品种 \\
       \midrule
       债券（4）     & 国债、信用债、可转债、货币      & 行业与消费（3） & 证券、军工、消费 \\
       A股宽基（5）  & 沪深300/500/1000、创业板、红利  & 港股与贵金属（2）& 恒生ETF、白银LOF \\
-      中国科技（7） & 半导体、AI、机器人、新能源、     & 全球股票（4）  & 纳指、标普500、日经、欧洲 \\
+      中国科技与先进制造（7） & 半导体、AI、机器人、新能源、     & 全球股票（4）  & 纳指、标普500、日经、欧洲 \\
                   & 中韩半导体、科创50、云计算      & 大宗商品（5）  & 黄金、有色、豆粕、煤炭、原油 \\
       \bottomrule
     \end{tabular}
   \end{center}
   \vspace{0.3em}
-  \small\centering
-  数据起始 \dataFirstDate{}（含训练期）\quad
+  \footnotesize\centering
+  数据起始 \dataFirstDate{}（含训练期）\\
   评价区间 \evalStartDate{}—\evalEndDate{}，共 \evalMonths{} 个月度观察点，\txCostBps{} bps 单边成本
 \end{frame}
 
-\figframe{因子暴露结构：各 ETF 对主要风险因子的敞口}{asset_pricing_factor_exposure.png}{0.90}{}
+\figframe{因子暴露结构：各 ETF 对主要风险因子的敞口}{asset_pricing_factor_exposure.png}{0.90}{图中展示 ETF 与主要风险因子的关联方向和强度，用于说明资产池并非单一权益或债券暴露，而是覆盖多类风险来源。}
 
 \begin{frame}{静态权重演进：从国内到全球多资产}
-  \begin{columns}[T]
-    \begin{column}{0.32\textwidth}
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.30\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=0.60\textheight,keepaspectratio]{static_v1_standard_weights.png}\\[0.3em]
+      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v1_standard_weights.png}\\[0.3em]
       \footnotesize \textbf{标准风险平价}\\债券主导，高集中度
     \end{column}
-    \begin{column}{0.32\textwidth}
+    \begin{column}{0.30\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=0.60\textheight,keepaspectratio]{static_v2_relaxed_weights.png}\\[0.3em]
+      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v2_relaxed_weights.png}\\[0.3em]
       \footnotesize \textbf{宽松 RRP}\\偏离惩罚引入，权重更分散
     \end{column}
-    \begin{column}{0.32\textwidth}
+    \begin{column}{0.30\textwidth}
       \centering
-      \includegraphics[width=\textwidth,height=0.60\textheight,keepaspectratio]{static_v3_global_weights.png}\\[0.3em]
+      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v3_global_weights.png}\\[0.3em]
       \footnotesize \textbf{Global RRP（30 支）}\\跨 8 大类，结构更均衡
     \end{column}
   \end{columns}
@@ -448,12 +497,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.66\textheight,keepaspectratio]{convex_adaptive_nav_comparison.png}\\
-      \footnotesize\centering 净值路径
+      \footnotesize\centering 净值路径：比较三类 RRP 模型的累计收益稳定性
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.66\textheight,keepaspectratio]{convex_adaptive_drawdown_comparison.png}\\
-      \footnotesize\centering 回撤路径
+      \footnotesize\centering 回撤路径：检验凸化与 CVaR 约束对下行风险的改善
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -530,7 +579,7 @@
   各资产组权重在评价期内动态调整，整体保持 8 大类分散，无单一类别长期占比超过组别上限约束
 \end{frame}
 
-\begin{frame}{HERC 权重路径：为何 Sharpe 高但无可比性}
+\begin{frame}{HERC 权重路径：为何 Sharpe 的经济含义有限}
   \begin{center}
     \includegraphics[width=0.88\textwidth,height=0.60\textheight,keepaspectratio]{hrp_weights_timeline.png}
   \end{center}
@@ -545,7 +594,7 @@
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item 年化波动率 \hercVolatility{}，Sharpe = \hercSharpe{} 来自人工压低分母，而非真正多资产分散
+        \item 年化波动率仅 \hercVolatility{}，Sharpe = \hercSharpe{} 主要来自低波动债券底仓，经济含义不同于多资产分散模型
       \end{itemize}
     \end{column}
   \end{columns}
@@ -556,12 +605,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{benchmark_nav_comparison.png}\\
-      \footnotesize\centering 净值路径
+      \footnotesize\centering 净值路径：主模型收益较稳，等权收益更高但波动更大
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{benchmark_drawdown_comparison.png}\\
-      \footnotesize\centering 回撤路径
+      \footnotesize\centering 回撤路径：主模型最大回撤显著小于等权和 60/40
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -583,12 +632,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_pricing_risk_attribution.png}\\
-      \footnotesize\centering 风险归因（各资产对组合波动的贡献）
+      \footnotesize\centering 风险归因：识别哪些资产贡献了主要组合波动
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_pricing_return_attribution.png}\\
-      \footnotesize\centering 收益归因（各资产对累计净值的贡献）
+      \footnotesize\centering 收益归因：识别哪些资产贡献了主要累计收益
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -697,12 +746,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{robustness_subperiod_sharpe.png}\\
-      \footnotesize\centering Sharpe 比率（中位数 \wfSharpeMedian{}，均值 \wfSharpeMean{}）
+      \footnotesize\centering Sharpe：多数子区间保持正风险调整收益
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{robustness_subperiod_drawdown.png}\\
-      \footnotesize\centering 最大回撤（均值 \wfDDMean{}）
+      \footnotesize\centering 最大回撤：压力期回撤可控但仍有阶段性弱点
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -757,12 +806,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{robustness_bootstrap_sharpe_distribution.png}\\
-      \footnotesize\centering Sharpe 经验分布
+      \footnotesize\centering Sharpe 分布：检验抽样扰动下风险调整收益是否稳定
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{robustness_bootstrap_drawdown_distribution.png}\\
-      \footnotesize\centering 最大回撤经验分布
+      \footnotesize\centering 最大回撤分布：检验尾部回撤在重抽样下的稳定性
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -805,12 +854,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{covariance_robustness_sharpe.png}\\
-      \footnotesize\centering Sharpe 比率对比
+      \footnotesize\centering Sharpe 对比：检验不同协方差估计器下的收益稳健性
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{covariance_robustness_turnover.png}\\
-      \footnotesize\centering 换手率对比
+      \footnotesize\centering 换手率对比：检验估计器变化是否破坏低换手特征
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -823,12 +872,12 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{robustness_stress_period_performance.png}\\
-      \footnotesize\centering 各压力期分模型绩效
+      \footnotesize\centering 压力期绩效：比较模型在市场冲击阶段的收益和回撤
     \end{column}
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_graph_stress_timeline.png}\\
-      \footnotesize\centering 资产层面的压力时序
+      \footnotesize\centering 压力时序：展示不同资产风险状态随时间变化
     \end{column}
   \end{columns}
   \vspace{0.2em}
@@ -843,7 +892,7 @@
 \begin{frame}{三条核心结论}
   \begin{swufekeypoints}
     \swufepoint{三维权衡同步改善}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——在收益、回撤、换手三个维度上均无明显短板}
-    \swufepoint{HERC 高 Sharpe 不具可比性}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 完全来自接近全仓债券的极低波动，而非跨资产分散的结果，不构成多资产配置框架的有效基准}
+    \swufepoint{HERC 需结合权重解释}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 主要来自接近全仓债券的低波动结构；因此应作为层次化配置基准，而非与主模型作单一指标排序}
     \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward 和参数扰动分析确认结论在区间内相对稳定，但不代表对未来绩效的预测}
   \end{swufekeypoints}
 \end{frame}
@@ -893,7 +942,9 @@
         最大回撤  & \improvedMaxDD     \\
         月均换手  & \improvedMonthlyTurnover \\
       \end{tabular}};
-    % logo removed
+    \node[anchor=north east, inner sep=0pt]
+      at ([xshift=-0.58cm,yshift=-0.42cm]current page.north east)
+      {\includegraphics[width=1.55cm]{logo}};
   \end{tikzpicture}
 \end{frame}
 
