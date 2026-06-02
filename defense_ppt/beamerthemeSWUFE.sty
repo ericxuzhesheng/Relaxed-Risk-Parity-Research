@@ -1,0 +1,243 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeSWUFE}[2026/05/11 SWUFE undergraduate thesis defense Beamer theme]
+
+\RequirePackage{iftex}
+\ifXeTeX\else
+  \PackageError{beamerthemeSWUFE}{This theme requires XeLaTeX}{Compile with latexmk -xelatex main.tex}
+\fi
+
+\RequirePackage{fontspec}
+\RequirePackage{xeCJK}
+\RequirePackage{xcolor}
+\RequirePackage{etoolbox}
+\RequirePackage{tikz}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+
+\mode<presentation>
+
+% Core palette
+\definecolor{swufeBlue}{HTML}{003B71}
+\definecolor{swufeGold}{HTML}{C8A045}
+\definecolor{swufeDark}{HTML}{1F2933}
+\definecolor{swufeLight}{HTML}{F5F7FA}
+\definecolor{swufeGray}{HTML}{6B7280}
+\definecolor{swufeLine}{HTML}{D8DEE9}
+
+% Robust font fallback for common Windows, macOS, Linux, and TeX Live setups.
+\defaultfontfeatures{Ligatures=TeX}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+\IfFontExistsTF{Arial}
+  {\setsansfont{Arial}}
+  {\setsansfont{TeX Gyre Heros}}
+\IfFontExistsTF{Consolas}
+  {\setmonofont{Consolas}[Scale=MatchLowercase]}
+  {\setmonofont{Inconsolata}[Scale=MatchLowercase]}
+
+\newcommand{\swufe@setcjkmainfont}{%
+  \IfFontExistsTF{SimSun}
+    {\setCJKmainfont{SimSun}[AutoFakeBold=true,AutoFakeSlant=true]}
+    {\IfFontExistsTF{Songti SC}
+      {\setCJKmainfont{Songti SC}[AutoFakeBold=true,AutoFakeSlant=true]}
+      {\IfFontExistsTF{Noto Serif CJK SC}
+        {\setCJKmainfont{Noto Serif CJK SC}[AutoFakeBold=true,AutoFakeSlant=true]}
+        {\IfFontExistsTF{FandolSong-Regular}
+          {\setCJKmainfont{FandolSong-Regular}[AutoFakeBold=true,AutoFakeSlant=true]}
+          {\setCJKmainfont{Microsoft YaHei}[AutoFakeBold=true,AutoFakeSlant=true]}}}}}
+\newcommand{\swufe@setcjksansfont}{%
+  \IfFontExistsTF{Microsoft YaHei}
+    {\setCJKsansfont{Microsoft YaHei}[AutoFakeBold=true,AutoFakeSlant=true]}
+    {\IfFontExistsTF{PingFang SC}
+      {\setCJKsansfont{PingFang SC}[AutoFakeBold=true,AutoFakeSlant=true]}
+      {\IfFontExistsTF{Noto Sans CJK SC}
+        {\setCJKsansfont{Noto Sans CJK SC}[AutoFakeBold=true,AutoFakeSlant=true]}
+        {\IfFontExistsTF{FandolHei-Regular}
+          {\setCJKsansfont{FandolHei-Regular}[AutoFakeBold=true,AutoFakeSlant=true]}
+          {\setCJKsansfont{SimSun}[AutoFakeBold=true,AutoFakeSlant=true]}}}}}
+\newcommand{\swufe@setcjkmonofont}{%
+  \IfFontExistsTF{KaiTi}
+    {\setCJKmonofont{KaiTi}[AutoFakeBold=true,AutoFakeSlant=true]}
+    {\IfFontExistsTF{Noto Sans Mono CJK SC}
+      {\setCJKmonofont{Noto Sans Mono CJK SC}[AutoFakeBold=true,AutoFakeSlant=true]}
+      {\IfFontExistsTF{FandolFang-Regular}
+        {\setCJKmonofont{FandolFang-Regular}[AutoFakeBold=true,AutoFakeSlant=true]}
+        {\setCJKmonofont{SimSun}[AutoFakeBold=true,AutoFakeSlant=true]}}}}
+\swufe@setcjkmainfont
+\swufe@setcjksansfont
+\swufe@setcjkmonofont
+
+\usetheme{default}
+\usefonttheme{professionalfonts}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\setbeamercolor{normal text}{fg=swufeDark,bg=white}
+\setbeamercolor{structure}{fg=swufeBlue}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=white}
+\setbeamercolor{author}{fg=white}
+\setbeamercolor{date}{fg=white}
+\setbeamercolor{frametitle}{fg=white,bg=swufeBlue}
+\setbeamercolor{block title}{fg=white,bg=swufeBlue}
+\setbeamercolor{block body}{fg=swufeDark,bg=swufeLight}
+\setbeamercolor{block title alerted}{fg=white,bg=swufeGold}
+\setbeamercolor{block body alerted}{fg=swufeDark,bg=swufeLight}
+\setbeamercolor{itemize item}{fg=swufeGold}
+\setbeamercolor{itemize subitem}{fg=swufeBlue}
+\setbeamercolor{enumerate item}{fg=swufeBlue}
+\setbeamerfont{title}{family=\sffamily,series=\bfseries,size=\LARGE}
+\setbeamerfont{subtitle}{family=\sffamily,size=\large}
+\setbeamerfont{frametitle}{family=\sffamily,series=\bfseries,size=\large}
+\setbeamerfont{section title}{family=\sffamily,series=\bfseries,size=\LARGE}
+\setbeamerfont{footline}{family=\sffamily,size=\scriptsize}
+\setbeamerfont{block title}{family=\sffamily,series=\bfseries}
+
+\setlength{\parskip}{0.3em}
+\linespread{1.08}
+
+% Generous editorial side margins and list rhythm.
+\setbeamersize{text margin left=0.85cm,text margin right=0.85cm}
+\addtobeamertemplate{itemize/enumerate body begin}{}{\setlength{\itemsep}{0.5em}}
+\addtobeamertemplate{itemize/enumerate subbody begin}{}{\setlength{\itemsep}{0.3em}}
+
+% Chinese caption labels for tables and figures.
+\renewcommand{\tablename}{表}
+\renewcommand{\figurename}{图}
+\setbeamercolor{caption name}{fg=swufeBlue}
+
+% Title metadata helpers.
+\newcommand{\swufeStudentID}{}
+\newcommand{\swufeSchool}{}
+\newcommand{\swufeMajor}{}
+\newcommand{\swufeSupervisor}{}
+\newcommand{\swufeUniversityCN}{西南财经大学}
+\newcommand{\swufeUniversityEN}{Southwest University of Finance and Economics}
+\newcommand{\studentid}[1]{\renewcommand{\swufeStudentID}{#1}}
+\newcommand{\school}[1]{\renewcommand{\swufeSchool}{#1}}
+\newcommand{\major}[1]{\renewcommand{\swufeMajor}{#1}}
+\newcommand{\supervisor}[1]{\renewcommand{\swufeSupervisor}{#1}}
+\newcommand{\universitycn}[1]{\renewcommand{\swufeUniversityCN}{#1}}
+\newcommand{\universityen}[1]{\renewcommand{\swufeUniversityEN}{#1}}
+
+\setbeamertemplate{title page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    % Deep blue canvas with subtle vertical depth.
+    \fill[swufeBlue] (current page.south west) rectangle (current page.north east);
+    \fill[black,opacity=0.16] (current page.south west) rectangle ([yshift=2.7cm]current page.south east);
+    % Atmospheric concentric rings in the top-right corner.
+    \fill[white,opacity=0.05] ([xshift=-1.9cm,yshift=1.4cm]current page.north east) circle (3.6cm);
+    \draw[white,opacity=0.10,line width=0.9pt] ([xshift=-4.7cm,yshift=0.2cm]current page.north east) circle (4.4cm);
+    \draw[swufeGold,opacity=0.32,line width=1pt] ([xshift=-1.1cm,yshift=-1.7cm]current page.north east) circle (2.1cm);
+    % Gold baseline accent.
+    \fill[swufeGold] (current page.south west) rectangle ([yshift=0.16cm]current page.south east);
+  \end{tikzpicture}
+  \vspace*{0.75cm}
+  {\sffamily\bfseries\normalsize\color{swufeGold}\rule[0.12em]{0.45em}{0.45em}\hspace{0.4em}}{\sffamily\bfseries\normalsize\color{white}\swufeUniversityCN\par}
+  \vspace{0.85cm}
+  {\usebeamerfont{title}\color{white}\inserttitle\par}
+  \vspace{0.35cm}
+  {\color{swufeGold}\rule{2.6cm}{2.2pt}\par}
+  \vspace{0.4cm}
+  {\usebeamerfont{subtitle}\color{white!88}\insertsubtitle\par}
+  \vfill
+  {\sffamily\scriptsize\setlength{\extrarowheight}{2.5pt}%
+    \begin{tabular}{@{}>{\bfseries\color{swufeGold}}l >{\color{white}}p{3.7cm} @{\hspace{0.5cm}}>{\bfseries\color{swufeGold}}l >{\color{white}}p{4.0cm}@{}}
+      学生姓名 & \insertauthor & 学号 & \swufeStudentID \\
+      学院/专业 & \swufeSchool\ /\ \swufeMajor & 指导老师 & \swufeSupervisor \\
+      答辩日期 & \insertdate & 学校 & \swufeUniversityCN \\
+    \end{tabular}\par}
+  \vspace*{0.5cm}
+}
+
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=0.9cm,dp=0.28cm,leftskip=0.55cm,rightskip=0.55cm]{frametitle}
+    {\color{swufeGold}\rule[0.1ex]{0.42em}{0.42em}}\hspace{0.45em}%
+    \usebeamerfont{frametitle}\insertframetitle
+    \ifx\insertframesubtitle\@empty\else
+      {\hfill\small\color{swufeLight}\insertframesubtitle}
+    \fi
+  \end{beamercolorbox}%
+  \nointerlineskip
+  \hbox{\color{swufeGold}\rule{\paperwidth}{1.4pt}}%
+}
+
+\setbeamertemplate{footline}{%
+  \hbox{\hspace{0.45cm}\color{swufeLine}\rule{\dimexpr\paperwidth-0.9cm\relax}{0.4pt}}%
+  \nointerlineskip\vskip1.2pt
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.40\paperwidth,ht=2.5ex,dp=1ex,leftskip=0.45cm]{author in head/foot}%
+      {\color{swufeGold}\rule[0.05ex]{0.32em}{0.32em}}\hspace{0.4em}\color{swufeGray}\insertsectionhead
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.34\paperwidth,ht=2.5ex,dp=1ex,center]{title in head/foot}%
+      \color{swufeGray}\sffamily 西南财经大学 \textperiodcentered{} 本科毕业论文答辩
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.26\paperwidth,ht=2.5ex,dp=1ex,rightskip=0.45cm plus 1fil]{date in head/foot}%
+      {\color{swufeBlue}\bfseries\insertframenumber}\,{\color{swufeGray}/ \inserttotalframenumber}
+    \end{beamercolorbox}%
+  }%
+  \vskip2pt
+}
+
+% Zero-padded section number, e.g. 01, 02 ... for the editorial display numeral.
+\newcommand{\swufe@secnum}{\ifnum\thesection<10 0\fi\thesection}
+
+\setbeamertemplate{section page}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[swufeLight] (current page.south west) rectangle (current page.north east);
+    \fill[swufeBlue] (current page.south west) rectangle ([xshift=2.1cm]current page.north west);
+    \fill[swufeGold] ([xshift=2.1cm]current page.south west) rectangle ([xshift=2.22cm]current page.north west);
+    % Oversized ghost numeral for typographic depth.
+    \node[anchor=east,inner sep=0pt,text=swufeBlue,opacity=0.06] at ([xshift=0.6cm,yshift=-0.2cm]current page.east)
+      {\sffamily\bfseries\fontsize{150}{150}\selectfont \swufe@secnum};
+    \node[anchor=north east,inner sep=0pt] at ([xshift=-1.0cm,yshift=-0.95cm]current page.north east)
+      {\includegraphics[width=1.7cm]{logo}};
+  \end{tikzpicture}
+  \vspace*{1.15cm}
+  \hspace*{1.9cm}
+  \begin{minipage}{0.74\paperwidth}
+    {\sffamily\bfseries\fontsize{58}{58}\selectfont\color{swufeGold}\swufe@secnum\par}
+    \vspace{0.35cm}
+    {\sffamily\color{swufeGray}\normalsize 第 \thesection 部分\par}
+    \vspace{0.12cm}
+    {\usebeamerfont{section title}\color{swufeBlue}\insertsection\par}
+    \vspace{0.3cm}
+    {\color{swufeGold}\rule{2.6cm}{2.2pt}\par}
+  \end{minipage}
+}
+\AtBeginSection{\begin{frame}[plain,noframenumbering]\sectionpage\end{frame}}
+
+\setbeamertemplate{itemize item}{\raisebox{0.16ex}{\scriptsize$\blacktriangleright$}}
+\setbeamertemplate{itemize subitem}{\raisebox{0.12ex}{\tiny$\bullet$}}
+
+\newenvironment{swufekeypoints}
+  {\begin{columns}[T,onlytextwidth]}
+  {\end{columns}}
+\newcommand{\swufepoint}[3]{%
+  \begin{column}{0.31\textwidth}
+    \begin{block}{#1}
+      {\large\bfseries\color{swufeGold}#2}\par\vspace{0.25em}
+      #3
+    \end{block}
+  \end{column}
+}
+
+\newcommand{\swufeplaceholderfigure}[2][0.88\linewidth]{%
+  \begin{tikzpicture}
+    \draw[rounded corners=2pt,draw=swufeLine,fill=swufeLight] (0,0) rectangle (8,4.2);
+    \draw[swufeBlue,line width=0.8pt] (0.7,0.7) -- (2.0,1.4) -- (3.0,1.15) -- (4.2,2.45) -- (5.6,2.1) -- (7.1,3.15);
+    \draw[swufeGold,line width=0.8pt] (0.7,1.0) -- (2.0,1.1) -- (3.0,1.8) -- (4.2,1.55) -- (5.6,2.7) -- (7.1,2.45);
+    \node[align=center,text=swufeGray] at (4,0.35) {\scriptsize #2};
+  \end{tikzpicture}
+}
+
+\AtBeginEnvironment{tabular}{\small}
+\AtBeginEnvironment{equation}{\small}
+
+\mode<all>
+

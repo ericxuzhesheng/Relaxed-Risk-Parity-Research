@@ -1,0 +1,685 @@
+% ============================================================
+%  答辩幻灯片 — 宽松风险平价在全球 ETF 资产配置中的改进与实证研究
+%  内容全部来自仓库：src/asset_universe.py、report/thesis_latex/generated_numbers.tex
+%  编译：xelatex main.tex  或  latexmk -xelatex main.tex
+% ============================================================
+\documentclass[aspectratio=169,11pt]{beamer}
+\usepackage{beamerthemeSWUFE}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+\graphicspath{{assets/figures/}{assets/logos/}}
+
+% ── 封面元信息（来自 report/thesis_latex/main.tex）────────────────────────
+\title{宽松风险平价在全球 ETF\\资产配置中的改进与实证研究}
+\subtitle{本科毕业论文答辩}
+\author{许哲圣}
+\studentid{42353012}
+\school{特拉华数据科学学院}
+\major{金融数学（金融服务与量化分析方向）}
+\supervisor{王磊 讲师}
+\date{2026年5月}
+
+% ── 来自 generated_numbers.tex 的核心数值宏 ──────────────────────────────
+% 评价区间
+\newcommand{\etfCount}{30}
+\newcommand{\evalStartDate}{2019-01-01}
+\newcommand{\evalEndDate}{2026-05-29}
+\newcommand{\evalMonths}{89}
+\newcommand{\txCostBps}{3}
+\newcommand{\riskFreeRate}{1.82\%}
+\newcommand{\dataFirstDate}{2018-02-28}
+% Global RRP
+\newcommand{\globalNetReturn}{4.59\%}
+\newcommand{\globalVolatility}{4.11\%}
+\newcommand{\globalSharpe}{0.674}
+\newcommand{\globalSortino}{0.770}
+\newcommand{\globalMaxDD}{-7.14\%}
+\newcommand{\globalCalmar}{0.643}
+\newcommand{\globalMonthlyTurnover}{22.30\%}
+% Convex Adaptive
+\newcommand{\convexNetReturn}{6.80\%}
+\newcommand{\convexVolatility}{5.21\%}
+\newcommand{\convexSharpe}{0.956}
+\newcommand{\convexSortino}{1.468}
+\newcommand{\convexMaxDD}{-6.66\%}
+\newcommand{\convexCalmar}{1.021}
+\newcommand{\convexMonthlyTurnover}{1.24\%}
+% Improved Convex Adaptive
+\newcommand{\improvedNetReturn}{5.57\%}
+\newcommand{\improvedVolatility}{2.62\%}
+\newcommand{\improvedSharpe}{1.431}
+\newcommand{\improvedSortino}{2.099}
+\newcommand{\improvedMaxDD}{-3.95\%}
+\newcommand{\improvedCalmar}{1.410}
+\newcommand{\improvedMonthlyTurnover}{2.07\%}
+% HERC
+\newcommand{\hercNetReturn}{2.23\%}
+\newcommand{\hercVolatility}{0.57\%}
+\newcommand{\hercSharpe}{0.718}
+\newcommand{\hercSortino}{1.053}
+\newcommand{\hercMaxDD}{-0.58\%}
+\newcommand{\hercCalmar}{3.828}
+\newcommand{\hercMonthlyTurnover}{5.78\%}
+% Equal Weight
+\newcommand{\equalWeightNetReturn}{10.66\%}
+\newcommand{\equalWeightVolatility}{11.08\%}
+\newcommand{\equalWeightSharpe}{0.798}
+\newcommand{\equalWeightSortino}{1.276}
+\newcommand{\equalWeightMaxDD}{-13.91\%}
+\newcommand{\equalWeightCalmar}{0.767}
+\newcommand{\equalWeightMonthlyTurnover}{1.24\%}
+% 60/40
+\newcommand{\sixtyFortyNetReturn}{8.02\%}
+\newcommand{\sixtyFortyVolatility}{8.91\%}
+\newcommand{\sixtyFortySharpe}{0.695}
+\newcommand{\sixtyFortySortino}{1.119}
+\newcommand{\sixtyFortyMaxDD}{-14.71\%}
+\newcommand{\sixtyFortyCalmar}{0.545}
+\newcommand{\sixtyFortyMonthlyTurnover}{1.43\%}
+% Walk-forward
+\newcommand{\walkforwardSharpeMean}{1.116}
+\newcommand{\walkforwardSharpeMedian}{1.014}
+\newcommand{\walkforwardNetreturnMean}{7.18\%}
+\newcommand{\walkforwardNetreturnMedian}{6.37\%}
+\newcommand{\walkforwardMaxddMean}{-2.07\%}
+\newcommand{\walkforwardMaxddMedian}{-1.80\%}
+% Sharpe 差异检验
+\newcommand{\improvedVsGlobalDiff}{0.757}
+\newcommand{\improvedVsGlobalPValue}{0.004}
+\newcommand{\improvedVsEqualPValue}{0.013}
+
+\begin{document}
+
+% ── 封面 ─────────────────────────────────────────────────────────────────────
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ── 目录 ─────────────────────────────────────────────────────────────────────
+\begin{frame}{目录}
+  \tableofcontents
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{研究背景与意义}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{长期配置的核心挑战}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{为什么收益预测很难？}
+      \begin{itemize}
+        \item 均值–方差对收益率估计高度敏感
+        \item 微小扰动导致权重剧烈变动（Michaud 1989）
+        \item 收益率估计误差影响约为协方差的 \textbf{10 倍}
+        \item 大量样本外检验：1/N 等权难以被击败
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{实践层面的约束}
+      \begin{itemize}
+        \item 月度调仓 + 交易成本长期积累
+        \item 相关结构时变、尾部依赖非线性
+        \item 境内外 ETF 上市时间参差不齐
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{风险平价的核心思想}
+        \centering
+        以\textbf{风险贡献}替代资金金额\\[0.4em]
+        \large
+        $RC_i = w_i \cdot \dfrac{(\Sigma w)_i}{\sigma_p}$\\[0.6em]
+        \normalsize
+        目标：$RC_i = b_i \cdot \sigma_p$\\[0.4em]
+        \small 对收益预测依赖低，可解释性强
+      \end{block}
+      \vspace{0.5em}
+      \begin{alertblock}{全球 ETF 落地的问题}
+        严格等式约束 + 权重上限 + CVaR 约束 + 换手惩罚\\
+        → 无法纳入标准凸优化求解器
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{研究意义与边际贡献}
+  \begin{swufekeypoints}
+    \swufepoint{数据贡献}{01}{以\textbf{可交易 ETF} 替代不可交易指数，回测成本与权重更贴近真实执行，而非停留在指数层面}
+    \swufepoint{方法贡献}{02}{将风险预算偏离惩罚、CVaR 约束、换手约束和资产组限制\textbf{统一纳入}同一凸优化框架，同时处理多个实施约束}
+    \swufepoint{验证贡献}{03}{串联多种稳健性诊断，将结论\textbf{明确限定}在具体样本区间和参数设定，避免过度外推}
+  \end{swufekeypoints}
+  \vspace{0.8em}
+  \begin{center}
+    \small
+    \begin{tabular}{lll}
+      \toprule
+      研究问题 & 方法 & 结论依据 \\
+      \midrule
+      RRP 能否建立清晰风险来源框架？ & 4 模型统一对比 & 绩效表 + 权重结构 \\
+      CVaR+换手惩罚如何改变三维权衡？ & Improved Convex vs. Global & Sharpe 差异检验 \\
+      HERC 与主模型是何关系？ & 相同样本 & 波动率分解 \\
+      结论对参数与样本的依赖程度？ & 多维稳健性 & Walk-forward + 扰动 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{文献综述与理论基础}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{理论脉络：从均值–方差到风险预算}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{均值–方差框架的局限}
+      \begin{itemize}
+        \item Markowitz (1959)：二次规划奠基
+        \item Michaud (1989)：估计误差放大效应
+        \item DeMiguel 等 (2009)：14 种优化均未稳定击败 1/N
+        \item Black-Litterman (1992)：需要先验，难以无模型验证
+      \end{itemize}
+      \vspace{0.6em}
+      \textbf{协方差估计的研究进展}
+      \begin{itemize}
+        \item 随机矩阵理论（Laloux 等 1999）：大量特征值为噪声
+        \item CM-IEWMA（Johansson 等 2023）：凸组合多个 EWMA
+        \item 端到端深度学习（Bongiorno 等 2025）：难纳入硬约束
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{风险平价的理论发展}
+      \begin{itemize}
+        \item Qian (2005)：风险贡献平等 = 最优分散
+        \item Maillard 等 (2010)：ERC 唯一性证明
+        \item Roncalli (2013)：推广为完整风险预算框架
+        \item Gambeta \& Kwon (2020)：\textbf{宽松风险平价}数学性质
+      \end{itemize}
+      \vspace{0.6em}
+      \textbf{层次化方法}
+      \begin{itemize}
+        \item HRP（López de Prado 2016）：层次聚类，回避矩阵求逆
+        \item HERC（Raffinot 2018）：簇间引入风险贡献逻辑
+        \item \alert{局限}：难以直接纳入 CVaR 约束和换手惩罚
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{CVaR 与交易成本的理论基础}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \textbf{CVaR 的数学性质}\\[0.3em]
+      Rockafellar \& Uryasev（2000；2002）将 CVaR 约束转化为\textbf{线性规划}：
+      \[
+        \mathrm{CVaR}_\alpha(w) = \eta + \frac{1}{(1-\alpha)T}\sum_{t=1}^T \max(-r_t^\top w - \eta,\, 0)
+      \]
+      \begin{itemize}
+        \item 次可加性 + 凸性：天然适合约束优化
+        \item 引入辅助变量 $\eta$ 后等价于线性不等式
+        \item 与 $\ell_1$ 换手惩罚可统一纳入同一凸框架
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \textbf{交易成本建模}\\[0.3em]
+      Almgren \& Chriss (2001)：换手速率与市场冲击成本的根本张力
+      \vspace{0.5em}
+      \begin{block}{本文采用线性近似}
+        \centering
+        $\mathrm{TC}_t = c \cdot \|w_t - w_{t-1}^+\|_1$\\[0.3em]
+        \small $c = \txCostBps$ bps 单边\\
+        月频调仓下合理性充分
+      \end{block}
+      \vspace{0.5em}
+      \small 国内研究（华泰 2020--2024）：\\
+      低利率环境下换手成本是\\
+      风险平价落地的核心约束之一
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{理论框架与模型方法}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{从标准风险平价到宽松风险平价}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \textbf{标准风险平价（ERC）}
+      \[
+        RC_i = w_i \cdot \frac{(\Sigma w)_i}{\sigma_p},\quad
+        \sum_i RC_i = \sigma_p
+      \]
+      目标：$RC_i = b_i \sigma_p$（严格等式）\\[0.5em]
+      \alert{问题}：加上权重上下限和组别约束后，直接求解不再可行
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{宽松风险平价（RRP）}\\[0.3em]
+      将严格等式改为\textbf{偏离惩罚}：
+      \[
+        \min_w \sum_i \!\left(\frac{RC_i}{\sigma_p} - b_i\right)^{\!2}
+        + \lambda_{\mathrm{reg}}\|w - w_0\|_2^2
+      \]
+      \[
+        \textstyle\sum_i w_i = 1,\quad l_i \le w_i \le u_i
+      \]
+      \begin{block}{}
+        允许在风险预算、权重稳定性\\
+        和现实约束之间做折中
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Convex Adaptive Global RRP 目标函数}
+  \small
+  将风险预算、CVaR、换手成本和资产组约束统一入凸框架：
+  \begin{align*}
+    \min_w\; J(w) &= \lambda_{\mathrm{var}}\, w^\top\Sigma_t w
+    + \lambda_{\mathrm{budget}}\|w - b_t\|_2^2 \\
+    &\quad+ \bigl(\lambda_{\mathrm{turnover}} + \lambda_{\mathrm{tc}} c\bigr)\|w - w_{t-1}^+\|_1
+    + \lambda_{\mathrm{cvar}}\,\mathrm{CVaR}_\alpha(w)
+    - \lambda_{\mathrm{return}}\,\mu_t^\top w
+  \end{align*}
+  \[
+    \textstyle\sum_i w_i = 1,\quad 0 \le w_i \le u_i,\quad L_g \le \textstyle\sum_{i\in g} w_i \le U_g
+  \]
+  \begin{center}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.25}
+    \begin{tabular}{l>{\raggedright\arraybackslash}p{4.8cm}>{\raggedright\arraybackslash}p{3.5cm}}
+      \toprule
+      模型 & 与 Global RRP 的差异 & 主要作用 \\
+      \midrule
+      Global RRP & 基准宽松风险预算 & 风险来源清晰，换手偏高 \\
+      Convex Adaptive & 凸化近似 + $\ell_1$ 换手惩罚 + 资产组上限 & 大幅降低换手 \\
+      \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 冻结 OOS 参数} & \textbf{尾部控制 + 防过拟合} \\
+      HERC & 层次聚类，回避矩阵求逆 & 基准对比 \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+\end{frame}
+
+\begin{frame}{参数冻结：防止过拟合}
+  \begin{columns}[T]
+    \begin{column}{0.55\textwidth}
+      \textbf{冻结样本外（Frozen OOS）流程}
+      \begin{enumerate}
+        \item 在训练集内网格搜索超参数候选
+        \item 筛选出 OOS 期表现稳健的候选集
+        \item \textbf{冻结参数}后在完整评价期重新运行
+        \item 所有报告数字均来自冻结参数下的结果
+      \end{enumerate}
+      \vspace{0.4em}
+      \begin{block}{冻结参数（candidate\_23）}
+        \small
+        \begin{tabular}{ll}
+          历史窗口 & 252 个交易日 \\
+          协方差估计 & EWMA \\
+          单资产最大权重 & 45\% \\
+          换手上限 & 80\% \\
+          换手惩罚 $\lambda_{\mathrm{to}}$ & 0.020 \\
+          CVaR 惩罚 $\lambda_{\mathrm{cvar}}$ & 0.080 \\
+          预算惩罚 $\lambda_{\mathrm{budget}}$ & 0.100 \\
+          CVaR 置信水平 $\alpha$ & 0.95 \\
+          收益奖励 $\lambda_{\mathrm{return}}$ & 0.060 \\
+        \end{tabular}
+      \end{block}
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \textbf{为什么冻结参数重要？}
+      \begin{itemize}
+        \item 超参数搜索本身会对样本过拟合
+        \item 如果参数随时间滚动优化 → 前视偏差
+        \item 冻结后：模型在测试集上的表现是\textbf{真正的样本外结果}
+      \end{itemize}
+      \vspace{0.6em}
+      \begin{alertblock}{诚实的结论边界}
+        所有数字均条件于\\
+        \textbf{2019--2026 年这一特定样本区间}\\
+        和上述约束参数设定，\\
+        不代表对未来绩效的预测
+      \end{alertblock}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{数据与回测设计}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{\etfCount{} 支 ETF 资产池（来自 src/asset\_universe.py）}
+  \fontsize{6.2}{7.4}\selectfont
+  \renewcommand{\arraystretch}{1.0}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \begin{tabular}{@{}lll@{}}
+        \toprule
+        代码 & 名称 & 类别 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{债券（4）}} \\
+        511380.SH & 可转债 ETF & 可转债 \\
+        511010.SH & 国债 ETF & 政府债 \\
+        511030.SH & 信用债 ETF & 信用债 \\
+        511880.SH & 日利 ETF & 货币 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{A 股宽基（5）}} \\
+        510300.SH & 沪深 300 ETF & A 股 \\
+        510500.SH & 中证 500 ETF & A 股 \\
+        512100.SH & 中证 1000 ETF & A 股 \\
+        159915.SZ & 创业板 ETF & A 股 \\
+        510880.SH & 红利 ETF & A 股红利 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{中国科技（7）}} \\
+        512480.SH & 半导体 ETF & 科技 \\
+        159819.SZ & 人工智能 ETF & 科技 \\
+        562500.SH & 机器人 ETF & 先进制造 \\
+        516160.SH & 新能源 ETF & 新能源 \\
+        513310.SH & 中韩半导体 ETF & 科技 \\
+        588000.SH & 科创 50 ETF & 科技 \\
+        516980.SH & 云计算 ETF & 科技 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{tabular}{@{}lll@{}}
+        \toprule
+        代码 & 名称 & 类别 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{中国行业与消费（3）}} \\
+        512880.SH & 证券 ETF & 金融 \\
+        512660.SH & 军工 ETF & 国防 \\
+        159928.SZ & 消费 ETF & 消费 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{港股与贵金属（2）}} \\
+        159920.SZ & 恒生 ETF & 港股 \\
+        161226.SZ & 白银 LOF & 贵金属 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{全球股票（4）}} \\
+        159941.SZ & 纳指 ETF & 全球 \\
+        513500.SH & 标普 500 ETF & 全球 \\
+        513880.SH & 日经 225 ETF & 全球 \\
+        513030.SH & 欧洲 ETF & 全球 \\
+        \midrule
+        \multicolumn{3}{l}{\textit{大宗商品（5）}} \\
+        518880.SH & 黄金 ETF & 大宗品 \\
+        159980.SZ & 有色 ETF & 商品权益 \\
+        159985.SZ & 豆粕 ETF & 农产品 \\
+        515220.SH & 煤炭 ETF & 传统能源 \\
+        162411.SZ & 原油 ETF & 大宗品 \\
+        \bottomrule
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{回测设计与评价框架}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{时间设计}
+      \begin{itemize}
+        \item 数据起始：\dataFirstDate（含训练期）
+        \item 评价区间：\evalStartDate{} 至 \evalEndDate
+        \item 月度观察点：\evalMonths{} 个
+        \item 调仓频率：每月末，月度调仓
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{成本与约束}
+      \begin{itemize}
+        \item 单边成本：\txCostBps{} bps
+        \item 无卖空（$w_i \geq 0$）
+        \item 权重归一：$\sum_i w_i = 1$
+        \item 无前视：每次调仓仅用历史数据
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{评价指标}
+      \begin{itemize}
+        \item \textbf{净年化收益}：扣除全部交易成本后
+        \item \textbf{Sharpe 比率}：无风险利率 \riskFreeRate
+        \item \textbf{Sortino 比率}：仅惩罚下行波动
+        \item \textbf{最大回撤}：全周期峰谷
+        \item \textbf{Calmar 比率}：年化收益 / 最大回撤绝对值
+        \item \textbf{月均换手率}：成本可控性代理
+      \end{itemize}
+      \vspace{0.4em}
+      \begin{block}{统一回测标准}
+        所有模型在相同数据集、\\
+        相同评价指标下横向对比，\\
+        避免不同口径带来的虚假优势
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{实证结果与分析}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{主要绩效对比（\evalStartDate{} -- \evalEndDate）}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{center}
+    \begin{tabular}{@{}lcccccc@{}}
+      \toprule
+      模型 & 净年化收益 & 年化波动 & Sharpe & Sortino & 最大回撤 & 月均换手 \\
+      \midrule
+      Global RRP        & \globalNetReturn  & \globalVolatility  & \globalSharpe  & \globalSortino  & \globalMaxDD  & \globalMonthlyTurnover \\
+      Convex Adaptive   & \convexNetReturn  & \convexVolatility  & \convexSharpe  & \convexSortino  & \convexMaxDD  & \convexMonthlyTurnover \\
+      \rowcolor{swufeLight}
+      \textbf{Improved Convex} & \textbf{\improvedNetReturn} & \textbf{\improvedVolatility} & \textbf{\improvedSharpe} & \textbf{\improvedSortino} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
+      HERC              & \hercNetReturn    & \hercVolatility    & \hercSharpe    & \hercSortino    & \hercMaxDD    & \hercMonthlyTurnover \\
+      \midrule
+      等权基准          & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightSortino & \equalWeightMaxDD & \equalWeightMonthlyTurnover \\
+      60/40 基准        & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover \\
+      \bottomrule
+    \end{tabular}
+  \end{center}
+  \vspace{0.2em}
+  \scriptsize 无风险利率 \riskFreeRate{}；净收益已扣除 \txCostBps{} bps 单边交易成本。
+\end{frame}
+
+\begin{frame}{关键发现：三维权衡的改善}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{换手率的问题（Global RRP）}
+      \begin{itemize}
+        \item 月均换手 \globalMonthlyTurnover → 年化换手 \textasciitilde267\%
+        \item 成本拖累明显：净收益仅 \globalNetReturn
+        \item 严格风险贡献约束 → 每月大幅再平衡
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{Improved Convex 的改进}
+      \begin{itemize}
+        \item 换手压至 \improvedMonthlyTurnover（降低约 \textbf{10 倍}）
+        \item Sharpe 从 \globalSharpe{} 升至 \textbf{\improvedSharpe}
+        \item Sortino 从 \globalSortino{} 升至 \textbf{\improvedSortino}
+        \item 最大回撤从 \globalMaxDD{} 收窄至 \textbf{\improvedMaxDD}
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{HERC 的 Sharpe 从何而来？}
+      \begin{itemize}
+        \item 表观 Sharpe = \hercSharpe，看似不错
+        \item 但年化波动率仅 \hercVolatility
+        \item 组合近乎全仓债券/货币市场
+        \item 这是\alert{极低波动的人工压制}，\\
+              \textbf{不是}多资产分散的结果
+        \item 净年化收益仅 \hercNetReturn，\\
+              远低于 60/40 的 \sixtyFortyNetReturn
+      \end{itemize}
+      \vspace{0.3em}
+      \begin{block}{核心结论}
+        Improved Convex 在\textbf{收益、回撤、换手}三维度均无明显短板，HERC 的高 Sharpe 不具可比性
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Sharpe 差异统计检验}
+  \begin{columns}[T]
+    \begin{column}{0.58\textwidth}
+      \textbf{时序 Sharpe 差异检验结果}\\[0.3em]
+      \footnotesize
+      \renewcommand{\arraystretch}{1.25}
+      \begin{tabular}{@{}lccl@{}}
+        \toprule
+        比较对 & $\Delta$ Sharpe & $p$ 值 & \\
+        \midrule
+        Improved vs.\ Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalPValue & \textbf{显著} \\
+        Improved vs.\ Defensive  & 0.893 & 0.001 & \textbf{显著} \\
+        Improved vs.\ 等权        & 0.686 & \improvedVsEqualPValue & \textbf{显著} \\
+        Global vs.\ 等权          & $-$0.071 & 0.782 & 不显著 \\
+        Defensive vs.\ 等权       & $-$0.185 & 0.434 & 不显著 \\
+        \bottomrule
+      \end{tabular}
+      \vspace{0.3em}
+      \scriptsize 基于 Jobson-Korkie 检验，Bootstrap 95\% CI
+    \end{column}
+    \begin{column}{0.42\textwidth}
+      \textbf{解读}
+      \begin{itemize}
+        \item Improved Convex 的 Sharpe 优势在统计上\textbf{显著}（$p < 0.05$）
+        \item Global RRP 和 Defensive RRP 相对等权基准\textbf{均不显著}
+        \item 纯粹降低换手（Convex Adaptive）不足以产生显著 Sharpe 提升
+        \item CVaR 约束 + 参数冻结共同带来真实的统计差异
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{稳健性检验}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{多维稳健性检验框架}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{1. Walk-forward 验证}\\[0.3em]
+      滚动子区间（多个训练-测试窗口）：
+      \begin{itemize}
+        \item Sharpe 均值：\walkforwardSharpeMean{}，中位数：\walkforwardSharpeMedian
+        \item 净收益均值：\walkforwardNetreturnMean{}，中位数：\walkforwardNetreturnMedian
+        \item 最大回撤均值：\walkforwardMaxddMean{}，中位数：\walkforwardMaxddMedian
+        \item 结论：中位数 Sharpe 约 1.0，跨区间相对稳定
+      \end{itemize}
+      \vspace{0.4em}
+      \textbf{2. 参数扰动分析}
+      \begin{itemize}
+        \item 对 5 个超参数分别 ±20\% 扰动
+        \item Sharpe 和换手率的分布范围
+        \item 识别对哪些参数最敏感
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \textbf{3. 协方差估计器对比}
+      \begin{itemize}
+        \item 样本协方差 vs. EWMA vs. 收缩估计
+        \item 本文基准：EWMA（冻结参数选定）
+        \item 其他估计器下结论方向一致
+      \end{itemize}
+      \vspace{0.4em}
+      \textbf{4. 成本分析}
+      \begin{itemize}
+        \item 交易成本盈亏平衡分析
+        \item Improved vs. Global RRP：需超过 \textbf{50 bps} 单边成本方可被击败
+        \item 月频 3 bps 远低于此阈值
+      \end{itemize}
+      \vspace{0.4em}
+      \textbf{5. 过拟合诊断}
+      \begin{itemize}
+        \item OOS 候选参数验证
+        \item 确认结论非样本内过拟合产物
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{结论的适用边界}
+  \begin{columns}[T]
+    \begin{column}{0.50\textwidth}
+      \textbf{结论成立的条件}
+      \begin{itemize}
+        \item 样本区间：\evalStartDate{} -- \evalEndDate
+        \item 资产池：\etfCount{} 支可交易 A 股/海外 ETF
+        \item 月度调仓，3 bps 单边成本
+        \item 冻结参数 candidate\_23
+      \end{itemize}
+      \vspace{0.5em}
+      \textbf{哪些方向可能改变结论？}
+      \begin{itemize}
+        \item \alert{市场机制切换}：熊市/危机下 CVaR 约束有效性存疑
+        \item \alert{资产池扩充}：加入更多品种可能改变聚类结构
+        \item \alert{高成本环境}：若实际成本远超 3 bps，换手节约的价值更大
+        \item \alert{不同频率}：日频调仓下换手惩罚参数需重新校准
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{alertblock}{研究局限（三项）}
+        \begin{enumerate}
+          \item 数据期间较短（89 个月），包含低利率→加息周期，与历史长期均值偏离
+          \item 协方差矩阵估计仍依赖历史数据；若相关结构快速变化，EWMA 存在滞后
+          \item 线性成本近似在大规模执行场景下需要精细化（市场冲击、流动性约束）
+        \end{enumerate}
+      \end{alertblock}
+      \vspace{0.4em}
+      \begin{block}{未来研究方向}
+        \small
+        \begin{itemize}
+          \item 因子层 CVaR 约束（资产 + 因子双层预算）
+          \item 机器学习协方差估计器与凸优化结合
+          \item 更长历史区间（含 2015 股灾、2020 新冠）
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+\section{主要结论}
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}{三条主要结论}
+  \begin{swufekeypoints}
+    \swufepoint{CVaR + 换手惩罚有效改善三维权衡}{01}{Improved Convex 将换手率从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover，净 Sharpe 升至 \improvedSharpe，最大回撤收窄至 \improvedMaxDD。Sharpe 提升在统计上显著（$p=\improvedVsGlobalPValue$）}
+    \swufepoint{HERC 高 Sharpe 不来自多资产分散}{02}{HERC 年化波动率仅 \hercVolatility，净收益仅 \hercNetReturn，来自近乎全仓债券的极低波动，与主模型所追求的跨资产分散无可比性}
+    \swufepoint{结论有明确的适用边界}{03}{所有数字条件于 \evalStartDate--\evalEndDate 的特定样本区间和冻结参数设定；走前向验证和参数扰动分析确认结论在区间内相对稳定，但不代表未来绩效}
+  \end{swufekeypoints}
+\end{frame}
+
+% ═══════════════════════════════════════════════════════════════════════════
+% ── 致谢与问答 ──────────────────────────────────────────────────────────────
+% ═══════════════════════════════════════════════════════════════════════════
+
+\begin{frame}[plain]
+  \begin{tikzpicture}[remember picture, overlay]
+    % 深蓝背景
+    \fill[swufeDark] (current page.south west) rectangle (current page.north east);
+    % 装饰环
+    \foreach \r in {2.5, 3.8, 5.1} {
+      \draw[swufeGold, opacity=0.15, line width=0.8pt] (current page.north east) circle(\r cm);
+    }
+    % 金色底栏
+    \fill[swufeGold] (current page.south west) rectangle ([yshift=6pt]current page.south east);
+    % 主要文字
+    \node[text=white, font=\Large\bfseries] at ([xshift=-0.5cm, yshift=0.5cm]current page.center) {感谢各位老师的聆听与指导};
+    \node[text=swufeGold, font=\normalsize] at ([xshift=-0.5cm, yshift=-0.3cm]current page.center) {敬请批评指正};
+    % 核心数字提示
+    \node[text=white!70, font=\scriptsize, anchor=south east] at ([xshift=-1.5cm, yshift=1.5cm]current page.south east) {
+      \begin{tabular}{rl}
+        净年化收益 & \improvedNetReturn \\
+        Sharpe    & \improvedSharpe \\
+        最大回撤  & \improvedMaxDD \\
+        月均换手  & \improvedMonthlyTurnover \\
+      \end{tabular}
+    };
+    % Logo
+    \node[anchor=north west, opacity=0.6] at ([xshift=1cm, yshift=-0.8cm]current page.north west) {
+      \includegraphics[height=1.2cm]{logo.png}
+    };
+  \end{tikzpicture}
+\end{frame}
+
+\end{document}
