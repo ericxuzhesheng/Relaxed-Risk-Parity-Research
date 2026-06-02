@@ -1,0 +1,6 @@
+\beamer@sectionintoc {1}{研究背景与意义}{3}{0}{1}
+\beamer@sectionintoc {2}{理论框架与模型方法}{6}{0}{2}
+\beamer@sectionintoc {3}{数据与回测设计}{9}{0}{3}
+\beamer@sectionintoc {4}{实证结果与分析}{13}{0}{4}
+\beamer@sectionintoc {5}{稳健性检验}{35}{0}{5}
+\beamer@sectionintoc {6}{主要结论}{47}{0}{6}
