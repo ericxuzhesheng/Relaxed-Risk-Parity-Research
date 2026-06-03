@@ -919,6 +919,45 @@
   \end{columns}
 \end{frame}
 
+\begin{frame}[shrink=4]{期货扩展实验：机构名义敞口配置}
+  \small
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.53\textwidth}
+      \textbf{实验定位}
+      \begin{itemize}
+        \item 主结果仍基于 \textbf{30 支 ETF、纯多头、无杠杆} 约束
+        \item 扩展实验面向具备保证金管理能力的机构资金
+        \item 固收与商品 ETF 替换为对应期货连续合约
+        \item IF / IC / IH / IM 作为权益端 portable alpha 叠加层
+      \end{itemize}
+      \vspace{0.4em}
+      \begin{alertblock}{解释边界}
+        \footnotesize 该结果依赖连续合约、保证金、现金收益、展期和执行假设，不替代 ETF 主模型的可实施结论。
+      \end{alertblock}
+    \end{column}
+    \begin{column}{0.45\textwidth}
+      \scriptsize
+      \renewcommand{\arraystretch}{1.22}
+      \resizebox{\linewidth}{!}{%
+      \begin{tabular}{@{}lrrrr@{}}
+        \toprule
+        场景 & 收益 & 波动 & Sharpe & 回撤 \\
+        \midrule
+        ETF 基准 & 5.57\% & 2.62\% & 1.431 & -3.95\% \\
+        期货+现金 & 9.28\% & 4.59\% & \textbf{1.625} & -4.66\% \\
+        期货 1.5x & 10.31\% & 6.89\% & 1.233 & -9.06\% \\
+        期货 2.0x & 13.17\% & 9.18\% & 1.237 & -12.40\% \\
+        \bottomrule
+      \end{tabular}
+      }
+      \vspace{0.8em}
+      \begin{block}{核心含义}
+        \footnotesize 1 倍名义敞口下，保证金制度释放现金收益，使 Sharpe 从 1.431 升至 1.625；继续放大名义敞口提高绝对收益，但回撤同步扩大。
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
 % ════════════════════════════════════════════════════════════════════════════
 % 致谢与问答
 % ════════════════════════════════════════════════════════════════════════════
