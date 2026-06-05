@@ -811,111 +811,101 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 \end{longtable}
 \endgroup
 
-本文实施了一次扩充验证：通过 Tushare 对接五个交易所，将固收与商品 ETF 替换为对应期货连续合约——国债期货 TS/TF/T/TL 覆盖完整利率曲线，商品端以黄金 AU、白银 AG、原油 SC、铜 CU、豆粕 M、生猪 LH、玻璃 FG 七个品种替换现货 ETF——同时将沪深300（IF）、中证500（IC）、上证50（IH）、中证1000（IM）四个股指期货作为\textbf{可携带 $\alpha$ 叠加层}（portable alpha overlay）\footnote{Portable alpha overlay：在保留原有贝塔敞口（此处为权益 ETF）的基础上，通过叠加衍生品合约在组合层面独立嵌入超额收益来源；股指期货与对应 ETF 同时存在于资产池，优化器自动确定两者配比以实现风险预算下的最优组合。}加入资产池——对应权益 ETF 保留，两者同时可见于优化器，自动找到最优混合配比。合计形成约 45 个资产组合，采用名义敞口分配（Notional Allocation）框架运行三个杠杆场景并与 ETF 基准对比，结果见表 \ref{tab:futures_comparison}。两类资产池的结构差异汇总见表 \ref{tab:pool_comparison}。
+本文进一步构造一个经典全天候期货基准（Classic All Weather Futures Benchmark）作为对照实验。该实验不再把期货作为本文 RRP 模型的增强版本，而是单独模拟经典全天候思想中的三个风险来源：权益/增长、久期/通缩、通胀/商品。每个风险桶内部采用 180 日滚动逆波动权重，桶间采用 30\% / 40\% / 30\% 的经典全天候风险预算；组合收益由期货价格收益叠加现金抵押收益构成，目标波动率版本在月度再平衡日根据过去波动率调整名义敞口，并将最大名义敞口限制为 4.0 倍。该设置用于比较 ETF-only RRP 与期货化全天候框架的结构差异，不代表对桥水真实全天候产品的复现。
 
 \begin{small}
 \begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.6cm}%
   >{\raggedright\arraybackslash}p{5.7cm}%
   >{\raggedright\arraybackslash}p{5.7cm}@{}}
-\caption{ETF 基准资产池与期货扩充资产池对比}\label{tab:pool_comparison}\\
+\caption{ETF 主模型与经典全天候期货基准对比}\label{tab:pool_comparison}\\
 \toprule
-对比维度 & ETF 资产池（基准） & 期货扩充资产池（扩展） \\
+对比维度 & ETF 主模型（基准） & 经典全天候期货基准（对照） \\
 \midrule
 \endfirsthead
 \multicolumn{3}{c}{\small\itshape （续表）} \\[2pt]
 \toprule
-对比维度 & ETF 资产池（基准） & 期货扩充资产池（扩展） \\
+对比维度 & ETF 主模型（基准） & 经典全天候期货基准（对照） \\
 \midrule
 \endhead
 \midrule
 \multicolumn{3}{r}{\small\itshape （接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14cm}@{}}{\footnotesize 注：中证1000股指期货（IM）于 2022-07-22 上市，历史较短，在数据不足阶段被优化器自动排除。} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14cm}@{}}{\footnotesize 注：中证1000股指期货（IM）于 2022-07-22 上市，30 年期国债期货（TL）于 2023 年上市；滚动窗口内有效观测不足时，相应合约自动不进入当期权重计算。} \\
 \endlastfoot
-资产数量 & 30 支 & 约 45 个 \\
+资产数量 & 30 支 ETF & 22 个期货连续合约 \\
 \addlinespace
 固收工具 &
   国债 ETF（含短、中、长久期）、日利 ETF（货币市场） &
-  国债期货 TS（2年）/ TF（5年）/ T（10年）/ TL（30年）覆盖完整利率曲线替换对应 ETF；日利 ETF 保留作现金管理 \\
+  国债期货 TS（2年）/ TF（5年）/ T（10年）/ TL（30年）构成久期/通缩风险桶 \\
 \addlinespace
 商品工具 &
   黄金 ETF、豆粕 ETF、白银 LOF、原油 ETF 等现货 ETF，不含展期收益 &
-  黄金 AU、白银 AG、原油 SC、铜 CU、豆粕 M、生猪 LH、玻璃 FG 期货替换；可精细管理展期 \\
+  黄金 AU、白银 AG、铜 CU、原油 SC、豆粕 M、生猪 LH、白糖 SR、棉花 CF、菜籽油 OI 构成通胀/商品风险桶 \\
 \addlinespace
 权益工具 &
   沪深300 / 中证500 / 上证50 / 中证1000 ETF 及行业/主题 ETF &
-  原权益 ETF 全部保留，叠加 IF / IC / IH / IM 四个股指期货构成 portable alpha 层 \\
+  IF / IC / IH / IM 股指期货构成权益/增长风险桶 \\
 \addlinespace
 交易所覆盖 &
   上交所（SSE）、深交所（SZSE） &
   上交所、深交所 + 中金所（CFFEX）、大商所（DCE）、上期所（SHFE）、上期能源（INE）、郑商所（ZCE） \\
 \addlinespace
-杠杆机制 &
+敞口机制 &
   无杠杆（$\sum_i w_i = 1,\ w_i \geq 0$） &
-  名义敞口倍数 $\lambda \in \{1,\ 1.5,\ 2\}$；全部资本留在货币市场基金，无需对外借款 \\
+  1.0 倍名义敞口基准，以及 8\% / 10\% 目标波动率版本；最大名义敞口 4.0 倍 \\
 \addlinespace
 资本利用范式 &
   Capital Allocation：100\% 资本映射至现货持仓，资金全额占用 &
-  Notional Allocation：保证金约占 8\%，余约 92\% 配置货币市场基金，每日产生 $r_f$ 收益 \\
+  Notional Allocation：期货提供价格敞口，现金抵押每日获得 $r_f$ 收益 \\
 \addlinespace
-现金增强收益 &
-  无 &
-  约 $0.92 \times 1.82\% \approx 1.68\%$/年（$\lambda=1$ 场景） \\
+权重规则 &
+  凸优化同时处理 CVaR、换手惩罚和资产组上限 &
+  桶内滚动逆波动；桶间采用 30\% / 40\% / 30\% 经典全天候风险预算 \\
 \addlinespace
 月均换手率 &
   0.10\% &
-  0.22\%（三个场景相同；换手来源于期货调仓而非杠杆变化） \\
+  0.36\%（1.0x）至约 1.42\%（目标波动率版本） \\
 \addlinespace
 代表性绩效 &
   Sharpe 1.431，最大回撤 $-3.95\%$，净年化 5.57\% &
-  $\lambda=1$：Sharpe 1.625，最大回撤 $-4.66\%$，净年化 9.28\%；
-  $\lambda=2$：净年化 13.17\%，最大回撤 $-12.40\%$ \\
+  1.0x 全天候：Sharpe 1.119，最大回撤 $-1.58\%$，净年化 4.14\%；目标波动率版本净年化约 10.5\%--10.8\%，Sharpe 约 1.11--1.14 \\
 \end{longtable}
 \end{small}
 
-名义敞口分配框架的核心机制如下：全部资本 $C$ 放入货币市场基金赚取 $r_f = 1.82\%$，期货保证金约占名义价值的 8\%，剩余约 92\% 的资本既充当超额保证金缓冲又每日产生现金收益，无需对外借款，杠杆成本仅为机会成本 $r_f$。总回报可分解为：
+全天候期货基准的收益分解为现金抵押收益与期货价格收益两部分：
 \begin{equation}
-R_{\text{total}} = r_f + \lambda \cdot (R_{\text{futures}} - r_f)
+R_{\text{total},t} = r_{f,t} + g_t R_{\text{AW futures},t}
 \label{eq:notional_alloc}
 \end{equation}
-其中 $\lambda$ 为名义倍数。当 $\lambda = 1$ 时称为现金增强（Cash Overlay）；$\lambda > 1$ 时为杠杆放大。
+其中 $g_t$ 为月度更新的名义敞口倍数。经典 1.0x 场景取 $g_t=1$；目标波动率场景按过去窗口的实现波动率估计 $g_t$，并设置 $g_t \leq 4.0$。该公式体现的是期货保证金框架下的名义敞口分配，而不是外部借款融资。
 
 \begin{table}[H]
 \centering
 \small
-\caption{期货替换对照实验：名义敞口分配框架四场景绩效对比（8 支 ETF 替换 + 四大股指期货叠加层，评价区间 \evalStartDate{} 至 \evalEndDate）}
+\caption{经典全天候期货基准对照实验绩效（评价区间 \evalStartDate{} 至 \evalEndDate）}
 \label{tab:futures_comparison}
 \resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}lcccccc@{}}
+\begin{tabular}{@{}lccccccc@{}}
 \toprule
-场景 & 净年化收益 & 年化波动率 & Sharpe & Calmar & 最大回撤 & 月均换手率 \\
+场景 & 净年化收益 & 年化波动率 & Sharpe & Calmar & 最大回撤 & 月均换手率 & 平均名义敞口 \\
 \midrule
-场景0：ETF 基准（Improved Convex，30 支 ETF）           & 5.57\%  & 2.62\% & 1.431 & 1.410 & $-3.95\%$ & 0.10\% \\
-场景1：期货 1 倍 + 现金增强（$\lambda=1$，$r_f$ 收益）  & 9.28\%  & 4.59\% & \textbf{1.625} & \textbf{1.991} & $-4.66\%$ & 0.22\% \\
-场景2：期货 1.5 倍名义敞口（$\lambda=1.5$）             & 10.31\% & 6.89\% & 1.233 & 1.139 & $-9.06\%$ & 0.22\% \\
-场景3：期货 2.0 倍名义敞口（$\lambda=2.0$）             & 13.17\% & 9.18\% & 1.237 & 1.062 & $-12.40\%$ & 0.22\% \\
+场景0：ETF 基准（Improved Convex，30 支 ETF） & 5.57\% & 2.62\% & \textbf{1.431} & 1.410 & $-3.95\%$ & 0.10\% & 1.00x \\
+场景1：经典全天候期货基准（1.0x）             & 4.14\% & 2.07\% & 1.119 & \textbf{2.625} & $-1.58\%$ & 0.36\% & 1.00x \\
+场景2：目标波动率全天候期货（8\%）            & 10.50\% & 7.61\% & 1.140 & 1.661 & $-6.32\%$ & 1.37\% & 3.72x \\
+场景3：目标波动率全天候期货（10\%）           & 10.76\% & 8.03\% & 1.113 & 1.660 & $-6.48\%$ & 1.42\% & 3.89x \\
 \bottomrule
 \end{tabular}%
 }
 \par\smallskip
-\noindent\parbox{\linewidth}{\footnotesize\raggedright 注：期货品种经由 Tushare 接入，覆盖中金所（CFFEX）、大商所（DCE）、上期所（SHFE）、上期能源（INE）、郑商所（ZCE）五所。8\% 保证金假设基于主要品种平均初始保证金比率的保守估算；ZC 与 IM 数据可用性限制详见表~\ref{tab:pool_comparison} 注。}
+\noindent\parbox{\linewidth}{\footnotesize\raggedright 注：期货品种经由 Tushare 接入，覆盖中金所（CFFEX）、大商所（DCE）、上期所（SHFE）、上期能源（INE）、郑商所（ZCE）等交易所。目标波动率版本按过去实现波动率调整名义敞口，最大名义敞口限制为 4.0 倍。}
 \end{table}
 
-表中有两个值得单独说明的结果。
+表 \ref{tab:futures_comparison} 表明，经典全天候期货基准在 1.0 倍名义敞口下具有更浅的最大回撤（$-1.58\%$）和更高的 Calmar（2.625），但净年化收益为 4.14\%，Sharpe 为 1.119，低于本文 ETF 主模型。这说明未杠杆化全天候框架确实能通过久期和商品期货降低路径风险，但其资本利用效率不足。
 
-第一，现金增强效应（场景1）独立地大幅改善了风险调整后表现。场景1 将闲置保证金之外约 92\% 的资本配置于货币市场基金，每年额外获得约 $0.92 \times 1.82\% \approx 1.68\%$ 的现金收益，而波动率与纯期货场景相同（4.59\%）。净年化收益从 ETF 基准的 5.57\% 升至 9.28\%，Sharpe 从 1.431 升至 \textbf{1.625}，Calmar 达到 1.991。这说明保证金制度本身的资金效率，而非杠杆，是期货路径相对 ETF 基准取得效率优势的主要来源。
+目标波动率版本更接近经典全天候的期货实现逻辑：8\% 目标波动率版本净年化收益提高至 10.50\%，10\% 目标波动率版本为 10.76\%。但两者 Sharpe 分别为 1.140 和 1.113，仍低于 ETF 主模型的 1.431；同时最大回撤扩大至约 $-6.3\%$--$-6.5\%$。这说明期货化名义敞口可以提高绝对收益空间，但收益提升主要来自风险敞口放大，而非单位风险收益的改善。
 
-第二，提高名义倍数后 Sharpe 近似保持不变，绝对收益线性上升。由公式~\eqref{eq:notional_alloc}，超额收益 $\lambda(R - r_f)$ 与波动率 $\lambda\sigma$ 均按 $\lambda$ 等比放大，Sharpe 在理论上严格不变：
-\begin{equation}
-\text{Sharpe}(\lambda) = \frac{\lambda(R - r_f)}{\lambda\sigma} = \frac{R - r_f}{\sigma} = \text{Sharpe}(1)
-\label{eq:sharpe_invariance}
-\end{equation}
-实证结果与理论一致：场景2（$\lambda=1.5$）Sharpe 为 1.233，场景3（$\lambda=2.0$）为 1.237，两者几乎相同，印证了尺度不变性。杠杆也线性放大最大回撤（$-4.66\% \to -9.06\% \to -12.40\%$），实际应用中须结合保证金充足率和压力测试确定适宜的 $\lambda$。
-
-当资金形态允许名义敞口分配时，$\lambda=1$（场景1）即可实现 Sharpe 1.625，无需承担额外杠杆风险；$\lambda=2$（场景3）净年化收益达 13.17\%，Sharpe 维持在 1.237，是具备保证金管理能力的专业机构资金的有效扩展路径。
-
-本实验采用"portable alpha 叠加层"方案：沪深300ETF、中证500ETF、中证1000ETF 保留在组合中，IF/IC/IH/IM 四个股指期货作为额外资产与对应 ETF 同时可见于优化器。在风险平价框架下，股指期货年化波动率高达 20\%--25\%，若直接替换 ETF，优化器会将其权重压至极低；叠加层设计允许优化器利用 ETF 建立稳定的基础股指暴露，同时通过少量股指期货仓位（仅需 10\%--12\% 保证金）在不增加额外资本占用的前提下调整权益端风险贡献。在名义敞口分配框架（场景1--3）中，即使股指期货权重较小，其释放的现金也能为组合贡献 $r_f$ 收益；杠杆放大（场景2、3）进一步等比扩大全部期货头寸的名义暴露。
+因此，期货化全天候基准更适合作为结构性对照：它展示了经典风险平价在衍生品和目标波动率框架下的资金效率，也说明本文主模型的优势并非来自简单期货替换或名义敞口放大，而是来自 CVaR 约束、换手惩罚和资产组约束共同作用下的优化结构。
 
 \subsection{与桥水全天候策略的横向对比}
 \label{sec:bridgewater_compare}

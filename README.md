@@ -32,7 +32,7 @@
 | ETF 资产池 | [资产池](#资产池) |
 | 图表和持仓解释 | [关键图表](#关键图表) |
 | 稳健性与过拟合控制 | [稳健性验证](#稳健性验证) |
-| 股指期货/期货替换结果 | [期货扩展实验](#期货扩展实验) |
+| 经典全天候对照结果 | [全天候期货基准](#全天候期货基准) |
 | 如何复现 | [快速开始](#快速开始) |
 
 ---
@@ -142,18 +142,18 @@
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
 
-### 期货扩展实验
+### 全天候期货基准
 
-本文主结果仍以 **30 只 ETF、纯多头、无杠杆** 的可实施资产池为准。作为机构资金扩展实验，研究进一步测试了将固收与商品 ETF 替换为对应期货连续合约，并把 IF / IC / IH / IM 股指期货作为权益端 portable alpha 叠加层的名义敞口分配框架。
+本文主结果仍以 **30 只 ETF、纯多头、无杠杆** 的可实施资产池为准。作为对照实验，研究进一步构造 **Classic All Weather Futures Benchmark**：将期货品种划分为权益/增长、久期/通缩、通胀/商品三类风险桶，桶内采用 180 日滚动逆波动权重，桶间采用 30% / 40% / 30% 的经典全天候风险预算，并在期货价格收益之上叠加现金抵押收益。目标波动率版本允许最高 4.0x 名义敞口，以更接近经典全天候的期货杠杆实现方式。该实验用于比较 ETF-only RRP 与经典全天候期货化框架的结构差异，不是桥水真实组合复现。
 
-| 场景 | 净年化收益 | 年化波动 | Sharpe | Calmar | 最大回撤 |
-|---|---:|---:|---:|---:|---:|
-| ETF 基准（Improved Convex） | 5.57% | 2.62% | 1.431 | 1.410 | -3.95% |
-| 期货 + 现金增强（1倍名义敞口） | 9.28% | 4.59% | 1.625 | 1.991 | -4.66% |
-| 期货 1.5倍名义敞口 | 10.31% | 6.89% | 1.233 | 1.139 | -9.06% |
-| 期货 2.0倍名义敞口 | 13.17% | 9.18% | 1.237 | 1.062 | -12.40% |
+| 场景 | 净年化收益 | 年化波动 | Sharpe | Calmar | 最大回撤 | 平均名义敞口 |
+|---|---:|---:|---:|---:|---:|---:|
+| ETF 基准（Improved Convex） | 5.57% | 2.62% | 1.431 | 1.410 | -3.95% | 1.00x |
+| 经典全天候期货基准（1.0x） | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
+| 目标波动率全天候期货（8%） | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
+| 目标波动率全天候期货（10%） | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
 
-该实验说明：在具备保证金管理、现金增强和衍生品执行能力的机构场景下，RRP 框架具备进一步扩展空间；但其结论依赖连续合约构造、保证金比例、现金收益、展期与执行假设，不能替代本文 ETF 主模型的落地约束。
+该对照显示：经典全天候期货框架在 1.0x 名义敞口下回撤更浅，但收益与 Sharpe 低于 Improved Convex Adaptive Global RRP；引入目标波动率与期货名义杠杆后，绝对收益提升至约 10.5%--10.8%，更符合经典全天候的资金利用逻辑，但风险调整收益仍低于 ETF 主模型。结论依赖连续合约构造、现金抵押收益、滚动窗口、目标波动率和名义敞口上限，应作为结构性基准而非主模型替代。
 
 ### 项目结构
 
@@ -203,7 +203,7 @@ The main result is not a maximum-return trading strategy. Under a long-only, unl
 | ETF universe | [Asset Universe](#asset-universe) |
 | Charts and interpretation | [Key Figures](#key-figures) |
 | Robustness checks | [Robustness Validation](#robustness-validation) |
-| Futures extension | [Futures Extension](#futures-extension) |
+| Classic All Weather comparison | [All Weather Futures Benchmark](#all-weather-futures-benchmark) |
 | Reproduction | [Quick Start](#quick-start) |
 
 ### Research Question
@@ -297,18 +297,18 @@ Through `2026-05`, the Improved Convex Adaptive Global RRP delivered **48.93%** 
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
 
-### Futures Extension
+### All Weather Futures Benchmark
 
-The main results remain based on the implementable **30-ETF, long-only, unlevered** universe. As an institutional extension, the study also tests a notional allocation framework that replaces fixed-income and commodity ETFs with futures continuous contracts, while adding IF / IC / IH / IM index futures as an equity portable-alpha overlay.
+The main results remain based on the implementable **30-ETF, long-only, unlevered** universe. As a benchmark experiment, the study also constructs a **Classic All Weather Futures Benchmark**. Futures are grouped into equity/growth, duration/deflation, and inflation/commodities buckets; each bucket uses 180-day rolling inverse-volatility weights, and bucket-level allocation uses a 30% / 40% / 30% classic All Weather risk budget. Futures price returns are layered over cash collateral earning the risk-free rate. The vol-targeted variants allow up to 4.0x gross notional exposure, making the benchmark closer to the leveraged futures implementation logic of classic All Weather portfolios. This is a rules-based All Weather benchmark, not a replication of Bridgewater's actual portfolio.
 
-| Scenario | Net Annual Return | Annual Vol | Sharpe | Calmar | Max Drawdown |
-|---|---:|---:|---:|---:|---:|
-| ETF Baseline (Improved Convex) | 5.57% | 2.62% | 1.431 | 1.410 | -3.95% |
-| Futures + Cash Overlay (1.0x notional) | 9.28% | 4.59% | 1.625 | 1.991 | -4.66% |
-| Futures 1.5x Notional Allocation | 10.31% | 6.89% | 1.233 | 1.139 | -9.06% |
-| Futures 2.0x Notional Allocation | 13.17% | 9.18% | 1.237 | 1.062 | -12.40% |
+| Scenario | Net Annual Return | Annual Vol | Sharpe | Calmar | Max Drawdown | Avg Gross Notional |
+|---|---:|---:|---:|---:|---:|---:|
+| ETF Baseline (Improved Convex) | 5.57% | 2.62% | 1.431 | 1.410 | -3.95% | 1.00x |
+| Classic All Weather Futures (1.0x) | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
+| Vol-Targeted All Weather Futures (8%) | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
+| Vol-Targeted All Weather Futures (10%) | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
 
-This extension suggests that the RRP framework can scale into derivative-enabled institutional mandates. The result depends on continuous-contract construction, margin assumptions, cash yield, roll mechanics, and execution assumptions, and should not be interpreted as replacing the ETF-based main model.
+The benchmark shows that the 1.0x All Weather futures version achieves shallower drawdown but lower return and Sharpe than the Improved Convex ETF model. Vol-targeting and futures notional leverage lift absolute returns to roughly 10.5%--10.8%, but risk-adjusted performance remains below the ETF main model. These results depend on continuous-contract construction, collateral yield, rolling windows, target-volatility rules, and gross-notional caps.
 
 ### Repository Structure
 
