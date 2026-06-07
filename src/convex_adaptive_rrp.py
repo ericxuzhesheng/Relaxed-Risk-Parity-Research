@@ -47,6 +47,7 @@ def _require_cvxpy() -> None:
 class ConvexRRPConfig:
     trading_days_per_year: int = 243
     lookback_days: int = 240
+    rebalance_frequency: str = "M"
     covariance_method: str = "ewma"
     covariance_allow_fallback: bool = True
     ewma_halflife: float = 60.0
@@ -263,8 +264,33 @@ def _solve_scipy_fallback(
     return previous, float(objective(previous)), str(result.message)
 
 
+def rebalance_dates_for_frequency(
+    returns: pd.DataFrame,
+    frequency: str = "M",
+) -> set[pd.Timestamp]:
+    """Return last available trading dates for a fixed rebalance frequency."""
+    if returns.empty:
+        return set()
+    dates = pd.to_datetime(returns.index)
+    frame = pd.DataFrame(index=dates).sort_index()
+    freq = frequency.upper()
+    if freq in {"W", "WEEKLY"}:
+        return set(frame.groupby(frame.index.to_period("W")).tail(1).index)
+    if freq in {"2W", "BIWEEKLY", "BI-WEEKLY"}:
+        weekly = list(frame.groupby(frame.index.to_period("W")).tail(1).index)
+        return set(weekly[::2])
+    if freq in {"M", "ME", "MONTHLY"}:
+        return set(frame.groupby(frame.index.to_period("M")).tail(1).index)
+    if freq in {"Q", "QE", "QUARTERLY"}:
+        return set(frame.groupby(frame.index.to_period("Q")).tail(1).index)
+    raise ValueError(
+        "rebalance_frequency must be one of W, 2W, M, or Q "
+        f"(got {frequency!r})"
+    )
+
+
 def _monthly_rebalance_dates(returns: pd.DataFrame) -> set[pd.Timestamp]:
-    return set(returns.groupby(returns.index.to_period("M")).tail(1).index)
+    return rebalance_dates_for_frequency(returns, "M")
 
 
 def run_convex_adaptive_backtest(
@@ -275,7 +301,7 @@ def run_convex_adaptive_backtest(
     dates = pd.to_datetime(returns.index)
     returns = returns.copy()
     returns.index = dates
-    rebalance_dates = _monthly_rebalance_dates(returns)
+    rebalance_dates = rebalance_dates_for_frequency(returns, cfg.rebalance_frequency)
     n_assets = len(returns.columns)
     weights = np.zeros(n_assets)
     nav_gross = 1.0

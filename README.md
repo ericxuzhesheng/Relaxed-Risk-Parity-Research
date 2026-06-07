@@ -139,8 +139,13 @@
 | Block bootstrap | 对 Sharpe 和回撤做重采样 | 评估结果对样本路径扰动的敏感性 |
 | 协方差估计稳健性 | 比较 sample、Ledoit-Wolf、EWMA 等估计器 | 主要结论不依赖单一协方差估计器 |
 | 参数扰动 | 改变关键惩罚项和 CVaR 阈值 | 输出随参数平滑变化，无明显断崖 |
+| 调仓频率敏感性 | 比较周度、双周、月度、季度调仓 | 月度并非收益最高频率，而是低换手与风险控制之间的可实施折中 |
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
+
+<p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
+
+在固定 Improved Convex Adaptive Global RRP 参数、仅改变调仓频率的对照中，周度和双周调仓的净年化收益分别为 **5.85%** 和 **5.76%**，Sharpe 分别为 **1.529** 和 **1.497**，但平均月换手率升至 **6.09%** 和 **3.52%**。月度调仓对应 **5.57%** 净年化收益、**1.431** Sharpe、**-3.95%** 最大回撤和 **2.07%** 平均月换手率；季度调仓换手率进一步降至 **1.57%**，但净年化收益和 Sharpe 分别降至 **5.21%** 和 **1.296**。因此，月度调仓不是人为选择的最高收益频率，而是长期配置场景下兼顾响应速度、交易成本和组合稳定性的主设定。
 
 ### 全天候期货基准
 
@@ -294,8 +299,13 @@ Through `2026-05`, the Improved Convex Adaptive Global RRP delivered **48.93%** 
 | Block bootstrap | Resampling of Sharpe and drawdown | Tests sensitivity to path variation |
 | Covariance robustness | Sample, Ledoit-Wolf, EWMA and related estimators | Main conclusions do not depend on one estimator |
 | Parameter perturbation | Vary key penalties and CVaR threshold | Performance changes smoothly without cliff-edge behavior |
+| Rebalance frequency sensitivity | Weekly, biweekly, monthly, and quarterly rebalancing | Monthly is not the highest-return frequency; it is the implementable low-turnover compromise |
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
+
+<p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
+
+With Improved Convex Adaptive Global RRP parameters fixed and only the rebalance schedule varied, weekly and biweekly rebalancing deliver **5.85%** and **5.76%** net annual return, with Sharpe ratios of **1.529** and **1.497**, but average monthly turnover rises to **6.09%** and **3.52%**. Monthly rebalancing delivers **5.57%** net annual return, **1.431** Sharpe, **-3.95%** maximum drawdown, and **2.07%** average monthly turnover. Quarterly rebalancing further lowers turnover to **1.57%**, but net annual return and Sharpe decline to **5.21%** and **1.296**. Monthly rebalancing is therefore presented as a long-horizon implementation choice rather than the ex-post highest-return frequency.
 
 ### All Weather Futures Benchmark
 

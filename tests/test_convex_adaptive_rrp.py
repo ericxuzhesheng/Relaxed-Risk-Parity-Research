@@ -3,7 +3,12 @@ import pandas as pd
 
 from src.adaptive_risk_budget import REGIME_LABELS, adaptive_budget_target, online_regime_state
 from src.asset_graph_features import rolling_correlation_graph_features
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest, solve_convex_rrp
+from src.convex_adaptive_rrp import (
+    ConvexRRPConfig,
+    rebalance_dates_for_frequency,
+    run_convex_adaptive_backtest,
+    solve_convex_rrp,
+)
 from scripts.run_convex_adaptive_rrp import config_row
 from scripts.run_walkforward_validation import split_windows
 
@@ -59,6 +64,36 @@ def test_backtest_outputs_solver_graph_and_regime_diagnostics():
     assert not graph.empty
     assert not regime.empty
     assert set(regime["regime_label"]).issubset(set(REGIME_LABELS))
+
+
+def test_rebalance_frequency_dates_are_last_available_observations():
+    returns = sample_returns(n=90, k=3)
+
+    weekly = rebalance_dates_for_frequency(returns, "W")
+    biweekly = rebalance_dates_for_frequency(returns, "2W")
+    monthly = rebalance_dates_for_frequency(returns, "M")
+    quarterly = rebalance_dates_for_frequency(returns, "Q")
+
+    expected_weekly = set(returns.groupby(returns.index.to_period("W")).tail(1).index)
+    expected_monthly = set(returns.groupby(returns.index.to_period("M")).tail(1).index)
+    expected_quarterly = set(returns.groupby(returns.index.to_period("Q")).tail(1).index)
+
+    assert weekly == expected_weekly
+    assert biweekly.issubset(weekly)
+    assert len(biweekly) <= len(weekly)
+    assert monthly == expected_monthly
+    assert quarterly == expected_quarterly
+
+
+def test_backtest_accepts_non_monthly_rebalance_frequency():
+    returns = sample_returns(n=150, k=4)
+    cfg = ConvexRRPConfig(lookback_days=45, max_weight=0.70, rebalance_frequency="W")
+
+    result, solver, _, _ = run_convex_adaptive_backtest(returns, cfg)
+
+    assert not result.empty
+    assert int(result["is_rebalance_day"].sum()) >= len(solver)
+    assert result["turnover"].fillna(0.0).sum() > 0.0
 
 
 def test_candidate_config_row_exposes_audit_schema_and_legacy_aliases():

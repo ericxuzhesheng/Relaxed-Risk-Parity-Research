@@ -69,6 +69,7 @@ Do claim where appropriate:
 | Full model comparison | `results/tables/hrp_comparison.csv` |
 | Per-ETF statistics | `results/tables/asset_descriptive_statistics.csv` |
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
+| Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
 
 Current results (evaluation from `2019-01-01` to `2026-05-29`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2018-02-28; point-in-time universe filtering applied):
 
@@ -182,8 +183,9 @@ Use these figure embeds when files exist:
 - `results/figures/convex_adaptive_drawdown_comparison.png`
 - `results/figures/convex_adaptive_turnover_comparison.png`
 - `results/figures/convex_adaptive_cvar_comparison.png`
+- `results/figures/rebalance_frequency_sensitivity.png`
 
-The NAV explanation should compare cumulative performance across Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP. The drawdown explanation focuses on stress-period risk control. The turnover explanation focuses on implementability. The CVaR explanation focuses on tail-risk control.
+The NAV explanation should compare cumulative performance across Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP. The drawdown explanation focuses on stress-period risk control. The turnover explanation focuses on implementability. The CVaR explanation focuses on tail-risk control. The rebalance-frequency explanation should state that monthly rebalancing is an implementation-oriented compromise, not the ex-post highest-return frequency.
 
 ---
 

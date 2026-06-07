@@ -78,6 +78,19 @@
 % 统计检验
 \newcommand{\improvedVsGlobalDiff}{0.757}
 \newcommand{\improvedVsGlobalPValue}{0.004}
+% 调仓频率敏感性
+\newcommand{\freqWeeklyNetReturn}{5.85\%}
+\newcommand{\freqWeeklySharpe}{1.529}
+\newcommand{\freqWeeklyMaxDD}{-3.31\%}
+\newcommand{\freqWeeklyMonthlyTurnover}{6.09\%}
+\newcommand{\freqBiweeklyNetReturn}{5.76\%}
+\newcommand{\freqBiweeklySharpe}{1.497}
+\newcommand{\freqBiweeklyMaxDD}{-3.68\%}
+\newcommand{\freqBiweeklyMonthlyTurnover}{3.52\%}
+\newcommand{\freqQuarterlyNetReturn}{5.21\%}
+\newcommand{\freqQuarterlySharpe}{1.296}
+\newcommand{\freqQuarterlyMaxDD}{-4.51\%}
+\newcommand{\freqQuarterlyMonthlyTurnover}{1.57\%}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -719,7 +732,7 @@
 \section{稳健性检验}
 % ════════════════════════════════════════════════════════════════════════════
 
-\begin{frame}{稳健性检验体系：五个维度}
+\begin{frame}{稳健性检验体系：六个维度}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
       \begin{enumerate}
@@ -730,6 +743,7 @@
     \end{column}
     \begin{column}{0.47\textwidth}
       \begin{enumerate}\setcounter{enumi}{3}
+        \item \textbf{调仓频率敏感性}：周度、双周、月度、季度仅改变调仓日历
         \item \textbf{Bootstrap 分布}：对月度收益序列重抽样，获取 Sharpe 和最大回撤的经验分布
         \item \textbf{协方差估计器}：比较样本协方差、EWMA（基准）、收缩估计三种方案
       \end{enumerate}
@@ -799,6 +813,16 @@
       \end{itemize}
     \end{column}
   \end{columns}
+\end{frame}
+
+\begin{frame}{调仓频率敏感性：月度不是最高收益频率}
+  \begin{center}
+    \includegraphics[width=0.88\textwidth,height=0.58\textheight,keepaspectratio]{rebalance_frequency_sensitivity.png}
+  \end{center}
+  \vspace{-0.2em}
+  \begin{alertblock}{解释口径}
+    \scriptsize 固定 candidate\_23 参数，仅改变调仓日历。周度和双周 Sharpe 更高但换手升至 \freqWeeklyMonthlyTurnover{} / \freqBiweeklyMonthlyTurnover{}；季度换手最低但收益和 Sharpe 下降。月度调仓是低换手与响应速度之间的可实施折中，而非事后最高收益频率。
+  \end{alertblock}
 \end{frame}
 
 \begin{frame}{Bootstrap 经验分布：Sharpe 与最大回撤}
@@ -893,7 +917,7 @@
   \begin{swufekeypoints}
     \swufepoint{三维权衡同步改善}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——在收益、回撤、换手三个维度上均无明显短板}
     \swufepoint{HERC 需结合权重解释}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 主要来自接近全仓债券的低波动结构；因此应作为层次化配置基准，而非与主模型作单一指标排序}
-    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward 和参数扰动分析确认结论在区间内相对稳定，但不代表对未来绩效的预测}
+    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward、参数扰动和调仓频率检验确认结论在区间内相对稳定，月度调仓不是事后最高收益频率，但不代表对未来绩效的预测}
   \end{swufekeypoints}
 \end{frame}
 

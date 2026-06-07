@@ -638,6 +638,13 @@ Factor & Return Share & Variance Share \\
 \figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
 图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。在已测试的 $[0, 50]$ bps 月单边费率扫描范围内，Improved Convex Adaptive Global RRP 相对于 Global RRP 的净年化收益优势始终为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal；本文 3 bps 的设定显著低于该阈值，说明主要结论对成本假设的合理变动具有稳健性。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
 
+\noindent\textbf{调仓频率敏感性。}
+除交易成本费率外，调仓频率本身也会影响收益、风险和可实施性。为检验月度调仓是否属于事后选择的有利设定，本文在固定 Improved Convex Adaptive Global RRP 候选参数的前提下，仅改变调仓日历，比较周度、双周、月度和季度四种频率。表~\ref{tab:rebalance_frequency_sensitivity} 与图~\ref{fig:rebalance_frequency_sensitivity} 显示，周度与双周调仓的净年化收益分别为 \freqWeeklyNetReturn{} 和 \freqBiweeklyNetReturn，Sharpe 分别为 \freqWeeklySharpe{} 和 \freqBiweeklySharpe，高于月度调仓的 \freqMonthlyNetReturn{} 和 \freqMonthlySharpe；但其月均换手率升至 \freqWeeklyMonthlyTurnover{} 和 \freqBiweeklyMonthlyTurnover，显著高于月度调仓的 \freqMonthlyMonthlyTurnover。季度调仓换手率进一步降至 \freqQuarterlyMonthlyTurnover，但净年化收益和 Sharpe 分别降至 \freqQuarterlyNetReturn{} 和 \freqQuarterlySharpe，最大回撤也扩大至 \freqQuarterlyMaxDD。由此可见，月度调仓并不是该频率检验中的最高收益设定，而是在长期配置语境下兼顾响应速度、交易成本和权重稳定性的可实施折中。
+
+\IfFileExists{generated_rebalance_frequency_table.tex}{\input{generated_rebalance_frequency_table.tex}}{\textbf{[Rebalance-frequency sensitivity table not found --- run scripts/generate_thesis_numbers.py]}}
+
+\figwide{rebalance_frequency_sensitivity.png}{调仓频率敏感性检验}{fig:rebalance_frequency_sensitivity}
+
 主模型的 CVaR 置信水平 $\alpha=0.95$（组合优化文献惯用水平）和回望窗口 252 日（自然年交易日数）均依先验惯例确定，不依赖回测结果反向校准\cite{rockafellar2000optimization}。敏感性分析在 $\beta \in \{0.90, 0.95, 0.975, 0.99\}$ 和窗口 $\in \{126, 252, 504\}$ 上共测试 12 个变体，结果见表~\ref{tab:cvar_sensitivity}。
 
 \begin{table}[H]
@@ -749,7 +756,7 @@ Improved Convex Adaptive Global RRP 相对各参照系的夏普优势在 95\% �
 
 HERC 在当前样本中夏普比率不低，但原因需要说清楚：几乎全仓债券，夏普比率来自极低的波动，而不是多资产分散。这和主模型是两种不同的配置思路，本文没有把它们放在同一个评价坐标上排序。
 
-稳健性检验方面，PBO = 0.429 说明候选选择带来的过拟合风险在可接受范围内，协方差估计器的选择不改变主要结论。但这些检验只能覆盖已测试的维度，所有结论都依赖当前的评价区间（\evalStartDate{} 至 \evalEndDate）和成本假设。
+稳健性检验方面，PBO = 0.429 说明候选选择带来的过拟合风险在可接受范围内，协方差估计器的选择不改变主要结论；调仓频率检验进一步表明，月度调仓不是事后最高收益频率，而是低换手和响应速度之间的实施折中。但这些检验只能覆盖已测试的维度，所有结论都依赖当前的评价区间（\evalStartDate{} 至 \evalEndDate）和成本假设。
 
 本文所有实证结论均在\textbf{纯多头、无杠杆}约束下取得。根据证监会《公开募集证券投资基金运作管理办法》，普通开放式基金杠杆不超过 0.4 倍，封闭期内不超过 1 倍，货币市场基金不超过 0.2 倍，标准风险平价"加杠杆平抑权益波动"的核心机制因此在公募语境下受到严格限制。本文的定位是：在无杠杆、有交易成本、有权重上限的约束下，引入 CVaR 约束和换手惩罚的宽松风险平价框架能产生 Sharpe \improvedSharpe、最大回撤 \improvedMaxDD 的表现，为公募 FOF、银行理财子及保险委外等无法使用杠杆的稳健型资金提供可执行的多资产风险预算路径。
 
