@@ -30,7 +30,7 @@ from typing import Iterable
 import numpy as np
 import pandas as pd
 
-from src.covariance_estimators import covariance_diagnostics, estimate_covariance
+from src.covariance_estimators import estimate_covariance
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_overlay import (
@@ -193,7 +193,6 @@ def run_static_backtest(
         raise ValueError(f"Unsupported model_type: {model_type}")
 
     keywords = config["bond_keywords"]
-    bond_indices = [i for i, col in enumerate(returns.columns) if any(k in col for k in keywords)]
     rebalance_dates = _monthly_rebalance_dates(returns)
     overlay_config = RiskOverlayConfig.from_config(config)
     cost_rate = transaction_cost_rate(overlay_config)
@@ -244,7 +243,6 @@ def run_static_backtest(
             )
             if len(df_window) >= 20 and len(active_cols) > 1:
                 previous_weights = current_weights.copy()
-                previous_active = pd.Series(previous_weights, index=returns.columns).reindex(active_cols).fillna(0.0).values
                 trend_positive_count = len(active_cols)
 
                 if model_type == "hrp":

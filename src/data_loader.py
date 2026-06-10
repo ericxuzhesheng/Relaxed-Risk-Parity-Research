@@ -35,14 +35,16 @@ def write_data_manifest(
     prices: pd.DataFrame,
     source_path: Path | str,
     source_label: str,
+    manifest_path: Path | str | None = None,
 ) -> dict:
     """Write a JSON manifest describing the loaded price cache.
 
     Records: load timestamp (UTC ISO 8601), source file mtime + sha256, row
     count, first/last valid date, the trading-day count per asset, and the
     per-asset NaN ratio. The manifest is written to ``data/MANIFEST.json``
-    so reproducibility checks can confirm exactly which snapshot fed a given
-    backtest run.
+    by default so reproducibility checks can confirm exactly which snapshot
+    fed a given backtest run; pass ``manifest_path`` to redirect the output
+    (tests must do this to avoid clobbering the repository manifest).
     """
     source = Path(source_path)
     if not source.exists():
@@ -84,11 +86,12 @@ def write_data_manifest(
         "asset_first_valid": first_valid,
         "asset_last_valid": last_valid,
     }
-    MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
-    MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
+    out_path = Path(manifest_path) if manifest_path is not None else MANIFEST_PATH
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False), encoding="utf-8")
     logger.info(
         "wrote data manifest -> %s (rows=%d assets=%d range=%s..%s)",
-        MANIFEST_PATH,
+        out_path,
         manifest["row_count"],
         manifest["asset_count"],
         manifest["first_date"],
@@ -97,14 +100,15 @@ def write_data_manifest(
     return manifest
 
 
-def read_data_manifest() -> dict | None:
+def read_data_manifest(manifest_path: Path | str | None = None) -> dict | None:
     """Return the most recent on-disk manifest, or None if absent."""
-    if not MANIFEST_PATH.exists():
+    path = Path(manifest_path) if manifest_path is not None else MANIFEST_PATH
+    if not path.exists():
         return None
     try:
-        return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+        return json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:
-        logger.warning("read_data_manifest: could not parse %s (%s)", MANIFEST_PATH, exc)
+        logger.warning("read_data_manifest: could not parse %s (%s)", path, exc)
         return None
 
 

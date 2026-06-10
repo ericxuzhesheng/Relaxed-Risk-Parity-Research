@@ -70,11 +70,8 @@ def expected_outputs() -> list[Path]:
         ROOT_DIR / "results/tables/cvar_sensitivity_summary.csv",
         ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv",
         ROOT_DIR / "results/tables/holdout_validation_summary.csv",
-        ROOT_DIR / "report/methodology_notes.md",
         ROOT_DIR / "docs/MODEL_GOVERNANCE.md",
-        ROOT_DIR / "report/asset_pricing_interpretation.md",
-        ROOT_DIR / "report/insurance_allocation_perspective.md",
-        ROOT_DIR / "report/thesis_figures_and_tables.md",
+        ROOT_DIR / "report/thesis_latex/main.tex",
     ]
 
 
@@ -138,8 +135,8 @@ def run_step(step: PipelineStep, quick: bool = False) -> dict:
     }
 
 
-def write_checklist(rows: list[dict]) -> Path:
-    output = ROOT_DIR / "results/tables/full_pipeline_checklist.csv"
+def write_checklist(rows: list[dict], output_path: Path | None = None) -> Path:
+    output = output_path if output_path is not None else ROOT_DIR / "results/tables/full_pipeline_checklist.csv"
     output.parent.mkdir(parents=True, exist_ok=True)
     file_rows = []
     for path in expected_outputs():

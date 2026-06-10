@@ -22,5 +22,7 @@ def test_benchmark_suite_smoke_outputs(tmp_path):
     assert (tmp_path / "figures/benchmark_drawdown_comparison.png").exists()
 
     summary = pd.read_csv(tmp_path / "tables/benchmark_performance_summary.csv")
-    assert "Equal Weight Benchmark" in set(summary["model"])
+    # Output model names go through src/public_labels.py, which maps the
+    # internal "Equal Weight Benchmark" key to the public "Equal Weight" label.
+    assert "Equal Weight" in set(summary["model"])
     assert "Global RRP" in set(summary["model"])

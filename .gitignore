@@ -6,6 +6,18 @@ __pycache__/
 .DS_Store
 *.log
 tmp_pytest*/
+tmp_render/
+# LaTeX build intermediates (main.bbl is kept for distribution)
+*.aux
+*.fdb_latexmk
+*.fls
+*.blg
+*.out
+*.toc
+*.xdv
+*.synctex.gz
+report/thesis_latex/build_check*.txt
+report/thesis_latex/xdvipdfmx_check.txt
 data/raw/*
 !data/raw/.gitkeep
 results/figures/*
@@ -50,6 +62,7 @@ results/quick/
 !results/figures/weight_path_asset_group_comparison.png
 !results/figures/improved_weights_timeline.png
 !results/figures/improved_rrp_vs_hs300_monthly_comparison.png
+!results/figures/rebalance_frequency_sensitivity.png
 !results/tables/performance_summary.csv
 !results/tables/risk_overlay_ablation.csv
 !results/tables/walkforward_validation.csv
@@ -114,6 +127,7 @@ results/quick/
 !results/tables/vol_aligned_comparison.csv
 !results/tables/improved_rrp_vs_hs300_monthly_returns.csv
 !results/tables/improved_rrp_vs_hs300_monthly_summary.csv
+!results/tables/rebalance_frequency_sensitivity.csv
 backtest/V1/*
 backtest/V2/*
 backtest/V3/*

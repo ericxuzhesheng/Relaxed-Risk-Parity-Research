@@ -286,7 +286,6 @@ def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: fl
         "covariance_estimator": cfg.covariance_method,
         "lookback_window": cfg.lookback_days,
         "Sharpe": metrics["sharpe_ratio"],
-        "max_drawdown": metrics["max_drawdown"],
         "Calmar": metrics["calmar_ratio"],
         "CVaR_daily_loss": metrics["cvar_95_daily_loss"],
         "net_return": metrics["net_annual_return"],

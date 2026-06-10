@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 
 from src.asset_universe import asset_mapping_frame, etf_names
-from src.data_loader import load_data, price_to_returns
+from src.data_loader import price_to_returns
 from src.investable import investable_columns
 
 

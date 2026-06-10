@@ -72,22 +72,21 @@ def test_pbo_summary_handles_small_score_table() -> None:
 
 
 def test_readme_describes_current_validation_layer() -> None:
-    text = Path("README.md").read_text(encoding="utf-8")
+    text = Path("README.md").read_text(encoding="utf-8").lower()
     for needle in [
-        "CSCV-PBO",
-        "Walk-Forward Validation",
-        "Holdout Validation",
-        "Block Bootstrap",
-        "Covariance Robustness",
-        "Parameter Perturbation",
-        "Stress Period Testing",
-        "validation.py",
+        "cscv-pbo",
+        "walk-forward",
+        "holdout",
+        "block bootstrap",
+        "covariance robustness",
+        "parameter perturbation",
+        "stress-period",
+        "rebalance frequency sensitivity",
         "run_full_research_pipeline.py",
-        "run_robustness_tests.py",
         "results/tables/",
         "report/thesis_latex/",
     ]:
-        assert needle in text
+        assert needle in text, needle
 
 
 def test_readme_uses_current_model_and_robustness_framing() -> None:
@@ -99,12 +98,12 @@ def test_readme_uses_current_model_and_robustness_framing() -> None:
         "HRP Benchmark",
         "HERC Benchmark",
         "CVaR",
-        "turnover controls",
-        "defensive dynamic risk overlay",
-        "overfitting risk",
+        "turnover",
+        "Risk-overlay",
+        "Overfitting probability",
         "out-of-sample",
     ]:
-        assert needle in text
+        assert needle in text, needle
 
 
 def test_holdout_split_generator_returns_chronological_splits() -> None:

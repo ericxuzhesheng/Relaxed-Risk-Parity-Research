@@ -7,7 +7,6 @@ they finish in well under one second.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import numpy as np
@@ -34,7 +33,9 @@ def test_write_data_manifest_includes_required_fields(tmp_path: Path) -> None:
     prices = _synthetic_prices()
     source_path = tmp_path / "fake_prices.csv"
     prices.to_csv(source_path)
-    manifest = write_data_manifest(prices, source_path, source_label="test:fake")
+    manifest = write_data_manifest(
+        prices, source_path, source_label="test:fake", manifest_path=tmp_path / "MANIFEST.json"
+    )
     assert manifest["schema_version"] == 1
     assert manifest["row_count"] == len(prices)
     assert manifest["asset_count"] == prices.shape[1]
@@ -50,8 +51,11 @@ def test_read_data_manifest_round_trip(tmp_path: Path) -> None:
     prices = _synthetic_prices()
     source_path = tmp_path / "fake_prices.csv"
     prices.to_csv(source_path)
-    written = write_data_manifest(prices, source_path, source_label="test:roundtrip")
-    loaded = read_data_manifest()
+    manifest_path = tmp_path / "MANIFEST.json"
+    written = write_data_manifest(
+        prices, source_path, source_label="test:roundtrip", manifest_path=manifest_path
+    )
+    loaded = read_data_manifest(manifest_path)
     assert loaded is not None
     assert loaded["row_count"] == written["row_count"]
     assert loaded["source_sha256"] == written["source_sha256"]

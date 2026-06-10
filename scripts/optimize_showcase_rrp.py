@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import itertools
 import os
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
