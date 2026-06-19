@@ -67,6 +67,84 @@ def _repair_psd(cov: pd.DataFrame, jitter: float = 1e-10) -> tuple[pd.DataFrame,
     }
 
 
+def _regime_conditional_covariance(
+    data: pd.DataFrame,
+    stress_quantile: float = 0.67,
+    crisis_prior: float = 0.40,
+    prior_weight: float = 0.50,
+    vol_window: int = 21,
+) -> tuple[pd.DataFrame, dict]:
+    """State-conditional covariance estimated from the supplied window only.
+
+    The classic ERC failure mode is that an *unconditional* covariance pools
+    calm and crisis days into one distribution, which under-weights the tail
+    co-movement that only shows up in stress regimes. This estimator instead:
+
+    1. classifies each day in the window as calm or stress using the trailing
+       realized volatility of the equal-weight portfolio (a point-in-time
+       regime proxy computed from the window itself, so no look-ahead);
+    2. estimates a within-regime sample covariance for each bucket;
+    3. recombines them as ``Σ = (1-π) Σ_calm + π Σ_stress`` where the stress
+       weight ``π`` is the *empirical* stress frequency shrunk toward a fixed
+       ``crisis_prior``. Shrinking the frequency toward a prior that exceeds
+       the empirical share over-weights rare-but-severe regimes, which is the
+       robustness mechanism described for regime-resilient risk parity.
+
+    Returns the daily covariance and a diagnostics dict. Falls back to the
+    pooled sample covariance when the window is too short to split reliably.
+    """
+    n_obs = len(data)
+    cols = data.columns
+    min_obs = max(len(cols) + 1, vol_window)
+    eq = data.mean(axis=1)
+    realized_vol = eq.rolling(vol_window, min_periods=max(5, vol_window // 4)).std()
+    valid = realized_vol.dropna()
+
+    def _fallback(note: str) -> tuple[pd.DataFrame, dict]:
+        cov = data.cov().fillna(0.0)
+        return cov, {
+            "regime_fallback": True,
+            "regime_n_stress": 0,
+            "regime_n_calm": int(n_obs),
+            "regime_pi_empirical": np.nan,
+            "regime_pi_stress": np.nan,
+            "regime_vol_threshold": np.nan,
+            "regime_note": note,
+        }
+
+    if len(valid) < 2 * len(cols) or n_obs < 3 * vol_window:
+        return _fallback("insufficient_history")
+
+    threshold = float(valid.quantile(stress_quantile))
+    stress_mask = (realized_vol >= threshold) & realized_vol.notna()
+    calm_mask = (realized_vol < threshold) & realized_vol.notna()
+    stress_data = data.loc[stress_mask]
+    calm_data = data.loc[calm_mask]
+    n_stress = int(len(stress_data))
+    n_calm = int(len(calm_data))
+    if n_stress + n_calm == 0:
+        return _fallback("empty_buckets")
+
+    pooled = data.loc[realized_vol.notna()].cov().fillna(0.0)
+    cov_stress = stress_data.cov().fillna(0.0) if n_stress >= min_obs else pooled
+    cov_calm = calm_data.cov().fillna(0.0) if n_calm >= min_obs else pooled
+
+    pi_empirical = n_stress / float(n_stress + n_calm)
+    prior_weight = float(np.clip(prior_weight, 0.0, 1.0))
+    pi_stress = float(np.clip((1.0 - prior_weight) * pi_empirical + prior_weight * crisis_prior, 0.0, 1.0))
+    cov = (1.0 - pi_stress) * cov_calm + pi_stress * cov_stress
+    cov = cov.reindex(index=cols, columns=cols).fillna(0.0)
+    return cov, {
+        "regime_fallback": False,
+        "regime_n_stress": n_stress,
+        "regime_n_calm": n_calm,
+        "regime_pi_empirical": float(pi_empirical),
+        "regime_pi_stress": pi_stress,
+        "regime_vol_threshold": threshold,
+        "regime_note": "ok",
+    }
+
+
 def _ewma_covariance(data: pd.DataFrame, halflife: float) -> pd.DataFrame:
     values = data.values.astype(float)
     n_obs = len(data)
@@ -122,6 +200,9 @@ def estimate_covariance(
     allow_fallback: bool = False,
     return_diagnostics: bool = False,
     point_in_time: bool = True,
+    regime_stress_quantile: float = 0.67,
+    regime_crisis_prior: float = 0.40,
+    regime_prior_weight: float = 0.50,
 ) -> pd.DataFrame | CovarianceResult:
     """
     Estimate a covariance matrix from the supplied return window only.
@@ -135,9 +216,17 @@ def estimate_covariance(
     fallback_used = False
     fallback_method = ""
     failure_note = ""
+    regime_diag: dict = {}
 
     if normalized == "sample":
         cov = data.cov().fillna(0.0)
+    elif normalized == "regime_conditional":
+        cov, regime_diag = _regime_conditional_covariance(
+            data,
+            stress_quantile=regime_stress_quantile,
+            crisis_prior=regime_crisis_prior,
+            prior_weight=regime_prior_weight,
+        )
     elif normalized == "ledoit_wolf":
         try:
             from sklearn.covariance import LedoitWolf
@@ -177,6 +266,8 @@ def estimate_covariance(
         point_in_time=point_in_time,
     )
     diagnostics.update(psd_diag)
+    if regime_diag:
+        diagnostics.update(regime_diag)
     diagnostics["covariance_observations"] = int(len(data))
     diagnostics["covariance_assets"] = int(len(original_columns))
     diagnostics["covariance_ewma_halflife"] = halflife if normalized == "ewma" else np.nan

@@ -1,4 +1,4 @@
-\begin{thebibliography}{56}
+\begin{thebibliography}{59}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{#1}
 \expandafter\ifx\csname urlstyle\endcsname\relax\else
@@ -160,6 +160,12 @@ GAMBETA V, KWON R.
   237.
 \newblock DOI: \doi{10.3390/jrfm13100237}.
 
+\bibitem[Ardia et~al.(2018)Ardia, Boudt, and Nguyen]{ardia2018beyond}
+ARDIA D, BOUDT K, NGUYEN G.
+\newblock Beyond risk-based portfolios: balancing performance and risk
+  contributions in asset allocation\allowbreak[J].
+\newblock Quantitative Finance, 2018, 18\allowbreak (8): 1249-1259.
+
 \bibitem[Cetingoz et~al.(2024)Cetingoz and Gu{\'e}ant]{cetingoz2024assetfactor}
 CETINGOZ A~R, GU{\'E}ANT O.
 \newblock Asset and factor risk budgeting: a balanced
@@ -314,6 +320,17 @@ LEDOIT O, WOLF M.
 \newblock Quadratic shrinkage for large covariance matrices\allowbreak[J/OL].
 \newblock Bernoulli, 2022, 28\allowbreak (3): 1519-1547.
 \newblock DOI: \doi{10.3150/20-BEJ1315}.
+
+\bibitem[Bouy{\'e} et~al.(2025)Bouy{\'e} and Teiletche]{bouye2025regime}
+BOUY{\'E} E, TEILETCHE J.
+\newblock Regime-based strategic asset allocation\allowbreak[J].
+\newblock Financial Analysts Journal, 2025, 81\allowbreak (4): 84-102.
+
+\bibitem[Fleming et~al.(2001)Fleming, Kirby, and
+  Ostdiek]{fleming2001volatility}
+FLEMING J, KIRBY C, OSTDIEK B.
+\newblock The economic value of volatility timing\allowbreak[J].
+\newblock The Journal of Finance, 2001, 56\allowbreak (1): 329-352.
 
 \bibitem[{中国人民银行}(2026)]{chinabond2026}
 {中国人民银行}.

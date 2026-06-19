@@ -61,6 +61,9 @@ class ConvexRRPConfig:
     return_reward: float = 0.05
     cvar_penalty: float = 0.0
     cvar_beta: float = 0.95
+    regime_stress_quantile: float = 0.67
+    regime_crisis_prior: float = 0.40
+    regime_prior_weight: float = 0.50
     use_graph_features: bool = False
     use_transaction_cost_objective: bool = False
     use_online_regime: bool = False
@@ -117,6 +120,9 @@ def solve_convex_rrp(
         allow_fallback=cfg.covariance_allow_fallback,
         return_diagnostics=True,
         point_in_time=True,
+        regime_stress_quantile=cfg.regime_stress_quantile,
+        regime_crisis_prior=cfg.regime_crisis_prior,
+        regime_prior_weight=cfg.regime_prior_weight,
     )
     cov = cov_result.covariance
     sigma = cov.values
