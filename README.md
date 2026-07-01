@@ -125,7 +125,7 @@
 
 ### 与沪深300ETF月度对比
 
-截至 `2026-06`，Improved Convex Adaptive Global RRP 累计收益为 **48.37%**，沪深300ETF 为 **83.39%**；但策略月度波动率仅 **0.83%**，显著低于沪深300ETF的 **4.55%**，日频最大回撤分别为 **-4.18%** 与 **-44.03%**。策略并非以跑赢沪深300为目标，而是以较低波动和较浅回撤换取长期路径稳定性。
+截至 `2026-06`，Improved Convex Adaptive Global RRP 累计收益为 **48.37%**，沪深300ETF 为 **83.39%**；但策略月度波动率仅 **0.83%**，显著低于沪深300ETF的 **4.55%**，日频最大回撤分别为 **-4.18%** 与 **-44.03%**。策略并非以跑赢沪深300为目标，而是以较低波动和较浅回撤换取长期路径稳定性；代价是权益强势阶段收益弹性有限，例如 2026-05 和 2026-06 策略分别录得 **-0.29%** 和 **-1.31%** 的月度收益，同期沪深300ETF为正收益。
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
 
@@ -285,7 +285,7 @@ Equal Weight generates higher absolute return but with much higher volatility an
 
 ### Monthly Comparison vs CSI 300 ETF
 
-Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **48.37%** cumulative return versus **83.39%** for the CSI 300 ETF proxy. Monthly volatility was **0.83%**, far below the CSI 300 ETF's **4.55%**; daily maximum drawdowns were **-4.18%** and **-44.03%**, respectively.
+Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **48.37%** cumulative return versus **83.39%** for the CSI 300 ETF proxy. Monthly volatility was **0.83%**, far below the CSI 300 ETF's **4.55%**; daily maximum drawdowns were **-4.18%** and **-44.03%**, respectively. The trade-off is limited upside capture in strong equity months: the strategy returned **-0.29%** in 2026-05 and **-1.31%** in 2026-06 while the CSI 300 ETF proxy posted positive monthly returns.
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
 

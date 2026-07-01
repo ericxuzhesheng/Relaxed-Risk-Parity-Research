@@ -353,7 +353,7 @@
     \midrule
     Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
     Convex Adaptive  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
-    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 参数冻结（candidate\_23）} & \textbf{主模型} \\
+    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（主结果 candidate\_25）} & \textbf{主模型} \\
     HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
     \bottomrule
   \end{tabular}
@@ -871,7 +871,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  PBO（Probability of Backtest Overfitting）热图展示不同超参数组合的过拟合概率；所选参数（candidate\_23）处于低 PBO 区域
+  PBO（Probability of Backtest Overfitting）热图展示不同超参数组合的过拟合概率；冻结样本外候选为 candidate\_23，本次完整样本主结果候选为 candidate\_25，二者角色需区分
 \end{frame}
 
 \begin{frame}{协方差估计器对比：Sharpe 与换手}
@@ -966,7 +966,7 @@
 
 \begin{frame}{三条核心结论}
   \begin{swufekeypoints}
-    \swufepoint{三维权衡同步改善}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——在收益、回撤、换手三个维度上均无明显短板}
+    \swufepoint{三维权衡形成折中}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——优势在于低波动、浅回撤与可控换手，代价是权益强势阶段收益弹性有限}
     \swufepoint{HERC 需结合权重解释}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 主要来自接近全仓债券的低波动结构；因此应作为层次化配置基准，而非与主模型作单一指标排序}
     \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward、参数扰动和调仓频率检验确认结论在区间内相对稳定，月度调仓不是事后最高收益频率，但不代表对未来绩效的预测}
   \end{swufekeypoints}

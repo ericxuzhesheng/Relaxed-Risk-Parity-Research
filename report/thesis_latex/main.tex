@@ -126,7 +126,7 @@
 
 本文以 \etfCount 支可交易全球多资产 ETF 构建统一回测框架，资产池覆盖八大类风险来源：债券、A 股宽基、中国科技（半导体、人工智能、机器人、新能源等七支主题 ETF）、中国行业与消费、港股、全球股票、大宗商品权益和大宗商品。评价区间 2019-01-01 至 \evalEndDate（共 \evalMonths 个月度观察点），月度调仓，单边交易成本 \txCostBps{} bps，全程无前视。在统一框架下对比 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 和层次化基准 HERC。
 
-主要结果如下。Global RRP 净年化收益 \globalNetReturn、Sharpe \globalSharpe、最大回撤 \globalMaxDD，但月均换手率 \globalMonthlyTurnover 带来可见的成本拖累。引入 CVaR 约束、换手惩罚和资产组上限后，Improved Convex Adaptive Global RRP 将换手率压至 \improvedMonthlyTurnover，净年化收益升至 \improvedNetReturn，Sharpe \improvedSharpe，Sortino \improvedSortino，最大回撤 \improvedMaxDD。HERC 的 Sharpe 为 \hercSharpe，收益 \hercNetReturn，其高 Sharpe 来自近乎全仓债券的极低波动，而非多资产分散。Improved Convex Adaptive Global RRP 没有在每项指标上都领先，但在收益、回撤和换手三个维度上均无明显短板。
+主要结果如下。Global RRP 净年化收益 \globalNetReturn、Sharpe \globalSharpe、最大回撤 \globalMaxDD，但月均换手率 \globalMonthlyTurnover 带来可见的成本拖累。引入 CVaR 约束、换手惩罚和资产组上限后，Improved Convex Adaptive Global RRP 将换手率压至 \improvedMonthlyTurnover，净年化收益升至 \improvedNetReturn，Sharpe \improvedSharpe，Sortino \improvedSortino，最大回撤 \improvedMaxDD。HERC 的 Sharpe 为 \hercSharpe，收益 \hercNetReturn，其高 Sharpe 来自近乎全仓债券的极低波动，而非多资产分散。Improved Convex Adaptive Global RRP 没有在每项指标上都领先，其主要价值在于以有限绝对收益弹性换取较低波动、较浅回撤和可控换手。
 
 以上结论基于特定历史区间和约束设定，不构成对未来收益的预测。
 
@@ -460,7 +460,7 @@ Calmar 比率为净年化收益除以最大回撤绝对值。平均月度换手�
 \subsection{主模型绩效比较}
 表 \ref{tab:core_perf} 汇报核心模型在 \evalStartDate{} 至 \evalEndDate{} 评价区间内的绩效指标，共 \rebalancingPoints{} 个按月观察点。夏普比率点估计的近似标准误为 $\sqrt{(1+0.5\hat{S}^2)/T}\approx0.13$（$T=\rebalancingPoints$ 月）；§\ref{sec:sharpe_diff_test} 给出基于分块自助法的配对显著性检验。Global RRP 的净年化收益率为 \globalNetReturn，年化波动率为 \globalVolatility，夏普比率为 \globalSharpe，最大回撤为 \globalMaxDD，平均月度换手率为 \globalMonthlyTurnover。这一换手水平在实务中并不轻松；若按 3 bps 费率估计，相关交易成本每年约会侵蚀 0.65 个百分点的净收益。
 
-Convex Adaptive Global RRP 的净年化收益为 \convexNetReturn，夏普比率为 \convexSharpe，最大回撤为 \convexMaxDD，平均月度换手率降至 \convexMonthlyTurnover。与 Global RRP 相比，换手率明显下降。Improved Convex Adaptive Global RRP 的净年化收益进一步提高到 \improvedNetReturn，夏普比率为 \improvedSharpe，Sortino 比率为 \improvedSortino，最大回撤为 \improvedMaxDD，平均月度换手率仅为 \improvedMonthlyTurnover。这一模型的优势不在于单一指标的极致领先，而在于收益、回撤与换手控制之间取得了更稳妥的平衡。
+Convex Adaptive Global RRP 的净年化收益为 \convexNetReturn，夏普比率为 \convexSharpe，最大回撤为 \convexMaxDD，平均月度换手率降至 \convexMonthlyTurnover。与 Global RRP 相比，换手率明显下降。Improved Convex Adaptive Global RRP 的净年化收益进一步提高到 \improvedNetReturn，夏普比率为 \improvedSharpe，Sortino 比率为 \improvedSortino，最大回撤为 \improvedMaxDD，平均月度换手率为 \improvedMonthlyTurnover。这一模型的优势不在于单一指标的极致领先，而在于收益、回撤与换手控制之间取得了更稳妥的平衡；相应不足是权益上涨阶段的收益弹性有限，可能阶段性落后高 beta 权益资产。
 
 \begin{table}[H]
 \centering
@@ -488,6 +488,7 @@ Equal Weight & \equalWeightNetReturn & \equalWeightSharpe & \equalWeightMaxDD & 
 % BEGIN MONTHLY_HS300_COMPARISON
 \subsection{与沪深300ETF的月度收益对比}
 \IfFileExists{generated_hs300_monthly_comparison.tex}{\input{generated_hs300_monthly_comparison.tex}}{\textbf{[HS300 monthly comparison not found --- run scripts/run_monthly_hs300_comparison.py]}}
+从月度路径看，Improved Convex Adaptive Global RRP 并不是单调上行策略。2026 年 5 月和 6 月模型月度收益分别为 $-0.29\%$ 和 $-1.31\%$，同期沪深300ETF分别上涨 2.05\% 和 1.95\%。这一阶段性落后反映了主模型的防御型配置特征：组合以较高比例配置现金管理、债券和商品分散资产，在权益单边修复月份不会充分暴露于 A 股 beta。因此，本节对照的目的不是证明模型持续跑赢沪深300，而是展示其以更低月度波动和更浅最大回撤换取净值路径稳定性的代价。
 % END MONTHLY_HS300_COMPARISON
 
 \subsection{HRP 与 HERC 基准模型对比}
@@ -623,7 +624,7 @@ Factor & Return Share & Variance Share \\
 归因结果说明 Improved Convex Adaptive Global RRP 的分散是实质性的：收益来源分布在权益、债券和商品三个方向，债券风险贡献极低但收益贡献近 27\%，体现了低波动资产在风险预算框架中的功能价值。HERC 债券集中度高，收益与风险来源均较单一。
 
 \subsection{小结}
-各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内收益、回撤和换手三个维度上都没有明显短板；HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
+各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内体现为低波动、浅回撤和可控换手之间的折中，而不是最高收益模型；HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
 
 \section{稳健性检验与过拟合诊断}
 
@@ -638,7 +639,7 @@ Factor & Return Share & Variance Share \\
 
 \subsection{交易成本与参数敏感性}
 \figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
-图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手极低，对成本假设基本不敏感。在已测试的 $[0, 50]$ bps 月单边费率扫描范围内，Improved Convex Adaptive Global RRP 相对于 Global RRP 的净年化收益优势始终为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal；本文 3 bps 的设定显著低于该阈值，说明主要结论对成本假设的合理变动具有稳健性。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
+图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手显著低于 Global RRP，对成本假设相对不敏感。在已测试的 $[0, 50]$ bps 月单边费率扫描范围内，Improved Convex Adaptive Global RRP 相对于 Global RRP 的净年化收益优势始终为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal；本文 3 bps 的设定显著低于该阈值，说明主要结论对成本假设的合理变动具有稳健性。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
 
 \textbf{调仓频率敏感性。}
 除交易成本费率外，调仓频率本身也会影响收益、风险和可实施性。为检验月度调仓是否属于事后选择的有利设定，本文在固定 Improved Convex Adaptive Global RRP 候选参数的前提下，仅改变调仓日历，比较周度、双周、月度和季度四种频率。表~\ref{tab:rebalance_frequency_sensitivity} 与图~\ref{fig:rebalance_frequency_sensitivity} 显示，周度与双周调仓的净年化收益分别为 \freqWeeklyNetReturn{} 和 \freqBiweeklyNetReturn，Sharpe 分别为 \freqWeeklySharpe{} 和 \freqBiweeklySharpe，高于月度调仓的 \freqMonthlyNetReturn{} 和 \freqMonthlySharpe；但其月均换手率升至 \freqWeeklyMonthlyTurnover{} 和 \freqBiweeklyMonthlyTurnover，显著高于月度调仓的 \freqMonthlyMonthlyTurnover。季度调仓换手率进一步降至 \freqQuarterlyMonthlyTurnover，但净年化收益和 Sharpe 分别降至 \freqQuarterlyNetReturn{} 和 \freqQuarterlySharpe，最大回撤也扩大至 \freqQuarterlyMaxDD。由此可见，月度调仓并不是该频率检验中的最高收益设定，而是在长期配置语境下兼顾响应速度、交易成本和权重稳定性的可实施折中。
@@ -758,7 +759,7 @@ Improved Convex Adaptive Global RRP 相对各参照系的夏普优势在 95\% �
 
 宽松风险平价在可交易全球 ETF 资产池中确实可以建立一个风险来源清晰的配置框架。Global RRP 净年化收益 \globalNetReturn，最大回撤 \globalMaxDD，在没有 CVaR 和换手约束的情况下已经可以运行，但 \globalMonthlyTurnover{} 的月度换手是个实际问题。
 
-加入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 净年化收益为 \improvedNetReturn，最大回撤 \improvedMaxDD，换手 \improvedMonthlyTurnover，Sharpe 达到 \improvedSharpe。这不是每项指标都领先，而是没有明显短板。
+加入 CVaR 约束、换手惩罚和资产组边界后，Improved Convex Adaptive Global RRP 净年化收益为 \improvedNetReturn，最大回撤 \improvedMaxDD，换手 \improvedMonthlyTurnover，Sharpe 达到 \improvedSharpe。这不是每项指标都领先，而是在当前样本期内形成了低波动、浅回撤和可控换手之间的折中；其代价是权益强势阶段收益弹性不足。
 
 HERC 在当前样本中夏普比率不低，但原因需要说清楚：几乎全仓债券，夏普比率来自极低的波动，而不是多资产分散。这和主模型是两种不同的配置思路，本文没有把它们放在同一个评价坐标上排序。
 
@@ -766,7 +767,7 @@ HERC 在当前样本中夏普比率不低，但原因需要说清楚：几乎全
 
 本文所有实证结论均在\textbf{纯多头、无杠杆}约束下取得。根据证监会《公开募集证券投资基金运作管理办法》，普通开放式基金杠杆不超过 0.4 倍，封闭期内不超过 1 倍，货币市场基金不超过 0.2 倍，标准风险平价"加杠杆平抑权益波动"的核心机制因此在公募语境下受到严格限制。本文的定位是：在无杠杆、有交易成本、有权重上限的约束下，引入 CVaR 约束和换手惩罚的宽松风险平价框架能产生 Sharpe \improvedSharpe、最大回撤 \improvedMaxDD 的表现，为公募 FOF、银行理财子及保险委外等无法使用杠杆的稳健型资金提供可执行的多资产风险预算路径。
 
-这组数字在国内机构资金语境中有具体参照：2025 年一年期定存利率约 1.5\%，银行理财子 R2 级收益普遍在 2\%--3\%，保险委外绝对收益要求一般在 3\%--5\%。对这类资金，考核目标是在回撤约束下持续跑赢无风险利率，而非跑赢股市。本模型在无杠杆、扣除 3 bps 单边成本后，净年化 \improvedNetReturn、最大回撤 \improvedMaxDD，相对上述基准有可验证的溢价，回撤路径也在机构内控通常要求的边界内。
+这组数字在国内机构资金语境中有具体参照：2025 年一年期定存利率约 1.5\%，银行理财子 R2 级收益普遍在 2\%--3\%，保险委外绝对收益要求一般在 3\%--5\%。对这类资金，考核目标是在回撤约束下获得高于无风险利率的长期风险溢价，而非每个月跑赢股市。本模型在无杠杆、扣除 3 bps 单边成本后，净年化 \improvedNetReturn、最大回撤 \improvedMaxDD，相对上述基准有可验证的历史溢价，回撤路径也在机构内控通常要求的边界内；但该结论仍依赖本文评价区间和当前市场相关性结构。
 
 Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收益倾斜项向权益/商品风险溢价的适度倾斜，是多资产分散的结果，而非压低分母。最大回撤 \improvedMaxDD{} 覆盖了 2022 年美联储激进加息和 A 股深度调整，对净值有明确回撤限制的险资委外和结构性产品有直接合规参考意义。月均换手率 \improvedMonthlyTurnover{} 来自 $L_1$ 惩罚项的截断效应：$\lambda_{to}\|\mathbf{w}_t - \mathbf{w}_{t-1}\|_1$ 将调仓幅度压缩至组合真正需要再平衡的程度，过滤协方差估计噪声驱动的无效调仓；对大额资金而言，低换手是模型在真实执行环境中可持续运营的工程基础。
 
@@ -999,8 +1000,9 @@ CVaR & 给定置信水平下尾部损失均值，衡量历史尾部风险 \\
 
 本文 CSCV/PBO 过拟合诊断共使用 36 个候选参数配置。表 \ref{tab:candidate_grid} 完整列出每个候选的核心参数，供验证时复现。其中 \frozenOosCandidate{} 即为冻结样本外检验（Frozen OOS）中使用的参数配置。列说明：Look.=回看窗口（日），Cov.=协方差方法（ewma/sample），MaxW=单资产权重上限，TO Cap=换手上限，$\lambda_{to}$=换手惩罚，$\lambda_{budget}$=预算惩罚，$\lambda_{cvar}$=CVaR 惩罚，$\beta$=CVaR 置信水平，$\lambda_{ret}$=收益倾斜权重。
 
-{\footnotesize
-\begin{longtable}{p{2.0cm}rp{1.1cm}rrrrrrr}
+{\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\begin{longtable}{p{1.75cm}rp{0.95cm}rrrrrrr}
 \caption{CSCV 候选参数网格（共 36 个候选）}\label{tab:candidate_grid}\\
 \toprule
 ID & Look. & Cov. & MaxW & TO Cap & $\lambda_{to}$ & $\lambda_{budget}$ & $\lambda_{cvar}$ & $\beta$ & $\lambda_{ret}$ \\
@@ -1034,7 +1036,7 @@ candidate\_21 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.080 
 candidate\_22 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.100 \\
 \textbf{candidate\_23} & \textbf{252} & \textbf{ewma} & \textbf{45\%} & \textbf{80\%} & \textbf{0.020} & \textbf{0.100} & \textbf{0.080} & \textbf{0.95} & \textbf{0.060} \\
 candidate\_24 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.060 \\
-candidate\_25 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
+\textit{candidate\_25} & \textit{252} & \textit{ewma} & \textit{45\%} & \textit{80\%} & \textit{0.020} & \textit{0.100} & \textit{0.080} & \textit{0.95} & \textit{0.080} \\
 candidate\_26 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
 candidate\_27 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.100 \\
 candidate\_28 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.100 \\
@@ -1047,7 +1049,7 @@ candidate\_34 & 120 & ewma & 45\% & 100\% & 0.000 & 0.050 & 0.050 & 0.95 & 0.060
 candidate\_35 & 252 & ewma & 40\% & 35\% & 0.030 & 0.350 & 0.200 & 0.90 & 0.050 \\
 candidate\_36 & 120 & sample & 40\% & --- & 0.020 & 0.100 & 0.100 & 0.95 & 0.050 \\
 \bottomrule
-\multicolumn{10}{l}{\footnotesize 加粗行为 Frozen OOS 使用的候选（candidate\_23）。"---" 表示换手上限无约束。} \\
+\multicolumn{10}{@{}p{12.8cm}@{}}{\footnotesize 加粗行为 Frozen OOS 使用的冻结候选（candidate\_23）；斜体行为本次完整样本历史评价选中的主结果候选（candidate\_25）。"---" 表示换手上限无约束。} \\
 \end{longtable}
 }
 
