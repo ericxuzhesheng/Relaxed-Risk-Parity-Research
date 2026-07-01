@@ -71,25 +71,25 @@ Do claim where appropriate:
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 | Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
 
-Current results (evaluation from `2019-01-01` to `2026-05-29`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2018-02-28; point-in-time universe filtering applied):
+Current results (evaluation from `2019-01-01` to `2026-06-30`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2018-03-30; point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.57%** | **2.62%** | **1.431** | **2.099** | **-3.95%** | **1.410** | **2.07%** |
-| Convex Adaptive Global RRP | 6.80% | 5.21% | 0.956 | 1.468 | -6.66% | 1.021 | 1.24% |
-| Global RRP | 4.59% | 4.11% | 0.674 | 0.770 | -7.14% | 0.643 | 22.30% |
-| Defensive Dynamic RRP | 4.59% | 4.45% | 0.622 | 0.779 | -7.11% | 0.645 | 24.58% |
-| HERC Benchmark | 2.23% | 0.57% | 0.718 | 1.053 | -0.58% | 3.828 | 5.78% |
-| HRP Benchmark | 1.68% | 0.17% | -0.785 | -1.289 | -0.08% | 20.665 | 1.05% |
-| Equal Weight | 10.66% | 11.08% | 0.798 | 1.276 | -13.91% | 0.767 | 1.24% |
+| **Improved Convex Adaptive Global RRP** | **5.44%** | **2.78%** | **1.303** | **1.892** | **-4.18%** | **1.302** | **3.18%** |
+| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
+| Global RRP | 4.26% | 4.17% | 0.585 | 0.673 | -7.17% | 0.594 | 22.97% |
+| Defensive Dynamic RRP | 4.78% | 4.37% | 0.678 | 0.835 | -7.10% | 0.674 | 24.36% |
+| HERC Benchmark | 2.25% | 0.57% | 0.751 | 1.089 | -0.58% | 3.884 | 5.70% |
+| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
+| Equal Weight | 10.66% | 11.20% | 0.789 | 1.255 | -13.90% | 0.766 | 1.23% |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.431 and Sortino 2.099, delivering 5.57% net annual return with max drawdown -3.95% at 2.07% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-05-29, with point-in-time investability filtering so later-listed ETFs only enter after sufficient valid observations. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves minimal opportunity for excess return.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.303 and Sortino 1.892, delivering 5.44% net annual return with max drawdown -4.18% at 3.18% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-06-30, with point-in-time investability filtering so later-listed ETFs only enter after sufficient valid observations. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves minimal opportunity for excess return.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Data range: `2018-02-28` to `2026-05-29`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Data range: `2018-03-30` to `2026-06-30`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|

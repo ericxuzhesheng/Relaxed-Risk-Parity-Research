@@ -27,44 +27,44 @@
 % ── 数值宏（全部来自 generated_numbers.tex）──────────────────────────────────
 \newcommand{\etfCount}{30}
 \newcommand{\evalStartDate}{2019-01-01}
-\newcommand{\evalEndDate}{2026-05-29}
-\newcommand{\evalMonths}{89}
+\newcommand{\evalEndDate}{2026-06-30}
+\newcommand{\evalMonths}{90}
 \newcommand{\txCostBps}{3}
 \newcommand{\riskFreeRate}{1.82\%}
-\newcommand{\dataFirstDate}{2018-02-28}
+\newcommand{\dataFirstDate}{2018-03-30}
 % Global RRP
-\newcommand{\globalNetReturn}{4.59\%}
-\newcommand{\globalVolatility}{4.11\%}
-\newcommand{\globalSharpe}{0.674}
-\newcommand{\globalSortino}{0.770}
-\newcommand{\globalMaxDD}{-7.14\%}
-\newcommand{\globalMonthlyTurnover}{22.30\%}
+\newcommand{\globalNetReturn}{4.26\%}
+\newcommand{\globalVolatility}{4.17\%}
+\newcommand{\globalSharpe}{0.585}
+\newcommand{\globalSortino}{0.673}
+\newcommand{\globalMaxDD}{-7.17\%}
+\newcommand{\globalMonthlyTurnover}{22.97\%}
 % Convex Adaptive
-\newcommand{\convexNetReturn}{6.80\%}
-\newcommand{\convexVolatility}{5.21\%}
-\newcommand{\convexSharpe}{0.956}
-\newcommand{\convexSortino}{1.468}
-\newcommand{\convexMaxDD}{-6.66\%}
-\newcommand{\convexMonthlyTurnover}{1.24\%}
+\newcommand{\convexNetReturn}{6.46\%}
+\newcommand{\convexVolatility}{5.18\%}
+\newcommand{\convexSharpe}{0.896}
+\newcommand{\convexSortino}{1.365}
+\newcommand{\convexMaxDD}{-6.75\%}
+\newcommand{\convexMonthlyTurnover}{1.28\%}
 % Improved Convex（主模型）
-\newcommand{\improvedNetReturn}{5.57\%}
-\newcommand{\improvedVolatility}{2.62\%}
-\newcommand{\improvedSharpe}{1.431}
-\newcommand{\improvedSortino}{2.099}
-\newcommand{\improvedMaxDD}{-3.95\%}
-\newcommand{\improvedCalmar}{1.410}
-\newcommand{\improvedMonthlyTurnover}{2.07\%}
+\newcommand{\improvedNetReturn}{5.44\%}
+\newcommand{\improvedVolatility}{2.78\%}
+\newcommand{\improvedSharpe}{1.303}
+\newcommand{\improvedSortino}{1.892}
+\newcommand{\improvedMaxDD}{-4.18\%}
+\newcommand{\improvedCalmar}{1.302}
+\newcommand{\improvedMonthlyTurnover}{3.18\%}
 % HERC
-\newcommand{\hercNetReturn}{2.23\%}
+\newcommand{\hercNetReturn}{2.25\%}
 \newcommand{\hercVolatility}{0.57\%}
-\newcommand{\hercSharpe}{0.718}
-\newcommand{\hercSortino}{1.053}
+\newcommand{\hercSharpe}{0.751}
+\newcommand{\hercSortino}{1.089}
 \newcommand{\hercMaxDD}{-0.58\%}
 % 等权 / 60-40
 \newcommand{\equalNetReturn}{10.66\%}
-\newcommand{\equalSharpe}{0.798}
-\newcommand{\equalSortino}{1.276}
-\newcommand{\equalMaxDD}{-13.91\%}
+\newcommand{\equalSharpe}{0.789}
+\newcommand{\equalSortino}{1.255}
+\newcommand{\equalMaxDD}{-13.90\%}
 \newcommand{\sixtyFortyNetReturn}{8.02\%}
 \newcommand{\sixtyFortySharpe}{0.695}
 \newcommand{\sixtyFortySortino}{1.119}
@@ -79,18 +79,18 @@
 \newcommand{\improvedVsGlobalDiff}{0.757}
 \newcommand{\improvedVsGlobalPValue}{0.004}
 % 调仓频率敏感性
-\newcommand{\freqWeeklyNetReturn}{5.85\%}
-\newcommand{\freqWeeklySharpe}{1.529}
-\newcommand{\freqWeeklyMaxDD}{-3.31\%}
-\newcommand{\freqWeeklyMonthlyTurnover}{6.09\%}
-\newcommand{\freqBiweeklyNetReturn}{5.76\%}
-\newcommand{\freqBiweeklySharpe}{1.497}
-\newcommand{\freqBiweeklyMaxDD}{-3.68\%}
-\newcommand{\freqBiweeklyMonthlyTurnover}{3.52\%}
-\newcommand{\freqQuarterlyNetReturn}{5.21\%}
-\newcommand{\freqQuarterlySharpe}{1.296}
-\newcommand{\freqQuarterlyMaxDD}{-4.51\%}
-\newcommand{\freqQuarterlyMonthlyTurnover}{1.57\%}
+\newcommand{\freqWeeklyNetReturn}{5.66\%}
+\newcommand{\freqWeeklySharpe}{1.432}
+\newcommand{\freqWeeklyMaxDD}{-3.38\%}
+\newcommand{\freqWeeklyMonthlyTurnover}{6.98\%}
+\newcommand{\freqBiweeklyNetReturn}{5.56\%}
+\newcommand{\freqBiweeklySharpe}{1.398}
+\newcommand{\freqBiweeklyMaxDD}{-3.60\%}
+\newcommand{\freqBiweeklyMonthlyTurnover}{4.30\%}
+\newcommand{\freqQuarterlyNetReturn}{5.06\%}
+\newcommand{\freqQuarterlySharpe}{1.218}
+\newcommand{\freqQuarterlyMaxDD}{-4.67\%}
+\newcommand{\freqQuarterlyMonthlyTurnover}{1.65\%}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -910,15 +910,15 @@
     \end{column}
     \begin{column}{0.52\textwidth}
       \scriptsize\renewcommand{\arraystretch}{1.25}
-      \textbf{留出窗 2024-01 — 2026-05（先验未见此区间）}
+      \textbf{留出窗 2024-01 — 2026-06（先验未见此区间）}
       \begin{center}
       \begin{tabular}{@{}lccc@{}}
         \toprule
         配置 & Sharpe & 最大回撤 & 净年化 \\
         \midrule
-        EWMA 基准      & 1.83 & $-2.16\%$ & 6.49\% \\
+        EWMA 基准      & 1.338 & $-3.30\%$ & 5.68\% \\
         \rowcolor{swufeLight}
-        \textbf{状态条件} & \textbf{1.92} & \textbf{$-2.12\%$} & \textbf{6.61\%} \\
+        \textbf{状态条件} & \textbf{1.350} & $-3.87\%$ & \textbf{5.74\%} \\
         \bottomrule
       \end{tabular}
       \end{center}
@@ -929,7 +929,7 @@
         \toprule
         配置 & Sharpe & 最大回撤 & 月换手 \\
         \midrule
-        EWMA 基准      & 1.431 & $-3.95\%$ & 2.07\% \\
+        EWMA 基准      & 1.303 & $-4.18\%$ & 3.18\% \\
         状态条件        & 1.446 & $-3.68\%$ & 2.26\% \\
         \bottomrule
       \end{tabular}
@@ -1019,7 +1019,7 @@
         \toprule
         场景 & 收益 & 波动 & Sharpe & 回撤 \\
         \midrule
-        ETF 基准 & 5.57\% & 2.62\% & 1.431 & -3.95\% \\
+        ETF 基准 & 5.44\% & 2.78\% & 1.303 & -4.18\% \\
         全天候 1.0x & 4.14\% & 2.07\% & 1.119 & -1.58\% \\
         目标波动 8\% & 10.50\% & 7.61\% & 1.140 & -6.32\% \\
         目标波动 10\% & 10.76\% & 8.03\% & 1.113 & -6.48\% \\
