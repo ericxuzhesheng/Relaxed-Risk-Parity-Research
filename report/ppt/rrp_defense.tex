@@ -31,14 +31,14 @@
 \newcommand{\evalMonths}{90}
 \newcommand{\txCostBps}{3}
 \newcommand{\riskFreeRate}{1.82\%}
-\newcommand{\dataFirstDate}{2018-03-30}
+\newcommand{\dataFirstDate}{2018-04-02}
 % Global RRP
-\newcommand{\globalNetReturn}{4.26\%}
+\newcommand{\globalNetReturn}{4.29\%}
 \newcommand{\globalVolatility}{4.17\%}
-\newcommand{\globalSharpe}{0.585}
-\newcommand{\globalSortino}{0.673}
+\newcommand{\globalSharpe}{0.593}
+\newcommand{\globalSortino}{0.683}
 \newcommand{\globalMaxDD}{-7.17\%}
-\newcommand{\globalMonthlyTurnover}{22.97\%}
+\newcommand{\globalMonthlyTurnover}{23.27\%}
 % Convex Adaptive
 \newcommand{\convexNetReturn}{6.46\%}
 \newcommand{\convexVolatility}{5.18\%}
@@ -47,28 +47,28 @@
 \newcommand{\convexMaxDD}{-6.75\%}
 \newcommand{\convexMonthlyTurnover}{1.28\%}
 % Improved Convex（主模型）
-\newcommand{\improvedNetReturn}{5.44\%}
-\newcommand{\improvedVolatility}{2.78\%}
-\newcommand{\improvedSharpe}{1.303}
-\newcommand{\improvedSortino}{1.892}
-\newcommand{\improvedMaxDD}{-4.18\%}
-\newcommand{\improvedCalmar}{1.302}
-\newcommand{\improvedMonthlyTurnover}{3.18\%}
+\newcommand{\improvedNetReturn}{5.73\%}
+\newcommand{\improvedVolatility}{2.92\%}
+\newcommand{\improvedSharpe}{1.339}
+\newcommand{\improvedSortino}{1.965}
+\newcommand{\improvedMaxDD}{-4.63\%}
+\newcommand{\improvedCalmar}{1.238}
+\newcommand{\improvedMonthlyTurnover}{2.21\%}
 % HERC
 \newcommand{\hercNetReturn}{2.25\%}
 \newcommand{\hercVolatility}{0.57\%}
-\newcommand{\hercSharpe}{0.751}
-\newcommand{\hercSortino}{1.089}
+\newcommand{\hercSharpe}{0.747}
+\newcommand{\hercSortino}{1.083}
 \newcommand{\hercMaxDD}{-0.58\%}
 % 等权 / 60-40
-\newcommand{\equalNetReturn}{10.66\%}
-\newcommand{\equalSharpe}{0.789}
-\newcommand{\equalSortino}{1.255}
+\newcommand{\equalNetReturn}{10.65\%}
+\newcommand{\equalSharpe}{0.788}
+\newcommand{\equalSortino}{1.253}
 \newcommand{\equalMaxDD}{-13.90\%}
-\newcommand{\sixtyFortyNetReturn}{8.02\%}
-\newcommand{\sixtyFortySharpe}{0.695}
-\newcommand{\sixtyFortySortino}{1.119}
-\newcommand{\sixtyFortyMaxDD}{-14.71\%}
+\newcommand{\sixtyFortyNetReturn}{8.18\%}
+\newcommand{\sixtyFortySharpe}{0.705}
+\newcommand{\sixtyFortySortino}{1.127}
+\newcommand{\sixtyFortyMaxDD}{-14.39\%}
 % Walk-forward
 \newcommand{\wfSharpeMean}{1.116}
 \newcommand{\wfSharpeMedian}{1.014}
@@ -79,18 +79,18 @@
 \newcommand{\improvedVsGlobalDiff}{0.757}
 \newcommand{\improvedVsGlobalPValue}{0.004}
 % 调仓频率敏感性
-\newcommand{\freqWeeklyNetReturn}{5.66\%}
-\newcommand{\freqWeeklySharpe}{1.432}
-\newcommand{\freqWeeklyMaxDD}{-3.38\%}
-\newcommand{\freqWeeklyMonthlyTurnover}{6.98\%}
-\newcommand{\freqBiweeklyNetReturn}{5.56\%}
-\newcommand{\freqBiweeklySharpe}{1.398}
-\newcommand{\freqBiweeklyMaxDD}{-3.60\%}
-\newcommand{\freqBiweeklyMonthlyTurnover}{4.30\%}
-\newcommand{\freqQuarterlyNetReturn}{5.06\%}
-\newcommand{\freqQuarterlySharpe}{1.218}
-\newcommand{\freqQuarterlyMaxDD}{-4.67\%}
-\newcommand{\freqQuarterlyMonthlyTurnover}{1.65\%}
+\newcommand{\freqWeeklyNetReturn}{5.55\%}
+\newcommand{\freqWeeklySharpe}{1.278}
+\newcommand{\freqWeeklyMaxDD}{-4.73\%}
+\newcommand{\freqWeeklyMonthlyTurnover}{3.38\%}
+\newcommand{\freqBiweeklyNetReturn}{5.58\%}
+\newcommand{\freqBiweeklySharpe}{1.286}
+\newcommand{\freqBiweeklyMaxDD}{-4.59\%}
+\newcommand{\freqBiweeklyMonthlyTurnover}{2.80\%}
+\newcommand{\freqQuarterlyNetReturn}{5.67\%}
+\newcommand{\freqQuarterlySharpe}{1.295}
+\newcommand{\freqQuarterlyMaxDD}{-4.79\%}
+\newcommand{\freqQuarterlyMonthlyTurnover}{1.68\%}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -353,7 +353,7 @@
     \midrule
     Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
     Convex Adaptive  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
-    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（主结果 candidate\_25）} & \textbf{主模型} \\
+    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（主结果 candidate\_03）} & \textbf{主模型} \\
     HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
     \bottomrule
   \end{tabular}
@@ -871,7 +871,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  PBO（Probability of Backtest Overfitting）热图展示不同超参数组合的过拟合概率；冻结样本外候选为 candidate\_23，本次完整样本主结果候选为 candidate\_25，二者角色需区分
+  PBO（Probability of Backtest Overfitting）热图展示不同超参数组合的过拟合概率；冻结样本外候选为 candidate\_23，本次完整样本主结果候选为 candidate\_03，二者角色需区分
 \end{frame}
 
 \begin{frame}{协方差估计器对比：Sharpe 与换手}
@@ -910,7 +910,7 @@
     \end{column}
     \begin{column}{0.52\textwidth}
       \scriptsize\renewcommand{\arraystretch}{1.25}
-      \textbf{留出窗 2024-01 — 2026-06（先验未见此区间）}
+      \textbf{留出窗 2024-01 — 2026-07（先验未见此区间）}
       \begin{center}
       \begin{tabular}{@{}lccc@{}}
         \toprule
@@ -929,7 +929,7 @@
         \toprule
         配置 & Sharpe & 最大回撤 & 月换手 \\
         \midrule
-        EWMA 基准      & 1.303 & $-4.18\%$ & 3.18\% \\
+        EWMA 基准      & 1.339 & $-4.63\%$ & 2.21\% \\
         状态条件        & 1.446 & $-3.68\%$ & 2.26\% \\
         \bottomrule
       \end{tabular}
@@ -967,7 +967,7 @@
     \begin{column}{0.32\textwidth}
       \begin{block}{现象}
         \footnotesize
-        2026-05 与 2026-06 策略月度收益分别为 $-0.29\%$、$-1.31\%$，同期沪深300ETF为正收益。
+        2026-05 与 2026-06 策略月度收益分别为 $-0.12\%$、$-1.21\%$，同期沪深300ETF为正收益。
       \end{block}
     \end{column}
     \begin{column}{0.34\textwidth}
@@ -1048,7 +1048,7 @@
         \toprule
         场景 & 收益 & 波动 & Sharpe & 回撤 \\
         \midrule
-        ETF 基准 & 5.44\% & 2.78\% & 1.303 & -4.18\% \\
+        ETF 基准 & 5.73\% & 2.92\% & 1.339 & -4.63\% \\
         全天候 1.0x & 4.14\% & 2.07\% & 1.119 & -1.58\% \\
         目标波动 8\% & 10.50\% & 7.61\% & 1.140 & -6.32\% \\
         目标波动 10\% & 10.76\% & 8.03\% & 1.113 & -6.48\% \\

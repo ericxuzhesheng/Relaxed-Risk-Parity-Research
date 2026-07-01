@@ -1,4 +1,2 @@
-slug,model_a,model_b,breakeven_bps,cost_levels_tested_bps
-ImprovedVsGlobal,Improved Convex Adaptive Global RRP,Global Relaxed Risk Parity,,"0,5,10,20,50"
-GlobalVsEqual,Global Relaxed Risk Parity,Improved Convex Adaptive Global RRP,,"0,5,10,20,50"
-DefensiveVsEqual,Defensive Dynamic Relaxed Risk Parity,Improved Convex Adaptive Global RRP,,"0,5,10,20,50"
+slug,model_a,model_b,breakeven_bps,diff_at_zero_bps,diff_at_max_bps,cost_levels_tested_bps,notes
+ImprovedVsGlobal,Improved Convex Adaptive Global RRP,Global Relaxed Risk Parity,,0.005829545932973579,0.020922212175060073,"0,5,10,20,50",Break-even cost where model_a's net annualized return equals model_b's. NaN indicates the advantage does not cross zero within the tested sweep range.
