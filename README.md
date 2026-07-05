@@ -123,12 +123,13 @@
 
 组合长期以国债ETF和日利ETF为稳定底仓，黄金ETF提供尾部风险和通胀对冲，A股宽基与全球股票暴露随协方差结构动态调整。2020 年 3 月流动性冲击期间，组合明显向债券和现金管理工具倾斜，体现自适应风险预算的防御特征。
 
-### 与沪深300ETF月度对比
+<!-- BEGIN MONTHLY_HS300_COMPARISON_CN -->
+### 与沪深300ETF的月度收益对比
 
-截至 `2026-07`（含 7 月初一个交易日），Improved Convex Adaptive Global RRP 累计收益为 **51.53%**，沪深300ETF 为 **82.62%**；但策略月度波动率仅 **0.85%**，显著低于沪深300ETF的 **4.53%**，日频最大回撤分别为 **-4.63%** 与 **-44.03%**。策略并非以跑赢沪深300为目标，而是以较低波动和较浅回撤换取长期路径稳定性；代价是权益强势阶段收益弹性有限，例如 2026-05 和 2026-06 策略分别录得 **-0.12%** 和 **-1.21%** 的月度收益，同期沪深300ETF为正收益。
+截至 `2026-06`，Improved Convex Adaptive Global RRP 与沪深300ETF的月度对比显示：策略累计收益为 **51.58%**，沪深300ETF为 **83.39%**；策略月度波动率 **0.85%**，显著低于沪深300ETF的 **4.55%**；日频最大回撤分别为 **-4.63%** 与 **-44.03%**。策略在 45/90 个月跑赢沪深300ETF，最近一个月（2026-06）策略收益 **-1.21%**，沪深300ETF **1.95%**。
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
-
+<!-- END MONTHLY_HS300_COMPARISON_CN -->
 ### 稳健性验证
 
 | 验证方法 | 用途 | 结论边界 |
@@ -283,12 +284,13 @@ Equal Weight generates higher absolute return but with much higher volatility an
 
 <p align="center"><img src="results/figures/improved_weights_timeline.png" width="860" alt="Improved Convex Adaptive Global RRP Weights"></p>
 
-### Monthly Comparison vs CSI 300 ETF
+<!-- BEGIN MONTHLY_HS300_COMPARISON_EN -->
+### Monthly Return Comparison vs CSI 300 ETF
 
-Through `2026-07` (including the first July trading day), the Improved Convex Adaptive Global RRP delivered **51.53%** cumulative return versus **82.62%** for the CSI 300 ETF proxy. Monthly volatility was **0.85%**, far below the CSI 300 ETF's **4.53%**; daily maximum drawdowns were **-4.63%** and **-44.03%**, respectively. The trade-off is limited upside capture in strong equity months: the strategy returned **-0.12%** in 2026-05 and **-1.21%** in 2026-06 while the CSI 300 ETF proxy posted positive monthly returns.
+Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **51.58%** cumulative return versus **83.39%** for the CSI 300 ETF proxy. Its monthly volatility was **0.85%**, far below the CSI 300 ETF's **4.55%**; daily maximum drawdowns were **-4.63%** and **-44.03%**, respectively. The strategy outperformed in 45/90 months. In the latest month (2026-06), the strategy returned **-1.21%** versus **1.95%** for the CSI 300 ETF.
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
-
+<!-- END MONTHLY_HS300_COMPARISON_EN -->
 ### Robustness Validation
 
 | Method | Purpose | Boundary |

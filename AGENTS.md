@@ -132,7 +132,7 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2018-04-02` 
 
 ### Before running:
 ```powershell
-$env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
+if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
 python scripts/update_etf_data.py --provider tushare --start-date 20150101
 ```
 

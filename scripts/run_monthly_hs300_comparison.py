@@ -27,6 +27,8 @@ README_EN_BEGIN = "<!-- BEGIN MONTHLY_HS300_COMPARISON_EN -->"
 README_EN_END = "<!-- END MONTHLY_HS300_COMPARISON_EN -->"
 THESIS_BEGIN = "% BEGIN MONTHLY_HS300_COMPARISON"
 THESIS_END = "% END MONTHLY_HS300_COMPARISON"
+DEFAULT_START_DATE = "2019-01-01"
+DEFAULT_END_DATE = "2026-06-30"
 
 
 def _pct(value: float, digits: int = 2) -> str:
@@ -70,15 +72,20 @@ def _find_hs300_column(returns: pd.DataFrame) -> str:
     return matches[0]
 
 
-def build_monthly_comparison(start_date: str = "2019-01-01") -> tuple[pd.DataFrame, pd.DataFrame]:
+def build_monthly_comparison(
+    start_date: str = DEFAULT_START_DATE,
+    end_date: str = DEFAULT_END_DATE,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    start_ts = pd.Timestamp(start_date)
+    end_ts = pd.Timestamp(end_date)
     strategy = _load_strategy_returns(STRATEGY_RETURNS)
-    strategy = strategy[strategy["date"] >= pd.Timestamp(start_date)].copy()
+    strategy = strategy[(strategy["date"] >= start_ts) & (strategy["date"] <= end_ts)].copy()
     strategy["month"] = strategy["date"].dt.to_period("M")
     strategy_monthly = strategy.groupby("month")["strategy_return"].apply(lambda s: (1.0 + s.fillna(0.0)).prod() - 1.0)
 
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
     hs300_col = _find_hs300_column(returns)
-    hs300_daily = returns[returns.index >= pd.Timestamp(start_date)][hs300_col].copy()
+    hs300_daily = returns[(returns.index >= start_ts) & (returns.index <= end_ts)][hs300_col].copy()
     hs300_monthly = hs300_daily.groupby(hs300_daily.index.to_period("M")).apply(
         lambda s: (1.0 + s.fillna(0.0)).prod() - 1.0
     )
@@ -242,6 +249,16 @@ def _insert_after_performance_section(text: str, block: str, occurrence: int) ->
     return text[:next_section] + "\n\n" + block + "\n" + text[next_section:]
 
 
+def _replace_section_by_heading(text: str, heading: str, block: str) -> tuple[str, bool]:
+    start = text.find(heading)
+    if start < 0:
+        return text, False
+    next_section = text.find("\n### ", start + len(heading))
+    if next_section < 0:
+        next_section = len(text)
+    return text[:start] + block + text[next_section:], True
+
+
 def update_readme(monthly: pd.DataFrame, summary: pd.DataFrame) -> None:
     text = README_PATH.read_text(encoding="utf-8")
     cn, en = build_readme_blocks(monthly, summary)
@@ -250,11 +267,15 @@ def update_readme(monthly: pd.DataFrame, summary: pd.DataFrame) -> None:
     if README_CN_BEGIN in text and README_CN_END in text:
         text = _replace_block(text, README_CN_BEGIN, README_CN_END, cn)
     else:
-        text = _insert_after_performance_section(text, cn_block, occurrence=1)
+        text, replaced = _replace_section_by_heading(text, "### 与沪深300ETF月度对比", cn_block)
+        if not replaced:
+            text = _insert_after_performance_section(text, cn_block, occurrence=1)
     if README_EN_BEGIN in text and README_EN_END in text:
         text = _replace_block(text, README_EN_BEGIN, README_EN_END, en)
     else:
-        text = _insert_after_performance_section(text, en_block, occurrence=2)
+        text, replaced = _replace_section_by_heading(text, "### Monthly Comparison vs CSI 300 ETF", en_block)
+        if not replaced:
+            text = _insert_after_performance_section(text, en_block, occurrence=2)
     README_PATH.write_text(text, encoding="utf-8")
 
 
@@ -293,7 +314,7 @@ def write_thesis_snippet(monthly: pd.DataFrame, summary: pd.DataFrame) -> None:
         "% Do not edit by hand.",
         r"\begin{figure}[H]",
         r"\centering",
-        r"\includegraphics[width=\textwidth]{../figures/improved_rrp_vs_hs300_monthly_comparison.png}",
+        r"\includegraphics[width=\textwidth]{improved_rrp_vs_hs300_monthly_comparison.png}",
         r"\caption{Improved Convex Adaptive Global RRP 与沪深300ETF的月度表现对比}",
         r"\label{fig:monthly_hs300_comparison}",
         r"\end{figure}",
@@ -321,11 +342,12 @@ def write_thesis_snippet(monthly: pd.DataFrame, summary: pd.DataFrame) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Monthly comparison between Improved RRP and CSI 300 ETF proxy.")
-    parser.add_argument("--start-date", default="2019-01-01")
+    parser.add_argument("--start-date", default=DEFAULT_START_DATE)
+    parser.add_argument("--end-date", default=DEFAULT_END_DATE)
     parser.add_argument("--skip-readme", action="store_true")
     args = parser.parse_args()
 
-    monthly, summary = build_monthly_comparison(args.start_date)
+    monthly, summary = build_monthly_comparison(args.start_date, args.end_date)
     write_csv_outputs(monthly, summary)
     write_figure(monthly, summary)
     write_thesis_snippet(monthly, summary)

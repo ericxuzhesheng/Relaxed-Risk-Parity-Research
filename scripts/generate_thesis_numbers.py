@@ -48,16 +48,12 @@ _ASSET_CLASS_SECTION: dict[str, str] = {
     "china finance":             "中国行业与消费",
     "china defense":             "中国行业与消费",
     "china consumer":            "中国行业与消费",
-    "hong kong equity":          "港股与大宗商品（白银）",
+    "hong kong equity":          "港股",
     "commodity":                 "大宗商品",
     "global equity":             "全球股票",
     "commodity equity":          "大宗商品",
 }
-# 白银LOF (commodity) sits between 恒生ETF and 纳指ETF in the universe;
-# group it with HK equity for display consistency with the original table.
-_TICKER_SECTION_OVERRIDE: dict[str, str] = {
-    "161226.SZ": "港股与大宗商品（白银）",
-}
+_TICKER_SECTION_OVERRIDE: dict[str, str] = {}
 
 # Observations below this threshold receive the $^*$ short-history marker.
 _SHORT_HISTORY_OBS = 1200

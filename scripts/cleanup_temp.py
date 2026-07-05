@@ -46,7 +46,7 @@ def clean_latex_artifacts(root: Path) -> None:
     tex_dir = root / "report" / "thesis_latex"
     if not tex_dir.exists():
         return
-    for ext in ("aux", "bbl", "blg", "fdb_latexmk", "fls", "log", "out", "xdv"):
+    for ext in ("aux", "bbl", "blg", "fdb_latexmk", "fls", "log", "out", "toc", "xdv"):
         for f in tex_dir.glob(f"*.{ext}"):
             _rm(f)
 
