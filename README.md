@@ -1,354 +1,171 @@
 # 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation
 
 <p align="center">
-  <a href="#中文"><img src="https://img.shields.io/badge/语言-中文-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="中文"></a>
-  &nbsp;
-  <a href="#english"><img src="https://img.shields.io/badge/Language-English-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="English"></a>
+  <a href="#zh"><img src="https://img.shields.io/badge/LANGUAGE-中文-E84D3D?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE 中文"></a>
+  <a href="#en"><img src="https://img.shields.io/badge/LANGUAGE-ENGLISH-2F73C9?style=for-the-badge&labelColor=3B3F47" alt="LANGUAGE ENGLISH"></a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/资产池-30只ETF · 8类-F2C94C?style=for-the-badge" alt="30 ETF">
-  <img src="https://img.shields.io/badge/评估区间-2019--2026 · 90个月-4CAF50?style=for-the-badge" alt="2019-2026">
-  <img src="https://img.shields.io/badge/Sharpe-1.339 · MaxDD --4.63%25-9B51E0?style=for-the-badge" alt="Sharpe 1.339">
+  <img src="https://img.shields.io/badge/Asset-Global%20Multi--Asset-F2C94C?style=for-the-badge" alt="Global Multi-Asset">
+  <img src="https://img.shields.io/badge/Strategy-Relaxed%20Risk%20Parity-7AC943?style=for-the-badge" alt="Relaxed Risk Parity">
+  <img src="https://img.shields.io/badge/Overlay-Defensive%20Dynamic%20RRP-9B51E0?style=for-the-badge" alt="Defensive Dynamic RRP">
 </p>
 
----
+<a id="zh"></a>
 
 ## 中文
 
-### 一句话概览
+### 项目概览
+本项目研究宽松风险平价在全球多资产配置中的应用，重点比较传统风险平价、本土宽松风险平价、全球宽松风险平价、防御型动态风险覆盖模型，以及 HRP / HERC 层次化配置 benchmark。
 
-本项目是一个面向本科论文与可复现实证研究的量化资产配置框架：在中国可交易 ETF 约束下，将经典风险平价扩展为 **Relaxed Risk Parity (RRP)**，并进一步构建 **Convex Adaptive Global RRP** 与 **Improved Convex Adaptive Global RRP**，用于研究低换手、CVaR 尾部风险控制和全球多资产配置的权衡。
-
-**主结论不是“追求最高收益”，而是：** 在纯多头、无杠杆、月度再平衡和 3 bps 单边交易成本下，Improved Convex Adaptive Global RRP 以 **5.73%** 净年化收益、**2.92%** 年化波动、**1.339** Sharpe、**-4.63%** 最大回撤和 **2.21%** 月均换手率，提供了一条可实施的稳健配置路径。
-
-### 快速导航
-
-| 你想看什么 | 入口 |
-|---|---|
-| 核心模型和定位 | [模型定位](#模型定位) |
-| 最新绩效数字 | [最新绩效](#最新绩效) |
-| ETF 资产池 | [资产池](#资产池) |
-| 图表和持仓解释 | [关键图表](#关键图表) |
-| 稳健性与过拟合控制 | [稳健性验证](#稳健性验证) |
-| 经典全天候对照结果 | [全天候期货基准](#全天候期货基准) |
-| 如何复现 | [快速开始](#快速开始) |
-
----
-
-### 研究问题
-
-> 在不依赖主观收益率预测的前提下，如何通过风险预算的系统性松弛设计，在风险均衡与收益目标之间取得可控平衡，并在中国可交易 ETF 的全球多资产框架下实现低成本落地？
-
-经典风险平价要求各资产风险贡献严格相等，在实证中容易压制高夏普资产配置，并在协方差结构变化时带来高换手。本文的处理方式是：保留风险预算的可解释性，同时允许风险贡献在目标附近有约束地浮动，再通过凸优化、CVaR 约束和换手惩罚把模型推向可执行版本。
-
-### 模型定位
-
-| Public Label | 定位 | 说明 |
+### 核心模型
+| 模型 | 定位 | 说明 |
 |---|---|---|
-| Standard Risk Parity | 基准 | 风险贡献严格均等 |
-| Local Relaxed Risk Parity | 本土扩展 | 仅使用本土资产池的 RRP |
-| **Global RRP** | **主展示模型** | 体现宽松风险平价在 30-ETF 全球资产池中的收益效率 |
-| Convex Adaptive Global RRP | 凸自适应版本 | 将松弛风险预算近似为可解的凸优化问题 |
-| **Improved Convex Adaptive Global RRP** | **低换手、CVaR-aware 实施版本** | 主打可实施性、低换手、尾部风险控制与稳定配置 |
-| Defensive Dynamic RRP | 防御实验 | 风险覆盖层实验，不是主收益最大化模型 |
-| HRP Benchmark / HERC Benchmark | 基准 | 层次化风险分配参考，不是本文主模型 |
+| Standard Risk Parity | 基准模型 | 传统风险贡献均衡组合 |
+| Local Relaxed Risk Parity | 本土宽松模型 | 在风险平价约束中引入松弛项，平衡风险均衡与收益目标 |
+| Global Relaxed Risk Parity | 主展示模型 | 扩展到全球多资产配置，是当前收益效率最高的主模型 |
+| Defensive Dynamic Relaxed Risk Parity | 防御型动态模型 | 在全球宽松风险平价基础上加入风险覆盖层，管理回撤、趋势、波动率和换手 |
+| HRP Benchmark / HERC Benchmark | 横向 benchmark | 用于检验层次聚类配置是否能替代 RRP 型全球配置 |
 
-### 方法摘要
+Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together with maximum drawdown, Calmar ratio, downside behavior, and turnover.
 
-| 模块 | 作用 |
-|---|---|
-| 风险预算松弛 | 将严格风险贡献平价放宽为可调风险预算，避免过度刚性 |
-| 凸自适应重构 | 用凸化近似替代原始非凸问题，提高求解稳定性和速度 |
-| CVaR 约束 | 显式限制尾部损失，服务风险厌恶型长期资金 |
-| 换手惩罚 | 将交易成本和调仓稳定性纳入目标函数 |
-| 资产组约束 | 防止单一资产类别过度集中 |
-| 稳健性验证 | 通过 walk-forward、holdout、CSCV-PBO、bootstrap 和压力期检验约束结论范围 |
+### 最新结果看板
+评估区间从 `2019-01-01` 开始。下表直接来自 `results/tables/showcase_performance_summary.csv`。
+| Model | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Turnover | Turnover-adjusted Sharpe |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Global RRP | 4.61% | 3.95% | 0.71 | 0.81 | -6.27% | 0.74 | 23.78% | 1.17 |
+| Defensive Dynamic RRP | 4.84% | 4.32% | 0.70 | 0.87 | -6.95% | 0.70 | 24.61% | 1.12 |
+| Convex Adaptive Global Relaxed Risk Parity | 7.16% | 5.16% | 1.04 | 1.60 | -5.99% | 1.20 | 1.34% | 1.39 |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 6.27% | 2.72% | 1.64 | 2.55 | -3.50% | 1.79 | 2.88% | 2.31 |
+| HRP Benchmark | 1.77% | 0.18% | -0.26 | -0.42 | -0.08% | 21.92 | 1.21% | 9.60 |
+| HERC Benchmark | 2.44% | 0.62% | 1.00 | 1.54 | -0.58% | 4.17 | 6.23% | 3.94 |
 
----
+Improved Convex Adaptive Global Relaxed Risk Parity 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。
 
-### 资产池
+### 图表展示
+<p align="center"><img src="results/figures/showcase_nav_comparison.png" width="820" alt="Showcase NAV Comparison"></p>
+<p align="center"><em>Showcase NAV comparison.</em></p>
+<p align="center"><img src="results/figures/showcase_drawdown_comparison.png" width="820" alt="Showcase Drawdown Comparison"></p>
+<p align="center"><em>Showcase drawdown comparison.</em></p>
 
-当前资产池来自 `src/asset_universe.py`，共 **30 只 ETF、8 类资产**。数据区间为 `2018-04-02` 至 `2026-07-01`；绩效评价从 `2019-01-01` 开始，并对后上市 ETF 采用时间点可投性过滤。
+- `results/figures/showcase_risk_overlay_ablation.png`
+- `results/figures/showcase_parameter_timeline.png`
+- `results/figures/nav_comparison.png`
+- `results/figures/drawdown_comparison.png`
 
-| 类别 | ETF 数量 | 代表性标的 |
-|---|---:|---|
-| 债券与现金 | 4 | 可转债ETF、国债ETF、信用债ETF、日利ETF |
-| A股宽基 | 5 | 沪深300ETF、中证500ETF、中证1000ETF、创业板ETF、红利ETF |
-| 中国科技与成长 | 7 | 半导体ETF、人工智能ETF、机器人ETF、新能源ETF、中韩半导体ETF、科创50ETF、云计算ETF |
-| 中国行业与消费 | 3 | 证券ETF、军工ETF、消费ETF |
-| 港股 | 1 | 恒生ETF |
-| 全球股票 | 4 | 纳指ETF、标普500ETF、日经225ETF、欧洲ETF |
-| 贵金属 | 2 | 黄金ETF、白银LOF |
-| 大宗商品与资源 | 4 | 有色ETF、豆粕ETF、煤炭ETF、原油ETF |
+### 方法框架
+框架包括风险贡献均衡、宽松收益目标、全球多资产扩展、防御型动态覆盖、回撤缩放、软趋势过滤、波动率目标、再入场逻辑、换手控制和交易成本调整。
 
-### 最新绩效
+### AFML 风格验证设计
+验证流程借鉴 Lopez de Prado 的 walk-forward、反过拟合和多重检验思想，但不声称完整实现 CSCV 或完整 Deflated Sharpe Ratio。每个测试期只使用此前数据进行参数选择，并报告稳定性、换手、简化 PBO 和保守调整 Sharpe 诊断。
 
-评价区间：`2019-01-01` 至 `2026-06-30`。交易成本：单边 3 bps，月度再平衡。
+### HRP / HERC Benchmark
+HRP / HERC 是横向 benchmark，用于检验层次聚类风险配置在同一数据集和评估窗口下是否优于 RRP 型全球配置。结果透明保留，不隐藏弱于主模型的情形。
 
-| 模型 | 净年化收益 | 年化波动 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手 |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.73%** | **2.92%** | **1.339** | **1.965** | **-4.63%** | **1.238** | **2.21%** |
-| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
-| Global RRP | 4.29% | 4.17% | 0.593 | 0.683 | -7.17% | 0.599 | 23.27% |
-| Defensive Dynamic RRP | 4.59% | 4.38% | 0.633 | 0.782 | -7.10% | 0.647 | 24.38% |
-| HERC Benchmark | 2.25% | 0.57% | 0.747 | 1.083 | -0.58% | 3.879 | 5.65% |
-| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
-| Equal Weight | 10.65% | 11.20% | 0.788 | 1.253 | -13.90% | 0.766 | 1.21% |
-
-**解读：** Equal Weight 的绝对收益更高，但波动和回撤显著放大；Improved Convex Adaptive Global RRP 的优势在于更低路径风险、更浅回撤和更可控换手。HRP 的极低波动带来很小回撤，但也显著压低了收益空间，因此更适合作为基准而非主模型。
-
-### 关键图表
-
-**全模型净值对比**
-
-<p align="center"><img src="results/figures/convex_adaptive_nav_comparison.png" width="860" alt="Convex Adaptive NAV Comparison"></p>
-
-**回撤路径对比**
-
-<p align="center"><img src="results/figures/convex_adaptive_drawdown_comparison.png" width="860" alt="Convex Adaptive Drawdown Comparison"></p>
-
-**换手率对比**
-
-<p align="center"><img src="results/figures/convex_adaptive_turnover_comparison.png" width="860" alt="Convex Adaptive Turnover Comparison"></p>
-
-**CVaR 尾部风险对比**
-
-<p align="center"><img src="results/figures/convex_adaptive_cvar_comparison.png" width="860" alt="Convex Adaptive CVaR Comparison"></p>
-
-**Improved Convex Adaptive Global RRP 持仓路径**
-
-<p align="center"><img src="results/figures/improved_weights_timeline.png" width="860" alt="Improved Convex Adaptive Global RRP Weights"></p>
-
-组合长期以国债ETF和日利ETF为稳定底仓，黄金ETF提供尾部风险和通胀对冲，A股宽基与全球股票暴露随协方差结构动态调整。2020 年 3 月流动性冲击期间，组合明显向债券和现金管理工具倾斜，体现自适应风险预算的防御特征。
-
-<!-- BEGIN MONTHLY_HS300_COMPARISON_CN -->
-### 与沪深300ETF的月度收益对比
-
-截至 `2026-06`，Improved Convex Adaptive Global RRP 与沪深300ETF的月度对比显示：策略累计收益为 **51.58%**，沪深300ETF为 **83.39%**；策略月度波动率 **0.85%**，显著低于沪深300ETF的 **4.55%**；日频最大回撤分别为 **-4.63%** 与 **-44.03%**。策略在 45/90 个月跑赢沪深300ETF，最近一个月（2026-06）策略收益 **-1.21%**，沪深300ETF **1.95%**。
-
-![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
-<!-- END MONTHLY_HS300_COMPARISON_CN -->
-### 稳健性验证
-
-| 验证方法 | 用途 | 结论边界 |
-|---|---|---|
-| Walk-forward validation | 滚动样本外参数选择 | 检验参数是否只适配完整样本 |
-| Holdout validation | 独立留出区间验证 | 检查样本内外结论是否一致 |
-| CSCV-PBO | 多候选过拟合概率诊断 | 当前 PBO 低于 0.5，但仍是参考值而非未来保证 |
-| Block bootstrap | 对 Sharpe 和回撤做重采样 | 评估结果对样本路径扰动的敏感性 |
-| 协方差估计稳健性 | 比较 sample、Ledoit-Wolf、EWMA 等估计器 | 主要结论不依赖单一协方差估计器 |
-| 参数扰动 | 改变关键惩罚项和 CVaR 阈值 | 输出随参数平滑变化，无明显断崖 |
-| 调仓频率敏感性 | 比较周度、双周、月度、季度调仓 | 月度并非收益最高频率，而是低换手与风险控制之间的可实施折中 |
-
-<p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
-
-<p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
-
-在固定 Improved Convex Adaptive Global RRP 参数、仅改变调仓频率的对照中，周度和双周调仓的净年化收益分别为 **5.55%** 和 **5.58%**，Sharpe 分别为 **1.278** 和 **1.286**，但平均月换手率升至 **3.38%** 和 **2.80%**。月度调仓对应 **5.73%** 净年化收益、**1.339** Sharpe、**-4.63%** 最大回撤和 **2.21%** 平均月换手率；季度调仓换手率进一步降至 **1.68%**，但净年化收益和 Sharpe 分别降至 **5.67%** 和 **1.295**。因此，月度调仓不是人为选择的最高收益频率，而是长期配置场景下兼顾响应速度、交易成本和组合稳定性的主设定。
-
-### 全天候期货基准
-
-本文主结果仍以 **30 只 ETF、纯多头、无杠杆** 的可实施资产池为准。作为对照实验，研究进一步构造 **Classic All Weather Futures Benchmark**：将期货品种划分为权益/增长、久期/通缩、通胀/商品三类风险桶，桶内采用 180 日滚动逆波动权重，桶间采用 30% / 40% / 30% 的经典全天候风险预算，并在期货价格收益之上叠加现金抵押收益。目标波动率版本允许最高 4.0x 名义敞口，以更接近经典全天候的期货杠杆实现方式。该实验用于比较 ETF-only RRP 与经典全天候期货化框架的结构差异，不是桥水真实组合复现。
-
-| 场景 | 净年化收益 | 年化波动 | Sharpe | Calmar | 最大回撤 | 平均名义敞口 |
-|---|---:|---:|---:|---:|---:|---:|
-| ETF 基准（Improved Convex） | 5.73% | 2.92% | 1.339 | 1.238 | -4.63% | 1.00x |
-| 经典全天候期货基准（1.0x） | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
-| 目标波动率全天候期货（8%） | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
-| 目标波动率全天候期货（10%） | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
-
-该对照显示：经典全天候期货框架在 1.0x 名义敞口下回撤更浅，但收益与 Sharpe 低于 Improved Convex Adaptive Global RRP；引入目标波动率与期货名义杠杆后，绝对收益提升至约 10.5%--10.8%，更符合经典全天候的资金利用逻辑，但风险调整收益仍低于 ETF 主模型。结论依赖连续合约构造、现金抵押收益、滚动窗口、目标波动率和名义敞口上限，应作为结构性基准而非主模型替代。
-
-### 项目结构
-
-```text
-.
-├── src/                       # 核心优化、回测、验证模块
-├── scripts/                   # 数据更新与研究流水线
-├── results/tables/            # 权威 CSV 结果
-├── results/figures/           # README、论文和答辩使用的图
-├── report/thesis_latex/       # 论文 LaTeX 源文件
-├── report/ppt/                # 答辩 Beamer 源文件与 PDF
-└── data/                      # ETF 价格数据与中间数据
-```
-
-### 快速开始
-
+### 如何运行
 ```bash
 pip install -r requirements.txt
-
-# 更新 ETF 数据，需要 Tushare token
-export TUSHARE_TOKEN=your_token_here
-python scripts/update_etf_data.py --provider tushare --start-date 20150101
-
-# 运行完整研究流水线
-python scripts/run_full_research_pipeline.py
-
-# 仅运行凸自适应主模型
-python scripts/run_convex_adaptive_rrp.py
+python -m pytest
+python scripts/optimize_showcase_rrp.py
+python scripts/run_rrp_pipeline.py --mode full
+python scripts/run_hrp_comparison.py
 ```
 
----
+### 输出文件
+- `results/tables/showcase_performance_summary.csv`
+- `results/tables/showcase_risk_overlay_ablation.csv`
+- `results/tables/showcase_walkforward_validation.csv`
+- `results/tables/showcase_parameter_stability.csv`
+- `results/tables/showcase_improvement_attribution.csv`
+- `results/tables/performance_summary.csv`
+- `results/tables/hrp_comparison.csv`
+- `results/figures/showcase_nav_comparison.png`
+- `results/figures/showcase_drawdown_comparison.png`
+
+### 适用场景与局限性
+本项目是回测研究，不构成投资建议。数据质量、资产映射、交易成本、滑点、杠杆融资成本、税费、流动性和实盘可交易性都需要独立复核。
+
+### 参考文献
+1. Gambeta, V., & Kwon, R. (2020). Risk return trade-off in relaxed risk parity portfolio optimization.
+2. Lopez de Prado, M. (2018). Advances in Financial Machine Learning.
+3. Bailey, D. H., Borwein, J. M., Lopez de Prado, M., & Zhu, Q. J. (2015). The Probability of Backtest Overfitting.
+4. Bailey, D. H., & Lopez de Prado, M. (2014). The Deflated Sharpe Ratio.
+5. Lopez de Prado, M. (2016). Building Diversified Portfolios that Outperform Out-of-Sample.
+
+<a id="en"></a>
 
 ## English
 
-### At A Glance
+### Project Overview
+This repository studies Relaxed Risk Parity for global multi-asset allocation, comparing classical risk parity, local and global relaxed variants, a defensive dynamic overlay, and HRP / HERC hierarchical benchmarks.
 
-This repository is a thesis-oriented quantitative asset allocation project. It extends classical Risk Parity into a **Relaxed Risk Parity (RRP)** framework, then builds convex, turnover-aware, CVaR-aware variants for a China-accessible global ETF universe.
-
-The main result is not a maximum-return trading strategy. Under a long-only, unlevered, monthly-rebalanced ETF setting with 3 bps one-way transaction cost, **Improved Convex Adaptive Global RRP** delivers **5.73%** net annual return, **2.92%** annual volatility, **1.339** Sharpe, **-4.63%** maximum drawdown, and **2.21%** average monthly turnover.
-
-### Navigation
-
-| Looking for | Section |
-|---|---|
-| Model definitions | [Model Positioning](#model-positioning) |
-| Latest results | [Latest Performance](#latest-performance) |
-| ETF universe | [Asset Universe](#asset-universe) |
-| Charts and interpretation | [Key Figures](#key-figures) |
-| Robustness checks | [Robustness Validation](#robustness-validation) |
-| Classic All Weather comparison | [All Weather Futures Benchmark](#all-weather-futures-benchmark) |
-| Reproduction | [Quick Start](#quick-start) |
-
-### Research Question
-
-> Without relying on subjective return forecasts, how can a systematically relaxed risk-budgeting design balance risk equalization against return objectives, while remaining implementable in a globally diversified universe of China-accessible ETFs?
-
-Classical Risk Parity forces all risk contributions to be equal. This is interpretable but rigid: it can suppress exposure to high-Sharpe assets and generate excessive turnover when the covariance structure changes. This project keeps the interpretability of risk budgeting while allowing controlled deviations from strict equality, then adds convex optimization, CVaR constraints, turnover penalties, and group limits for implementation.
-
-### Model Positioning
-
-| Public Label | Role | Description |
+### Core Models
+| Model | Role | Description |
 |---|---|---|
-| Standard Risk Parity | Baseline | Strict equal risk contributions |
-| Local Relaxed Risk Parity | Local extension | RRP restricted to the local asset pool |
-| **Global RRP** | **Main showcase model** | Return-efficient global 30-ETF RRP |
-| Convex Adaptive Global RRP | Convex approximation | Convexified relaxed risk-budgeting approximation |
-| **Improved Convex Adaptive Global RRP** | **Implementable refinement** | Low-turnover, CVaR-aware, stable allocation model |
-| Defensive Dynamic RRP | Defensive experiment | Risk-overlay experiment, not the main return-maximizing model |
-| HRP Benchmark / HERC Benchmark | Benchmarks | Hierarchical allocation references |
+| Standard Risk Parity | Baseline | Classical risk-contribution balancing |
+| Local Relaxed Risk Parity | Local relaxed model | Balances risk parity with return objectives through relaxation terms |
+| Global Relaxed Risk Parity | Main showcase model | Global multi-asset extension and the main return-efficient model |
+| Defensive Dynamic Relaxed Risk Parity | Defensive overlay | Manages drawdown, trend, volatility, re-entry, and turnover controls |
+| HRP Benchmark / HERC Benchmark | Benchmarks | Hierarchical allocation references, not the main contribution |
 
-### Method Summary
+Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together with maximum drawdown, Calmar ratio, downside behavior, and turnover.
 
-| Module | Purpose |
-|---|---|
-| Relaxed risk budgeting | Softens strict equal-risk-contribution constraints |
-| Convex adaptive reformulation | Improves solver stability and scalability |
-| CVaR constraint | Controls tail-loss exposure |
-| Turnover penalty | Internalizes trading cost and allocation stability |
-| Group limits | Prevents excessive concentration in one asset class |
-| Robustness validation | Bounds conclusions through walk-forward, holdout, CSCV-PBO, bootstrap, and stress-period checks |
+### Latest Results
+Evaluation starts on `2019-01-01`. The table is generated from `results/tables/showcase_performance_summary.csv`.
+| Model | Annual Return | Annual Volatility | Sharpe | Sortino | Max Drawdown | Calmar | Avg Turnover | Turnover-adjusted Sharpe |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Global RRP | 4.61% | 3.95% | 0.71 | 0.81 | -6.27% | 0.74 | 23.78% | 1.17 |
+| Defensive Dynamic RRP | 4.84% | 4.32% | 0.70 | 0.87 | -6.95% | 0.70 | 24.61% | 1.12 |
+| Convex Adaptive Global Relaxed Risk Parity | 7.16% | 5.16% | 1.04 | 1.60 | -5.99% | 1.20 | 1.34% | 1.39 |
+| Improved Convex Adaptive Global Relaxed Risk Parity | 6.27% | 2.72% | 1.64 | 2.55 | -3.50% | 1.79 | 2.88% | 2.31 |
+| HRP Benchmark | 1.77% | 0.18% | -0.26 | -0.42 | -0.08% | 21.92 | 1.21% | 9.60 |
+| HERC Benchmark | 2.44% | 0.62% | 1.00 | 1.54 | -0.58% | 4.17 | 6.23% | 3.94 |
 
-### Asset Universe
+Improved Convex Adaptive Global Relaxed Risk Parity is a constrained parameter refinement of the convex adaptive optimizer, selected with drawdown and turnover-aware criteria.
 
-The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset categories**. Data run from `2018-04-02` to `2026-07-01`; performance evaluation starts on `2019-01-01`. Later-listed ETFs enter only after sufficient valid observations.
+### Figures
+<p align="center"><img src="results/figures/showcase_nav_comparison.png" width="820" alt="Showcase NAV Comparison"></p>
+<p align="center"><img src="results/figures/showcase_drawdown_comparison.png" width="820" alt="Showcase Drawdown Comparison"></p>
 
-| Category | ETF Count | Representative Exposures |
-|---|---:|---|
-| Bonds and cash | 4 | Convertible bond, government bond, credit bond, money market |
-| China broad equity | 5 | CSI 300, CSI 500, CSI 1000, ChiNext, dividend |
-| China technology and growth | 7 | Semiconductor, AI, robotics, new energy, China-Korea semiconductor, STAR 50, cloud computing |
-| China sectors and consumer | 3 | Securities, defense, consumer |
-| Hong Kong equity | 1 | Hang Seng ETF |
-| Global equity | 4 | Nasdaq-100, S&P 500, Nikkei 225, Europe |
-| Precious metals | 2 | Gold, silver |
-| Commodities and resources | 4 | Non-ferrous metals, soybean meal, coal, crude oil |
+### Methodology
+The framework combines relaxed risk parity, global diversification, defensive risk overlays, drawdown-aware scaling, soft trend filtering, volatility targeting, re-entry logic, turnover control, and transaction-cost-aware evaluation.
 
-### Latest Performance
+### AFML-Inspired Validation Design
+The showcase uses strict walk-forward validation. Candidate selection only uses data before each test period, with simplified PBO-style diagnostics, parameter stability checks, turnover-aware metrics, and conservative adjusted Sharpe diagnostics.
 
-Evaluation period: `2019-01-01` to `2026-06-30`. Transaction cost: 3 bps one-way, monthly rebalancing.
+### HRP / HERC Benchmark
+HRP / HERC are benchmarks used to test whether hierarchical clustering alone can outperform RRP-based global diversification under the same evaluation setup.
 
-| Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.73%** | **2.92%** | **1.339** | **1.965** | **-4.63%** | **1.238** | **2.21%** |
-| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
-| Global RRP | 4.29% | 4.17% | 0.593 | 0.683 | -7.17% | 0.599 | 23.27% |
-| Defensive Dynamic RRP | 4.59% | 4.38% | 0.633 | 0.782 | -7.10% | 0.647 | 24.38% |
-| HERC Benchmark | 2.25% | 0.57% | 0.747 | 1.083 | -0.58% | 3.879 | 5.65% |
-| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
-| Equal Weight | 10.65% | 11.20% | 0.788 | 1.253 | -13.90% | 0.766 | 1.21% |
-
-Equal Weight generates higher absolute return but with much higher volatility and drawdown. The Improved Convex model is positioned as the implementable, low-turnover, tail-risk-controlled allocation rather than a return-maximizing strategy.
-
-### Key Figures
-
-<p align="center"><img src="results/figures/convex_adaptive_nav_comparison.png" width="860" alt="Convex Adaptive NAV Comparison"></p>
-
-<p align="center"><img src="results/figures/convex_adaptive_drawdown_comparison.png" width="860" alt="Convex Adaptive Drawdown Comparison"></p>
-
-<p align="center"><img src="results/figures/convex_adaptive_turnover_comparison.png" width="860" alt="Convex Adaptive Turnover Comparison"></p>
-
-<p align="center"><img src="results/figures/convex_adaptive_cvar_comparison.png" width="860" alt="Convex Adaptive CVaR Comparison"></p>
-
-<p align="center"><img src="results/figures/improved_weights_timeline.png" width="860" alt="Improved Convex Adaptive Global RRP Weights"></p>
-
-<!-- BEGIN MONTHLY_HS300_COMPARISON_EN -->
-### Monthly Return Comparison vs CSI 300 ETF
-
-Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **51.58%** cumulative return versus **83.39%** for the CSI 300 ETF proxy. Its monthly volatility was **0.85%**, far below the CSI 300 ETF's **4.55%**; daily maximum drawdowns were **-4.63%** and **-44.03%**, respectively. The strategy outperformed in 45/90 months. In the latest month (2026-06), the strategy returned **-1.21%** versus **1.95%** for the CSI 300 ETF.
-
-![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
-<!-- END MONTHLY_HS300_COMPARISON_EN -->
-### Robustness Validation
-
-| Method | Purpose | Boundary |
-|---|---|---|
-| Walk-forward validation | Rolling out-of-sample parameter selection | Tests whether parameters only fit the full sample |
-| Holdout validation | Independent validation period | Checks consistency between in-sample and holdout results |
-| CSCV-PBO | Overfitting probability diagnostic | PBO is below 0.5, but remains a diagnostic rather than a future guarantee |
-| Block bootstrap | Resampling of Sharpe and drawdown | Tests sensitivity to path variation |
-| Covariance robustness | Sample, Ledoit-Wolf, EWMA and related estimators | Main conclusions do not depend on one estimator |
-| Parameter perturbation | Vary key penalties and CVaR threshold | Performance changes smoothly without cliff-edge behavior |
-| Rebalance frequency sensitivity | Weekly, biweekly, monthly, and quarterly rebalancing | Monthly is not the highest-return frequency; it is the implementable low-turnover compromise |
-
-<p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
-
-<p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
-
-With Improved Convex Adaptive Global RRP parameters fixed and only the rebalance schedule varied, weekly and biweekly rebalancing deliver **5.55%** and **5.58%** net annual return, with Sharpe ratios of **1.278** and **1.286**, but average monthly turnover rises to **3.38%** and **2.80%**. Monthly rebalancing delivers **5.73%** net annual return, **1.339** Sharpe, **-4.63%** maximum drawdown, and **2.21%** average monthly turnover. Quarterly rebalancing further lowers turnover to **1.68%**, but net annual return and Sharpe decline to **5.67%** and **1.295**. Monthly rebalancing is therefore presented as a long-horizon implementation choice rather than the ex-post highest-return frequency.
-
-### All Weather Futures Benchmark
-
-The main results remain based on the implementable **30-ETF, long-only, unlevered** universe. As a benchmark experiment, the study also constructs a **Classic All Weather Futures Benchmark**. Futures are grouped into equity/growth, duration/deflation, and inflation/commodities buckets; each bucket uses 180-day rolling inverse-volatility weights, and bucket-level allocation uses a 30% / 40% / 30% classic All Weather risk budget. Futures price returns are layered over cash collateral earning the risk-free rate. The vol-targeted variants allow up to 4.0x gross notional exposure, making the benchmark closer to the leveraged futures implementation logic of classic All Weather portfolios. This is a rules-based All Weather benchmark, not a replication of Bridgewater's actual portfolio.
-
-| Scenario | Net Annual Return | Annual Vol | Sharpe | Calmar | Max Drawdown | Avg Gross Notional |
-|---|---:|---:|---:|---:|---:|---:|
-| ETF Baseline (Improved Convex) | 5.73% | 2.92% | 1.339 | 1.238 | -4.63% | 1.00x |
-| Classic All Weather Futures (1.0x) | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
-| Vol-Targeted All Weather Futures (8%) | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
-| Vol-Targeted All Weather Futures (10%) | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
-
-The benchmark shows that the 1.0x All Weather futures version achieves shallower drawdown but lower return and Sharpe than the Improved Convex ETF model. Vol-targeting and futures notional leverage lift absolute returns to roughly 10.5%--10.8%, but risk-adjusted performance remains below the ETF main model. These results depend on continuous-contract construction, collateral yield, rolling windows, target-volatility rules, and gross-notional caps.
-
-### Repository Structure
-
-```text
-.
-├── src/                       # Core optimization, backtest, and validation modules
-├── scripts/                   # Data update and research pipeline scripts
-├── results/tables/            # Authoritative CSV results
-├── results/figures/           # Figures used by README, thesis, and defense slides
-├── report/thesis_latex/       # Thesis LaTeX source
-├── report/ppt/                # Defense Beamer source and PDF
-└── data/                      # ETF price data and intermediate files
-```
-
-### Quick Start
-
+### How to Run
 ```bash
 pip install -r requirements.txt
-
-export TUSHARE_TOKEN=your_token_here
-python scripts/update_etf_data.py --provider tushare --start-date 20150101
-
-python scripts/run_full_research_pipeline.py
-python scripts/run_convex_adaptive_rrp.py
+python -m pytest
+python scripts/optimize_showcase_rrp.py
+python scripts/run_rrp_pipeline.py --mode full
+python scripts/run_hrp_comparison.py
 ```
 
----
+### Output Files
+- `results/tables/showcase_performance_summary.csv`
+- `results/tables/showcase_risk_overlay_ablation.csv`
+- `results/tables/showcase_walkforward_validation.csv`
+- `results/tables/showcase_parameter_stability.csv`
+- `results/tables/showcase_improvement_attribution.csv`
+- `results/tables/performance_summary.csv`
+- `results/tables/hrp_comparison.csv`
+- `results/figures/showcase_nav_comparison.png`
+- `results/figures/showcase_drawdown_comparison.png`
+
+### Use Cases and Limitations
+This is backtest research, not investment advice. Data quality, asset mappings, transaction costs, slippage, financing costs, taxes, liquidity, and live tradability require independent review.
+
+### References
+1. Gambeta, V., & Kwon, R. (2020). Risk return trade-off in relaxed risk parity portfolio optimization.
+2. Lopez de Prado, M. (2018). Advances in Financial Machine Learning.
+3. Bailey, D. H., Borwein, J. M., Lopez de Prado, M., & Zhu, Q. J. (2015). The Probability of Backtest Overfitting.
+4. Bailey, D. H., & Lopez de Prado, M. (2014). The Deflated Sharpe Ratio.
+5. Lopez de Prado, M. (2016). Building Diversified Portfolios that Outperform Out-of-Sample.
 
 ## License
-
 MIT License.

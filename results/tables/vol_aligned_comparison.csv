@@ -1,2 +1,3 @@
-slug,model,reference_model,reference_volatility,scale_factor,net_annual_return,annualized_volatility,sharpe_ratio
-improvedVolAlignedHrp,Improved Convex Adaptive Global RRP (vol-aligned to HRP),HRP Benchmark,0.0017562411024512,0.0672103950841451,0.003806924860876154,0.0017562411024512,-8.195386794578098
+slug,target_model,target_annualized_volatility,scale_factor,net_annual_return,annualized_volatility,sharpe_ratio,sortino_ratio,max_drawdown,calmar_ratio
+improvedVolAlignedHrp,HRP Benchmark,0.0018445053016412,0.06906269048347802,0.0037326611604928672,0.001844854420555142,-7.841994836185346,-11.853767314149712,-0.0024527913008047797,1.5218013694308816
+improvedVolAlignedHerc,HERC Benchmark,0.006177215654596,0.23128972978471024,0.012541739168405952,0.006178384847668338,-0.9158155361153039,-1.3843243325922856,-0.008194669051125869,1.5304753724841196
