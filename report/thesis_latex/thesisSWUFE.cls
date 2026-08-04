@@ -36,7 +36,9 @@
 \tcbuselibrary{breakable}
 
 \RequirePackage{fontspec}  % 字体支持
-\setmainfont{Times New Roman}  % 英文mainfont Times New Roman
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
 \setCJKmainfont{SIMSUN}[
     Path = ./fonts/,
     Extension = .TTC,
