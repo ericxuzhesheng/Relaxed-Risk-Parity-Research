@@ -211,6 +211,16 @@ def _past_vol(series: pd.Series, trading_days: int) -> float:
     return float(clean.std() * np.sqrt(trading_days))
 
 
+def average_rebalance_turnover(turnover: pd.Series) -> float:
+    active = pd.Series(turnover).dropna()
+    active = active[active > 0]
+    return float(active.mean()) if not active.empty else 0.0
+
+
+def futures_transaction_cost(turnover: float, gross_notional: float, cost_bps: float) -> float:
+    return float(turnover) * float(gross_notional) * float(cost_bps) / 10_000.0
+
+
 def run_all_weather_benchmark(
     futures_returns: pd.DataFrame,
     eval_start: str,
@@ -221,6 +231,7 @@ def run_all_weather_benchmark(
     lookback_days: int = DEFAULT_LOOKBACK_DAYS,
     max_gross_notional: float = DEFAULT_MAX_GROSS_NOTIONAL,
     trading_days: int = TRADING_DAYS,
+    transaction_cost_bps: float = 5.0,
 ) -> AllWeatherResult:
     logger.info("Running %s", model)
     data = futures_returns.sort_index().dropna(how="all")
@@ -258,11 +269,16 @@ def run_all_weather_benchmark(
                     current_notional = 1.0
 
         risky_return = _row_weighted_return(data.loc[date], current_asset_weights)
-        total_return = rf_daily + current_notional * risky_return
+        scaled_turnover = turnover * current_notional if is_rebalance else 0.0
+        total_return = (
+            rf_daily
+            + current_notional * risky_return
+            - futures_transaction_cost(turnover, current_notional, transaction_cost_bps)
+        )
 
         raw_risky_returns.append(risky_return)
         returns.append(total_return)
-        turnovers.append(turnover * current_notional if is_rebalance else 0.0)
+        turnovers.append(scaled_turnover)
         gross_notional.append(current_notional)
         rows.append({"date": date, **{asset: current_asset_weights.loc[asset] * current_notional for asset in data.columns}})
 
@@ -302,19 +318,26 @@ def load_scenario0_returns(eval_start: str, config: dict, eval_end: pd.Timestamp
     nav.index = pd.to_datetime(eval_df["date"])
     metrics = calculate_metrics(nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
     metrics["model"] = "Scenario 0: ETF Baseline (Improved Convex)"
-    metrics["avg_monthly_turnover"] = float(eval_df["turnover"].fillna(0.0).mean())
+    metrics["avg_monthly_turnover"] = average_rebalance_turnover(eval_df["turnover"])
     metrics["avg_gross_notional"] = 1.0
     metrics["target_vol"] = np.nan
+    metrics["transaction_cost_bps"] = 3.0
     return {"metrics": metrics, "nav": nav}
 
 
-def metrics_from_all_weather(result: AllWeatherResult, risk_free_rate: float, trading_days: int, target_vol: float | None) -> dict:
+def metrics_from_all_weather(
+    result: AllWeatherResult,
+    risk_free_rate: float,
+    trading_days: int,
+    target_vol: float | None,
+    transaction_cost_bps: float = 5.0,
+) -> dict:
     metrics = calculate_metrics(result.nav, risk_free_rate, trading_days)
     metrics["model"] = result.model
-    monthly_turnover = result.turnover[result.turnover > 0]
-    metrics["avg_monthly_turnover"] = float(monthly_turnover.mean()) if not monthly_turnover.empty else 0.0
+    metrics["avg_monthly_turnover"] = average_rebalance_turnover(result.turnover)
     metrics["avg_gross_notional"] = float(result.gross_notional.mean())
     metrics["target_vol"] = target_vol if target_vol is not None else np.nan
+    metrics["transaction_cost_bps"] = transaction_cost_bps
     return metrics
 
 
@@ -395,6 +418,7 @@ def save_comparison_table(all_metrics: list[dict]) -> None:
         "avg_monthly_turnover",
         "avg_gross_notional",
         "target_vol",
+        "transaction_cost_bps",
     ]
     cols = [c for c in cols_order if c in df.columns] + [c for c in df.columns if c not in cols_order]
     df = df[cols]
@@ -508,7 +532,15 @@ def main() -> None:
         (low_vol, args.target_vol_low),
         (high_vol, args.target_vol_high),
     ]:
-        all_metrics.append(metrics_from_all_weather(result, risk_free_rate, TRADING_DAYS, target))
+        all_metrics.append(
+            metrics_from_all_weather(
+                result,
+                risk_free_rate,
+                TRADING_DAYS,
+                target,
+                config["transaction_cost_bps"],
+            )
+        )
         nav_dict[result.model.replace("Scenario ", "S")] = result.nav
 
     save_comparison_table(all_metrics)

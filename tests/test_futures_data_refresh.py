@@ -91,3 +91,17 @@ def test_futures_benchmark_is_capped_at_etf_evaluation_end():
     capped = cap_evaluation_end(futures_returns, pd.Timestamp("2026-08-05"))
 
     assert capped.index.max() == pd.Timestamp("2026-08-05")
+
+
+def test_average_rebalance_turnover_excludes_non_rebalance_days():
+    from scripts.run_futures_extension import average_rebalance_turnover
+
+    turnover = pd.Series([0.0, 0.02, 0.0, 0.04])
+
+    assert average_rebalance_turnover(turnover) == pytest.approx(0.03)
+
+
+def test_futures_transaction_cost_scales_with_notional():
+    from scripts.run_futures_extension import futures_transaction_cost
+
+    assert futures_transaction_cost(turnover=0.25, gross_notional=2.0, cost_bps=5.0) == pytest.approx(0.00025)
