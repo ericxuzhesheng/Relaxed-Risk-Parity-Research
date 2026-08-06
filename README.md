@@ -9,8 +9,8 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.8%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.8+">
   <img src="https://img.shields.io/badge/资产池-30只ETF · 8类-F2C94C?style=for-the-badge" alt="30 ETF">
-  <img src="https://img.shields.io/badge/评估区间-2019--2026 · 90个月-4CAF50?style=for-the-badge" alt="2019-2026">
-  <img src="https://img.shields.io/badge/Sharpe-1.339 · MaxDD --4.63%25-9B51E0?style=for-the-badge" alt="Sharpe 1.339">
+  <img src="https://img.shields.io/badge/评估区间-2019--2026 · 91个月-4CAF50?style=for-the-badge" alt="2019-2026">
+  <img src="https://img.shields.io/badge/Sharpe-1.430 · MaxDD --4.03%25-9B51E0?style=for-the-badge" alt="Sharpe 1.430">
 </p>
 
 ---
@@ -21,7 +21,7 @@
 
 本项目是一个面向本科论文与可复现实证研究的量化资产配置框架：在中国可交易 ETF 约束下，将经典风险平价扩展为 **Relaxed Risk Parity (RRP)**，并进一步构建 **Convex Adaptive Global RRP** 与 **Improved Convex Adaptive Global RRP**，用于研究低换手、CVaR 尾部风险控制和全球多资产配置的权衡。
 
-**主结论不是“追求最高收益”，而是：** 在纯多头、无杠杆、月度再平衡和 3 bps 单边交易成本下，Improved Convex Adaptive Global RRP 以 **5.73%** 净年化收益、**2.92%** 年化波动、**1.339** Sharpe、**-4.63%** 最大回撤和 **2.21%** 月均换手率，提供了一条可实施的稳健配置路径。
+**主结论不是“追求最高收益”，而是：** 在纯多头、无杠杆、月度再平衡和 3 bps 单边交易成本下，Improved Convex Adaptive Global RRP 以 **5.98%** 净年化收益、**2.91%** 年化波动、**1.430** Sharpe、**-4.03%** 最大回撤和 **2.09%** 月均换手率，提供了一条可实施的稳健配置路径。
 
 ### 快速导航
 
@@ -70,7 +70,7 @@
 
 ### 资产池
 
-当前资产池来自 `src/asset_universe.py`，共 **30 只 ETF、8 类资产**。数据区间为 `2018-04-02` 至 `2026-07-01`；绩效评价从 `2019-01-01` 开始，并对后上市 ETF 采用时间点可投性过滤。
+当前资产池来自 `src/asset_universe.py`，共 **30 只 ETF、8 类资产**。数据区间为 `2015-11-19` 至 `2026-07-31`；绩效评价从 `2019-01-01` 开始，并对后上市 ETF 采用时间点可投性过滤。
 
 | 类别 | ETF 数量 | 代表性标的 |
 |---|---:|---|
@@ -85,17 +85,17 @@
 
 ### 最新绩效
 
-评价区间：`2019-01-01` 至 `2026-06-30`。交易成本：单边 3 bps，月度再平衡。
+评价区间：`2019-01-01` 至 `2026-07-31`。交易成本：单边 3 bps，月度再平衡。
 
 | 模型 | 净年化收益 | 年化波动 | Sharpe | Sortino | 最大回撤 | Calmar | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.73%** | **2.92%** | **1.339** | **1.965** | **-4.63%** | **1.238** | **2.21%** |
-| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
-| Global RRP | 4.29% | 4.17% | 0.593 | 0.683 | -7.17% | 0.599 | 23.27% |
-| Defensive Dynamic RRP | 4.59% | 4.38% | 0.633 | 0.782 | -7.10% | 0.647 | 24.38% |
-| HERC Benchmark | 2.25% | 0.57% | 0.747 | 1.083 | -0.58% | 3.879 | 5.65% |
-| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
-| Equal Weight | 10.65% | 11.20% | 0.788 | 1.253 | -13.90% | 0.766 | 1.21% |
+| **Improved Convex Adaptive Global RRP** | **5.98%** | **2.91%** | **1.430** | **2.165** | **-4.03%** | **1.486** | **2.09%** |
+| Convex Adaptive Global RRP | 6.67% | 5.19% | 0.935 | 1.455 | -5.74% | 1.162 | 1.31% |
+| Global RRP | 4.67% | 4.16% | 0.686 | 0.815 | -5.91% | 0.791 | 23.63% |
+| Defensive Dynamic RRP | 4.85% | 4.40% | 0.690 | 0.879 | -7.12% | 0.682 | 24.65% |
+| HERC Benchmark | 2.29% | 0.61% | 0.774 | 1.168 | -0.56% | 4.113 | 6.21% |
+| HRP Benchmark | 1.72% | 0.18% | -0.550 | -0.905 | -0.08% | 21.323 | 1.29% |
+| Equal Weight | 10.00% | 11.13% | 0.735 | 1.179 | -13.79% | 0.725 | 1.21% |
 
 **解读：** Equal Weight 的绝对收益更高，但波动和回撤显著放大；Improved Convex Adaptive Global RRP 的优势在于更低路径风险、更浅回撤和更可控换手。HRP 的极低波动带来很小回撤，但也显著压低了收益空间，因此更适合作为基准而非主模型。
 
@@ -126,7 +126,7 @@
 <!-- BEGIN MONTHLY_HS300_COMPARISON_CN -->
 ### 与沪深300ETF的月度收益对比
 
-截至 `2026-06`，Improved Convex Adaptive Global RRP 与沪深300ETF的月度对比显示：策略累计收益为 **51.58%**，沪深300ETF为 **83.39%**；策略月度波动率 **0.85%**，显著低于沪深300ETF的 **4.55%**；日频最大回撤分别为 **-4.63%** 与 **-44.03%**。策略在 45/90 个月跑赢沪深300ETF，最近一个月（2026-06）策略收益 **-1.21%**，沪深300ETF **1.95%**。
+截至 `2026-07`，Improved Convex Adaptive Global RRP 与沪深300ETF的月度对比显示：策略累计收益为 **54.95%**，沪深300ETF为 **70.02%**；策略月度波动率 **0.85%**，显著低于沪深300ETF的 **4.60%**；日频最大回撤分别为 **-4.03%** 与 **-44.03%**。策略在 45/91 个月跑赢沪深300ETF，最近一个月（2026-07）策略收益 **0.37%**，沪深300ETF **-7.29%**。
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
 <!-- END MONTHLY_HS300_COMPARISON_CN -->
@@ -140,26 +140,26 @@
 | Block bootstrap | 对 Sharpe 和回撤做重采样 | 评估结果对样本路径扰动的敏感性 |
 | 协方差估计稳健性 | 比较 sample、Ledoit-Wolf、EWMA 等估计器 | 主要结论不依赖单一协方差估计器 |
 | 参数扰动 | 改变关键惩罚项和 CVaR 阈值 | 输出随参数平滑变化，无明显断崖 |
-| 调仓频率敏感性 | 比较周度、双周、月度、季度调仓 | 月度并非收益最高频率，而是低换手与风险控制之间的可实施折中 |
+| 调仓频率敏感性 | 比较周度、双周、月度、季度调仓 | 月度当前排名第一，但仍是预设实施规则而非事后择优结果 |
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
 
 <p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
 
-在固定 Improved Convex Adaptive Global RRP 参数、仅改变调仓频率的对照中，周度和双周调仓的净年化收益分别为 **5.55%** 和 **5.58%**，Sharpe 分别为 **1.278** 和 **1.286**，但平均月换手率升至 **3.38%** 和 **2.80%**。月度调仓对应 **5.73%** 净年化收益、**1.339** Sharpe、**-4.63%** 最大回撤和 **2.21%** 平均月换手率；季度调仓换手率进一步降至 **1.68%**，但净年化收益和 Sharpe 分别降至 **5.67%** 和 **1.295**。因此，月度调仓不是人为选择的最高收益频率，而是长期配置场景下兼顾响应速度、交易成本和组合稳定性的主设定。
+在固定 Improved Convex Adaptive Global RRP 参数、仅改变调仓频率的对照中，周度和双周调仓的净年化收益均约为 **5.78%**，Sharpe 分别为 **1.362** 和 **1.366**，平均月换手率分别为 **3.23%** 和 **2.66%**。月度调仓对应 **5.98%** 净年化收益、**1.430** Sharpe、**-4.03%** 最大回撤和 **2.09%** 平均月换手率；季度调仓换手率进一步降至 **1.65%**，净年化收益和 Sharpe 为 **5.96%** 和 **1.410**。月度调仓在本次样本中恰好取得四种频率中的最高净收益和 Sharpe，但其主设定仍基于长期配置下的响应速度、交易成本和组合稳定性，而非事后按最高收益选择。
 
 ### 全天候期货基准
 
-本文主结果仍以 **30 只 ETF、纯多头、无杠杆** 的可实施资产池为准。作为对照实验，研究进一步构造 **Classic All Weather Futures Benchmark**：将期货品种划分为权益/增长、久期/通缩、通胀/商品三类风险桶，桶内采用 180 日滚动逆波动权重，桶间采用 30% / 40% / 30% 的经典全天候风险预算，并在期货价格收益之上叠加现金抵押收益。目标波动率版本允许最高 4.0x 名义敞口，以更接近经典全天候的期货杠杆实现方式。该实验用于比较 ETF-only RRP 与经典全天候期货化框架的结构差异，不是桥水真实组合复现。
+本文主结果仍以 **30 只 ETF、纯多头、无杠杆** 的可实施资产池为准。作为对照实验，研究进一步构造 **Classic All Weather Futures Benchmark**：将期货品种划分为权益/增长、久期/通缩、通胀/商品三类风险桶，桶内采用 180 日滚动逆波动权重，桶间采用 30% / 40% / 30% 的经典全天候风险预算，并在期货价格收益之上叠加现金抵押收益。目标波动率版本允许最高 4.0x 名义敞口，以更接近经典全天候的期货杠杆实现方式。期货场景扣除 5 bps 单边成本。当前缓存覆盖 22 个品种，但 Y、OI、ZC 的最后可得日期分别为 2019-06-28、2018-05-15 和 2022-05-11；加载器会前向填充停更价格，因此该实验仅作为低置信度的补充基准，不是桥水真实组合复现。
 
 | 场景 | 净年化收益 | 年化波动 | Sharpe | Calmar | 最大回撤 | 平均名义敞口 |
 |---|---:|---:|---:|---:|---:|---:|
-| ETF 基准（Improved Convex） | 5.73% | 2.92% | 1.339 | 1.238 | -4.63% | 1.00x |
-| 经典全天候期货基准（1.0x） | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
-| 目标波动率全天候期货（8%） | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
-| 目标波动率全天候期货（10%） | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
+| ETF 基准（Improved Convex） | 5.98% | 2.91% | 1.430 | 1.486 | -4.03% | 1.00x |
+| 经典全天候期货基准（1.0x） | 3.99% | 2.10% | 1.035 | 2.529 | -1.58% | 1.00x |
+| 目标波动率全天候期货（8%） | 9.80% | 7.70% | 1.037 | 1.360 | -7.21% | 3.71x |
+| 目标波动率全天候期货（10%） | 10.04% | 8.08% | 1.018 | 1.393 | -7.21% | 3.87x |
 
-该对照显示：经典全天候期货框架在 1.0x 名义敞口下回撤更浅，但收益与 Sharpe 低于 Improved Convex Adaptive Global RRP；引入目标波动率与期货名义杠杆后，绝对收益提升至约 10.5%--10.8%，更符合经典全天候的资金利用逻辑，但风险调整收益仍低于 ETF 主模型。结论依赖连续合约构造、现金抵押收益、滚动窗口、目标波动率和名义敞口上限，应作为结构性基准而非主模型替代。
+该对照显示：经典全天候期货框架在 1.0x 名义敞口下回撤更浅，但收益与 Sharpe 低于 Improved Convex Adaptive Global RRP；引入目标波动率与期货名义杠杆后，绝对收益提升至约 9.8%--10.0%，更符合经典全天候的资金利用逻辑，但风险调整收益仍低于 ETF 主模型。结论依赖连续合约构造、现金抵押收益、滚动窗口、目标波动率和名义敞口上限，应作为结构性基准而非主模型替代。
 
 ### 项目结构
 
@@ -198,7 +198,7 @@ python scripts/run_convex_adaptive_rrp.py
 
 This repository is a thesis-oriented quantitative asset allocation project. It extends classical Risk Parity into a **Relaxed Risk Parity (RRP)** framework, then builds convex, turnover-aware, CVaR-aware variants for a China-accessible global ETF universe.
 
-The main result is not a maximum-return trading strategy. Under a long-only, unlevered, monthly-rebalanced ETF setting with 3 bps one-way transaction cost, **Improved Convex Adaptive Global RRP** delivers **5.73%** net annual return, **2.92%** annual volatility, **1.339** Sharpe, **-4.63%** maximum drawdown, and **2.21%** average monthly turnover.
+The main result is not a maximum-return trading strategy. Under a long-only, unlevered, monthly-rebalanced ETF setting with 3 bps one-way transaction cost, **Improved Convex Adaptive Global RRP** delivers **5.98%** net annual return, **2.91%** annual volatility, **1.430** Sharpe, **-4.03%** maximum drawdown, and **2.09%** average monthly turnover.
 
 ### Navigation
 
@@ -243,7 +243,7 @@ Classical Risk Parity forces all risk contributions to be equal. This is interpr
 
 ### Asset Universe
 
-The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset categories**. Data run from `2018-04-02` to `2026-07-01`; performance evaluation starts on `2019-01-01`. Later-listed ETFs enter only after sufficient valid observations.
+The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset categories**. Data run from `2015-11-19` to `2026-07-31`; performance evaluation starts on `2019-01-01`. Later-listed ETFs enter only after sufficient valid observations.
 
 | Category | ETF Count | Representative Exposures |
 |---|---:|---|
@@ -258,17 +258,17 @@ The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset cat
 
 ### Latest Performance
 
-Evaluation period: `2019-01-01` to `2026-06-30`. Transaction cost: 3 bps one-way, monthly rebalancing.
+Evaluation period: `2019-01-01` to `2026-07-31`. Transaction cost: 3 bps one-way, monthly rebalancing.
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.73%** | **2.92%** | **1.339** | **1.965** | **-4.63%** | **1.238** | **2.21%** |
-| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
-| Global RRP | 4.29% | 4.17% | 0.593 | 0.683 | -7.17% | 0.599 | 23.27% |
-| Defensive Dynamic RRP | 4.59% | 4.38% | 0.633 | 0.782 | -7.10% | 0.647 | 24.38% |
-| HERC Benchmark | 2.25% | 0.57% | 0.747 | 1.083 | -0.58% | 3.879 | 5.65% |
-| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
-| Equal Weight | 10.65% | 11.20% | 0.788 | 1.253 | -13.90% | 0.766 | 1.21% |
+| **Improved Convex Adaptive Global RRP** | **5.98%** | **2.91%** | **1.430** | **2.165** | **-4.03%** | **1.486** | **2.09%** |
+| Convex Adaptive Global RRP | 6.67% | 5.19% | 0.935 | 1.455 | -5.74% | 1.162 | 1.31% |
+| Global RRP | 4.67% | 4.16% | 0.686 | 0.815 | -5.91% | 0.791 | 23.63% |
+| Defensive Dynamic RRP | 4.85% | 4.40% | 0.690 | 0.879 | -7.12% | 0.682 | 24.65% |
+| HERC Benchmark | 2.29% | 0.61% | 0.774 | 1.168 | -0.56% | 4.113 | 6.21% |
+| HRP Benchmark | 1.72% | 0.18% | -0.550 | -0.905 | -0.08% | 21.323 | 1.29% |
+| Equal Weight | 10.00% | 11.13% | 0.735 | 1.179 | -13.79% | 0.725 | 1.21% |
 
 Equal Weight generates higher absolute return but with much higher volatility and drawdown. The Improved Convex model is positioned as the implementable, low-turnover, tail-risk-controlled allocation rather than a return-maximizing strategy.
 
@@ -287,7 +287,7 @@ Equal Weight generates higher absolute return but with much higher volatility an
 <!-- BEGIN MONTHLY_HS300_COMPARISON_EN -->
 ### Monthly Return Comparison vs CSI 300 ETF
 
-Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **51.58%** cumulative return versus **83.39%** for the CSI 300 ETF proxy. Its monthly volatility was **0.85%**, far below the CSI 300 ETF's **4.55%**; daily maximum drawdowns were **-4.63%** and **-44.03%**, respectively. The strategy outperformed in 45/90 months. In the latest month (2026-06), the strategy returned **-1.21%** versus **1.95%** for the CSI 300 ETF.
+Through `2026-07`, the Improved Convex Adaptive Global RRP delivered **54.95%** cumulative return versus **70.02%** for the CSI 300 ETF proxy. Its monthly volatility was **0.85%**, far below the CSI 300 ETF's **4.60%**; daily maximum drawdowns were **-4.03%** and **-44.03%**, respectively. The strategy outperformed in 45/91 months. In the latest month (2026-07), the strategy returned **0.37%** versus **-7.29%** for the CSI 300 ETF.
 
 ![Improved RRP vs CSI 300 ETF monthly comparison](results/figures/improved_rrp_vs_hs300_monthly_comparison.png)
 <!-- END MONTHLY_HS300_COMPARISON_EN -->
@@ -301,26 +301,26 @@ Through `2026-06`, the Improved Convex Adaptive Global RRP delivered **51.58%** 
 | Block bootstrap | Resampling of Sharpe and drawdown | Tests sensitivity to path variation |
 | Covariance robustness | Sample, Ledoit-Wolf, EWMA and related estimators | Main conclusions do not depend on one estimator |
 | Parameter perturbation | Vary key penalties and CVaR threshold | Performance changes smoothly without cliff-edge behavior |
-| Rebalance frequency sensitivity | Weekly, biweekly, monthly, and quarterly rebalancing | Monthly is not the highest-return frequency; it is the implementable low-turnover compromise |
+| Rebalance frequency sensitivity | Weekly, biweekly, monthly, and quarterly rebalancing | Monthly currently ranks first, but remains an implementation choice rather than an ex-post selection rule |
 
 <p align="center"><img src="results/figures/robustness_bootstrap_sharpe_distribution.png" width="760" alt="Bootstrap Sharpe Distribution"></p>
 
 <p align="center"><img src="results/figures/rebalance_frequency_sensitivity.png" width="860" alt="Rebalance Frequency Sensitivity"></p>
 
-With Improved Convex Adaptive Global RRP parameters fixed and only the rebalance schedule varied, weekly and biweekly rebalancing deliver **5.55%** and **5.58%** net annual return, with Sharpe ratios of **1.278** and **1.286**, but average monthly turnover rises to **3.38%** and **2.80%**. Monthly rebalancing delivers **5.73%** net annual return, **1.339** Sharpe, **-4.63%** maximum drawdown, and **2.21%** average monthly turnover. Quarterly rebalancing further lowers turnover to **1.68%**, but net annual return and Sharpe decline to **5.67%** and **1.295**. Monthly rebalancing is therefore presented as a long-horizon implementation choice rather than the ex-post highest-return frequency.
+With Improved Convex Adaptive Global RRP parameters fixed and only the rebalance schedule varied, weekly and biweekly rebalancing both deliver about **5.78%** net annual return, with Sharpe ratios of **1.362** and **1.366** and average monthly turnover of **3.23%** and **2.66%**. Monthly rebalancing delivers **5.98%** net annual return, **1.430** Sharpe, **-4.03%** maximum drawdown, and **2.09%** average monthly turnover. Quarterly rebalancing lowers turnover to **1.65%**, with **5.96%** net annual return and **1.410** Sharpe. Monthly happens to produce the highest net return and Sharpe among the four frequencies in this refresh, but it remains an implementation-oriented choice based on responsiveness, trading cost, and allocation stability rather than ex-post return selection.
 
 ### All Weather Futures Benchmark
 
-The main results remain based on the implementable **30-ETF, long-only, unlevered** universe. As a benchmark experiment, the study also constructs a **Classic All Weather Futures Benchmark**. Futures are grouped into equity/growth, duration/deflation, and inflation/commodities buckets; each bucket uses 180-day rolling inverse-volatility weights, and bucket-level allocation uses a 30% / 40% / 30% classic All Weather risk budget. Futures price returns are layered over cash collateral earning the risk-free rate. The vol-targeted variants allow up to 4.0x gross notional exposure, making the benchmark closer to the leveraged futures implementation logic of classic All Weather portfolios. This is a rules-based All Weather benchmark, not a replication of Bridgewater's actual portfolio.
+The main results remain based on the implementable **30-ETF, long-only, unlevered** universe. As a benchmark experiment, the study also constructs a **Classic All Weather Futures Benchmark**. Futures are grouped into equity/growth, duration/deflation, and inflation/commodities buckets; each bucket uses 180-day rolling inverse-volatility weights, and bucket-level allocation uses a 30% / 40% / 30% classic All Weather risk budget. Futures price returns are layered over cash collateral earning the risk-free rate, and futures scenarios deduct a 5 bps one-way cost. The vol-targeted variants allow up to 4.0x gross notional exposure. The current cache covers 22 products, but Y, OI, and ZC end on 2019-06-28, 2018-05-15, and 2022-05-11; the loader forward-fills stale prices. This is therefore a lower-confidence supplementary benchmark, not a replication of Bridgewater's actual portfolio.
 
 | Scenario | Net Annual Return | Annual Vol | Sharpe | Calmar | Max Drawdown | Avg Gross Notional |
 |---|---:|---:|---:|---:|---:|---:|
-| ETF Baseline (Improved Convex) | 5.73% | 2.92% | 1.339 | 1.238 | -4.63% | 1.00x |
-| Classic All Weather Futures (1.0x) | 4.14% | 2.07% | 1.119 | 2.625 | -1.58% | 1.00x |
-| Vol-Targeted All Weather Futures (8%) | 10.50% | 7.61% | 1.140 | 1.661 | -6.32% | 3.72x |
-| Vol-Targeted All Weather Futures (10%) | 10.76% | 8.03% | 1.113 | 1.660 | -6.48% | 3.89x |
+| ETF Baseline (Improved Convex) | 5.98% | 2.91% | 1.430 | 1.486 | -4.03% | 1.00x |
+| Classic All Weather Futures (1.0x) | 3.99% | 2.10% | 1.035 | 2.529 | -1.58% | 1.00x |
+| Vol-Targeted All Weather Futures (8%) | 9.80% | 7.70% | 1.037 | 1.360 | -7.21% | 3.71x |
+| Vol-Targeted All Weather Futures (10%) | 10.04% | 8.08% | 1.018 | 1.393 | -7.21% | 3.87x |
 
-The benchmark shows that the 1.0x All Weather futures version achieves shallower drawdown but lower return and Sharpe than the Improved Convex ETF model. Vol-targeting and futures notional leverage lift absolute returns to roughly 10.5%--10.8%, but risk-adjusted performance remains below the ETF main model. These results depend on continuous-contract construction, collateral yield, rolling windows, target-volatility rules, and gross-notional caps.
+The benchmark shows that the 1.0x All Weather futures version achieves shallower drawdown but lower return and Sharpe than the Improved Convex ETF model. Vol-targeting and futures notional leverage lift absolute returns to roughly 9.8%--10.0%, but risk-adjusted performance remains below the ETF main model. These results depend on continuous-contract construction, collateral yield, rolling windows, target-volatility rules, and gross-notional caps.
 
 ### Repository Structure
 

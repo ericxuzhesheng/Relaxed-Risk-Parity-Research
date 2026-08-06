@@ -32,7 +32,7 @@ logger = logging.getLogger("generate_thesis_numbers")
 
 # Evaluation window — update here when the researcher extends the backtest.
 _EVAL_START_DATE = "2019-01-01"
-_EVAL_END_DATE = "2026-06-30"  # latest trading day included in the performance evaluation
+_EVAL_END_DATE = "2026-07-31"  # user-approved performance evaluation cutoff
 
 # Section display names for ETF pool and stats tables.
 _ASSET_CLASS_SECTION: dict[str, str] = {

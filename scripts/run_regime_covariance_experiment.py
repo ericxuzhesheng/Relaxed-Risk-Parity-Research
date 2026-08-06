@@ -144,7 +144,7 @@ def evaluate(model_name: str, setting: str, result: pd.DataFrame, eval_start: st
 def main() -> None:
     parser = argparse.ArgumentParser(description="Regime-conditional covariance A/B + prior sweep.")
     parser.add_argument("--quick", action="store_true", help="Use a synthetic short sample for smoke testing.")
-    parser.add_argument("--cutoff", default="2026-05-31", help="Inclusive end date for the return sample.")
+    parser.add_argument("--cutoff", default="2026-07-31", help="Inclusive end date for the return sample.")
     parser.add_argument("--output-root", default="results", help="Output root containing tables/.")
     args = parser.parse_args()
 

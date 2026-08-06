@@ -14,7 +14,7 @@ cd "D:\Github Repository\Relaxed-Risk-Parity-Research"
 # 1. 修改 src/asset_universe.py（手动编辑，见下文说明）
 
 # 2. 拉取数据
-$env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
+$env:TUSHARE_TOKEN="<YOUR_TUSHARE_TOKEN>"
 python scripts/update_etf_data.py --provider tushare --start-date 20100101
 
 # 3. 运行全流程脚本（顺序不可颠倒）
@@ -149,7 +149,7 @@ python -c "from src.asset_universe import ASSET_UNIVERSE; print(len(ASSET_UNIVER
 ## Step 2：拉取数据
 
 ```powershell
-$env:TUSHARE_TOKEN="ddd1b26b20ff085ac9b60c9bd902ae76bbff60910863e8cc0168da53"
+$env:TUSHARE_TOKEN="<YOUR_TUSHARE_TOKEN>"
 python scripts/update_etf_data.py --provider tushare --start-date 20100101
 ```
 

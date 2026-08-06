@@ -405,10 +405,10 @@ HERC Benchmark & 层次化风险贡献基准模型 & 引入层次风险贡献 & 
 
 图 \ref{fig:asset_graph} 展示了资产池在平静期与主要压力期前后的跨类别相关结构变化。债券类（日利、国债、信用债）与权益、商品的相关性在压力期通常有所上升，典型的分散化效果有所削弱；黄金在多数压力期仍保持与权益的低相关或负相关，是当前资产池中分散效果最稳定的品种之一。全球股票类与中国 A 股之间的相关性在 2020 年初流动性危机和 2022 年下行期明显走高，这也是协方差估计器需要兼顾近期和历史信息的一个具体原因。不同压力情景下相关结构的变化路径，是协方差稳健性检验的重要背景。
 
-以 2022 年为具体案例，可以较清晰地观察到协方差矩阵变化如何驱动权重调整。2022 年初俄乌冲突爆发后，原油、黄金等商品波动率骤然上升，同期全球股票与 A 股宽基的相关性走高，债券类的防御价值出现压缩。本文所用 Ledoit-Wolf 收缩估计器以 252 日历史窗口为主要信息来源，在 2022 年上半年逐步将上述相关性变化纳入协方差矩阵，使权益类资产的协方差贡献在估计层面相应放大。优化器在更新的协方差矩阵输入下，结合资产组权重上限约束，将权益类配置从 2021—2022 阶段的约 5\%--16\% 压缩至更低水平，同时因 $L_1$ 换手惩罚的存在，调仓幅度受到约束，避免了对短期信号的过度追随。黄金 ETF 因与权益相关性在此期间仍相对稳定而保持稳定配置。这一机制说明，"协方差驱动权重调整"并非黑箱操作，其逻辑链条可在权重路径图（图 \ref{fig:weight_path}）与阶段性权重统计（表 \ref{tab:weight_path_stage}）中得到印证。
+以 2022 年为具体案例，可以较清晰地观察到协方差矩阵变化如何驱动权重调整。2022 年初俄乌冲突爆发后，原油、黄金等商品波动率骤然上升，同期全球股票与 A 股宽基的相关性走高，债券类的防御价值出现压缩。本文所用 Ledoit-Wolf 收缩估计器以 252 日历史窗口为主要信息来源，在 2022 年上半年逐步将上述相关性变化纳入协方差矩阵，使权益类资产的协方差贡献在估计层面相应放大。优化器在更新的协方差矩阵输入下，结合资产组权重上限约束，将权益类配置从 2021—2022 阶段的约 8\%--17\% 压缩至更低水平，同时因 $L_1$ 换手惩罚的存在，调仓幅度受到约束，避免了对短期信号的过度追随。黄金 ETF 因与权益相关性在此期间仍相对稳定而保持稳定配置。这一机制说明，"协方差驱动权重调整"并非黑箱操作，其逻辑链条可在权重路径图（图 \ref{fig:weight_path}）与阶段性权重统计（表 \ref{tab:weight_path_stage}）中得到印证。
 
 \subsection{样本构造与预处理}
-本文使用经复权处理后的可比价格序列，并据此计算相邻交易日收益率，同时对不同 ETF 的交易日进行对齐。上市前缺失价格不作填补；若某 ETF 在再平衡日前的可用历史记录不足 60 个交易日，则不参与当期优化，满足门槛后方可进入可投资宇宙。价格数据通过 Tushare 接口获取，当前缓存中最早有效价格观测为 2018-04-02，最新缓存日期为 2026-07-01；受限于各 ETF 上市时间，部分晚上市品种的有效样本更短。本文绩效评价区间自 2019-01-01 起，至 2026-06-30 止，将评价起点设定为该日期而非上市首日，是为保证多数资产在进入评价期前已积累足够的协方差估计历史窗口，避免初期样本不足带来的估计偏误。逐点时间宇宙过滤在每个再平衡日排除历史数据不足的 ETF，以避免前视信息泄露。部分资产如中证1000 ETF 上市时间较晚，因此其历史统计特征和模型参与频率与早上市 ETF 不完全一致，这一点在描述性统计与回测设计中已有体现。
+本文使用经复权处理后的可比价格序列，并据此计算相邻交易日收益率，同时对不同 ETF 的交易日进行对齐。上市前缺失价格不作填补；若某 ETF 在再平衡日前的可用历史记录不足 60 个交易日，则不参与当期优化，满足门槛后方可进入可投资宇宙。价格数据通过 Tushare 接口获取，当前缓存中最早有效价格观测为 \dataFirstDate，最新缓存日期为 \dataLastDate；受限于各 ETF 上市时间，部分晚上市品种的有效样本更短。本文绩效评价区间自 \evalStartDate{} 起，至 \evalEndDate{} 止，将评价起点设定为该日期而非上市首日，是为保证多数资产在进入评价期前已积累足够的协方差估计历史窗口，避免初期样本不足带来的估计偏误。逐点时间宇宙过滤在每个再平衡日排除历史数据不足的 ETF，以避免前视信息泄露。部分资产如中证1000 ETF 上市时间较晚，因此其历史统计特征和模型参与频率与早上市 ETF 不完全一致，这一点在描述性统计与回测设计中已有体现。
 
 \subsection{收益率、权重、交易成本与换手率定义}
 设第 $i$ 个 ETF 在第 $t$ 日价格为 $P_{i,t}$，日收益率为：
@@ -491,7 +491,7 @@ Equal Weight & \equalWeightNetReturn & \equalWeightSharpe & \equalWeightMaxDD & 
 % END MONTHLY_HS300_COMPARISON
 
 \subsection{HRP 与 HERC 基准模型对比}
-表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。如第~\ref{sec:herc_baseline}~节所述，HRP 在本资产池中退化为准现金配置（组合年化波动率 0.17\%，Sharpe $-$0.828），仍列入此处供参照。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
+表 \ref{tab:benchmark_perf} 展示了在相同评价口径下计算的 HRP 和 HERC 基准模型绩效。如第~\ref{sec:herc_baseline}~节所述，HRP 在本资产池中退化为准现金配置（组合年化波动率 \hrpVolatility，Sharpe \hrpSharpe），仍列入此处供参照。HERC 基准模型的净年化收益为 \hercNetReturn，夏普比率为 \hercSharpe，最大回撤为 \hercMaxDD，Calmar 比率为 \hercCalmar，平均月度换手率为 \hercMonthlyTurnover。
 
 HERC 的绝对年化收益（\hercNetReturn）与 Improved Convex Adaptive Global RRP 的 \improvedNetReturn 仍有明显差距。HERC 年化波动率为 \hercVolatility，在评价期内维持较高比例的债券配置；凸优化框架通过 CVaR 约束和资产组权重上限，将权益和商品的分散化维持在更高水平。
 
@@ -532,23 +532,23 @@ HERC Benchmark & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD & \
 \toprule
 Model & Stage & Bonds & China Eq. & HK Eq. & Global Eq. & Commodities \\
 \midrule
-Improved Convex & 2021--2022 & 76.08\% & 5.58\% & 0.14\% & 4.45\% & 13.75\% \\
-Improved Convex & 2023--2025 & 74.79\% & 1.30\% & 1.29\% & 9.83\% & 12.11\% \\
-Global RRP & 2021--2022 & 32.56\% & 16.06\% & 1.91\% & 6.84\% & 7.76\% \\
-Global RRP & 2023--2025 & 82.64\% & 4.65\% & 0.54\% & 3.11\% & 3.44\% \\
-HERC & 2021--2022 & 95.47\% & 1.47\% & 0.18\% & 0.94\% & 1.93\% \\
-HERC & 2023--2025 & 95.16\% & 1.74\% & 0.24\% & 0.83\% & 2.04\% \\
+Improved Convex & 2021--2022 & 71.95\% & 8.00\% & 0.68\% & 5.71\% & 13.67\% \\
+Improved Convex & 2023--2025 & 69.39\% & 8.17\% & 0.36\% & 6.42\% & 15.66\% \\
+Global RRP & 2021--2022 & 66.28\% & 16.96\% & 1.36\% & 6.25\% & 9.63\% \\
+Global RRP & 2023--2025 & 92.16\% & 4.25\% & 0.32\% & 3.47\% & 3.76\% \\
+HERC & 2021--2022 & 95.05\% & 1.73\% & 0.16\% & 0.89\% & 2.17\% \\
+HERC & 2023--2025 & 94.86\% & 2.10\% & 0.16\% & 0.97\% & 1.92\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 说明各模型绩效差异从何而来。Improved Convex Adaptive Global RRP 的权重路径较为平滑，其债券底仓在两个阶段都稳定在约 75\% 附近，其中日利 ETF（货币市场层）和国债 ETF 共同承担现金与久期管理职责；商品组配置稳定在 12--14\% 区间，主要由黄金 ETF 贡献。这种稳定性来自换手惩罚和资产组边界的约束，而不是模型自发保守。
+图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 说明各模型绩效差异从何而来。Improved Convex Adaptive Global RRP 的权重路径较为平滑，其债券底仓在两个阶段稳定在约 69\%--72\%，其中日利 ETF（货币市场层）和国债 ETF 共同承担现金与久期管理职责；商品组配置约为 14\%--16\%，主要由黄金 ETF 贡献。这种稳定性来自换手惩罚和资产组边界的约束，而不是模型自发保守。
 
-Global RRP 在没有换手约束的情况下更直接地响应协方差变化，其债券组权重从 2021--2022 阶段的 32.56\% 显著上升至 2023--2025 阶段的 82.64\%，反映出基础风险预算模型在权益类波动放大后会快速向防御性资产倾斜，调仓幅度大，换手代价也明显高于约束化版本。
+Global RRP 在没有换手约束的情况下更直接地响应协方差变化，其债券组权重从 2021--2022 阶段的 66.28\% 显著上升至 2023--2025 阶段的 92.16\%，反映出基础风险预算模型在权益类波动放大后会快速向防御性资产倾斜，调仓幅度大，换手代价也明显高于约束化版本。
 
-HERC 两个阶段的债券权重均维持在 95\% 以上，权益与商品合计不超过 5\%，是递归二分机制在波动率悬殊资产池中向低方差端自然收敛的结构性结果（详见§\ref{sec:herc_baseline}）。这说明，若不在求解器层面显式写入资产组下限约束，混合波动率资产池中的跨类别分散在算法层面无法保证；两类方法的比较价值在于揭示约束有无对配置的系统性影响，而非在同一夏普坐标上排序。
+HERC 两个阶段的债券权重均维持在约 95\%，权益与商品合计约为 5\%，是递归二分机制在波动率悬殊资产池中向低方差端自然收敛的结构性结果（详见§\ref{sec:herc_baseline}）。这说明，若不在求解器层面显式写入资产组下限约束，混合波动率资产池中的跨类别分散在算法层面无法保证；两类方法的比较价值在于揭示约束有无对配置的系统性影响，而非在同一夏普坐标上排序。
 
-货币市场 ETF（511880.SH，日利 ETF）的平均权重约 43--46\%，是最大单一持仓，但其收益贡献远低于权重占比（收益率接近无风险利率）；商品/黄金权重约 12--14\%，收益贡献份额达 43.2\%（见§\ref{sec:factor_attr}）。权重与收益贡献的不对称是风险预算在混合资产池中的典型特征。
+货币市场 ETF（511880.SH，日利 ETF）在评价期内的平均权重约 40.0\%，是最大单一持仓，但其收益贡献远低于权重占比（收益率接近无风险利率）；商品组平均权重约 14.5\%，收益贡献份额为 25.3\%（见§\ref{sec:factor_attr}）。权重与收益贡献的不对称是风险预算在混合资产池中的典型特征。
 
 \subsection{CVaR 尾部风险分析}
 \figmaybe{convex_adaptive_cvar_comparison.png}{核心模型95\%日度CVaR比较}{fig:cvar}
@@ -561,11 +561,11 @@ HERC 两个阶段的债券权重均维持在 95\% 以上，权益与商品合计
 \toprule
 Model & 95\% Daily CVaR \\
 \midrule
-Global RRP & 0.64\% \\
-Defensive Dynamic RRP & 0.65\% \\
-Convex Adaptive Global RRP & 0.60\% \\
-Improved Convex Adaptive Global RRP & 0.63\% \\
-HERC Benchmark & 0.06\% \\
+Global RRP & 0.68\% \\
+Defensive Dynamic RRP & 0.69\% \\
+Convex Adaptive Global RRP & 0.72\% \\
+Improved Convex Adaptive Global RRP & 0.40\% \\
+HERC Benchmark & 0.08\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -577,7 +577,7 @@ HERC Benchmark & 0.06\% \\
 
 \figwide{asset_pricing_factor_exposure.png}{核心模型因子暴露汇总（全样本回归）}{fig:factor_exposure}
 
-图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示全样本因子暴露回归结果。Global RRP 对债券因子的暴露显著（$\bar{\beta}_{bond}=1.682$），对权益因子暴露极低（$\bar{\beta}_{equity}=0.022$），$R^2=0.485$，全样本调整后年化 $\alpha=2.82\%$（$t=2.70$）。Improved Convex Adaptive Global RRP 的因子结构更为均衡：债券因子暴露降至 $\bar{\beta}_{bond}=0.901$，商品/黄金因子暴露上升至 $\bar{\beta}_{commodity}=0.175$，权益因子暴露约为 $\bar{\beta}_{equity}=0.119$；模型 $R^2=0.895$，年化 $\alpha=1.87\%$（$t=3.51$），说明五因子能较好解释其收益变动，且存在统计上显著的正截距。
+图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示全样本因子暴露回归结果。Global RRP 的权益、债券与商品/黄金因子系数分别为 $0.154$、$-0.056$ 与 $0.050$，$R^2=0.540$，全样本调整后年化 $\alpha=1.95\%$（$t=2.19$）。Improved Convex Adaptive Global RRP 的权益、债券与商品/黄金因子系数分别为 $0.081$、$0.023$ 与 $0.098$，模型 $R^2=0.737$，年化 $\alpha=3.30\%$（$t=7.32$）。这些系数来自代理因子回归，只用于解释历史收益结构，不能视为稳定的未来暴露。
 
 \begin{table}[H]
 \centering
@@ -588,8 +588,8 @@ HERC Benchmark & 0.06\% \\
 \toprule
 Model & $\beta_{eq}$ & $\beta_{bond}$ & $\beta_{com}$ & $\beta_{def}$ & $\beta_{global}$ & $R^2$ & $\alpha$ (Annualized) \\
 \midrule
-Global RRP & 0.022 & 1.682 & 0.058 & $-$0.014 & 0.248 & 0.485 & 2.82\% \\
-Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
+Global RRP & 0.154 & $-$0.056 & 0.050 & 0.036 & 0.115 & 0.540 & 1.95\% \\
+Improved Convex & 0.081 & 0.023 & 0.098 & 0.038 & 0.076 & 0.737 & 3.30\% \\
 \bottomrule
 \multicolumn{8}{l}{\footnotesize 因子均为代理因子，不对应特定标准化指数。} \\
 \end{tabular}
@@ -597,11 +597,11 @@ Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
 
 \figwide{asset_pricing_rolling_betas.png}{Improved Convex Adaptive Global RRP 滚动因子暴露（252日窗口）}{fig:rolling_betas}
 
-图 \ref{fig:rolling_betas} 展示两模型在 252 日滚动窗口下的因子暴露时序。Improved Convex 的债券暴露范围 $[-0.16, 2.06]$，商品暴露稳定在 $[0.11, 0.22]$。Global RRP 债券暴露均值更高（$\bar{\beta}_{bond}=1.682$），波动更大（$[-0.71, 4.11]$），反映无换手约束时对协方差变化的直接响应。
+图 \ref{fig:rolling_betas} 展示两模型在 252 日滚动窗口下的因子暴露时序。Improved Convex 的债券暴露范围为 $[-0.01,0.90]$，均值为 $0.261$；商品/黄金暴露范围为 $[0.05,0.16]$，均值为 $0.100$。Global RRP 的债券暴露范围为 $[-0.16,0.90]$，均值为 $0.133$，而权益暴露均值为 $0.230$，高于 Improved Convex 的 $0.105$。滚动系数存在明显时变性，因此这里只将其作为历史解释工具。
 
 \figpair{asset_pricing_return_attribution.png}{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:return_attr}{fig:risk_attr}
 
-表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，商品/黄金贡献最大（43.2\%），债券（27.0\%）和权益（25.3\%）次之——黄金 ETF 在样本期表现突出是主因。风险方面，权益因子方差份额最高（59.1\%），债券仅 0.8\%，债券端以低波动换取了近 27\% 的收益贡献。
+表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，权益贡献最大（55.6\%），商品/黄金（25.3\%）和债券（13.2\%）次之。风险方面，权益因子方差份额最高（63.1\%），商品/黄金为 23.6\%，债券为 4.1\%。这说明主模型并非没有权益风险，而是通过债券、商品和防御性资产降低了单一风险来源的集中度。
 
 \begin{table}[H]
 \centering
@@ -612,15 +612,15 @@ Improved Convex & 0.119 & 0.901 & 0.175 & 0.006 & 0.227 & 0.895 & 1.87\% \\
 \toprule
 Factor & Return Share & Variance Share \\
 \midrule
-权益 & 25.3\% & 59.1\% \\
-债券 & 27.0\% & 0.8\% \\
-商品/黄金 & 43.2\% & 33.8\% \\
-防御性 & 4.6\% & 6.2\% \\
+权益 & 55.6\% & 63.1\% \\
+债券 & 13.2\% & 4.1\% \\
+商品/黄金 & 25.3\% & 23.6\% \\
+防御性 & 5.9\% & 9.2\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-归因结果说明 Improved Convex Adaptive Global RRP 的分散是实质性的：收益来源分布在权益、债券和商品三个方向，债券风险贡献极低但收益贡献近 27\%，体现了低波动资产在风险预算框架中的功能价值。HERC 债券集中度高，收益与风险来源均较单一。
+归因结果说明 Improved Convex Adaptive Global RRP 的历史收益仍以权益为主，但商品/黄金、债券和防御性资产共同提供了约 44.4\% 的收益贡献；债券风险份额仅 4.1\%，体现了低波动资产在风险预算框架中的缓冲作用。HERC 债券集中度高，收益与风险来源均较单一。
 
 \subsection{小结}
 各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内体现为低波动、浅回撤和可控换手之间的折中，而不是最高收益模型；HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
@@ -631,7 +631,7 @@ Factor & Return Share & Variance Share \\
 \figpair{robustness_subperiod_sharpe.png}{robustness_subperiod_drawdown.png}{子区间夏普比率稳健性}{子区间最大回撤稳健性}{fig:sub_sharpe}{fig:sub_drawdown}
 图 \ref{fig:sub_sharpe}--\ref{fig:sub_drawdown} 展示各子区间的夏普比率和最大回撤。子区间指标通常比全样本波动更大，这里的用途是观察结论在哪些阶段有所减弱，而非寻找”最优子区间”。
 
-跨 5 个子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [0.959, 1.741]，均值 1.246，无一子区间出现负值。其最弱子区间为 2021 年后的收紧期（post\_2021），对应全球权益和债券双杀的市场环境；在该子区间内 Global RRP 的夏普比率降至 0.162，而 Improved Convex 仍维持在 0.959，展示出较强的下行防护能力，但这也是主模型在子区间内表现最逊色的阶段，需要明确披露。
+跨 5 个固定子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [0.570, 1.239]，均值 0.949，无一子区间出现负值。其最弱子区间为 2021 年后的收紧期（post\_2021），对应全球权益和债券同步承压的市场环境；在该子区间内 Global RRP 的夏普比率降至 0.034，而 Improved Convex 仍维持在 0.570，展示出相对较强的下行防护能力，但这也是主模型在固定子区间内表现最弱的阶段，需要明确披露。
 
 \figmaybe{robustness_stress_period_performance.png}{压力期表现检验}{fig:stress}
 压力期检验用于观察极端阶段组合反应。压力期标签是事后贴上去的，只用于观察组合在特定阶段的行为，不作为调参依据。
@@ -641,7 +641,7 @@ Factor & Return Share & Variance Share \\
 图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，而 Improved Convex Adaptive Global RRP 因换手显著低于 Global RRP，对成本假设相对不敏感。在已测试的 $[0, 50]$ bps 月单边费率扫描范围内，Improved Convex Adaptive Global RRP 相对于 Global RRP 的净年化收益优势始终为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal；本文 3 bps 的设定显著低于该阈值，说明主要结论对成本假设的合理变动具有稳健性。当前成本设定是固定费率，实际成本还包括冲击成本和买卖价差，后者没有纳入。
 
 \textbf{调仓频率敏感性。}
-除交易成本费率外，调仓频率本身也会影响收益、风险和可实施性。为检验月度调仓是否属于事后选择的有利设定，本文在固定 Improved Convex Adaptive Global RRP 候选参数的前提下，仅改变调仓日历，比较周度、双周、月度和季度四种频率。表~\ref{tab:rebalance_frequency_sensitivity} 与图~\ref{fig:rebalance_frequency_sensitivity} 显示，周度与双周调仓的净年化收益分别为 \freqWeeklyNetReturn{} 和 \freqBiweeklyNetReturn，Sharpe 分别为 \freqWeeklySharpe{} 和 \freqBiweeklySharpe，高于月度调仓的 \freqMonthlyNetReturn{} 和 \freqMonthlySharpe；但其月均换手率升至 \freqWeeklyMonthlyTurnover{} 和 \freqBiweeklyMonthlyTurnover，显著高于月度调仓的 \freqMonthlyMonthlyTurnover。季度调仓换手率进一步降至 \freqQuarterlyMonthlyTurnover，但净年化收益和 Sharpe 分别降至 \freqQuarterlyNetReturn{} 和 \freqQuarterlySharpe，最大回撤也扩大至 \freqQuarterlyMaxDD。由此可见，月度调仓并不是该频率检验中的最高收益设定，而是在长期配置语境下兼顾响应速度、交易成本和权重稳定性的可实施折中。
+除交易成本费率外，调仓频率本身也会影响收益、风险和可实施性。本文在固定 Improved Convex Adaptive Global RRP 候选参数的前提下，仅改变调仓日历，比较周度、双周、月度和季度四种频率。表~\ref{tab:rebalance_frequency_sensitivity} 与图~\ref{fig:rebalance_frequency_sensitivity} 显示，周度与双周调仓的净年化收益均为 \freqWeeklyNetReturn，Sharpe 均为 \freqWeeklySharpe，月均换手率分别为 \freqWeeklyMonthlyTurnover{} 和 \freqBiweeklyMonthlyTurnover；月度调仓的净年化收益为 \freqMonthlyNetReturn，Sharpe 为 \freqMonthlySharpe，月均换手率为 \freqMonthlyMonthlyTurnover。季度调仓换手率进一步降至 \freqQuarterlyMonthlyTurnover，净年化收益和 Sharpe 分别为 \freqQuarterlyNetReturn{} 和 \freqQuarterlySharpe。月度调仓在本次刷新中恰好取得四种频率中的最高净收益和 Sharpe，但研究设计仍将其视为兼顾响应速度、交易成本和权重稳定性的实施选择，而不是依据本次事后排名重新选择的参数。
 
 \IfFileExists{generated_rebalance_frequency_table.tex}{\input{generated_rebalance_frequency_table.tex}}{\textbf{[Rebalance-frequency sensitivity table not found --- run scripts/generate_thesis_numbers.py]}}
 
@@ -652,6 +652,7 @@ Factor & Return Share & Variance Share \\
 \begin{table}[H]
 \centering
 \small
+\setlength{\tabcolsep}{4pt}
 \caption{CVaR 参数敏感性分析（12 变体，基于 Improved Convex Adaptive Global RRP）}
 \label{tab:cvar_sensitivity}
 \begin{tabular}{llrrrr}
@@ -659,42 +660,42 @@ Factor & Return Share & Variance Share \\
 Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \midrule
 \multirow{4}{*}{置信水平 $\beta$}
- & 0.90  & 1.189 & 5.40\% & $-$4.94\% & 4.15\% \\
- & 0.95  & 1.186 & 5.39\% & $-$4.93\% & 4.15\% \\
- & 0.975 & 1.185 & 5.38\% & $-$4.93\% & 4.14\% \\
- & 0.99  & 1.188 & 5.39\% & $-$4.95\% & 4.12\% \\
+ & 0.90  & 1.161 & 5.29\% & $-$4.35\% & 4.03\% \\
+ & 0.95  & 1.158 & 5.28\% & $-$4.35\% & 4.02\% \\
+ & 0.975 & 1.153 & 5.26\% & $-$4.34\% & 4.02\% \\
+ & 0.99  & 1.155 & 5.26\% & $-$4.34\% & 4.00\% \\
 \midrule
 \multirow{3}{*}{回望窗口（交易日）}
- & 126   & 1.203 & 5.45\% & $-$4.95\% & 4.88\% \\
- & 252   & 1.195 & 5.42\% & $-$4.93\% & 3.91\% \\
- & 504   & 1.163 & 5.30\% & $-$4.93\% & 3.63\% \\
+ & 126   & 1.174 & 5.34\% & $-$4.36\% & 4.74\% \\
+ & 252   & 1.172 & 5.32\% & $-$4.33\% & 3.79\% \\
+ & 504   & 1.124 & 5.15\% & $-$4.35\% & 3.52\% \\
 \midrule
-全部 12 变体均值 & --- & 1.187 & 5.39\% & $-$4.94\% & 4.14\% \\
+全部 12 变体均值 & --- & 1.157 & 5.27\% & $-$4.35\% & 4.02\% \\
 \bottomrule
-\multicolumn{6}{l}{\footnotesize 各行为对应参数水平下的多个变体均值，评价起点与主模型一致，样本截至 2026-05-29。} \\
+\multicolumn{6}{l}{\footnotesize 各行为对应参数水平下的多个变体均值，评价起点与主模型一致，样本截至 \evalEndDate。} \\
 \end{tabular}
 \end{table}
 
-12 个变体的夏普比率范围为 1.163--1.203，净年化收益范围为 5.30\%--5.45\%，最大回撤均在 -4.95\% 至 -4.93\% 之间，整体结论对 CVaR 参数选择不敏感。回望窗口的影响略大于置信水平：126 日窗口的净年化收益较高但换手率也较高，504 日长窗口换手率最低，反映更长历史窗口使协方差估计更稳定，调仓幅度更小。
+12 个变体的夏普比率范围为 1.118--1.184，净年化收益范围为 5.14\%--5.36\%，最大回撤均在 $-4.38\%$ 至 $-4.32\%$ 之间，整体结论对 CVaR 参数选择不敏感。回望窗口的影响略大于置信水平：126 日窗口换手率较高，504 日长窗口换手率最低且 Sharpe 略低，反映更长历史窗口使协方差估计更稳定、调仓幅度更小，但也降低了响应速度。
 
 \figwide{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
 参数扰动采用单因素变化方式，用于观察模型是否对某一参数表现出过度敏感。在已测试的扰动范围内，主模型表现总体稳定；至于该范围之外的参数区域，本文不作外推判断。
 
-收益倾斜项 $\lambda_{return}$ 的零值测试需要单独说明，因为第三章已承诺在此处提供实证证据。将 $\lambda_{return}$ 完全设为 0（即从目标函数中彻底移除历史均值输入项），在 2019-01-01 至评价期末的完整评价窗口内，夏普比率从基准的 \improvedSharpe{} 降至 1.283（降幅约 0.15），净年化收益从 \improvedNetReturn{} 降至 4.80\%，最大回撤从 \improvedMaxDD{} 扩大至 $-4.24\%$，求解器回退率约为 1.0\%。模型在 $\lambda_{return}=0$ 下绩效有所下降但并未坍塌，夏普比率 1.283 仍处于合理可用范围，这一结果支持第三章的定性判断：$\lambda_{return}=0.06$ 对组合产生温和的方向性修正，但模型的风险调整收益基础主要来自方差控制、风险预算跟踪、CVaR 约束和换手惩罚四项风险端设计，而非历史收益的主动追踪。
+收益倾斜项 $\lambda_{return}$ 的零值测试需要单独说明，因为第三章已承诺在此处提供实证证据。将 $\lambda_{return}$ 完全设为 0（即从目标函数中彻底移除历史均值输入项），在 2019-01-01 至评价期末的完整评价窗口内，夏普比率从基准的 \improvedSharpe{} 降至 1.331（降幅约 0.10），净年化收益从 \improvedNetReturn{} 降至 5.39\%，最大回撤从 \improvedMaxDD{} 扩大至 $-4.12\%$，求解器回退率约为 2.38\%。模型在 $\lambda_{return}=0$ 下绩效有所下降但并未坍塌，夏普比率 1.331 仍处于合理可用范围，这一结果支持第三章的定性判断：$\lambda_{return}=0.06$ 对组合产生温和的方向性修正，但模型的风险调整收益基础主要来自方差控制、风险预算跟踪、CVaR 约束和换手惩罚四项风险端设计，而非历史收益的主动追踪。
 
 \subsection{协方差估计与过拟合诊断}
 \figpair{covariance_robustness_sharpe.png}{covariance_robustness_drawdown.png}{不同协方差估计下的夏普比率}{不同协方差估计下的回撤表现}{fig:cov_sharpe}{fig:cov_drawdown}
 \figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
 本文比较了 sample covariance、Ledoit-Wolf 收缩以及不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 显示主要结论不依赖单一协方差估计器，但选择不同估计器会影响权重细节和换手水平。
 
-在三类无条件估计器之外，本文进一步检验了第三章所述的状态条件协方差估计器，以考察对压力态的显式加权能否改善主模型。该估计器包含一个状态频率先验，控制对压力态协方差的加权强度。为避免以全样本绩效反向挑选先验所造成的样本内偏误，本文采用设计窗与留出窗划分：先验仅在设计窗（2019-01-01 至 2023-12-31）内、按本章验证打分函数选定，且回测历史在设计窗末端截断，选择阶段不接触其后的任何数据；随后对选定先验、标准 EWMA 基准等固定配置在留出窗内评估，绩效指标仅在留出区间计算，滚动回测保持点内（point-in-time）口径。设计窗验证选出的先验为 $\pi=0.50$、先验权重 $0.75$，即相对经验状态频率适度提高压力态权重。
+在三类无条件估计器之外，本文进一步检验了第三章所述的状态条件协方差估计器，以考察对压力态的显式加权能否改善主模型。该估计器包含一个状态频率先验，控制对压力态协方差的加权强度。为避免以全样本绩效反向挑选先验所造成的样本内偏误，本文采用设计窗与留出窗划分：先验仅在设计窗（2019-01-01 至 2023-12-31）内、按本章验证打分函数选定，且回测历史在设计窗末端截断，选择阶段不接触其后的任何数据；随后对选定先验、标准 EWMA 基准等固定配置在留出窗内评估，绩效指标仅在留出区间计算，滚动回测保持点内（point-in-time）口径。设计窗验证选出的先验为 $\pi=0.67$、先验权重 $1.00$，即在候选集合中对压力态施加最强的先验加权。
 
-在 2024-01-02 至 2026-06-30 的留出窗内，设计窗选出的状态条件估计器相对基准 EWMA 的 Sharpe 由 1.338 小幅升至 1.350，净年化收益由 5.68\% 升至 5.74\%，95\% CVaR 由 0.416\% 降至 0.414\%，但最大回撤由 $-3.30\%$ 扩大至 $-3.87\%$，月均换手由 3.39\% 小幅升至 3.40\%。在更短的 2025-01-02 起留出窗内，该设定的 Sharpe 为 1.091，略低于 EWMA 基准的 1.096，最大回撤仍为 $-3.87\%$，深于基准的 $-3.30\%$。在完整评价窗的先验扫描中，$\pi=0.50$、先验权重 $0.75$ 对应 Sharpe 1.338、最大回撤 $-3.97\%$，激进先验 $\pi=0.67$、权重 1.00 对应 Sharpe 1.322、最大回撤 $-3.79\%$，相对主 EWMA 基准的 Sharpe 1.339 与最大回撤 $-4.63\%$ 呈现一定改善，但该改善并未在留出窗中稳定转化为更浅回撤。上述结果与 Ielpo 等（2024）\cite{ielpo2024regime} 状态平价构造的理论方向并不矛盾：对罕见但严重的压力态加权可能改变尾部风险暴露；但本文样本中的改善依赖先验设定和评价窗口，不能作为替换主模型的新基准。因此，本文将状态条件协方差定位为对主模型的稳健性补充，而非新的主结果。需要说明的是，CSCV/PBO 依赖非连续时间区块的拼接，与本文路径依赖的滚动回测口径不兼容，故此处的样本外检验采用设计窗与留出窗的时间序贯划分，而非区块重组。
+在 2024-01-02 至 \evalEndDate{} 的留出窗内，设计窗选出的状态条件估计器相对基准 EWMA 的 Sharpe 由 1.546 升至 1.594，净年化收益均约为 6.40\%，95\% CVaR 由 0.412\% 降至 0.396\%，月均换手由 1.35\% 降至 1.18\%；但最大回撤由 $-2.08\%$ 扩大至 $-2.58\%$。在更短的 2025-01-02 起留出窗内，该设定的 Sharpe 为 1.706，高于 EWMA 基准的 1.583，最大回撤仍为 $-2.58\%$，深于基准的 $-2.08\%$。在完整评价窗的先验扫描中，选定的激进先验对应 Sharpe 1.419、最大回撤 $-3.91\%$、95\% CVaR 0.392\% 和月均换手 2.24\%，相对主 EWMA 基准的 1.430、$-4.03\%$、0.404\% 和 2.09\% 呈现尾部与回撤改善、但收益效率和换手略有恶化的混合结果。上述结果与 Ielpo 等（2024）\cite{ielpo2024regime} 状态平价构造的理论方向并不矛盾：对罕见但严重的压力态加权可能改变尾部风险暴露；但本文样本中的改善依赖先验设定、指标和评价窗口，不能作为替换主模型的新基准。因此，本文将状态条件协方差定位为对主模型的稳健性补充，而非新的主结果。需要说明的是，CSCV/PBO 依赖非连续时间区块的拼接，与本文路径依赖的滚动回测口径不兼容，故此处的样本外检验采用设计窗与留出窗的时间序贯划分，而非区块重组。
 
 \figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
-回测中的多重假设检验问题长期存在。White 的现实检验法通过自助法比较最优策略与随机基准的胜出概率，是处理数据窥探偏差的早期统计框架\cite{white2000reality}；Harvey 和 Liu 进一步梳理了多次回测搜索造成统计显著性失真的机制\cite{harvey2015backtesting}。本文采用 CSCV/PBO 来估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。本次运行使用 36 个候选和 35 个区块分割，得到的 PBO 为 0.429。PBO 低于 0.5，说明样本内表现靠前的候选在样本外排序中仍大致位于中位数以上；中位逻辑秩为 0.288，也高于随机基准。这一结果支持主模型结论具有一定稳健性，但它仍然只是对参数选择偏差程度的估计，不能被理解为对未来样本外表现的保证。\footnote{本文 PBO 计算在 CSCV 排名前设置了两项拒绝门：最大回撤超过 $-7.5\%$ 或月均换手超过 3\% 的候选被剔除后才进入 CSCV 候选池。这与 Bailey et al.（2016）\cite{bailey2014probability} 要求的全集 CSCV 计算存在差异，拒绝门的使用会使报告的 PBO 低于全集 PBO。此外，冻结样本外窗口约 17 个月，统计功效有限。上述两点局限意味着本文的 PBO 估计应理解为参考值而非严格的过拟合概率上界。}
+回测中的多重假设检验问题长期存在。White 的现实检验法通过自助法比较最优策略与随机基准的胜出概率，是处理数据窥探偏差的早期统计框架\cite{white2000reality}；Harvey 和 Liu 进一步梳理了多次回测搜索造成统计显著性失真的机制\cite{harvey2015backtesting}。本文采用 CSCV/PBO 来估计候选参数选择带来的过拟合概率\cite{bailey2014probability,bailey2017pbo}。增强版诊断使用 36 个候选、10 个时间区块和 12 个组合分割，得到的 PBO 为 0.250，平均样本外相对秩为 0.359。PBO 低于 0.5，说明在这些分割中，样本内胜出候选落入样本外后半区的比例低于一半。这一结果支持主模型结论具有一定稳健性，但它仍然只是对参数选择偏差程度的估计，不能被理解为对未来样本外表现的保证。\footnote{增强版 CSCV 使用完整的 36 个候选集合，但为控制路径依赖回测的计算量，仅抽取 12 个组合分割；组合数量有限会降低估计精度。因此，本文将 PBO 理解为参考性诊断，而非严格的过拟合概率上界。}
 
-滚动前向验证（Walk-Forward）含 23 个测试切片，净年化收益 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}，夏普比率 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}，最大回撤均值 \walkforwardMaxddMean；切片较短，应作为滚动诊断证据而非机械外推依据。冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 2026-05-29，候选参数 \frozenOosCandidate，结果受样本期全球权益修复和黄金等分散资产支撑，应理解为特定市场背景下的条件性外样本证据。
+滚动前向验证（Walk-Forward）含 23 个测试切片，净年化收益 \walkforwardNetreturnMean{}$\pm$\walkforwardNetreturnStd{}，夏普比率 \walkforwardSharpeMean{}$\pm$\walkforwardSharpeStd{}，最大回撤均值 \walkforwardMaxddMean；切片较短，应作为滚动诊断证据而非机械外推依据。伪冻结样本外检验（Frozen OOS）区间为 2025-01-02 至 \evalEndDate，候选参数 \frozenOosCandidate；由于 2025 年后的数据在早期研究迭代中可能已经被观察，该结果只能作为条件性补充证据，不能视为严格的未见样本验证。
 
 \subsection{统计显著性检验}
 本节用两个互补的检验方法评估绩效指标的抽样稳定性。第一个是移动分块自助法（Moving Block Bootstrap）：对历史收益率进行有放回随机分块重抽样（200 个样本，块长 21 日，仅在验证区间内进行），检验绩效指标的抽样分布。
@@ -706,21 +707,22 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \begin{table}[H]
 \centering
 \small
+\setlength{\tabcolsep}{4pt}
 \caption{分块自助法绩效分布（200 次重抽样，块长 21 日）}
 \label{tab:bootstrap_summary}
 \begin{tabular}{lrrrrrr}
 \toprule
 Model & Sharpe Mean & Sharpe P5 & Sharpe P50 & Sharpe P95 & MDD Mean & MDD P5 \\
 \midrule
-Global RRP & 0.616 & $-$0.010 & 0.618 & 1.181 & $-$6.93\% & $-$13.53\% \\
-Convex Adaptive & 0.683 & 0.085 & 0.692 & 1.246 & $-$8.40\% & $-$13.38\% \\
-Improved Convex & 0.662 & 0.063 & 0.634 & 1.328 & $-$7.98\% & $-$12.77\% \\
+Global RRP & 0.614 & 0.131 & 0.624 & 1.156 & $-$7.88\% & $-$12.51\% \\
+Convex Adaptive & 0.869 & 0.389 & 0.866 & 1.359 & $-$7.41\% & $-$11.00\% \\
+Improved Convex & 0.936 & 0.418 & 0.900 & 1.522 & $-$6.54\% & $-$9.99\% \\
 \bottomrule
 \multicolumn{7}{l}{\footnotesize P5/P50/P95 为对应分位数，MDD P5 为最大回撤的第 5 百分位（最差情形）。} \\
 \end{tabular}
 \end{table}
 
-关键发现：Improved Convex Adaptive Global RRP 的 Sharpe P5 分位为 0.063，最差 5\% 情形仍略高于零；Global RRP 的 P5 为 $-$0.010，不利区间存在接近零或负值的风险。Improved Convex 的 P50 中位数（0.634）低于全样本 Sharpe（\improvedSharpe{}），说明分块重抽样下的路径扰动会削弱但未完全消除其风险调整收益优势。分块自助法不能替代真实样本外检验，它估计的是历史数据抽样变异对结论的影响幅度。
+关键发现：Improved Convex Adaptive Global RRP 的 Sharpe P5 分位为 0.418，Global RRP 的 P5 为 0.131；两者在本次 200 次分块重抽样中的第 5 百分位均高于零，但主模型下界更高。Improved Convex 的 P50 中位数（0.900）低于全样本 Sharpe（\improvedSharpe{}），说明分块重抽样下的路径扰动会削弱但未消除其风险调整收益优势。分块自助法不能替代真实样本外检验，它估计的是历史数据抽样变异对结论的影响幅度。
 
 第二个是成对夏普差异检验。\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
 
@@ -762,7 +764,7 @@ Improved Convex Adaptive Global RRP 相对各参照系的夏普优势在 95\% �
 
 HERC 在当前样本中夏普比率不低，但原因需要说清楚：几乎全仓债券，夏普比率来自极低的波动，而不是多资产分散。这和主模型是两种不同的配置思路，本文没有把它们放在同一个评价坐标上排序。
 
-稳健性检验方面，PBO = 0.429 说明候选选择带来的过拟合风险在可接受范围内，协方差估计器的选择不改变主要结论；调仓频率检验进一步表明，月度调仓不是事后最高收益频率，而是低换手和响应速度之间的实施折中。但这些检验只能覆盖已测试的维度，所有结论都依赖当前的评价区间（\evalStartDate{} 至 \evalEndDate）和成本假设。
+稳健性检验方面，增强版 PBO = 0.250 表明候选选择风险在已测试分割中低于随机中位基准，协方差估计器的选择不改变主要结论；月度调仓在本次频率检验中恰好取得最高净收益和 Sharpe，但其研究定位仍是低换手和响应速度之间的实施折中，而非依据事后排名重新选择的参数。这些检验只能覆盖已测试的维度，所有结论都依赖当前的评价区间（\evalStartDate{} 至 \evalEndDate）和成本假设。
 
 本文所有实证结论均在\textbf{纯多头、无杠杆}约束下取得。根据证监会《公开募集证券投资基金运作管理办法》，普通开放式基金杠杆不超过 0.4 倍，封闭期内不超过 1 倍，货币市场基金不超过 0.2 倍，标准风险平价"加杠杆平抑权益波动"的核心机制因此在公募语境下受到严格限制。本文的定位是：在无杠杆、有交易成本、有权重上限的约束下，引入 CVaR 约束和换手惩罚的宽松风险平价框架能产生 Sharpe \improvedSharpe、最大回撤 \improvedMaxDD 的表现，为公募 FOF、银行理财子及保险委外等无法使用杠杆的稳健型资金提供可执行的多资产风险预算路径。
 
@@ -829,6 +831,7 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
 本文进一步构造一个经典全天候期货基准（Classic All Weather Futures Benchmark）作为对照实验。该实验不再把期货作为本文 RRP 模型的增强版本，而是单独模拟经典全天候思想中的三个风险来源：权益/增长、久期/通缩、通胀/商品。每个风险桶内部采用 180 日滚动逆波动权重，桶间采用 30\% / 40\% / 30\% 的经典全天候风险预算；组合收益由期货价格收益叠加现金抵押收益构成，目标波动率版本在月度再平衡日根据过去波动率调整名义敞口，并将最大名义敞口限制为 4.0 倍。该设置用于比较 ETF-only RRP 与期货化全天候框架的结构差异，不代表对桥水真实全天候产品的复现。
 
 \begin{small}
+\setlength{\tabcolsep}{5.5pt}
 \begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.6cm}%
   >{\raggedright\arraybackslash}p{5.7cm}%
   >{\raggedright\arraybackslash}p{5.7cm}@{}}
@@ -883,8 +886,8 @@ Sharpe \improvedSharpe{} 来自 CVaR 约束对尾部损失的直接锚定和收�
   0.36\%（1.0x）至约 1.42\%（目标波动率版本） \\
 \addlinespace
 代表性绩效 &
-  Sharpe 1.339，最大回撤 $-4.63\%$，净年化 5.73\% &
-  1.0x 全天候：Sharpe 1.119，最大回撤 $-1.58\%$，净年化 4.14\%；目标波动率版本净年化约 10.5\%--10.8\%，Sharpe 约 1.11--1.14 \\
+  Sharpe \improvedSharpe，最大回撤 \improvedMaxDD，净年化 \improvedNetReturn{} &
+  1.0x 全天候：Sharpe 1.035，最大回撤 $-1.58\%$，净年化 3.99\%；目标波动率版本净年化约 9.8\%--10.0\%，Sharpe 约 1.02--1.04 \\
 \end{longtable}
 \end{small}
 
@@ -905,20 +908,20 @@ R_{\text{total},t} = r_{f,t} + g_t R_{\text{AW futures},t}
 \toprule
 场景 & 净年化收益 & 年化波动率 & Sharpe & Calmar & 最大回撤 & 月均换手率 & 平均名义敞口 \\
 \midrule
-场景0：ETF 基准（Improved Convex，30 支 ETF） & 5.73\% & 2.92\% & \textbf{1.339} & 1.238 & $-4.63\%$ & \improvedMonthlyTurnover{} & 1.00x \\
-场景1：经典全天候期货基准（1.0x）             & 4.14\% & 2.07\% & 1.119 & \textbf{2.625} & $-1.58\%$ & 0.36\% & 1.00x \\
-场景2：目标波动率全天候期货（8\%）            & 10.50\% & 7.61\% & 1.140 & 1.661 & $-6.32\%$ & 1.37\% & 3.72x \\
-场景3：目标波动率全天候期货（10\%）           & 10.76\% & 8.03\% & 1.113 & 1.660 & $-6.48\%$ & 1.42\% & 3.89x \\
+场景0：ETF 基准（Improved Convex，30 支 ETF） & \improvedNetReturn{} & \improvedVolatility{} & \textbf{\improvedSharpe} & \improvedCalmar{} & \improvedMaxDD{} & \improvedMonthlyTurnover{} & 1.00x \\
+场景1：经典全天候期货基准（1.0x）             & 3.99\% & 2.10\% & 1.035 & \textbf{2.529} & $-1.58\%$ & 0.36\% & 1.00x \\
+场景2：目标波动率全天候期货（8\%）            & 9.80\% & 7.70\% & 1.037 & 1.360 & $-7.21\%$ & 1.36\% & 3.71x \\
+场景3：目标波动率全天候期货（10\%）           & 10.04\% & 8.08\% & 1.018 & 1.393 & $-7.21\%$ & 1.41\% & 3.87x \\
 \bottomrule
 \end{tabular}%
 }
 \par\smallskip
-\noindent\parbox{\linewidth}{\footnotesize\raggedright 注：期货品种经由 Tushare 接入，覆盖中金所（CFFEX）、大商所（DCE）、上期所（SHFE）、上期能源（INE）、郑商所（ZCE）等交易所。目标波动率版本按过去实现波动率调整名义敞口，最大名义敞口限制为 4.0 倍。}
+\noindent\parbox{\linewidth}{\footnotesize\raggedright 注：期货品种经由 Tushare 接入，覆盖 22 个品种，期货场景扣除 5 bps 单边成本。Y、OI、ZC 的最后可得日期分别为 2019-06-28、2018-05-15 和 2022-05-11；加载器会前向填充停更价格。目标波动率版本最大名义敞口为 4.0 倍，因此本表仅作为低置信度的补充基准。}
 \end{table}
 
-表 \ref{tab:futures_comparison} 表明，经典全天候期货基准在 1.0 倍名义敞口下具有更浅的最大回撤（$-1.58\%$）和更高的 Calmar（2.625），但净年化收益为 4.14\%，Sharpe 为 1.119，低于本文 ETF 主模型。这说明未杠杆化全天候框架确实能通过久期和商品期货降低路径风险，但其资本利用效率不足。
+表 \ref{tab:futures_comparison} 表明，经典全天候期货基准在 1.0 倍名义敞口下具有更浅的最大回撤（$-1.58\%$）和更高的 Calmar（2.529），但净年化收益为 3.99\%，Sharpe 为 1.035，低于本文 ETF 主模型。这说明未杠杆化全天候框架确实能通过久期和商品期货降低路径风险，但其资本利用效率不足。
 
-目标波动率版本更接近经典全天候的期货实现逻辑：8\% 目标波动率版本净年化收益提高至 10.50\%，10\% 目标波动率版本为 10.76\%。但两者 Sharpe 分别为 1.140 和 1.113，仍低于 ETF 主模型的 1.339；同时最大回撤扩大至约 $-6.3\%$--$-6.5\%$。这说明期货化名义敞口可以提高绝对收益空间，但收益提升主要来自风险敞口放大，而非单位风险收益的改善。
+目标波动率版本更接近经典全天候的期货实现逻辑：8\% 目标波动率版本净年化收益提高至 9.80\%，10\% 目标波动率版本为 10.04\%。但两者 Sharpe 分别为 1.037 和 1.018，仍低于 ETF 主模型的 \improvedSharpe；最大回撤均扩大至约 $-7.21\%$。这说明期货化名义敞口可以提高绝对收益空间，但收益提升主要来自风险敞口放大，而非单位风险收益的改善。
 
 因此，期货化全天候基准更适合作为结构性对照：它展示了经典风险平价在衍生品和目标波动率框架下的资金效率，也说明本文主模型的优势并非来自简单期货替换或名义敞口放大，而是来自 CVaR 约束、换手惩罚和资产组约束共同作用下的优化结构。
 
@@ -928,9 +931,9 @@ R_{\text{total},t} = r_{f,t} + g_t R_{\text{AW futures},t}
 本节将本模型与桥水（Bridgewater Associates）中国版全天候策略（All Weather China）并排对比。两者都以风险平价为底层逻辑，但在牌照约束、工具选择和资金效率哲学上差异显著。
 
 \begin{small}
-\begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.6cm}%
-  >{\raggedright\arraybackslash}p{5.8cm}%
-  >{\raggedright\arraybackslash}p{5.8cm}@{}}
+\begin{longtable}{@{}>{\bfseries\raggedright\arraybackslash}p{2.55cm}%
+  >{\raggedright\arraybackslash}p{5.75cm}%
+  >{\raggedright\arraybackslash}p{5.75cm}@{}}
 \caption{本论文改进凸模型与桥水全天候策略横向对比$^{a}$}\label{tab:bridgewater_compare}\\
 \toprule
 对比维度 & 本论文改进凸模型（公募视角） & 桥水全天候策略（外资私募视角） \\
@@ -945,7 +948,7 @@ R_{\text{total},t} = r_{f,t} + g_t R_{\text{AW futures},t}
 \multicolumn{3}{r}{\small\itshape （接下页）} \\
 \endfoot
 \bottomrule
-\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14.2cm}@{}}{\footnotesize $^{a}$~桥水全天候策略相关描述参考：Bridgewater Associates（2012）\cite{bridgewater2012allweather}。} \\
+\multicolumn{3}{@{}>{\raggedright\arraybackslash}p{14.05cm}@{}}{\footnotesize $^{a}$~桥水全天候策略相关描述参考：Bridgewater Associates（2012）\cite{bridgewater2012allweather}。} \\
 \endlastfoot
 牌照与杠杆红线 &
 公募基金/银行理财子/保险委外受限资金。《公募基金运作管理办法》：开放式基金总资产不超过净资产 140\%；本文实证严格设定为无杠杆（$\sum w_i=1$，$w_i\geq 0$），主动对标监管红线以下运营。 &
@@ -1015,7 +1018,7 @@ ID & Look. & Cov. & MaxW & TO Cap & $\lambda_{to}$ & $\lambda_{budget}$ & $\lamb
 \endhead
 candidate\_01 & 180 & ewma & 40\% & 35\% & 0.020 & 0.350 & 0.200 & 0.95 & 0.050 \\
 candidate\_02 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.050 \\
-\textit{candidate\_03} & \textit{252} & \textit{ewma} & \textit{40\%} & \textit{60\%} & \textit{0.020} & \textit{0.250} & \textit{0.150} & \textit{0.95} & \textit{0.060} \\
+\textbf{\textit{candidate\_03}} & \textbf{\textit{252}} & \textbf{\textit{ewma}} & \textbf{\textit{40\%}} & \textbf{\textit{60\%}} & \textbf{\textit{0.020}} & \textbf{\textit{0.250}} & \textbf{\textit{0.150}} & \textbf{\textit{0.95}} & \textbf{\textit{0.060}} \\
 candidate\_04 & 252 & ewma & 40\% & 60\% & 0.020 & 0.250 & 0.150 & 0.95 & 0.060 \\
 candidate\_05 & 252 & ewma & 40\% & 60\% & 0.020 & 0.250 & 0.150 & 0.95 & 0.060 \\
 candidate\_06 & 120 & ewma & 45\% & 80\% & 0.010 & 0.050 & 0.080 & 0.95 & 0.050 \\
@@ -1035,7 +1038,7 @@ candidate\_19 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.200 & 0.95 & 0.050 
 candidate\_20 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.060 \\
 candidate\_21 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.080 \\
 candidate\_22 & 252 & ewma & 45\% & 80\% & 0.010 & 0.100 & 0.080 & 0.95 & 0.100 \\
-\textbf{candidate\_23} & \textbf{252} & \textbf{ewma} & \textbf{45\%} & \textbf{80\%} & \textbf{0.020} & \textbf{0.100} & \textbf{0.080} & \textbf{0.95} & \textbf{0.060} \\
+candidate\_23 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.060 \\
 candidate\_24 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.060 \\
 candidate\_25 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
 candidate\_26 & 252 & ewma & 45\% & 80\% & 0.020 & 0.100 & 0.080 & 0.95 & 0.080 \\
@@ -1050,7 +1053,7 @@ candidate\_34 & 120 & ewma & 45\% & 100\% & 0.000 & 0.050 & 0.050 & 0.95 & 0.060
 candidate\_35 & 252 & ewma & 40\% & 35\% & 0.030 & 0.350 & 0.200 & 0.90 & 0.050 \\
 candidate\_36 & 120 & sample & 40\% & --- & 0.020 & 0.100 & 0.100 & 0.95 & 0.050 \\
 \bottomrule
-\multicolumn{10}{@{}p{12.8cm}@{}}{\footnotesize 加粗行为 Frozen OOS 使用的冻结候选（candidate\_23）；斜体行为本次完整样本历史评价选中的主结果候选（candidate\_03）。"---" 表示换手上限无约束。} \\
+\multicolumn{10}{@{}p{12.8cm}@{}}{\footnotesize 加粗斜体行为当前伪冻结样本外检验与完整样本历史评价共同使用的 candidate\_03；由于 2025 年后数据可能已在此前研究迭代中被观察，该检验不构成严格未见样本证据。"---" 表示换手上限无约束。} \\
 \end{longtable}
 }
 

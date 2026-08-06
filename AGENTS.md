@@ -71,25 +71,25 @@ Do claim where appropriate:
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 | Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
 
-Current results (evaluation from `2019-01-01` to `2026-06-30`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2018-04-02; latest cache date is 2026-07-01; point-in-time universe filtering applied):
+Current results (evaluation from `2019-01-01` to `2026-07-31`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2015-11-19; latest cache date is 2026-07-31; point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.73%** | **2.92%** | **1.339** | **1.965** | **-4.63%** | **1.238** | **2.21%** |
-| Convex Adaptive Global RRP | 6.46% | 5.18% | 0.896 | 1.365 | -6.75% | 0.958 | 1.28% |
-| Global RRP | 4.29% | 4.17% | 0.593 | 0.683 | -7.17% | 0.599 | 23.27% |
-| Defensive Dynamic RRP | 4.59% | 4.38% | 0.633 | 0.782 | -7.10% | 0.647 | 24.38% |
-| HERC Benchmark | 2.25% | 0.57% | 0.747 | 1.083 | -0.58% | 3.879 | 5.65% |
-| HRP Benchmark | 1.68% | 0.17% | -0.827 | -1.365 | -0.08% | 20.577 | 1.10% |
-| Equal Weight | 10.65% | 11.20% | 0.788 | 1.253 | -13.90% | 0.766 | 1.21% |
+| **Improved Convex Adaptive Global RRP** | **5.98%** | **2.91%** | **1.430** | **2.165** | **-4.03%** | **1.486** | **2.09%** |
+| Convex Adaptive Global RRP | 6.67% | 5.19% | 0.935 | 1.455 | -5.74% | 1.162 | 1.31% |
+| Global RRP | 4.67% | 4.16% | 0.686 | 0.815 | -5.91% | 0.791 | 23.63% |
+| Defensive Dynamic RRP | 4.85% | 4.40% | 0.690 | 0.879 | -7.12% | 0.682 | 24.65% |
+| HERC Benchmark | 2.29% | 0.61% | 0.774 | 1.168 | -0.56% | 4.113 | 6.21% |
+| HRP Benchmark | 1.72% | 0.18% | -0.550 | -0.905 | -0.08% | 21.323 | 1.29% |
+| Equal Weight | 10.00% | 11.13% | 0.735 | 1.179 | -13.79% | 0.725 | 1.21% |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.339 and Sortino 1.965, delivering 5.73% net annual return with max drawdown -4.63% at 2.21% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-06-30, with point-in-time investability filtering so later-listed ETFs only enter after sufficient valid observations. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.17%) drives its minimal downside but also leaves minimal opportunity for excess return.
+**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.430 and Sortino 2.165, delivering 5.98% net annual return with max drawdown -4.03% at 2.09% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-07-31, with point-in-time investability filtering so later-listed ETFs only enter after sufficient valid observations. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.18%) drives its minimal downside but also leaves minimal opportunity for excess return.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Data range: `2018-04-02` to `2026-07-01`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Data range: `2015-11-19` to `2026-07-31`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -185,7 +185,7 @@ Use these figure embeds when files exist:
 - `results/figures/convex_adaptive_cvar_comparison.png`
 - `results/figures/rebalance_frequency_sensitivity.png`
 
-The NAV explanation should compare cumulative performance across Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP. The drawdown explanation focuses on stress-period risk control. The turnover explanation focuses on implementability. The CVaR explanation focuses on tail-risk control. The rebalance-frequency explanation should state that monthly rebalancing is an implementation-oriented compromise, not the ex-post highest-return frequency.
+The NAV explanation should compare cumulative performance across Global RRP, Convex Adaptive Global RRP, and Improved Convex Adaptive Global RRP. The drawdown explanation focuses on stress-period risk control. The turnover explanation focuses on implementability. The CVaR explanation focuses on tail-risk control. The rebalance-frequency explanation should state that monthly rebalancing is an implementation-oriented compromise selected for responsiveness, trading cost, and allocation stability rather than ex-post ranking; if it happens to rank first in the latest sample, disclose that explicitly.
 
 ---
 

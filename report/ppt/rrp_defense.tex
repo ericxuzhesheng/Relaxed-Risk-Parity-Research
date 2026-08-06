@@ -27,48 +27,52 @@
 % ── 数值宏（全部来自 generated_numbers.tex）──────────────────────────────────
 \newcommand{\etfCount}{30}
 \newcommand{\evalStartDate}{2019-01-01}
-\newcommand{\evalEndDate}{2026-06-30}
-\newcommand{\evalMonths}{90}
+\newcommand{\evalEndDate}{2026-07-31}
+\newcommand{\evalMonths}{91}
 \newcommand{\txCostBps}{3}
 \newcommand{\riskFreeRate}{1.82\%}
-\newcommand{\dataFirstDate}{2018-04-02}
+\newcommand{\dataFirstDate}{2015-11-19}
+\newcommand{\dataLastDate}{2026-07-31}
 % Global RRP
-\newcommand{\globalNetReturn}{4.29\%}
-\newcommand{\globalVolatility}{4.17\%}
-\newcommand{\globalSharpe}{0.593}
-\newcommand{\globalSortino}{0.683}
-\newcommand{\globalMaxDD}{-7.17\%}
-\newcommand{\globalMonthlyTurnover}{23.27\%}
+\newcommand{\globalNetReturn}{4.67\%}
+\newcommand{\globalVolatility}{4.16\%}
+\newcommand{\globalSharpe}{0.686}
+\newcommand{\globalSortino}{0.815}
+\newcommand{\globalMaxDD}{-5.91\%}
+\newcommand{\globalMonthlyTurnover}{23.63\%}
 % Convex Adaptive
-\newcommand{\convexNetReturn}{6.46\%}
-\newcommand{\convexVolatility}{5.18\%}
-\newcommand{\convexSharpe}{0.896}
-\newcommand{\convexSortino}{1.365}
-\newcommand{\convexMaxDD}{-6.75\%}
-\newcommand{\convexMonthlyTurnover}{1.28\%}
+\newcommand{\convexNetReturn}{6.67\%}
+\newcommand{\convexVolatility}{5.19\%}
+\newcommand{\convexSharpe}{0.935}
+\newcommand{\convexSortino}{1.455}
+\newcommand{\convexMaxDD}{-5.74\%}
+\newcommand{\convexMonthlyTurnover}{1.31\%}
 % Improved Convex（主模型）
-\newcommand{\improvedNetReturn}{5.73\%}
-\newcommand{\improvedVolatility}{2.92\%}
-\newcommand{\improvedSharpe}{1.339}
-\newcommand{\improvedSortino}{1.965}
-\newcommand{\improvedMaxDD}{-4.63\%}
-\newcommand{\improvedCalmar}{1.238}
-\newcommand{\improvedMonthlyTurnover}{2.21\%}
+\newcommand{\improvedNetReturn}{5.98\%}
+\newcommand{\improvedVolatility}{2.91\%}
+\newcommand{\improvedSharpe}{1.430}
+\newcommand{\improvedSortino}{2.165}
+\newcommand{\improvedMaxDD}{-4.03\%}
+\newcommand{\improvedCalmar}{1.486}
+\newcommand{\improvedMonthlyTurnover}{2.09\%}
 % HERC
-\newcommand{\hercNetReturn}{2.25\%}
-\newcommand{\hercVolatility}{0.57\%}
-\newcommand{\hercSharpe}{0.747}
-\newcommand{\hercSortino}{1.083}
-\newcommand{\hercMaxDD}{-0.58\%}
+\newcommand{\hercNetReturn}{2.29\%}
+\newcommand{\hercVolatility}{0.61\%}
+\newcommand{\hercSharpe}{0.774}
+\newcommand{\hercSortino}{1.168}
+\newcommand{\hercMaxDD}{-0.56\%}
+\newcommand{\hercMonthlyTurnover}{6.21\%}
 % 等权 / 60-40
-\newcommand{\equalNetReturn}{10.65\%}
-\newcommand{\equalSharpe}{0.788}
-\newcommand{\equalSortino}{1.253}
-\newcommand{\equalMaxDD}{-13.90\%}
-\newcommand{\sixtyFortyNetReturn}{8.18\%}
-\newcommand{\sixtyFortySharpe}{0.705}
-\newcommand{\sixtyFortySortino}{1.127}
-\newcommand{\sixtyFortyMaxDD}{-14.39\%}
+\newcommand{\equalNetReturn}{10.00\%}
+\newcommand{\equalSharpe}{0.735}
+\newcommand{\equalSortino}{1.179}
+\newcommand{\equalMaxDD}{-13.79\%}
+\newcommand{\equalMonthlyTurnover}{1.21\%}
+\newcommand{\sixtyFortyNetReturn}{7.45\%}
+\newcommand{\sixtyFortySharpe}{0.624}
+\newcommand{\sixtyFortySortino}{1.002}
+\newcommand{\sixtyFortyMaxDD}{-14.99\%}
+\newcommand{\sixtyFortyMonthlyTurnover}{1.40\%}
 % Walk-forward
 \newcommand{\wfSharpeMean}{1.116}
 \newcommand{\wfSharpeMedian}{1.014}
@@ -76,21 +80,21 @@
 \newcommand{\wfReturnMedian}{6.37\%}
 \newcommand{\wfDDMean}{-2.07\%}
 % 统计检验
-\newcommand{\improvedVsGlobalDiff}{0.757}
-\newcommand{\improvedVsGlobalPValue}{0.004}
+\newcommand{\improvedVsGlobalDiff}{0.744}
+\newcommand{\improvedVsGlobalPValue}{0.005}
 % 调仓频率敏感性
-\newcommand{\freqWeeklyNetReturn}{5.55\%}
-\newcommand{\freqWeeklySharpe}{1.278}
-\newcommand{\freqWeeklyMaxDD}{-4.73\%}
-\newcommand{\freqWeeklyMonthlyTurnover}{3.38\%}
-\newcommand{\freqBiweeklyNetReturn}{5.58\%}
-\newcommand{\freqBiweeklySharpe}{1.286}
-\newcommand{\freqBiweeklyMaxDD}{-4.59\%}
-\newcommand{\freqBiweeklyMonthlyTurnover}{2.80\%}
-\newcommand{\freqQuarterlyNetReturn}{5.67\%}
-\newcommand{\freqQuarterlySharpe}{1.295}
-\newcommand{\freqQuarterlyMaxDD}{-4.79\%}
-\newcommand{\freqQuarterlyMonthlyTurnover}{1.68\%}
+\newcommand{\freqWeeklyNetReturn}{5.78\%}
+\newcommand{\freqWeeklySharpe}{1.362}
+\newcommand{\freqWeeklyMaxDD}{-4.06\%}
+\newcommand{\freqWeeklyMonthlyTurnover}{3.23\%}
+\newcommand{\freqBiweeklyNetReturn}{5.78\%}
+\newcommand{\freqBiweeklySharpe}{1.366}
+\newcommand{\freqBiweeklyMaxDD}{-4.15\%}
+\newcommand{\freqBiweeklyMonthlyTurnover}{2.66\%}
+\newcommand{\freqQuarterlyNetReturn}{5.96\%}
+\newcommand{\freqQuarterlySharpe}{1.410}
+\newcommand{\freqQuarterlyMaxDD}{-4.03\%}
+\newcommand{\freqQuarterlyMonthlyTurnover}{1.65\%}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -242,7 +246,7 @@
   \end{alertblock}
 \end{frame}
 
-\begin{frame}{风险预算与层次化方法：本文连接点}
+\begin{frame}[shrink=5]{风险预算与层次化方法：本文连接点}
   \begin{columns}[T]
     \begin{column}{0.48\textwidth}
       \textbf{风险平价与宽松风险预算}
@@ -262,7 +266,7 @@
       \end{itemize}
     \end{column}
   \end{columns}
-  \vspace{0.6em}
+  \vspace{0.2em}
   \begin{block}{本文连接点}
     \centering
     风险预算提供可解释目标，凸优化框架提供 CVaR、换手率和资产组约束的统一实现方式。
@@ -360,20 +364,20 @@
   \vspace{0.4em}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
-      \textbf{参数冻结：防止过拟合的关键}
+      \textbf{参数固定与验证角色}
       \begin{enumerate}
-        \item 在\textbf{训练集}内网格搜索超参数候选
-        \item 筛选 OOS 期稳健的候选集
-        \item \textbf{冻结}后在 \evalStartDate{}—\evalEndDate{} 重跑
-        \item 评价期不重新优化，避免回看样本
+        \item 历史评价从 36 个候选中选出 candidate\_03
+        \item 稳健性与敏感性诊断均固定该候选，不再重选
+        \item 伪冻结窗口为 2025-01-02—\evalEndDate{}
+        \item 因该区间可能曾被观察，不作为严格未见样本证据
       \end{enumerate}
     \end{column}
     \begin{column}{0.44\textwidth}
       \begin{tabular}{@{}ll@{}}
         历史窗口 & 252 交易日 \\
         协方差估计 & EWMA \\
-        单资产最大权重 & 45\% \\
-        换手上限 & 80\% \\
+        单资产最大权重 & 40\% \\
+        换手上限 & 60\% \\
         CVaR 置信水平 & 95\% \\
       \end{tabular}
       \vspace{0.2em}\\
@@ -444,10 +448,10 @@
       Convex Adaptive & \convexNetReturn  & \convexSharpe  & \convexSortino  & \convexMaxDD  & \convexMonthlyTurnover \\
       \rowcolor{swufeLight}
       \textbf{Improved Convex} & \textbf{\improvedNetReturn} & \textbf{\improvedSharpe} & \textbf{\improvedSortino} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
-      HERC            & \hercNetReturn    & \hercSharpe    & \hercSortino    & \hercMaxDD    & 5.78\% \\
+      HERC            & \hercNetReturn    & \hercSharpe    & \hercSortino    & \hercMaxDD    & \hercMonthlyTurnover \\
       \midrule
-      等权基准        & \equalNetReturn   & \equalSharpe   & \equalSortino   & \equalMaxDD   & 1.24\% \\
-      60/40 基准      & \sixtyFortyNetReturn & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & 1.43\% \\
+      等权基准        & \equalNetReturn   & \equalSharpe   & \equalSortino   & \equalMaxDD   & \equalMonthlyTurnover \\
+      60/40 基准      & \sixtyFortyNetReturn & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover \\
       \bottomrule
     \end{tabular}
   \end{center}
@@ -707,14 +711,14 @@
         比较对 & $\Delta$Sharpe & $p$ 值 & 结论 \\
         \midrule
         Improved vs.\ Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalPValue & \textbf{显著} \\
-        Improved vs.\ Defensive  & 0.893 & 0.001 & \textbf{显著} \\
-        Improved vs.\ 等权       & 0.686 & 0.013 & \textbf{显著} \\
-        Global vs.\ 等权         & $-$0.071 & 0.782 & 不显著 \\
-        Defensive vs.\ 等权      & $-$0.185 & 0.434 & 不显著 \\
+        Improved vs.\ Defensive  & 0.823 & 0.002 & \textbf{显著} \\
+        Improved vs.\ 等权       & 0.759 & 0.002 & \textbf{显著} \\
+        Global vs.\ 等权         & 0.015 & 0.959 & 不显著 \\
+        Defensive vs.\ 等权      & $-$0.041 & 0.853 & 不显著 \\
         \bottomrule
       \end{tabular}
       \vspace{0.3em}
-      \scriptsize 基于 Jobson-Korkie 检验，Bootstrap 95\% 置信区间
+      \scriptsize 21 日移动分块 Bootstrap，2000 次重抽样，95\% 置信区间
     \end{column}
     \begin{column}{0.37\textwidth}
       \begin{block}{核心含义}
@@ -722,7 +726,7 @@
         \begin{itemize}
           \item Improved Convex 优势\textbf{统计显著}（$p=\improvedVsGlobalPValue$）
           \item 仅降换手不足以产生显著 Sharpe 提升
-          \item \textbf{CVaR + 参数冻结}是真实来源
+          \item \textbf{CVaR + 换手约束}共同塑造低风险路径
         \end{itemize}
       \end{block}
     \end{column}
@@ -771,7 +775,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  多数子区间 Sharpe $>$ 0.8，中位数约 1.0；加息冲击期（2022）表现最弱，但未出现大幅回撤
+  5 个固定子区间 Sharpe 均为正，范围 0.570--1.239；post\_2021 最弱，结论存在阶段性边界
 \end{frame}
 
 \begin{frame}{参数扰动敏感性分析}
@@ -783,13 +787,13 @@
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item Sharpe 对换手惩罚系数 $\lambda_{to}$ 最敏感——说明换手控制是关键杠杆
+        \item 已测试范围内 Sharpe 对收益倾斜项最敏感；将其设为 0 后 Sharpe 仍为 1.331
       \end{itemize}
     \end{column}
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item CVaR 系数 $\lambda_c$ 扰动对最大回撤影响显著，整体方向稳定
+        \item CVaR 惩罚扰动的 Sharpe 与回撤变化较小，未出现断崖式失效
       \end{itemize}
     \end{column}
   \end{columns}
@@ -816,13 +820,13 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{调仓频率敏感性：月度不是最高收益频率}
+\begin{frame}{调仓频率敏感性：月度当前排名第一}
   \begin{center}
     \includegraphics[width=0.88\textwidth,height=0.58\textheight,keepaspectratio]{rebalance_frequency_sensitivity.png}
   \end{center}
   \vspace{-0.2em}
   \begin{alertblock}{解释口径}
-    \scriptsize 固定 candidate\_23 参数，仅改变调仓日历。周度和双周 Sharpe 更高但换手升至 \freqWeeklyMonthlyTurnover{} / \freqBiweeklyMonthlyTurnover{}；季度换手最低但收益和 Sharpe 下降。月度调仓是低换手与响应速度之间的可实施折中，而非事后最高收益频率。
+    \scriptsize 固定 candidate\_03 参数，仅改变调仓日历。月度净收益与 Sharpe 在本次样本中最高；周度和双周换手升至 \freqWeeklyMonthlyTurnover{} / \freqBiweeklyMonthlyTurnover{}，季度换手最低。月度是预设实施规则，并非根据本次排名事后重选。
   \end{alertblock}
 \end{frame}
 
@@ -841,7 +845,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  Bootstrap 1000 次重抽样；Improved Convex 的 Sharpe 分布中心高于其他模型，分布尾部亦较轻
+  Bootstrap 200 次重抽样、块长 21 日；Improved Convex 的 Sharpe P5 为 0.418，高于 Global RRP 的 0.131
 \end{frame}
 
 \begin{frame}{过拟合诊断}
@@ -871,7 +875,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  PBO（Probability of Backtest Overfitting）热图展示不同超参数组合的过拟合概率；冻结样本外候选为 candidate\_23，本次完整样本主结果候选为 candidate\_03，二者角色需区分
+  增强版 CSCV 使用 36 个候选、10 个时间区块和 12 个组合分割，PBO=0.250；candidate\_03 同时用于主结果和伪冻结诊断，后者不构成严格未见样本证据
 \end{frame}
 
 \begin{frame}{协方差估计器对比：Sharpe 与换手}
@@ -905,41 +909,40 @@
       \end{itemize}
       \vspace{0.3em}
       \begin{block}{盲选结果}
-        \scriptsize 设计窗独立选出激进先验：压力态权重 $1/3 \to 2/3$
+        \scriptsize 设计窗独立选出激进先验：$\pi=0.67$、先验权重 $1.00$
       \end{block}
     \end{column}
     \begin{column}{0.52\textwidth}
-      \scriptsize\renewcommand{\arraystretch}{1.25}
-      \textbf{留出窗 2024-01-02 — 2026-06-30（先验未见此区间）}
-      \begin{center}
+      \scriptsize\renewcommand{\arraystretch}{1.12}
+      \textbf{留出窗 2024-01-02 — \evalEndDate{}（先验未见此区间）}
+      \begin{center}\vspace{-0.35em}
       \begin{tabular}{@{}lccc@{}}
         \toprule
         配置 & Sharpe & 最大回撤 & 净年化 \\
         \midrule
-        EWMA 基准      & 1.338 & $-3.30\%$ & 5.68\% \\
+        EWMA 基准      & 1.546 & $-2.08\%$ & 6.40\% \\
         \rowcolor{swufeLight}
-        \textbf{状态条件} & \textbf{1.350} & $-3.87\%$ & \textbf{5.74\%} \\
+        \textbf{状态条件} & \textbf{1.594} & $-2.58\%$ & \textbf{6.40\%} \\
         \bottomrule
       \end{tabular}
-      \end{center}
-      \vspace{0.2em}
+      \end{center}\vspace{-0.5em}
       \textbf{完整评价窗 2019–2026}
-      \begin{center}
+      \begin{center}\vspace{-0.35em}
       \begin{tabular}{@{}lccc@{}}
         \toprule
         配置 & Sharpe & 最大回撤 & 月换手 \\
         \midrule
-        EWMA 基准      & 1.339 & $-4.63\%$ & 2.21\% \\
-        状态条件        & 1.446 & $-3.68\%$ & 2.26\% \\
+        EWMA 基准      & 1.430 & $-4.03\%$ & 2.09\% \\
+        状态条件        & 1.419 & $-3.91\%$ & 2.24\% \\
         \bottomrule
       \end{tabular}
-      \end{center}
-      \vspace{0.2em}
-      \begin{alertblock}{诚实边界}
-        \scriptsize 改善方向一致但幅度有限；最短的 2025+ 留出窗内 Sharpe 优势消失（回撤/CVaR 仍不劣）。故定位为\textbf{主模型的稳健性补充，而非替换基准}。
-      \end{alertblock}
+      \end{center}\vspace{-0.5em}
     \end{column}
   \end{columns}
+  \vspace{-0.3em}
+  \begin{alertblock}{诚实边界}
+    \scriptsize 留出窗 Sharpe/CVaR 改善但回撤加深；全窗回撤/CVaR 略优但 Sharpe/换手略差，因此仅作\textbf{主模型的稳健性补充}。
+  \end{alertblock}
 \end{frame}
 
 \begin{frame}{压力期表现：市场动荡时的防御性}
@@ -997,7 +1000,7 @@
   \begin{swufekeypoints}
     \swufepoint{三维权衡形成折中}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——优势在于低波动、浅回撤与可控换手，代价是权益强势阶段收益弹性有限}
     \swufepoint{HERC 需结合权重解释}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 主要来自接近全仓债券的低波动结构；因此应作为层次化配置基准，而非与主模型作单一指标排序}
-    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward、参数扰动和调仓频率检验确认结论在区间内相对稳定，月度调仓不是事后最高收益频率，但不代表对未来绩效的预测}
+    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward、参数扰动和调仓频率检验确认结论在区间内相对稳定。月度调仓本次恰好排名第一，但实施规则并非按事后收益选择，也不代表对未来绩效的预测}
   \end{swufekeypoints}
 \end{frame}
 
@@ -1037,7 +1040,7 @@
       \end{itemize}
       \vspace{0.4em}
       \begin{alertblock}{解释边界}
-        \footnotesize 该实验是透明规则基准，不复现桥水真实组合；结论依赖连续合约、现金抵押收益、滚动窗口和名义敞口上限。
+        \footnotesize 该实验扣除 5 bps 成本，仅是补充基准；22 个品种中 Y/OI/ZC 较早停更且价格会前向填充，故不复现桥水真实组合。
       \end{alertblock}
     \end{column}
     \begin{column}{0.45\textwidth}
@@ -1048,10 +1051,10 @@
         \toprule
         场景 & 收益 & 波动 & Sharpe & 回撤 \\
         \midrule
-        ETF 基准 & 5.73\% & 2.92\% & 1.339 & -4.63\% \\
-        全天候 1.0x & 4.14\% & 2.07\% & 1.119 & -1.58\% \\
-        目标波动 8\% & 10.50\% & 7.61\% & 1.140 & -6.32\% \\
-        目标波动 10\% & 10.76\% & 8.03\% & 1.113 & -6.48\% \\
+        ETF 基准 & \improvedNetReturn{} & \improvedVolatility{} & \improvedSharpe{} & \improvedMaxDD{} \\
+        全天候 1.0x & 3.99\% & 2.10\% & 1.035 & -1.58\% \\
+        目标波动 8\% & 9.80\% & 7.70\% & 1.037 & -7.21\% \\
+        目标波动 10\% & 10.04\% & 8.08\% & 1.018 & -7.21\% \\
         \bottomrule
       \end{tabular}
       }

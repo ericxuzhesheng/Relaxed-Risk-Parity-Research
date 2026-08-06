@@ -735,7 +735,8 @@ def main() -> None:
     plot_risk_overlay_ablation(public_ablation, resolve_path("results/figures/showcase_risk_overlay_ablation.png"))
     plot_dynamic_parameter_timeline(chosen_dynamic, resolve_path("results/figures/showcase_parameter_timeline.png"))
     plot_pbo_heatmap(pbo, resolve_path("results/figures/showcase_pbo_heatmap.png"))
-    write_readme(summary, eval_start_date)
+    # README is maintained as a curated bilingual landing page. Generated
+    # research artifacts must not replace its full document structure.
 
     print("Chosen V3 candidate:", chosen_v3_name)
     print("Chosen Dynamic candidate:", chosen_dynamic_name)
