@@ -283,13 +283,21 @@ def run_all_weather_benchmark(
     )
 
 
-def load_scenario0_returns(eval_start: str, config: dict) -> dict:
+def cap_evaluation_end(data: pd.DataFrame, eval_end: pd.Timestamp) -> pd.DataFrame:
+    frame = data.copy()
+    frame.index = pd.to_datetime(frame.index)
+    return frame[frame.index <= pd.Timestamp(eval_end)]
+
+
+def load_scenario0_returns(eval_start: str, config: dict, eval_end: pd.Timestamp | None = None) -> dict:
     path = resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv")
     if not Path(path).exists():
         logger.warning("ETF baseline CSV not found at %s; run run_convex_adaptive_rrp.py first.", path)
         return {}
     df = pd.read_csv(path, parse_dates=["date"])
     eval_df = df[df["date"] >= eval_start].copy()
+    if eval_end is not None:
+        eval_df = eval_df[eval_df["date"] <= pd.Timestamp(eval_end)]
     nav = (1.0 + eval_df["portfolio_return"].fillna(0.0)).cumprod()
     nav.index = pd.to_datetime(eval_df["date"])
     metrics = calculate_metrics(nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
@@ -428,6 +436,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--force-update", action="store_true", help="Re-fetch futures data from Tushare")
     parser.add_argument("--eval-start", type=str, default="2019-01-01")
+    parser.add_argument("--eval-end", type=str, default=None, help="Inclusive evaluation end; defaults to the ETF data end.")
     parser.add_argument("--target-vol-low", type=float, default=0.08)
     parser.add_argument("--target-vol-high", type=float, default=0.10)
     parser.add_argument("--bucket-budget", choices=sorted(BUCKET_BUDGETS), default="classic")
@@ -445,10 +454,12 @@ def main() -> None:
     risk_free_rate = config.get("risk_free_rate", 0.0)
 
     logger.info("Loading ETF returns to confirm local data cache is available...")
-    _ = load_data(source="tushare").dropna(how="all")
+    etf_returns = load_data(source="tushare").dropna(how="all")
+    eval_end = pd.Timestamp(args.eval_end) if args.eval_end else pd.Timestamp(etf_returns.index.max())
 
     logger.info("Loading futures returns...")
     futures_returns = load_futures_returns(force_update=args.force_update)
+    futures_returns = cap_evaluation_end(futures_returns, eval_end)
     logger.info("Futures universe: %d assets, %d trading days", futures_returns.shape[1], len(futures_returns))
     if args.grid_search:
         run_parameter_grid(futures_returns, eval_start, risk_free_rate, TRADING_DAYS)
@@ -456,7 +467,7 @@ def main() -> None:
     all_metrics: list[dict] = []
     nav_dict: dict[str, pd.Series] = {}
 
-    s0 = load_scenario0_returns(eval_start, config)
+    s0 = load_scenario0_returns(eval_start, config, eval_end)
     if s0:
         all_metrics.append(s0["metrics"])
         nav_dict["ETF Improved Convex RRP"] = s0["nav"]

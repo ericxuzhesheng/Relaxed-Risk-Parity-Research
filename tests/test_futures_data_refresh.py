@@ -78,3 +78,16 @@ def test_tushare_contract_fetch_retries_transient_failure(monkeypatch):
     assert client.calls == 2
     assert result is not None
     assert result.iloc[0] == pytest.approx(123.4)
+
+
+def test_futures_benchmark_is_capped_at_etf_evaluation_end():
+    from scripts.run_futures_extension import cap_evaluation_end
+
+    futures_returns = pd.DataFrame(
+        {"asset": [0.01, 0.02]},
+        index=pd.to_datetime(["2026-08-05", "2026-08-06"]),
+    )
+
+    capped = cap_evaluation_end(futures_returns, pd.Timestamp("2026-08-05"))
+
+    assert capped.index.max() == pd.Timestamp("2026-08-05")
