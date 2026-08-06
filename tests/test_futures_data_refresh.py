@@ -44,3 +44,37 @@ def test_merge_futures_refresh_keeps_cached_tail_when_refresh_is_stale():
     merged = merge_futures_price_refresh(existing, stale_refresh)
 
     pd.testing.assert_series_equal(merged["asset_a"].dropna(), existing["asset_a"])
+
+
+def test_tushare_contract_fetch_retries_transient_failure(monkeypatch):
+    from src import futures_data
+
+    class FlakyClient:
+        def __init__(self):
+            self.calls = 0
+
+        def fut_daily(self, **_kwargs):
+            self.calls += 1
+            if self.calls == 1:
+                raise RuntimeError("temporary throttle")
+            return pd.DataFrame(
+                {
+                    "trade_date": ["20260805"],
+                    "close": [123.4],
+                    "vol": [10],
+                }
+            )
+
+    client = FlakyClient()
+    monkeypatch.setattr(futures_data.time, "sleep", lambda _seconds: None)
+
+    result = futures_data._fetch_contract_tushare(
+        client,
+        "AU2610.SHF",
+        "20260801",
+        "20260806",
+    )
+
+    assert client.calls == 2
+    assert result is not None
+    assert result.iloc[0] == pytest.approx(123.4)

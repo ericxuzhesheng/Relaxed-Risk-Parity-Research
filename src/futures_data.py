@@ -209,12 +209,18 @@ def _fetch_contract_akshare(ts_code: str) -> pd.Series | None:
 
 def _fetch_contract_tushare(pro, ts_code: str, start_date: str, end_date: str) -> pd.Series | None:
     """Fetch daily close price for one contract via Tushare pro.fut_daily()."""
-    try:
-        df = pro.fut_daily(ts_code=ts_code, start_date=start_date, end_date=end_date)
-        time.sleep(0.2)
-    except Exception as exc:
-        logger.debug("fut_daily(%s): %s", ts_code, exc)
-        return None
+    df = None
+    for attempt in range(3):
+        try:
+            df = pro.fut_daily(ts_code=ts_code, start_date=start_date, end_date=end_date)
+            time.sleep(0.2)
+            break
+        except Exception as exc:
+            if attempt == 2:
+                logger.warning("fut_daily(%s) failed after 3 attempts: %s", ts_code, exc)
+                return None
+            logger.debug("fut_daily(%s) attempt %d failed: %s", ts_code, attempt + 1, exc)
+            time.sleep(float(attempt + 1))
     if df is None or df.empty:
         return None
     df = df.copy()
