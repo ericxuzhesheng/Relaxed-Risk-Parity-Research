@@ -52,18 +52,33 @@ def build_variants(base: ConvexRRPConfig) -> list[dict[str, object]]:
     return rows
 
 
-def main() -> None:
+def apply_sample_window(
+    returns: pd.DataFrame,
+    sample_start: str,
+    sample_end: str | None,
+) -> pd.DataFrame:
+    window = returns[returns.index >= pd.Timestamp(sample_start)]
+    if sample_end is not None:
+        window = window[window.index <= pd.Timestamp(sample_end)]
+    return window
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run CVaR sensitivity diagnostics for the convex adaptive candidate.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--eval-start", default="2019-01-01")
     parser.add_argument("--sample-start", default="2019-01-02")
-    parser.add_argument("--sample-end", default="2026-05-29")
+    parser.add_argument("--sample-end", default=None, help="Inclusive cutoff; defaults to the latest available observation.")
     parser.add_argument("--smoke", action="store_true")
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
-    returns = returns[(returns.index >= pd.Timestamp(args.sample_start)) & (returns.index <= pd.Timestamp(args.sample_end))]
+    returns = apply_sample_window(returns, args.sample_start, args.sample_end)
     if returns.empty:
         raise ValueError("CVaR sensitivity returns are empty.")
 

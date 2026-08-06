@@ -60,13 +60,17 @@ def interpretation(delta_sharpe: float, delta_drawdown: float, delta_turnover: f
     return "moderate"
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run one-at-a-time parameter sensitivity around the selected improved candidate.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None, help="Accepted for CLI consistency; ignored.")
-    parser.add_argument("--eval-start", default="2021-01-01")
+    parser.add_argument("--eval-start", default="2019-01-01")
     parser.add_argument("--smoke", action="store_true")
-    args = parser.parse_args()
+    return parser
+
+
+def main() -> None:
+    args = build_parser().parse_args()
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))

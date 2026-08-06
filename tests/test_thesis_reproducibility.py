@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pandas as pd
+
 
 def test_thesis_report_files_exist_and_non_empty():
     for path in [
@@ -66,3 +68,35 @@ def test_pipeline_expected_outputs_includes_new_tables():
         "holdout_validation_summary.csv",
     ]:
         assert any(table in o for o in outputs), f"{table} missing from expected_outputs()"
+
+
+def test_cvar_sensitivity_uses_latest_available_date_without_cutoff():
+    from scripts.run_cvar_sensitivity import apply_sample_window
+
+    returns = pd.DataFrame(
+        {"asset": [0.01, 0.02, 0.03]},
+        index=pd.to_datetime(["2026-05-29", "2026-07-01", "2026-08-05"]),
+    )
+
+    actual = apply_sample_window(returns, sample_start="2026-05-29", sample_end=None)
+
+    assert actual.index.max() == pd.Timestamp("2026-08-05")
+
+
+def test_cvar_sensitivity_honors_explicit_cutoff():
+    from scripts.run_cvar_sensitivity import apply_sample_window
+
+    returns = pd.DataFrame(
+        {"asset": [0.01, 0.02, 0.03]},
+        index=pd.to_datetime(["2026-05-29", "2026-07-01", "2026-08-05"]),
+    )
+
+    actual = apply_sample_window(returns, sample_start="2026-05-29", sample_end="2026-07-01")
+
+    assert actual.index.max() == pd.Timestamp("2026-07-01")
+
+
+def test_parameter_sensitivity_default_matches_primary_evaluation_start():
+    from scripts.run_parameter_sensitivity import build_parser
+
+    assert build_parser().parse_args([]).eval_start == "2019-01-01"
