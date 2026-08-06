@@ -1,0 +1,46 @@
+import pandas as pd
+import pytest
+
+
+def test_merge_futures_refresh_preserves_missing_cached_assets_and_extends_overlap():
+    from src.futures_data import merge_futures_price_refresh
+
+    existing = pd.DataFrame(
+        {
+            "asset_a": [100.0, 101.0, 102.0],
+            "asset_b": [200.0, 202.0, 204.0],
+        },
+        index=pd.to_datetime(["2026-05-20", "2026-05-21", "2026-05-22"]),
+    )
+    refreshed = pd.DataFrame(
+        {"asset_a": [50.0, 51.0, 52.0]},
+        index=pd.to_datetime(["2026-05-21", "2026-05-22", "2026-05-25"]),
+    )
+
+    merged = merge_futures_price_refresh(existing, refreshed)
+
+    assert list(merged.columns) == ["asset_a", "asset_b"]
+    pd.testing.assert_series_equal(
+        merged.loc[existing.index, "asset_b"],
+        existing["asset_b"],
+        check_names=False,
+    )
+    assert merged.loc[pd.Timestamp("2026-05-22"), "asset_a"] == pytest.approx(102.0)
+    assert merged.loc[pd.Timestamp("2026-05-25"), "asset_a"] == pytest.approx(104.0)
+
+
+def test_merge_futures_refresh_keeps_cached_tail_when_refresh_is_stale():
+    from src.futures_data import merge_futures_price_refresh
+
+    existing = pd.DataFrame(
+        {"asset_a": [100.0, 101.0, 102.0]},
+        index=pd.to_datetime(["2026-05-20", "2026-05-21", "2026-05-22"]),
+    )
+    stale_refresh = pd.DataFrame(
+        {"asset_a": [50.0, 51.0]},
+        index=pd.to_datetime(["2026-05-20", "2026-05-21"]),
+    )
+
+    merged = merge_futures_price_refresh(existing, stale_refresh)
+
+    pd.testing.assert_series_equal(merged["asset_a"].dropna(), existing["asset_a"])

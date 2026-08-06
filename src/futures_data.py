@@ -309,6 +309,7 @@ def fetch_futures_prices(
     start_date: str = "20180101",
     end_date: str | None = None,
     names: list[str] | None = None,
+    persist: bool = True,
 ) -> pd.DataFrame:
     """Fetch and construct continuous contract prices for all futures products.
 
@@ -363,13 +364,68 @@ def fetch_futures_prices(
         raise RuntimeError("No futures data fetched. Check token and permissions.")
 
     prices = pd.concat(frames, axis=1).sort_index()
-    FUTURES_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    prices.to_csv(FUTURES_CACHE_PATH)
-    logger.info(
-        "Saved futures prices → %s (%d rows, %d assets)",
-        FUTURES_CACHE_PATH, len(prices), prices.shape[1],
-    )
+    if persist:
+        FUTURES_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        prices.to_csv(FUTURES_CACHE_PATH)
+        logger.info(
+            "Saved futures prices → %s (%d rows, %d assets)",
+            FUTURES_CACHE_PATH, len(prices), prices.shape[1],
+        )
     return prices
+
+
+def merge_futures_price_refresh(existing: pd.DataFrame, refreshed: pd.DataFrame) -> pd.DataFrame:
+    """Append refreshed tails without dropping cached products or rewriting history."""
+    cached = existing.copy()
+    cached.index = pd.to_datetime(cached.index)
+    cached = cached[~cached.index.duplicated(keep="last")].sort_index()
+
+    fresh = refreshed.copy()
+    fresh.index = pd.to_datetime(fresh.index)
+    fresh = fresh[~fresh.index.duplicated(keep="last")].sort_index()
+
+    result = cached.copy()
+    for column in fresh.columns:
+        new_series = fresh[column].dropna().astype(float)
+        if new_series.empty:
+            continue
+
+        if column not in result or result[column].dropna().empty:
+            result = result.reindex(result.index.union(new_series.index).sort_values())
+            result.loc[new_series.index, column] = new_series
+            continue
+
+        old_series = result[column].dropna().astype(float)
+        last_cached_date = old_series.index.max()
+        if new_series.index.max() <= last_cached_date:
+            continue
+
+        overlap = old_series.index.intersection(new_series.index)
+        if overlap.empty:
+            logger.warning(
+                "Cannot anchor refreshed futures series %s to the cache; preserving cached history.",
+                column,
+            )
+            continue
+
+        anchor_date = overlap.max()
+        anchor_new = float(new_series.loc[anchor_date])
+        anchor_old = float(old_series.loc[anchor_date])
+        if not np.isfinite(anchor_new) or not np.isfinite(anchor_old) or anchor_new == 0:
+            logger.warning(
+                "Invalid overlap anchor for refreshed futures series %s; preserving cached history.",
+                column,
+            )
+            continue
+
+        extension = new_series[new_series.index > last_cached_date] * (anchor_old / anchor_new)
+        if extension.empty:
+            continue
+        result = result.reindex(result.index.union(extension.index).sort_values())
+        result.loc[extension.index, column] = extension
+
+    ordered_columns = list(cached.columns) + [column for column in fresh.columns if column not in cached.columns]
+    return result.reindex(columns=ordered_columns).sort_index()
 
 
 def load_futures_prices(force_update: bool = False) -> pd.DataFrame:
@@ -378,6 +434,21 @@ def load_futures_prices(force_update: bool = False) -> pd.DataFrame:
         df = pd.read_csv(FUTURES_CACHE_PATH, index_col=0, parse_dates=True)
         logger.info("Loaded futures prices from cache: %s (%d assets)", FUTURES_CACHE_PATH, df.shape[1])
         return df
+    if force_update and FUTURES_CACHE_PATH.exists():
+        existing = pd.read_csv(FUTURES_CACHE_PATH, index_col=0, parse_dates=True)
+        refreshed = fetch_futures_prices(persist=False)
+        merged = merge_futures_price_refresh(existing, refreshed)
+        FUTURES_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        merged.to_csv(FUTURES_CACHE_PATH)
+        retained = len(set(existing.columns) - set(refreshed.columns))
+        logger.info(
+            "Merged futures refresh → %s (%d rows, %d assets; %d cached assets retained)",
+            FUTURES_CACHE_PATH,
+            len(merged),
+            merged.shape[1],
+            retained,
+        )
+        return merged
     return fetch_futures_prices()
 
 
