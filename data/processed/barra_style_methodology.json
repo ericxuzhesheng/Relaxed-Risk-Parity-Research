@@ -1,0 +1,29 @@
+{
+  "method": "transparent Barra-style cross-asset proxy exposure analysis",
+  "official_barra_model": false,
+  "warning": "These are reproducible ETF-return proxies, not licensed MSCI Barra exposures.",
+  "analysis_start": "2020-01-20",
+  "analysis_end": "2026-07-31",
+  "active_etf_count": 30,
+  "candidate_etf_count": 6,
+  "minimum_pairwise_observations": 120,
+  "exposure_estimator": "Pearson correlation of ETF return and each factor proxy on their common daily sample",
+  "factor_order": [
+    "china_market",
+    "china_size",
+    "china_value",
+    "duration",
+    "credit",
+    "commodity",
+    "global_equity"
+  ],
+  "factor_definitions": {
+    "china_market": "510300.SH - 511880.SH",
+    "china_size": "512100.SH - 510300.SH",
+    "china_value": "510880.SH - 510300.SH",
+    "duration": "511260.SH - 511880.SH",
+    "credit": "511030.SH - 511010.SH",
+    "commodity": "equal-weight(159980.SZ,159981.SZ,159985.SZ,518880.SH,162411.SZ) - 511880.SH",
+    "global_equity": "equal-weight(159920.SZ,159941.SZ,513500.SH,513880.SH,513030.SH) - 511880.SH"
+  }
+}

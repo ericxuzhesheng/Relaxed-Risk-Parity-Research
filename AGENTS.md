@@ -73,6 +73,8 @@ Do claim where appropriate:
 
 Current results (evaluation from `2019-01-01` to `2026-07-31`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2015-11-19; latest cache date is 2026-07-31; point-in-time universe filtering applied):
 
+> The active-universe configuration and price cache were rotated on `2026-08-07` for the next monthly research update. The performance results below are the last completed backtest snapshot for the preceding universe; no backtest has yet been run on the rotated universe.
+
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
 | **Improved Convex Adaptive Global RRP** | **5.98%** | **2.91%** | **1.430** | **2.165** | **-4.03%** | **1.486** | **2.09%** |
@@ -95,20 +97,19 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2015-11-19` 
 |---|---|---|
 | 可转债ETF | 511380.SH | convertible bond |
 | 国债ETF | 511010.SH | government bond |
+| 10年国债ETF | 511260.SH | government bond |
 | 信用债ETF | 511030.SH | credit bond |
 | 日利ETF | 511880.SH | money market |
 | 沪深300ETF | 510300.SH | china equity |
 | 中证500ETF | 510500.SH | china equity |
 | 中证1000ETF | 512100.SH | china equity |
+| 中证2000ETF | 563300.SH | china equity |
 | 创业板ETF | 159915.SZ | china equity |
 | 红利ETF | 510880.SH | china equity dividend |
 | 半导体ETF | 512480.SH | china tech equity |
 | 人工智能ETF | 159819.SZ | china tech equity |
-| 机器人ETF | 562500.SH | china advanced manufacturing |
 | 新能源ETF | 516160.SH | china new energy |
-| 中韩半导体ETF | 513310.SH | china tech equity |
 | 科创50ETF | 588000.SH | china tech equity |
-| 云计算ETF | 516980.SH | china tech equity |
 | 证券ETF | 512880.SH | china finance |
 | 军工ETF | 512660.SH | china defense |
 | 消费ETF | 159928.SZ | china consumer |
@@ -119,10 +120,24 @@ Current universe: **30 ETFs** across **8 categories**. Data range: `2015-11-19` 
 | 日经225ETF | 513880.SH | global equity |
 | 欧洲ETF | 513030.SH | global equity |
 | 黄金ETF | 518880.SH | commodity |
-| 有色ETF | 159980.SZ | commodity equity |
+| 有色金属期货ETF | 159980.SZ | commodity |
+| 能源化工期货ETF | 159981.SZ | commodity |
 | 豆粕ETF | 159985.SZ | commodity |
 | 煤炭ETF | 515220.SH | commodity |
 | 原油ETF | 162411.SZ | commodity |
+
+Candidate universe: **6 ETFs**, excluded from the active 30 and from backtests until the next scheduled universe review.
+
+| ETF | Ticker | Category |
+|---|---|---|
+| 30年国债ETF | 511090.SH | government bond |
+| 中韩半导体ETF | 513310.SH | china tech equity |
+| 证券公司先锋策略ETF | 516980.SH | china finance |
+| 沙特ETF | 520830.SH | global equity |
+| 巴西ETF | 520870.SH | global equity |
+| 机器人ETF | 562500.SH | china advanced manufacturing |
+
+`516980.SH` was previously mislabeled as 云计算ETF in the project. Tushare `fund_basic` identifies it as 华富中证证券公司先锋策略ETF, so the candidate label and category use the official identity.
 
 ---
 

@@ -31,3 +31,9 @@ def test_nonferrous_futures_etf_is_classified_as_commodity():
 
     assert mapping["159980.SZ"].asset_class == "commodity"
 
+
+def test_mislabeled_516980_candidate_uses_official_asset_identity():
+    mapping = {item.ticker: item for item in CANDIDATE_UNIVERSE}
+
+    assert mapping["516980.SH"].new_name == "证券公司先锋策略ETF"
+    assert mapping["516980.SH"].asset_class == "china finance"

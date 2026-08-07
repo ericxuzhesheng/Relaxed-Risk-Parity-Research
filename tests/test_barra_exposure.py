@@ -94,4 +94,3 @@ def test_exposure_correlation_matrix_is_symmetric_with_unit_diagonal():
     assert np.allclose(np.diag(corr), 1.0)
     assert corr.loc["A", "B"] == 1.0
     assert corr.loc["A", "C"] == -1.0
-

@@ -70,18 +70,22 @@
 
 ### 资产池
 
-当前资产池来自 `src/asset_universe.py`，共 **30 只 ETF、8 类资产**。数据区间为 `2015-11-19` 至 `2026-07-31`；绩效评价从 `2019-01-01` 开始，并对后上市 ETF 采用时间点可投性过滤。
+当前资产池来自 `src/asset_universe.py`，共 **30 只 ETF、8 类资产**。数据区间为 `2015-11-19` 至 `2026-07-31`；绩效评价从 `2019-01-01` 开始，并对后上市 ETF 采用时间点可投性过滤。资产池配置已于 `2026-08-07` 完成轮换，供下一次月度研究更新使用；下方绩效仍是轮换前资产池的最近一次完整回测快照，本次未运行回测。
 
 | 类别 | ETF 数量 | 代表性标的 |
 |---|---:|---|
-| 债券与现金 | 4 | 可转债ETF、国债ETF、信用债ETF、日利ETF |
-| A股宽基 | 5 | 沪深300ETF、中证500ETF、中证1000ETF、创业板ETF、红利ETF |
-| 中国科技与成长 | 7 | 半导体ETF、人工智能ETF、机器人ETF、新能源ETF、中韩半导体ETF、科创50ETF、云计算ETF |
+| 债券与现金 | 5 | 可转债ETF、国债ETF、10年国债ETF、信用债ETF、日利ETF |
+| A股宽基 | 6 | 沪深300ETF、中证500ETF、中证1000ETF、中证2000ETF、创业板ETF、红利ETF |
+| 中国科技与成长 | 4 | 半导体ETF、人工智能ETF、新能源ETF、科创50ETF |
 | 中国行业与消费 | 3 | 证券ETF、军工ETF、消费ETF |
 | 港股 | 1 | 恒生ETF |
 | 全球股票 | 4 | 纳指ETF、标普500ETF、日经225ETF、欧洲ETF |
 | 贵金属 | 2 | 黄金ETF、白银LOF |
-| 大宗商品与资源 | 4 | 有色ETF、豆粕ETF、煤炭ETF、原油ETF |
+| 大宗商品与资源 | 5 | 有色金属期货ETF、能源化工期货ETF、豆粕ETF、煤炭ETF、原油ETF |
+
+候选池共 6 只，暂不进入回测：30年国债ETF（511090.SH）、中韩半导体ETF（513310.SH）、证券公司先锋策略ETF（516980.SH）、沙特ETF（520830.SH）、巴西ETF（520870.SH）、机器人ETF（562500.SH）。其中 `516980.SH` 此前在项目中误标为“云计算ETF”，现已按 Tushare 官方基金信息更正。
+
+本次同时生成了 36 只 ETF 的 7 维 Barra-style 代理敞口及相关性诊断，覆盖中国市场、规模、价值、久期、信用、商品和全球股票风险源。该结果是基于 ETF 收益率构造的透明代理，并非商业 MSCI Barra 模型数据；方法定义与完整矩阵见 `data/processed/barra_style_methodology.json` 和 `data/processed/barra_style_exposure_correlation.csv`。
 
 ### 最新绩效
 
@@ -243,18 +247,22 @@ Classical Risk Parity forces all risk contributions to be equal. This is interpr
 
 ### Asset Universe
 
-The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset categories**. Data run from `2015-11-19` to `2026-07-31`; performance evaluation starts on `2019-01-01`. Later-listed ETFs enter only after sufficient valid observations.
+The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset categories**. Data run from `2015-11-19` to `2026-07-31`; performance evaluation starts on `2019-01-01`. Later-listed ETFs enter only after sufficient valid observations. The universe configuration was rotated on `2026-08-07` for the next monthly research update. The performance section remains the last completed pre-rotation backtest snapshot; no backtest was run in this update.
 
 | Category | ETF Count | Representative Exposures |
 |---|---:|---|
-| Bonds and cash | 4 | Convertible bond, government bond, credit bond, money market |
-| China broad equity | 5 | CSI 300, CSI 500, CSI 1000, ChiNext, dividend |
-| China technology and growth | 7 | Semiconductor, AI, robotics, new energy, China-Korea semiconductor, STAR 50, cloud computing |
+| Bonds and cash | 5 | Convertible bond, government bond, 10-year government bond, credit bond, money market |
+| China broad equity | 6 | CSI 300, CSI 500, CSI 1000, CSI 2000, ChiNext, dividend |
+| China technology and growth | 4 | Semiconductor, AI, new energy, STAR 50 |
 | China sectors and consumer | 3 | Securities, defense, consumer |
 | Hong Kong equity | 1 | Hang Seng ETF |
 | Global equity | 4 | Nasdaq-100, S&P 500, Nikkei 225, Europe |
 | Precious metals | 2 | Gold, silver |
-| Commodities and resources | 4 | Non-ferrous metals, soybean meal, coal, crude oil |
+| Commodities and resources | 5 | Non-ferrous metals futures, energy and chemicals futures, soybean meal, coal, crude oil |
+
+The six-ETF candidate pool, excluded from backtests until the next universe review, is: 30-year government bond (511090.SH), China-Korea semiconductor (513310.SH), securities-company pioneer strategy (516980.SH), Saudi Arabia (520830.SH), Brazil (520870.SH), and robotics (562500.SH). Tushare's official fund record identifies `516980.SH` as a securities-company strategy ETF; the former project label “cloud computing ETF” was incorrect and has been corrected.
+
+This update also produces seven-dimensional Barra-style proxy exposures and exposure correlations for all 36 ETFs, covering China market, size, value, duration, credit, commodity, and global-equity risk sources. These are transparent ETF-return proxies, not licensed MSCI Barra model data; see `data/processed/barra_style_methodology.json` and `data/processed/barra_style_exposure_correlation.csv` for the definitions and full matrix.
 
 ### Latest Performance
 

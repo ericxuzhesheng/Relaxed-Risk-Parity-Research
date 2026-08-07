@@ -1,0 +1,4 @@
+out_ts_code,out_name,in_ts_code,in_name,exposure_vector_correlation,daily_return_correlation,paired_return_days
+562500.SH,机器人ETF,563300.SH,中证2000ETF,0.9907178518073883,0.8363969095843279,694
+513310.SH,中韩半导体ETF,159981.SZ,能源化工期货ETF,0.1720473247128358,-0.048349360761059904,872
+516980.SH,证券公司先锋策略ETF,511260.SH,10年国债ETF,-0.5527979321124771,-0.1830127653868208,1232

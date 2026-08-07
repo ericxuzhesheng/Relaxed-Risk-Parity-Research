@@ -21,6 +21,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Convertible-bond ETF providing equity-linked credit exposure with downside protection."),
     AssetMapping("国债ETF",       "国债ETF",     "511010.SH", "government bond",
                  "Government bond ETF for duration exposure; the duration anchor of the risk parity portfolio."),
+    AssetMapping("10年国债ETF",   "10年国债ETF", "511260.SH", "government bond",
+                 "Ten-year government bond ETF adding an explicit medium-long duration risk source."),
     AssetMapping("信用债ETF",     "信用债ETF",   "511030.SH", "credit bond",
                  "Credit spread bond ETF capturing yield pickup over government bonds."),
     AssetMapping("日利ETF",       "日利ETF",     "511880.SH", "money market",
@@ -32,6 +34,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Mid-cap China equity ETF tracking the CSI 500 index."),
     AssetMapping("中证1000ETF",   "中证1000ETF", "512100.SH", "china equity",
                  "Small-cap China equity ETF tracking the CSI 1000 index."),
+    AssetMapping("中证2000ETF",   "中证2000ETF", "563300.SH", "china equity",
+                 "Micro-cap China equity ETF extending the broad-market size spectrum below the CSI 1000."),
     AssetMapping("创业板ETF",     "创业板ETF",   "159915.SZ", "china equity",
                  "ChiNext GEB ETF covering established growth companies with longer listing history than STAR board."),
     AssetMapping("红利ETF",       "红利ETF",     "510880.SH", "china equity dividend",
@@ -41,16 +45,10 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
                  "Semiconductor ETF capturing core hardware factor across the China chip value chain."),
     AssetMapping("人工智能ETF",   "人工智能ETF", "159819.SZ", "china tech equity",
                  "Artificial intelligence ETF covering software, algorithms, and applied AI services."),
-    AssetMapping("机器人ETF",     "机器人ETF",   "562500.SH", "china advanced manufacturing",
-                 "Robotics and intelligent manufacturing ETF capturing industrial automation growth."),
     AssetMapping("新能源ETF",     "新能源ETF",   "516160.SH", "china new energy",
                  "Broad new-energy ETF covering electric vehicles, energy storage, and solar."),
-    AssetMapping("中韩半导体ETF",  "中韩半导体ETF", "513310.SH", "china tech equity",
-                 "China-Korea semiconductor ETF adding DRAM/NAND memory chip exposure and KRW cross-currency dimension."),
     AssetMapping("科创50ETF",     "科创50ETF",   "588000.SH", "china tech equity",
                  "STAR Market 50 ETF aggregating China's self-reliance technology blue chips across IC, materials, and biotech."),
-    AssetMapping("云计算ETF",     "云计算ETF",   "516980.SH", "china tech equity",
-                 "Cloud computing ETF covering SaaS, cloud infrastructure, and digital services."),
     # ── 中国行业与消费 ────────────────────────────────────────────────────────
     AssetMapping("证券ETF",       "证券ETF",     "512880.SH", "china finance",
                  "China brokerage and securities sector ETF for market-cyclical beta."),
@@ -75,8 +73,10 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
     # ── 大宗商品 ──────────────────────────────────────────────────────────────
     AssetMapping("黄金ETF",       "黄金ETF",     "518880.SH", "commodity",
                  "Gold ETF providing precious-metal inflation hedge and tail-risk diversification."),
-    AssetMapping("有色ETF",       "有色ETF",     "159980.SZ", "commodity equity",
-                 "Non-ferrous metals ETF capturing industrial commodity demand."),
+    AssetMapping("有色ETF",       "有色金属期货ETF", "159980.SZ", "commodity",
+                 "Non-ferrous metals futures ETF providing direct industrial-metal futures exposure."),
+    AssetMapping("能源化工期货ETF", "能源化工期货ETF", "159981.SZ", "commodity",
+                 "Energy and chemicals futures ETF adding a direct commodity-futures risk source."),
     AssetMapping("豆粕连续",      "豆粕ETF",     "159985.SZ", "commodity",
                  "Soybean meal ETF providing agricultural commodity exposure."),
     AssetMapping("煤炭ETF",       "煤炭ETF",     "515220.SH", "commodity",
@@ -86,8 +86,28 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
 )
 
 
+CANDIDATE_UNIVERSE: tuple[AssetMapping, ...] = (
+    AssetMapping("30年国债ETF", "30年国债ETF", "511090.SH", "government bond",
+                 "Long-duration government bond candidate reserved for the next universe review."),
+    AssetMapping("中韩半导体ETF", "中韩半导体ETF", "513310.SH", "china tech equity",
+                 "China-Korea semiconductor candidate moved out of the active 30-ETF universe."),
+    AssetMapping("云计算ETF", "证券公司先锋策略ETF", "516980.SH", "china finance",
+                 "Candidate moved out of the active universe; the prior project label was corrected against Tushare fund_basic."),
+    AssetMapping("沙特ETF", "沙特ETF", "520830.SH", "global equity",
+                 "Saudi Arabia equity candidate reserved for the next universe review."),
+    AssetMapping("巴西ETF", "巴西ETF", "520870.SH", "global equity",
+                 "Brazil equity candidate reserved for the next universe review."),
+    AssetMapping("机器人ETF", "机器人ETF", "562500.SH", "china advanced manufacturing",
+                 "Robotics candidate moved out of the active 30-ETF universe."),
+)
+
+
 def asset_mapping_frame() -> pd.DataFrame:
     return pd.DataFrame([asdict(item) for item in ETF_UNIVERSE])
+
+
+def candidate_asset_mapping_frame() -> pd.DataFrame:
+    return pd.DataFrame([asdict(item) for item in CANDIDATE_UNIVERSE])
 
 
 def ticker_to_name() -> dict[str, str]:
