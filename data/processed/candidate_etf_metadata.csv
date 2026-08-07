@@ -1,0 +1,3 @@
+﻿ts_code,name,management,custodian,fund_type,found_date,list_date,benchmark,data_start,data_end,row_count,source,requested_start_date,adjustment_method,integration_status
+511260.SH,国泰上证10年期国债ETF,国泰基金管理有限公司,中国建设银行股份有限公司,债券型,20170804,20170824,上证10年期国债指数×100%,2017-08-24,2026-08-07,2172,Tushare fund_basic + fund_daily + fund_adj,20150101,close * adj_factor / latest_adj_factor,candidate_only_not_in_backtest
+563300.SH,华泰柏瑞中证2000ETF,华泰柏瑞基金管理有限公司,招商银行股份有限公司,股票型,20230906,20230914,中证2000指数收益率×100%,2023-09-14,2026-08-07,700,Tushare fund_basic + fund_daily + fund_adj,20150101,close * adj_factor / latest_adj_factor,candidate_only_not_in_backtest
