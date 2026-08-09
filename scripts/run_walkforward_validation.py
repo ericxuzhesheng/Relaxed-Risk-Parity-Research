@@ -48,6 +48,11 @@ def metric_columns(prefix: str, metrics: dict) -> dict:
     return {f"{prefix}_{key}": value for key, value in metrics.items()}
 
 
+def effective_evaluation_start(requested: str | None, config: dict) -> str:
+    """Resolve the formal walk-forward start without exposing pre-evaluation data."""
+    return requested or str(config["evaluation_start_date"])
+
+
 def run_split(
     returns: pd.DataFrame,
     split: dict,
@@ -119,14 +124,14 @@ def main() -> None:
     requested_frozen_start = None
 
     config = get_config({"transaction_cost_bps": 3.0})
+    eval_start = effective_evaluation_start(args.eval_start, config)
     base_candidate_count = len(candidate_configurations(config["transaction_cost_bps"]))
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
-    if args.eval_start:
-        returns = returns[returns.index >= pd.Timestamp(args.eval_start)]
+    returns = returns[returns.index >= pd.Timestamp(eval_start)]
     run_metadata = validation_run_metadata(
         validation_method="walkforward",
         validation_kind=validation_kind,
-        eval_start=args.eval_start or returns.index.min(),
+        eval_start=eval_start,
         eval_end=returns.index.max(),
         selection_rule="highest validation-window score within each split",
         limitations="Validation-window selection is followed by test reporting; bounded runs are intermediate validation evidence.",
@@ -142,8 +147,7 @@ def main() -> None:
         step_months=args.step_months,
         base_candidate_count=base_candidate_count,
     )
-    if args.eval_start:
-        run_metadata["eval_start"] = pd.Timestamp(args.eval_start).date().isoformat()
+    run_metadata["eval_start"] = pd.Timestamp(eval_start).date().isoformat()
     run_metadata["candidate_count"] = len(candidate_configurations(config["transaction_cost_bps"]))
     run_metadata["base_candidate_count"] = base_candidate_count
     run_metadata["validation_method"] = "walkforward"
@@ -152,8 +156,6 @@ def main() -> None:
     run_metadata["limitations"] = "Validation-window selection is followed by test reporting; bounded runs are intermediate validation evidence."
 
     candidates = candidate_configurations(config["transaction_cost_bps"])
-    if args.eval_start:
-        returns = returns[returns.index >= pd.Timestamp(args.eval_start)]
     candidates = candidate_configurations(config["transaction_cost_bps"])
     if args.max_candidates is not None:
         candidates = candidates[: args.max_candidates]
