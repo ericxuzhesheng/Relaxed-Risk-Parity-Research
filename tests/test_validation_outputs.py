@@ -175,3 +175,11 @@ def test_no_future_leakage_in_extended_sample_logic() -> None:
     window2 = returns.iloc[300:400]
     active2 = investable_columns(window2, min_observations=30)
     assert len(active2) <= len(returns.columns)
+
+
+def test_walkforward_defaults_to_configured_evaluation_start() -> None:
+    from scripts.run_walkforward_validation import effective_evaluation_start
+
+    config = {"evaluation_start_date": "2018-01-02"}
+    assert effective_evaluation_start(None, config) == "2018-01-02"
+    assert effective_evaluation_start("2020-01-01", config) == "2020-01-01"
