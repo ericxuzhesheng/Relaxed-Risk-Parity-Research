@@ -4,11 +4,8 @@ import numpy as np
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 年化无风险利率。取值 1.82% 对应中国 1 年期国债收益率在评价区间
-# 2019-01-01 至 2026-05-07 上的近似平均水平，数据来源为中国人民银行公布的
-# 国债收益率曲线（Wind/CSMAR 同步收录）。引文键 chinabond2026 用于
-# references.bib 中的 Sharpe 分母口径说明。如需重估，请同步更新
-# scripts/generate_thesis_numbers.py 中 \riskFreeRate 宏对应的数值。
+# Sharpe、Sortino及统计检验统一从月度中债1年期国债收益率构造日度
+# 无风险收益序列；月末观察滞后一个月生效，缺月时正式流水线失败退出。
 DEFAULT_CONFIG = {
     "lookback_weeks": 48,
     "trading_days_per_year": 243,
@@ -25,6 +22,7 @@ DEFAULT_CONFIG = {
     "bond_keywords": ["国债", "信用票", "美债", "债"],
     "bond_leverage_upper": 1.4,
     "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
+    "risk_free_rate": None,
     "target_vol": 0.060,
     "gross_exposure_cap": 1.50,
     "turnover_cap": 0.25,
@@ -47,6 +45,22 @@ def get_config(overrides=None):
 
 def infer_asset_class(asset_name: str) -> str:
     name = str(asset_name)
+    from src.asset_universe import CANDIDATE_UNIVERSE, ETF_UNIVERSE
+
+    declared_categories: dict[str, str] = {}
+    for asset in (*ETF_UNIVERSE, *CANDIDATE_UNIVERSE):
+        declared_categories[asset.new_name] = asset.asset_class
+        declared_categories[asset.old_name] = asset.asset_class
+    category = declared_categories.get(name, "")
+    if category == "money market":
+        return "cash"
+    if "bond" in category:
+        return "bond"
+    if category == "china equity dividend":
+        return "defensive"
+    if category == "commodity":
+        return "commodity_gold"
+
     if "红利" in name:
         return "defensive"
     if "债" in name or "信用" in name:

@@ -219,6 +219,56 @@ def test_public_selector_switches_after_statistically_significant_sharpe_gain() 
     assert selected["selection_action"].tolist() == ["initialize", "switch_significant_sharpe"]
 
 
+def test_public_selector_initializes_with_conservative_candidate_within_sharpe_confidence_set() -> None:
+    from src.afml_oos import select_public_low_turnover_oos_candidates
+
+    scores = pd.DataFrame(
+        [
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": candidate_id,
+                "validation_sharpe": sharpe,
+                "validation_avg_monthly_turnover": turnover,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            }
+            for candidate_id, sharpe, turnover in [
+                ("candidate_03", 1.00, 0.02),
+                ("candidate_04", 1.30, 0.01),
+                ("candidate_05", 0.90, 0.01),
+            ]
+        ]
+    )
+
+    selected = select_public_low_turnover_oos_candidates(
+        scores,
+        eligible_candidate_ids=("candidate_03", "candidate_04", "candidate_05"),
+        turnover_limit=0.03,
+    )
+
+    assert selected["challenger_candidate_id"].item() == "candidate_04"
+    assert selected["selected_candidate_id"].item() == "candidate_03"
+    assert selected["initialization_confidence_set_size"].item() == 3
+
+
+def test_public_candidate_family_keeps_grid_size_and_applies_cash_concentration_cap() -> None:
+    from scripts.run_convex_adaptive_rrp import (
+        PUBLIC_CASH_CONCENTRATION_CAP,
+        PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
+        candidate_configurations,
+    )
+
+    configurations = dict(candidate_configurations(3.0))
+
+    assert len(configurations) == 36
+    for candidate_id in PUBLIC_LOW_TURNOVER_CANDIDATE_IDS:
+        assert configurations[candidate_id].group_bounds == {
+            "cash": (0.0, PUBLIC_CASH_CONCENTRATION_CAP)
+        }
+
+
 def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypatch: pytest.MonkeyPatch) -> None:
     import src.convex_adaptive_rrp as module
     from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_schedule_backtest

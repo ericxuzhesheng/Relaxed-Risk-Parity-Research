@@ -52,7 +52,7 @@ def test_robustness_smoke_outputs_required_tables(tmp_path):
     }.issubset(set(audit["component"]))
 
     perturb = pd.read_csv(tmp_path / "tables" / "robustness_parameter_perturbation.csv")
-    assert "selected_baseline" in set(perturb["case"])
+    assert "public_schedule_baseline" in set(perturb["case"])
     assert perturb["case"].nunique() > 5
 
     overall = pd.read_csv(tmp_path / "tables" / "robustness_overall_summary.csv")

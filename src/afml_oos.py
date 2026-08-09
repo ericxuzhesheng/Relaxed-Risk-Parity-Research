@@ -278,6 +278,9 @@ def select_public_low_turnover_oos_candidates(
         raise ValueError("switch_confidence must be between 0.5 and 1.0")
 
     eligible_ids = set(eligible_candidate_ids)
+    preference_rank = {
+        candidate_id: rank for rank, candidate_id in enumerate(eligible_candidate_ids)
+    }
     ordered_scores = scores.copy()
     ordered_scores["test_start"] = pd.to_datetime(ordered_scores["test_start"])
     ordered_scores = ordered_scores.sort_values(
@@ -325,8 +328,49 @@ def select_public_low_turnover_oos_candidates(
         incumbent_before = incumbent_id
         sharpe_improvement = 0.0
         switch_threshold = 0.0
+        initialization_confidence_set_size = 0
         if incumbent_id is None:
-            winner = challenger
+            challenger_se = _annualized_sharpe_standard_error(
+                float(challenger["validation_sharpe"]),
+                int(challenger["validation_observations"]),
+                trading_days_per_year,
+            )
+            confidence_rows = []
+            for _, candidate in challenger_pool.iterrows():
+                candidate_se = _annualized_sharpe_standard_error(
+                    float(candidate["validation_sharpe"]),
+                    int(candidate["validation_observations"]),
+                    trading_days_per_year,
+                )
+                confidence_threshold = z_score * (
+                    challenger_se**2 + candidate_se**2
+                ) ** 0.5
+                if (
+                    float(challenger["validation_sharpe"])
+                    - float(candidate["validation_sharpe"])
+                    <= confidence_threshold
+                ):
+                    confidence_rows.append(candidate)
+            confidence_set = pd.DataFrame(confidence_rows)
+            initialization_confidence_set_size = len(confidence_set)
+            confidence_set["_preference_rank"] = confidence_set["candidate_id"].map(
+                preference_rank
+            )
+            winner = confidence_set.sort_values(
+                ["_preference_rank", "validation_avg_monthly_turnover", "candidate_id"],
+                ascending=[True, True, True],
+                kind="mergesort",
+            ).iloc[0]
+            winner = winner.drop(labels=["_preference_rank"])
+            switch_threshold = z_score * (
+                challenger_se**2
+                + _annualized_sharpe_standard_error(
+                    float(winner["validation_sharpe"]),
+                    int(winner["validation_observations"]),
+                    trading_days_per_year,
+                )
+                ** 2
+            ) ** 0.5
             selection_action = "initialize"
         else:
             incumbent_rows = family_scores[family_scores["candidate_id"].eq(incumbent_id)]
@@ -375,6 +419,7 @@ def select_public_low_turnover_oos_candidates(
         audited["solver_gate_passed"] = bool(solver_gate_passed)
         audited["turnover_gate_passed"] = bool(turnover_gate_passed)
         audited["selection_action"] = selection_action
+        audited["initialization_confidence_set_size"] = initialization_confidence_set_size
         audited["sharpe_improvement"] = sharpe_improvement
         audited["sharpe_switch_threshold"] = switch_threshold
         selected_rows.append(audited)

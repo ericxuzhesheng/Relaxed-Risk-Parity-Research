@@ -26,16 +26,26 @@ def steps(quick: bool) -> list[PipelineStep]:
         rrp_cmd.append("--fast-mode")
     quick_root = ROOT_DIR / "results" / "quick"
     return [
+        PipelineStep("update_etf_data", [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260731"], True),
+        PipelineStep("update_risk_free_rate", [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260731"], True),
+        PipelineStep("barra_exposure_correlation", [python, "scripts/run_barra_exposure_correlation.py"], True),
         PipelineStep("rrp_pipeline", rrp_cmd, True, [ROOT_DIR / "results/tables/performance_summary.csv"] if quick else None),
         PipelineStep("showcase_optimization", [python, "scripts/optimize_showcase_rrp.py"], False, [ROOT_DIR / "results/tables/showcase_performance_summary.csv"] if quick else None),
         PipelineStep("hrp_comparison", [python, "scripts/run_hrp_comparison.py"], False, [ROOT_DIR / "results/tables/hrp_comparison.csv"] if quick else None),
         PipelineStep("convex_adaptive_rrp", [python, "scripts/run_convex_adaptive_rrp.py"], True, [ROOT_DIR / "results/tables/convex_adaptive_performance_summary.csv"] if quick else None),
+        PipelineStep("walkforward_validation", [python, "scripts/run_walkforward_validation.py", *(["--smoke"] if quick else [])], False, [ROOT_DIR / "results/tables/walkforward_validation_summary.csv"] if quick else None),
+        PipelineStep("cscv_pbo", [python, "scripts/run_cscv_pbo.py", *(["--smoke"] if quick else [])], False, [ROOT_DIR / "results/tables/cscv_pbo_summary.csv"] if quick else None),
         PipelineStep("monthly_hs300_comparison", [python, "scripts/run_monthly_hs300_comparison.py"], False, [ROOT_DIR / "results/tables/improved_rrp_vs_hs300_monthly_returns.csv"] if quick else None),
         PipelineStep("rebalance_frequency_sensitivity", [python, "scripts/run_rebalance_frequency_sensitivity.py"], False, [ROOT_DIR / "results/tables/rebalance_frequency_sensitivity.csv"] if quick else None),
         PipelineStep("extended_sample_robustness", [python, "scripts/run_extended_sample_robustness.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/extended_sample_robustness_summary.csv"] if quick else None),
         PipelineStep("cvar_sensitivity", [python, "scripts/run_cvar_sensitivity.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/cvar_sensitivity_summary.csv"] if quick else None),
         PipelineStep("enhanced_cscv_pbo", [python, "scripts/run_enhanced_cscv_pbo.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv"] if quick else None),
-        PipelineStep("holdout_validation", [python, "scripts/run_holdout_validation.py", *( ["--smoke"] if quick else [] )], False, [ROOT_DIR / "results/tables/holdout_validation_summary.csv"] if quick else None),
+        PipelineStep("parameter_sensitivity", [python, "scripts/run_parameter_sensitivity.py", *(["--smoke"] if quick else [])], False, [ROOT_DIR / "results/tables/parameter_sensitivity_summary.csv"] if quick else None),
+        PipelineStep("overlay_sensitivity", [python, "scripts/run_overlay_sensitivity.py"], False),
+        PipelineStep("regime_covariance_experiment", [python, "scripts/run_regime_covariance_experiment.py"], False),
+        PipelineStep("regime_oos_validation", [python, "scripts/run_regime_oos_validation.py"], False),
+        PipelineStep("vol_aligned_comparison", [python, "scripts/run_vol_aligned_comparison.py"], False),
+        PipelineStep("sharpe_diff_tests", [python, "scripts/run_sharpe_diff_tests.py"], False),
         PipelineStep(
             "benchmark_suite",
             [python, "scripts/run_benchmark_suite.py", *(["--smoke", "--output-root", str(quick_root / "benchmark")] if quick else [])],
@@ -51,6 +61,10 @@ def steps(quick: bool) -> list[PipelineStep]:
             [python, "scripts/run_asset_pricing_diagnostics.py", *(["--smoke", "--output-root", str(quick_root / "asset_pricing")] if quick else [])],
             False,
         ),
+        PipelineStep("weight_path_diagnostics", [python, "scripts/run_weight_path_diagnostics.py"], False),
+        PipelineStep("plot_weights_timeline", [python, "scripts/plot_weights_timeline.py"], False),
+        PipelineStep("augment_supplementary_csvs", [python, "scripts/augment_supplementary_csvs.py"], False),
+        PipelineStep("generate_thesis_numbers", [python, "scripts/generate_thesis_numbers.py"], True),
     ]
 
 
@@ -69,9 +83,14 @@ def expected_outputs() -> list[Path]:
         ROOT_DIR / "results/tables/rebalance_frequency_sensitivity.csv",
         ROOT_DIR / "results/tables/cvar_sensitivity_summary.csv",
         ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv",
-        ROOT_DIR / "results/tables/holdout_validation_summary.csv",
+        ROOT_DIR / "results/tables/afml_oos_selection.csv",
+        ROOT_DIR / "data/processed/risk_free_rate_monthly.csv",
+        ROOT_DIR / "data/processed/barra_style_exposure_correlation.csv",
         ROOT_DIR / "docs/MODEL_GOVERNANCE.md",
         ROOT_DIR / "report/thesis_latex/main.tex",
+        ROOT_DIR / "report/thesis_latex/main.pdf",
+        ROOT_DIR / "report/ppt/rrp_defense.tex",
+        ROOT_DIR / "report/ppt/rrp_defense.pdf",
     ]
 
 
@@ -154,23 +173,31 @@ def write_checklist(rows: list[dict], output_path: Path | None = None) -> Path:
 
 
 def compile_pdf() -> None:
-    tex_dir = ROOT_DIR / "report" / "thesis_latex"
-    if not (tex_dir / "main.tex").exists():
-        return
-    print("\nCompiling thesis PDF...")
-    try:
-        result = subprocess.run(
-            ["latexmk", "-xelatex", "-interaction=nonstopmode", "main.tex"],
-            cwd=tex_dir,
-        )
-        if result.returncode == 0:
-            print("Thesis PDF compiled successfully.")
-        else:
-            print("Warning: PDF compilation failed (latexmk returned non-zero).", file=sys.stderr)
-            print("  Run manually: cd report/thesis_latex && latexmk -xelatex -interaction=nonstopmode main.tex", file=sys.stderr)
-    except FileNotFoundError:
-        print("Warning: latexmk not found on PATH. Compile PDF manually:", file=sys.stderr)
-        print("  cd report/thesis_latex && latexmk -xelatex -interaction=nonstopmode main.tex", file=sys.stderr)
+    documents = [
+        (ROOT_DIR / "report" / "thesis_latex", "main.tex", "Thesis"),
+        (ROOT_DIR / "report" / "ppt", "rrp_defense.tex", "Defense slides"),
+    ]
+    for tex_dir, filename, label in documents:
+        if not (tex_dir / filename).exists():
+            continue
+        print(f"\nCompiling {label} PDF with three XeLaTeX passes...")
+        try:
+            return_code = 0
+            for _ in range(3):
+                result = subprocess.run(
+                    ["xelatex", "-interaction=nonstopmode", "-halt-on-error", filename],
+                    cwd=tex_dir,
+                )
+                return_code = result.returncode
+                if return_code != 0:
+                    break
+            if return_code == 0:
+                print(f"{label} PDF compiled successfully.")
+            else:
+                print(f"Warning: {label} PDF compilation failed.", file=sys.stderr)
+        except FileNotFoundError:
+            print("Warning: xelatex not found on PATH; PDFs were not compiled.", file=sys.stderr)
+            return
 
 
 def cleanup() -> None:

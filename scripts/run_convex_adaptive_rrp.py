@@ -42,6 +42,9 @@ PUBLIC_SELECTION_METHOD = "afml_rolling_oos"
 EXPLORATORY_REFERENCE_CANDIDATE_ID = "candidate_03"
 PUBLIC_LOW_TURNOVER_CANDIDATE_IDS = ("candidate_03", "candidate_04", "candidate_05")
 PUBLIC_EXECUTION_WARMUP_MONTHS = 36
+PUBLIC_CASH_CONCENTRATION_CAP = 0.30
+PUBLIC_VALIDATION_TURNOVER_LIMIT = 0.04
+PUBLIC_REALIZED_TURNOVER_LIMIT = 0.02
 
 
 def ensure_output_dirs() -> None:
@@ -245,7 +248,17 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
         {**probe_winner, "lookback_days": 120, "covariance_method": "sample", "max_weight": 0.40, "turnover_cap": None, "turnover_penalty": 0.02, "budget_penalty": 0.10, "cvar_penalty": 0.10},
     ]:
         add(params)
-    return [(name, ConvexRRPConfig(transaction_cost_bps=transaction_cost_bps, **params)) for name, params in rows]
+    configurations = []
+    for name, params in rows:
+        governed = dict(params)
+        if name in PUBLIC_LOW_TURNOVER_CANDIDATE_IDS:
+            governed["group_bounds"] = {
+                "cash": (0.0, PUBLIC_CASH_CONCENTRATION_CAP)
+            }
+        configurations.append(
+            (name, ConvexRRPConfig(transaction_cost_bps=transaction_cost_bps, **governed))
+        )
+    return configurations
 
 
 def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tuple[float, str]:
@@ -427,7 +440,7 @@ def build_public_oos_from_scores(
         phase_selection = select_public_low_turnover_oos_candidates(
             phase_scores,
             eligible_candidate_ids=PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
-            turnover_limit=0.02,
+            turnover_limit=PUBLIC_VALIDATION_TURNOVER_LIMIT,
             switch_confidence=0.95,
             trading_days_per_year=config["trading_days_per_year"],
         )
@@ -462,6 +475,17 @@ def build_public_oos_from_scores(
         test_metric_rows.append({f"test_{key}": value for key, value in metrics.items()})
     oos_selection = pd.concat([oos_selection.reset_index(drop=True), pd.DataFrame(test_metric_rows)], axis=1)
     public_result = slice_and_rebase_result(scheduled_result, eval_start_date)
+    public_months = max(
+        pd.to_datetime(public_result["date"]).dt.to_period("M").nunique(), 1
+    )
+    realized_monthly_turnover = float(
+        public_result["turnover"].fillna(0.0).sum() / public_months
+    )
+    if realized_monthly_turnover > PUBLIC_REALIZED_TURNOVER_LIMIT + 1e-12:
+        raise ValueError(
+            "Public OOS path violates the realized monthly turnover release gate: "
+            f"{realized_monthly_turnover:.4%} > {PUBLIC_REALIZED_TURNOVER_LIMIT:.4%}"
+        )
     public_solver = scheduled_solver[
         pd.to_datetime(scheduled_solver["date"]) >= evaluation_start
     ].copy()

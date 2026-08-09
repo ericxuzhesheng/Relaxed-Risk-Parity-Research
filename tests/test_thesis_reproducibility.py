@@ -44,12 +44,13 @@ def test_new_validation_scripts_exist():
 def test_pipeline_includes_new_diagnostics():
     pipeline = Path("scripts/run_full_research_pipeline.py").read_text(encoding="utf-8")
     for step in [
+        "convex_adaptive_rrp",
         "extended_sample_robustness",
         "cvar_sensitivity",
         "enhanced_cscv_pbo",
-        "holdout_validation",
     ]:
         assert step in pipeline
+    assert "holdout_validation" not in pipeline
 
 
 def test_governance_doc_listed_in_pipeline():
@@ -65,7 +66,7 @@ def test_pipeline_expected_outputs_includes_new_tables():
         "extended_sample_robustness_summary.csv",
         "cvar_sensitivity_summary.csv",
         "cscv_pbo_enhanced_summary.csv",
-        "holdout_validation_summary.csv",
+        "afml_oos_selection.csv",
     ]:
         assert any(table in o for o in outputs), f"{table} missing from expected_outputs()"
 
@@ -99,4 +100,4 @@ def test_cvar_sensitivity_honors_explicit_cutoff():
 def test_parameter_sensitivity_default_matches_primary_evaluation_start():
     from scripts.run_parameter_sensitivity import build_parser
 
-    assert build_parser().parse_args([]).eval_start == "2019-01-01"
+    assert build_parser().parse_args([]).eval_start == "2018-01-02"
