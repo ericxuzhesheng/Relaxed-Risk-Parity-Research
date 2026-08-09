@@ -258,6 +258,7 @@ def result_window_metrics(
     months = max(len(dates.dt.to_period("M").unique()), 1)
     turnover = data["turnover"].fillna(0.0) if "turnover" in data else pd.Series(0.0, index=data.index)
     return {
+        "observations": int(len(data)),
         "net_annual_return": float(metrics["annualized_return"]),
         "annual_volatility": float(metrics["annualized_volatility"]),
         "sharpe": float(metrics["sharpe_ratio"]),

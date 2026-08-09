@@ -9,6 +9,7 @@ paths, but no test-window observation is used for selection.
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from statistics import NormalDist
 
 import pandas as pd
 
@@ -180,14 +181,211 @@ def select_oos_candidates_from_scores(scores: pd.DataFrame) -> pd.DataFrame:
     """Choose one deterministic winner per OOS split from an audited score table."""
     if scores.empty:
         raise ValueError("OOS candidate score table is empty")
-    ordered = scores.sort_values(
-        ["split_id", "validation_score", "candidate_id"],
-        ascending=[True, False, True],
-        kind="mergesort",
-    )
-    selected = ordered.groupby("split_id", sort=False, as_index=False).head(1).copy()
+    required = {
+        "split_id",
+        "candidate_id",
+        "validation_score",
+        "validation_solver_fallback_rate",
+    }
+    missing = sorted(required.difference(scores.columns))
+    if missing:
+        raise ValueError(f"OOS candidate score table is missing columns: {missing}")
+
+    selected_rows: list[pd.Series] = []
+    gate_passed: list[bool] = []
+    for _, split_scores in scores.groupby("split_id", sort=False):
+        fallback_rates = pd.to_numeric(
+            split_scores["validation_solver_fallback_rate"], errors="coerce"
+        )
+        if fallback_rates.isna().any() or (fallback_rates < 0.0).any():
+            raise ValueError("Validation solver fallback rates must be finite and non-negative")
+
+        zero_fallback = fallback_rates <= 1e-12
+        if zero_fallback.any():
+            eligible = split_scores.loc[zero_fallback]
+            split_gate_passed = True
+        else:
+            minimum_fallback = float(fallback_rates.min())
+            eligible = split_scores.loc[fallback_rates <= minimum_fallback + 1e-12]
+            split_gate_passed = False
+
+        winner = eligible.sort_values(
+            ["validation_score", "candidate_id"],
+            ascending=[False, True],
+            kind="mergesort",
+        ).iloc[0]
+        selected_rows.append(winner)
+        gate_passed.append(split_gate_passed)
+
+    selected = pd.DataFrame(selected_rows).reset_index(drop=True)
     selected = selected.rename(columns={"candidate_id": "selected_candidate_id"})
     selected["uses_future_data"] = False
-    selected["selection_rule"] = "highest past-only validation score; candidate_id breaks exact ties"
+    selected["solver_gate_passed"] = pd.Series(gate_passed, dtype=object)
+    selected["selection_rule"] = (
+        "prefer zero validation solver fallback; otherwise minimize fallback rate; "
+        "then maximize past-only validation score; candidate_id breaks exact ties"
+    )
     selected["validation_status"] = "strict_rolling_oos_no_test_reselection"
     return selected.reset_index(drop=True)
+
+
+def _annualized_sharpe_standard_error(
+    annualized_sharpe: float,
+    observations: int,
+    trading_days_per_year: int,
+) -> float:
+    """Return the normal-approximation standard error of annualized Sharpe."""
+    if observations < 2:
+        raise ValueError("Sharpe comparison requires at least two validation observations")
+    daily_sharpe = float(annualized_sharpe) / trading_days_per_year**0.5
+    daily_se = ((1.0 + 0.5 * daily_sharpe**2) / (observations - 1)) ** 0.5
+    return float(daily_se * trading_days_per_year**0.5)
+
+
+def select_public_low_turnover_oos_candidates(
+    scores: pd.DataFrame,
+    *,
+    eligible_candidate_ids: Sequence[str],
+    turnover_limit: float = 0.02,
+    switch_confidence: float = 0.95,
+    trading_days_per_year: int = 243,
+) -> pd.DataFrame:
+    """Select the public low-turnover candidate with statistical switch hysteresis.
+
+    The first window initializes from the highest cost-adjusted validation
+    Sharpe among the pre-declared low-turnover family.  Later windows retain
+    the incumbent unless a zero-fallback, turnover-compliant challenger has a
+    one-sided Sharpe improvement above the requested confidence threshold.
+    """
+    required = {
+        "split_id",
+        "candidate_id",
+        "validation_sharpe",
+        "validation_avg_monthly_turnover",
+        "validation_solver_fallback_rate",
+        "validation_observations",
+        "test_start",
+        "test_end",
+    }
+    missing = sorted(required.difference(scores.columns))
+    if missing:
+        raise ValueError(f"Public OOS score table is missing columns: {missing}")
+    if not eligible_candidate_ids:
+        raise ValueError("Public low-turnover candidate family is empty")
+    if turnover_limit < 0.0:
+        raise ValueError("turnover_limit cannot be negative")
+    if not 0.5 < switch_confidence < 1.0:
+        raise ValueError("switch_confidence must be between 0.5 and 1.0")
+
+    eligible_ids = set(eligible_candidate_ids)
+    ordered_scores = scores.copy()
+    ordered_scores["test_start"] = pd.to_datetime(ordered_scores["test_start"])
+    ordered_scores = ordered_scores.sort_values(
+        ["test_start", "split_id", "candidate_id"], kind="mergesort"
+    )
+    z_score = NormalDist().inv_cdf(switch_confidence)
+    incumbent_id: str | None = None
+    selected_rows: list[pd.Series] = []
+
+    for _, all_split_scores in ordered_scores.groupby("split_id", sort=False):
+        family_scores = all_split_scores[
+            all_split_scores["candidate_id"].isin(eligible_ids)
+        ].copy()
+        if family_scores.empty:
+            raise ValueError("No public low-turnover candidates exist in an OOS split")
+
+        fallback_rates = pd.to_numeric(
+            family_scores["validation_solver_fallback_rate"], errors="coerce"
+        )
+        if fallback_rates.isna().any() or (fallback_rates < 0.0).any():
+            raise ValueError("Validation solver fallback rates must be finite and non-negative")
+        zero_fallback = fallback_rates <= 1e-12
+        if zero_fallback.any():
+            solver_eligible = family_scores.loc[zero_fallback]
+            solver_gate_passed = True
+        else:
+            minimum_fallback = float(fallback_rates.min())
+            solver_eligible = family_scores.loc[fallback_rates <= minimum_fallback + 1e-12]
+            solver_gate_passed = False
+
+        low_turnover = solver_eligible[
+            pd.to_numeric(
+                solver_eligible["validation_avg_monthly_turnover"], errors="coerce"
+            )
+            <= turnover_limit + 1e-12
+        ]
+        turnover_gate_passed = not low_turnover.empty
+        challenger_pool = low_turnover if turnover_gate_passed else solver_eligible
+        challenger = challenger_pool.sort_values(
+            ["validation_sharpe", "validation_avg_monthly_turnover", "candidate_id"],
+            ascending=[False, True, True],
+            kind="mergesort",
+        ).iloc[0]
+
+        incumbent_before = incumbent_id
+        sharpe_improvement = 0.0
+        switch_threshold = 0.0
+        if incumbent_id is None:
+            winner = challenger
+            selection_action = "initialize"
+        else:
+            incumbent_rows = family_scores[family_scores["candidate_id"].eq(incumbent_id)]
+            if incumbent_rows.empty:
+                winner = challenger
+                selection_action = "switch_missing_incumbent"
+            else:
+                incumbent = incumbent_rows.iloc[0]
+                incumbent_fallback = float(incumbent["validation_solver_fallback_rate"])
+                if solver_gate_passed and incumbent_fallback > 1e-12:
+                    winner = challenger
+                    selection_action = "switch_solver_gate"
+                elif str(challenger["candidate_id"]) == incumbent_id:
+                    winner = incumbent
+                    selection_action = "retain_incumbent"
+                elif not turnover_gate_passed:
+                    winner = incumbent
+                    selection_action = "retain_turnover_gate"
+                else:
+                    sharpe_improvement = float(
+                        challenger["validation_sharpe"] - incumbent["validation_sharpe"]
+                    )
+                    challenger_se = _annualized_sharpe_standard_error(
+                        float(challenger["validation_sharpe"]),
+                        int(challenger["validation_observations"]),
+                        trading_days_per_year,
+                    )
+                    incumbent_se = _annualized_sharpe_standard_error(
+                        float(incumbent["validation_sharpe"]),
+                        int(incumbent["validation_observations"]),
+                        trading_days_per_year,
+                    )
+                    switch_threshold = z_score * (challenger_se**2 + incumbent_se**2) ** 0.5
+                    if sharpe_improvement > switch_threshold:
+                        winner = challenger
+                        selection_action = "switch_significant_sharpe"
+                    else:
+                        winner = incumbent
+                        selection_action = "retain_incumbent"
+
+        incumbent_id = str(winner["candidate_id"])
+        audited = winner.copy()
+        audited["incumbent_candidate_id"] = incumbent_before
+        audited["challenger_candidate_id"] = str(challenger["candidate_id"])
+        audited["selected_candidate_id"] = incumbent_id
+        audited["solver_gate_passed"] = bool(solver_gate_passed)
+        audited["turnover_gate_passed"] = bool(turnover_gate_passed)
+        audited["selection_action"] = selection_action
+        audited["sharpe_improvement"] = sharpe_improvement
+        audited["sharpe_switch_threshold"] = switch_threshold
+        selected_rows.append(audited)
+
+    selected = pd.DataFrame(selected_rows).reset_index(drop=True)
+    selected = selected.drop(columns=["candidate_id"], errors="ignore")
+    selected["uses_future_data"] = False
+    selected["selection_rule"] = (
+        "predeclared low-turnover family; zero solver fallback; validation monthly turnover "
+        f"at most {turnover_limit:.2%}; maximize past-only net Sharpe; switch only when the "
+        f"one-sided Sharpe improvement exceeds the {switch_confidence:.0%} threshold"
+    )
+    selected["validation_status"] = "strict_rolling_oos_no_test_reselection"
+    return selected

@@ -88,6 +88,137 @@ def test_oos_selector_uses_only_pre_test_validation_data() -> None:
     assert selected["uses_future_data"].eq(False).all()
 
 
+def test_oos_selector_prefers_zero_fallback_candidate_before_score() -> None:
+    from src.afml_oos import select_oos_candidates_from_scores
+
+    scores = pd.DataFrame(
+        [
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": "candidate_high_score_fallback",
+                "validation_score": 10.0,
+                "validation_solver_fallback_rate": 1.0,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            },
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": "candidate_valid",
+                "validation_score": 1.0,
+                "validation_solver_fallback_rate": 0.0,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            },
+        ]
+    )
+
+    selected = select_oos_candidates_from_scores(scores)
+
+    assert selected["selected_candidate_id"].item() == "candidate_valid"
+    assert selected["solver_gate_passed"].item() is True
+
+
+def test_public_selector_keeps_low_turnover_incumbent_without_significant_sharpe_gain() -> None:
+    from src.afml_oos import select_public_low_turnover_oos_candidates
+
+    scores = pd.DataFrame(
+        [
+            {
+                "split_id": "warmup_01",
+                "candidate_id": "candidate_03",
+                "validation_sharpe": 1.00,
+                "validation_avg_monthly_turnover": 0.01,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2017-10-09",
+                "test_end": "2017-12-29",
+            },
+            {
+                "split_id": "warmup_01",
+                "candidate_id": "candidate_04",
+                "validation_sharpe": 0.80,
+                "validation_avg_monthly_turnover": 0.01,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2017-10-09",
+                "test_end": "2017-12-29",
+            },
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": "candidate_03",
+                "validation_sharpe": 0.90,
+                "validation_avg_monthly_turnover": 0.01,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            },
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": "candidate_04",
+                "validation_sharpe": 1.00,
+                "validation_avg_monthly_turnover": 0.01,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            },
+            {
+                "split_id": "afml_oos_01",
+                "candidate_id": "candidate_exploratory",
+                "validation_sharpe": 9.00,
+                "validation_avg_monthly_turnover": 0.50,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 120,
+                "test_start": "2018-01-02",
+                "test_end": "2018-03-30",
+            },
+        ]
+    )
+
+    selected = select_public_low_turnover_oos_candidates(
+        scores,
+        eligible_candidate_ids=("candidate_03", "candidate_04"),
+    )
+
+    assert selected["selected_candidate_id"].tolist() == ["candidate_03", "candidate_03"]
+    assert selected["selection_action"].tolist() == ["initialize", "retain_incumbent"]
+    assert selected["turnover_gate_passed"].all()
+
+
+def test_public_selector_switches_after_statistically_significant_sharpe_gain() -> None:
+    from src.afml_oos import select_public_low_turnover_oos_candidates
+
+    scores = pd.DataFrame(
+        [
+            {
+                "split_id": split_id,
+                "candidate_id": candidate_id,
+                "validation_sharpe": sharpe,
+                "validation_avg_monthly_turnover": 0.01,
+                "validation_solver_fallback_rate": 0.0,
+                "validation_observations": 100_000,
+                "test_start": test_start,
+                "test_end": test_end,
+            }
+            for split_id, test_start, test_end, candidate_id, sharpe in [
+                ("warmup_01", "2017-10-09", "2017-12-29", "candidate_03", 1.00),
+                ("warmup_01", "2017-10-09", "2017-12-29", "candidate_04", 0.80),
+                ("afml_oos_01", "2018-01-02", "2018-03-30", "candidate_03", 0.50),
+                ("afml_oos_01", "2018-01-02", "2018-03-30", "candidate_04", 1.00),
+            ]
+        ]
+    )
+
+    selected = select_public_low_turnover_oos_candidates(
+        scores,
+        eligible_candidate_ids=("candidate_03", "candidate_04"),
+    )
+
+    assert selected["selected_candidate_id"].tolist() == ["candidate_03", "candidate_04"]
+    assert selected["selection_action"].tolist() == ["initialize", "switch_significant_sharpe"]
+
+
 def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypatch: pytest.MonkeyPatch) -> None:
     import src.convex_adaptive_rrp as module
     from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_schedule_backtest
@@ -131,3 +262,23 @@ def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypa
     assert applied["turnover"] == pytest.approx(2.0)
     assert applied["transaction_cost"] == pytest.approx(2.0 * 3.0 / 10000.0)
     assert solver.loc[solver["date"].eq(next_rebalance), "selected_candidate_id"].item() == "candidate_b"
+
+
+def test_public_oos_repricing_holds_weights_and_turnover_fixed() -> None:
+    from scripts.public_oos import reprice_public_result
+
+    source = pd.DataFrame(
+        {
+            "date": pd.bdate_range("2018-01-02", periods=3),
+            "gross_return": [0.01, -0.01, 0.005],
+            "turnover": [1.0, 0.0, 0.5],
+            "weight_a": [1.0, 1.0, 0.5],
+        }
+    )
+
+    repriced = reprice_public_result(source, transaction_cost_bps=10.0)
+
+    assert repriced["turnover"].equals(source["turnover"])
+    assert repriced["weight_a"].equals(source["weight_a"])
+    assert repriced["transaction_cost"].tolist() == pytest.approx([0.001, 0.0, 0.0005])
+    assert repriced["net_return"].tolist() == pytest.approx([0.009, -0.01, 0.0045])

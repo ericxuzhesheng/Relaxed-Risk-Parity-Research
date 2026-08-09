@@ -16,7 +16,7 @@ from src.asset_graph_features import graph_feature_frame
 from src.afml_oos import (
     generate_quarterly_oos_windows,
     score_oos_candidates,
-    select_oos_candidates_from_scores,
+    select_public_low_turnover_oos_candidates,
 )
 from src.backtest import run_static_backtest
 from src.benchmarks import run_benchmark_backtest
@@ -39,6 +39,8 @@ BASE_CONVEX_MODEL_NAME = "Convex Adaptive Global Relaxed Risk Parity"
 IMPROVED_MODEL_NAME = "Improved Convex Adaptive Global Relaxed Risk Parity"
 PUBLIC_SELECTION_METHOD = "afml_rolling_oos"
 EXPLORATORY_REFERENCE_CANDIDATE_ID = "candidate_03"
+PUBLIC_LOW_TURNOVER_CANDIDATE_IDS = ("candidate_03", "candidate_04", "candidate_05")
+PUBLIC_EXECUTION_WARMUP_MONTHS = 36
 
 
 def ensure_output_dirs() -> None:
@@ -48,6 +50,23 @@ def ensure_output_dirs() -> None:
 
 def monthly_rebalance_dates(returns: pd.DataFrame) -> set[pd.Timestamp]:
     return set(returns.groupby(returns.index.to_period("M")).tail(1).index)
+
+
+def public_execution_warmup_start(returns: pd.DataFrame, evaluation_start: str) -> pd.Timestamp:
+    requested = pd.Timestamp(evaluation_start) - pd.DateOffset(months=PUBLIC_EXECUTION_WARMUP_MONTHS)
+    available = pd.DatetimeIndex(returns.index)[pd.DatetimeIndex(returns.index) >= requested]
+    if available.empty or available[0] >= pd.Timestamp(evaluation_start):
+        raise ValueError("Insufficient pre-evaluation history for public execution warm-up")
+    return pd.Timestamp(available[0])
+
+
+def slice_and_rebase_result(result: pd.DataFrame, evaluation_start: str) -> pd.DataFrame:
+    public = result[pd.to_datetime(result["date"]) >= pd.Timestamp(evaluation_start)].copy()
+    if public.empty:
+        raise ValueError("Public OOS result is empty after the evaluation start")
+    public["nav_gross"] = (1.0 + public["gross_return"].fillna(0.0)).cumprod()
+    public["nav_net"] = (1.0 + public["net_return"].fillna(0.0)).cumprod()
+    return public.reset_index(drop=True)
 
 
 def nav_from_return(result: pd.DataFrame, return_col: str, eval_start_date: str) -> pd.Series:
@@ -350,9 +369,10 @@ def run_improvement_search(
     candidate_results = {candidate_id: result for candidate_id, _cfg, result, _solver, _metrics, _fallback in evaluated}
     candidate_solvers = {candidate_id: solver for candidate_id, _cfg, _result, solver, _metrics, _fallback in evaluated}
     candidate_configs = {candidate_id: cfg for candidate_id, cfg, _result, _solver, _metrics, _fallback in evaluated}
+    warmup_start = public_execution_warmup_start(returns, eval_start_date)
     windows = generate_quarterly_oos_windows(
         returns,
-        evaluation_start=eval_start_date,
+        evaluation_start=warmup_start,
         evaluation_end=config["evaluation_end_date"],
         train_months=24,
         validation_months=6,
@@ -365,7 +385,24 @@ def run_improvement_search(
         risk_free_returns=config.get("risk_free_rate"),
         trading_days_per_year=config["trading_days_per_year"],
     )
-    oos_selection = select_oos_candidates_from_scores(oos_scores)
+    oos_selection = select_public_low_turnover_oos_candidates(
+        oos_scores,
+        eligible_candidate_ids=PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
+        turnover_limit=0.02,
+        switch_confidence=0.95,
+        trading_days_per_year=config["trading_days_per_year"],
+    )
+    evaluation_start = pd.Timestamp(eval_start_date)
+    oos_scores["phase"] = np.where(
+        pd.to_datetime(oos_scores["test_start"]) < evaluation_start,
+        "execution_warmup",
+        "public_oos",
+    )
+    oos_selection["phase"] = np.where(
+        pd.to_datetime(oos_selection["test_start"]) < evaluation_start,
+        "execution_warmup",
+        "public_oos",
+    )
     parameter_rows = {
         candidate_id: config_fields(candidate_id, cfg)
         for candidate_id, cfg in candidate_configs.items()
@@ -376,7 +413,7 @@ def run_improvement_search(
                 {candidate_id: fields[key] for candidate_id, fields in parameter_rows.items()}
             )
 
-    public_result, public_solver, _, _ = run_convex_adaptive_schedule_backtest(
+    scheduled_result, scheduled_solver, _, _ = run_convex_adaptive_schedule_backtest(
         returns,
         oos_selection[["test_start", "test_end", "selected_candidate_id"]],
         candidate_configs,
@@ -384,14 +421,20 @@ def run_improvement_search(
     test_metric_rows = []
     for row in oos_selection.itertuples(index=False):
         metrics = result_window_metrics(
-            public_result,
+            scheduled_result,
             pd.Timestamp(row.test_start),
             pd.Timestamp(row.test_end),
             config,
         )
         test_metric_rows.append({f"test_{key}": value for key, value in metrics.items()})
     oos_selection = pd.concat([oos_selection.reset_index(drop=True), pd.DataFrame(test_metric_rows)], axis=1)
-    selection_counts = oos_selection["selected_candidate_id"].value_counts()
+    public_result = slice_and_rebase_result(scheduled_result, eval_start_date)
+    public_solver = scheduled_solver[
+        pd.to_datetime(scheduled_solver["date"]) >= evaluation_start
+    ].copy()
+    selection_counts = oos_selection.loc[
+        oos_selection["phase"].eq("public_oos"), "selected_candidate_id"
+    ].value_counts()
     candidates["oos_selection_count"] = candidates["candidate_id"].map(selection_counts).fillna(0).astype(int)
     candidates["selected"] = candidates["oos_selection_count"].gt(0)
     if not public_solver.empty:
