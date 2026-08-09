@@ -91,6 +91,37 @@ def test_provider_merge_fills_missing_dates_and_rejects_conflicts() -> None:
         merge_provider_yields(primary, conflicting)
 
 
+def test_collect_history_uses_fallback_for_missing_months_and_fails_closed() -> None:
+    from src.risk_free import collect_risk_free_history
+
+    calls: list[tuple[str, str]] = []
+
+    def primary(start_date: str, end_date: str) -> pd.DataFrame:
+        calls.append(("primary", start_date))
+        return _daily([("2017-12-29", 3.83, "tushare_yc_cb")])
+
+    def fallback(start_date: str, end_date: str) -> pd.DataFrame:
+        calls.append(("fallback", start_date))
+        return _daily([("2018-01-31", 3.84, "chinabond_official")])
+
+    combined = collect_risk_free_history(
+        "2017-12-01",
+        "2018-01-31",
+        primary_fetcher=primary,
+        fallback_fetcher=fallback,
+    )
+    assert calls == [("primary", "2017-12-01"), ("fallback", "2017-12-01")]
+    assert combined["trade_date"].dt.strftime("%Y-%m-%d").tolist() == ["2017-12-29", "2018-01-31"]
+
+    with pytest.raises(ValueError, match="missing monthly risk-free observations.*2018-01"):
+        collect_risk_free_history(
+            "2017-12-01",
+            "2018-01-31",
+            primary_fetcher=primary,
+            fallback_fetcher=lambda _start, _end: _daily([]),
+        )
+
+
 def test_metrics_use_aligned_daily_excess_returns() -> None:
     from src.metrics import calculate_metrics
 
