@@ -183,3 +183,13 @@ def test_walkforward_defaults_to_configured_evaluation_start() -> None:
     config = {"evaluation_start_date": "2018-01-02"}
     assert effective_evaluation_start(None, config) == "2018-01-02"
     assert effective_evaluation_start("2020-01-01", config) == "2020-01-01"
+
+
+def test_convex_models_use_governed_public_labels() -> None:
+    from src.public_labels import public_model_label
+
+    assert public_model_label("Convex Adaptive Global Relaxed Risk Parity") == "Convex Adaptive Global RRP"
+    assert (
+        public_model_label("Improved Convex Adaptive Global Relaxed Risk Parity")
+        == "Improved Convex Adaptive Global RRP"
+    )
