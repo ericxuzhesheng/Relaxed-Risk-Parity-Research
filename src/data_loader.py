@@ -112,13 +112,32 @@ def read_data_manifest(manifest_path: Path | str | None = None) -> dict | None:
         return None
 
 
-def fetch_from_tushare(start_date: str = "20180101", end_date: str | None = None) -> pd.DataFrame:
+def adjusted_fund_close(close: pd.Series, adj_factor: pd.Series) -> pd.Series:
+    """Return a continuous adjusted close without discarding early price history.
+
+    Tushare's ``fund_adj`` history can begin years after ``fund_daily``.  The
+    earliest available factor is therefore carried backward to the fund's
+    listing history, while ordinary gaps are forward-filled.  Normalising by
+    the last factor preserves the latest unadjusted close level.
+    """
+    close_values = pd.to_numeric(close, errors="coerce").sort_index()
+    factor_values = pd.to_numeric(adj_factor, errors="coerce").sort_index()
+    aligned_factor = factor_values.reindex(close_values.index).ffill().bfill()
+    valid_factor = aligned_factor.dropna()
+    if valid_factor.empty:
+        return close_values
+    base = float(valid_factor.iloc[-1])
+    if not np.isfinite(base) or base == 0:
+        raise ValueError("The latest ETF adjustment factor must be finite and non-zero.")
+    return close_values * aligned_factor / base
+
+
+def fetch_from_tushare(start_date: str = "20000101", end_date: str | None = "20260731") -> pd.DataFrame:
     config = get_config()
     token = config.get("tushare_token", "")
     if not token:
         raise RuntimeError("TUSHARE_TOKEN is not set. Set it in the environment before refreshing Tushare data.")
-    ts.set_token(token)
-    pro = ts.pro_api()
+    pro = ts.pro_api(token)
     if end_date is None:
         end_date = datetime.now().strftime("%Y%m%d")
 
@@ -137,8 +156,7 @@ def fetch_from_tushare(start_date: str = "20180101", end_date: str | None = None
             adj = adj.copy()
             adj["trade_date"] = pd.to_datetime(adj["trade_date"])
             adj = adj.set_index("trade_date").sort_index()
-            base = float(adj["adj_factor"].dropna().iloc[-1])
-            price = daily["close"].astype(float) * adj["adj_factor"].astype(float) / base
+            price = adjusted_fund_close(daily["close"], adj["adj_factor"])
         else:
             price = daily["close"].astype(float)
         frames.append(price.rename(item.new_name))
@@ -204,6 +222,8 @@ def load_price_data(source: str = "tushare", force_update: bool = False) -> pd.D
         cache_path = resolve_path("资产数据.xlsx")
         source_label = "excel:资产数据.xlsx"
     df = df.apply(pd.to_numeric, errors="coerce").sort_index()
+    evaluation_end = pd.Timestamp(get_config()["evaluation_end_date"])
+    df = df.loc[df.index <= evaluation_end]
     if cache_path is not None and Path(cache_path).exists():
         try:
             write_data_manifest(df, cache_path, source_label)
