@@ -43,8 +43,8 @@ def test_oos_selector_uses_only_pre_test_validation_data() -> None:
     first = pd.DataFrame(
         {
             "date": dates,
-            "net_return": np.where(dates < pd.Timestamp("2018-01-02"), 0.002, -0.002),
-            "portfolio_return": np.where(dates < pd.Timestamp("2018-01-02"), 0.002, -0.002),
+            "net_return": np.where(dates < pd.Timestamp("2018-01-02"), 0.001, -0.003),
+            "portfolio_return": np.where(dates < pd.Timestamp("2018-01-02"), 0.001, -0.003),
             "turnover": 0.0,
         }
     )
@@ -93,7 +93,8 @@ def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypa
     from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_schedule_backtest
 
     dates = pd.bdate_range("2020-01-01", periods=100)
-    returns = pd.DataFrame({"asset_a": 0.001, "asset_b": 0.0}, index=dates)
+    alternating = np.where(np.arange(len(dates)) % 2 == 0, 0.001, -0.001)
+    returns = pd.DataFrame({"asset_a": alternating, "asset_b": -alternating}, index=dates)
     first_start = dates[70]
     second_start = dates[80]
     schedule = pd.DataFrame(
@@ -116,11 +117,17 @@ def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypa
 
     first = result.loc[result["date"].eq(first_start)].iloc[0]
     switch = result.loc[result["date"].eq(second_start)].iloc[0]
+    monthly_rebalances = set(returns.groupby(returns.index.to_period("M")).tail(1).index)
+    next_rebalance = min(date for date in monthly_rebalances if date >= second_start)
+    applied = result.loc[result["date"].eq(next_rebalance)].iloc[0]
     assert first["selected_candidate_id"] == "candidate_a"
     assert first["turnover"] == pytest.approx(1.0)
     assert switch["selected_candidate_id"] == "candidate_b"
-    assert switch["weight_asset_a"] == pytest.approx(0.0)
-    assert switch["weight_asset_b"] == pytest.approx(1.0)
-    assert switch["turnover"] == pytest.approx(2.0)
-    assert switch["transaction_cost"] == pytest.approx(2.0 * 3.0 / 10000.0)
-    assert solver.loc[solver["date"].eq(second_start), "selected_candidate_id"].item() == "candidate_b"
+    assert switch["weight_asset_a"] == pytest.approx(1.0)
+    assert switch["weight_asset_b"] == pytest.approx(0.0)
+    assert switch["turnover"] == pytest.approx(0.0)
+    assert applied["weight_asset_a"] == pytest.approx(0.0)
+    assert applied["weight_asset_b"] == pytest.approx(1.0)
+    assert applied["turnover"] == pytest.approx(2.0)
+    assert applied["transaction_cost"] == pytest.approx(2.0 * 3.0 / 10000.0)
+    assert solver.loc[solver["date"].eq(next_rebalance), "selected_candidate_id"].item() == "candidate_b"

@@ -135,7 +135,8 @@ def test_candidate_config_row_exposes_audit_schema_and_legacy_aliases():
     assert row["candidate_id"] == "candidate_01"
     assert row["lambda_cvar"] == row["cvar_penalty"]
     assert row["upper_bound_i"] == row["max_weight"]
-    assert "not frozen OOS" in row["notes"]
+    assert "rolling OOS selection" in row["notes"]
+    assert "never select the public historical path" in row["notes"]
 
 
 def test_walkforward_split_windows_are_ordered_without_future_overlap():

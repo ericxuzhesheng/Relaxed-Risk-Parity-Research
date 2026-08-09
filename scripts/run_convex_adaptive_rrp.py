@@ -13,21 +13,32 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.asset_graph_features import graph_feature_frame
+from src.afml_oos import (
+    generate_quarterly_oos_windows,
+    score_oos_candidates,
+    select_oos_candidates_from_scores,
+)
 from src.backtest import run_static_backtest
 from src.benchmarks import run_benchmark_backtest
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from src.convex_adaptive_rrp import (
+    ConvexRRPConfig,
+    run_convex_adaptive_backtest,
+    run_convex_adaptive_schedule_backtest,
+)
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.metrics import calculate_metrics
 from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
+from src.validation import config_fields, result_window_metrics
 from src.visualization import plot_drawdown_comparison, plot_metric_comparison, plot_nav_comparison
 
 
 BASE_CONVEX_MODEL_NAME = "Convex Adaptive Global Relaxed Risk Parity"
 IMPROVED_MODEL_NAME = "Improved Convex Adaptive Global Relaxed Risk Parity"
-PRIMARY_CANDIDATE_ID = "candidate_03"
+PUBLIC_SELECTION_METHOD = "afml_rolling_oos"
+EXPLORATORY_REFERENCE_CANDIDATE_ID = "candidate_03"
 
 
 def ensure_output_dirs() -> None:
@@ -255,11 +266,16 @@ def selection_score(metrics: dict, incumbent: dict, fallback_rate: float) -> tup
 
 
 def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: float, score: float, reject_reason: str) -> dict:
-    audit_note = "Selected using historical evaluation metrics; research-extension candidate, not frozen OOS."
+    audit_note = (
+        "The public model uses AFML-inspired rolling OOS selection. Full-sample candidate metrics "
+        "are exploratory diagnostics and never select the public historical path."
+    )
     return {
         "candidate_id": name,
         "candidate_name": name,
         "selected": False,
+        "primary_selected": False,
+        "exploratory_selected": False,
         "selection_score": score,
         "sharpe": metrics["sharpe_ratio"],
         "calmar": metrics["calmar_ratio"],
@@ -283,6 +299,7 @@ def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: fl
         "lambda_budget": cfg.budget_penalty,
         "upper_bound_i": cfg.max_weight,
         "turnover_cap": cfg.turnover_cap,
+        "portfolio_vol_cap": cfg.portfolio_vol_cap,
         "cvar_alpha": cfg.cvar_beta,
         "covariance_estimator": cfg.covariance_method,
         "lookback_window": cfg.lookback_days,
@@ -299,25 +316,28 @@ def run_improvement_search(
     returns: pd.DataFrame,
     eval_start_date: str,
     config: dict,
-    incumbent_metrics: dict,
-) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    candidate_rows = []
-    outputs = []
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    evaluated: list[tuple[str, ConvexRRPConfig, pd.DataFrame, pd.DataFrame, dict, float]] = []
     for candidate_name, cfg in candidate_configurations(config["transaction_cost_bps"]):
         print(f"Running improvement {candidate_name}...")
         result, solver_diag, _, _ = run_convex_adaptive_backtest(returns, cfg)
         metrics = summarize_result(candidate_name, result, eval_start_date, config)
         fallback_rate = float(solver_diag["fallback_used"].mean()) if not solver_diag.empty else 1.0
-        score, reject_reason = selection_score(metrics, incumbent_metrics, fallback_rate)
+        evaluated.append((candidate_name, cfg, result, solver_diag, metrics, fallback_rate))
+
+    reference = next(row for row in evaluated if row[0] == EXPLORATORY_REFERENCE_CANDIDATE_ID)
+    reference_metrics = reference[4]
+    candidate_rows = []
+    for candidate_name, cfg, _result, _solver, metrics, fallback_rate in evaluated:
+        score, reject_reason = selection_score(metrics, reference_metrics, fallback_rate)
         candidate_rows.append(config_row(candidate_name, cfg, metrics, fallback_rate, score, reject_reason))
-        outputs.append((candidate_name, result, solver_diag))
 
     candidates = pd.DataFrame(candidate_rows)
     accepted = candidates[candidates["reject_reason"].eq("")]
     preferred = accepted[
         (accepted["average_monthly_turnover"] <= 0.02)
-        & (accepted["Sharpe"] > float(incumbent_metrics["sharpe_ratio"]))
-        & (accepted["Calmar"] > float(incumbent_metrics["calmar_ratio"]))
+        & (accepted["Sharpe"] > float(reference_metrics["sharpe_ratio"]))
+        & (accepted["Calmar"] > float(reference_metrics["calmar_ratio"]))
     ]
     if not preferred.empty:
         selected_idx = preferred["selection_score"].idxmax()
@@ -325,13 +345,58 @@ def run_improvement_search(
         selected_idx = accepted["selection_score"].idxmax()
     else:
         selected_idx = candidates["selection_score"].idxmax()
-    candidates.loc[selected_idx, "selected"] = True
-    selected_name = str(candidates.loc[selected_idx, "candidate_name"])
-    _, selected_result, selected_solver = next(row for row in outputs if row[0] == selected_name)
-    selected_solver = selected_solver.copy()
-    if not selected_solver.empty:
-        selected_solver.insert(0, "model", IMPROVED_MODEL_NAME)
-    return candidates, selected_result, selected_solver
+    candidates.loc[selected_idx, "exploratory_selected"] = True
+
+    candidate_results = {candidate_id: result for candidate_id, _cfg, result, _solver, _metrics, _fallback in evaluated}
+    candidate_solvers = {candidate_id: solver for candidate_id, _cfg, _result, solver, _metrics, _fallback in evaluated}
+    candidate_configs = {candidate_id: cfg for candidate_id, cfg, _result, _solver, _metrics, _fallback in evaluated}
+    windows = generate_quarterly_oos_windows(
+        returns,
+        evaluation_start=eval_start_date,
+        evaluation_end=config["evaluation_end_date"],
+        train_months=24,
+        validation_months=6,
+        embargo_trading_days=1,
+    )
+    oos_scores = score_oos_candidates(
+        windows,
+        candidate_results,
+        candidate_solvers,
+        risk_free_returns=config.get("risk_free_rate"),
+        trading_days_per_year=config["trading_days_per_year"],
+    )
+    oos_selection = select_oos_candidates_from_scores(oos_scores)
+    parameter_rows = {
+        candidate_id: config_fields(candidate_id, cfg)
+        for candidate_id, cfg in candidate_configs.items()
+    }
+    for key in next(iter(parameter_rows.values())):
+        if key != "selected_candidate_id":
+            oos_selection[key] = oos_selection["selected_candidate_id"].map(
+                {candidate_id: fields[key] for candidate_id, fields in parameter_rows.items()}
+            )
+
+    public_result, public_solver, _, _ = run_convex_adaptive_schedule_backtest(
+        returns,
+        oos_selection[["test_start", "test_end", "selected_candidate_id"]],
+        candidate_configs,
+    )
+    test_metric_rows = []
+    for row in oos_selection.itertuples(index=False):
+        metrics = result_window_metrics(
+            public_result,
+            pd.Timestamp(row.test_start),
+            pd.Timestamp(row.test_end),
+            config,
+        )
+        test_metric_rows.append({f"test_{key}": value for key, value in metrics.items()})
+    oos_selection = pd.concat([oos_selection.reset_index(drop=True), pd.DataFrame(test_metric_rows)], axis=1)
+    selection_counts = oos_selection["selected_candidate_id"].value_counts()
+    candidates["oos_selection_count"] = candidates["candidate_id"].map(selection_counts).fillna(0).astype(int)
+    candidates["selected"] = candidates["oos_selection_count"].gt(0)
+    if not public_solver.empty:
+        public_solver.insert(0, "model", IMPROVED_MODEL_NAME)
+    return candidates, public_result, public_solver, oos_selection, oos_scores
 
 
 def plot_transaction_cost(summary: pd.DataFrame, save_path: str) -> None:
@@ -370,7 +435,7 @@ def readme_row(row: pd.Series) -> str:
         f"| {public_model_label(row['model'])} | {row['net_annual_return']:.2%} | {row['annualized_volatility']:.2%} | "
         f"{row['sharpe_ratio']:.2f} | {row['sortino_ratio']:.2f} | "
         f"{row['max_drawdown']:.2%} | {row['calmar_ratio']:.2f} | "
-        f"{row['avg_monthly_turnover']:.2%} | {row['turnover_adjusted_sharpe']:.2f} |"
+        f"{row['avg_monthly_turnover']:.2%} |"
     )
 
 
@@ -393,17 +458,6 @@ def replace_latest_results_table(text: str, heading: str, rows: list[str], note:
     return text[:start] + new_block + text[end:]
 
 
-def previous_improved_metrics() -> dict | None:
-    path = Path(resolve_path("results/tables/convex_adaptive_performance_summary.csv"))
-    if not path.exists():
-        return None
-    previous = pd.read_csv(path)
-    previous = previous[previous["model"].map(public_model_label).eq(public_model_label(IMPROVED_MODEL_NAME))]
-    if previous.empty:
-        return None
-    return previous.iloc[0].to_dict()
-
-
 def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics: dict) -> None:
     public_models = [
         "Global Relaxed Risk Parity",
@@ -412,36 +466,30 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
         IMPROVED_MODEL_NAME,
         "HRP Benchmark",
         "HERC Benchmark",
+        "Equal Weight Benchmark",
+        "60/40 Benchmark",
     ]
     public_summary = apply_public_model_labels(summary.set_index("model").loc[public_models].reset_index())
     rows = [readme_row(row) for _, row in public_summary.iterrows()]
-    both_improved = (
-        improved_metrics["sharpe_ratio"] > baseline_metrics["sharpe_ratio"]
-        and abs(improved_metrics["max_drawdown"]) < abs(baseline_metrics["max_drawdown"])
-    )
     note_en = (
-        f"{IMPROVED_MODEL_NAME} is a constrained parameter refinement of the convex adaptive optimizer, "
-        "selected with drawdown and turnover-aware criteria."
-        if both_improved
-        else "Additional constrained tuning was tested, but the existing improved variant remained the preferred robust setting."
+        f"{IMPROVED_MODEL_NAME} is one continuous AFML-inspired rolling OOS path from 2018-01-02. "
+        "Each quarterly candidate is selected from the completed six-month validation window after a one-trading-day embargo."
     )
     note_zh = (
-        f"{IMPROVED_MODEL_NAME} 是对凸自适应优化器的受约束参数细化版本，并采用回撤和换手约束感知的标准进行选择。"
-        if both_improved
-        else f"{IMPROVED_MODEL_NAME} 已作为受约束优化细化版本进行测试；本次运行改进有限，结果已如实报告。"
+        f"{IMPROVED_MODEL_NAME} 是自 2018-01-02 起连续拼接的 AFML 风格滚动样本外路径。"
+        "每季度候选仅依据已完成的六个月验证窗选择，并设置一个交易日的隔离期。"
     )
     readme_path = Path(resolve_path("README.md"))
     text = readme_path.read_text(encoding="utf-8")
-    text = replace_latest_results_table(text, "### 最新结果看板", rows, note_zh)
-    text = replace_latest_results_table(text, "### Latest Results", rows, note_en)
+    text = replace_latest_results_table(text, "### 最新绩效", rows, note_zh)
+    text = replace_latest_results_table(text, "### Latest Performance", rows, note_en)
     readme_path.write_text(text, encoding="utf-8")
 
 
 def main() -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
-    eval_start_date = config.get("plot_start_date", "2015-01-01")
-    incumbent_metrics = previous_improved_metrics()
+    eval_start_date = config["evaluation_start_date"]
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
 
     print("Running baseline Global Relaxed Risk Parity...")
@@ -491,12 +539,13 @@ def main() -> None:
     base_result.to_csv(resolve_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     base_solver.insert(0, "model", BASE_CONVEX_MODEL_NAME)
     baseline_summary = summarize_result(BASE_CONVEX_MODEL_NAME, base_result, eval_start_date, config)
-    if incumbent_metrics is None:
-        incumbent_metrics = baseline_summary
-
-    candidates, improved_result, improved_solver = run_improvement_search(returns, eval_start_date, config, incumbent_metrics)
+    candidates, improved_result, improved_solver, oos_selection, oos_scores = run_improvement_search(
+        returns, eval_start_date, config
+    )
     improved_result.to_csv(resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     candidates.to_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"), index=False)
+    oos_selection.to_csv(resolve_path("results/tables/afml_oos_selection.csv"), index=False)
+    oos_scores.to_csv(resolve_path("results/tables/afml_oos_candidate_scores.csv"), index=False)
 
     models: dict[str, pd.DataFrame] = {
         "Global Relaxed Risk Parity": global_rrp,
@@ -514,18 +563,16 @@ def main() -> None:
     summary_public = apply_public_model_labels(summary)
     summary_public.to_csv(resolve_path("results/tables/convex_adaptive_performance_summary.csv"), index=False)
 
-    selected_row = candidates[candidates["selected"]].iloc[0]
     ablation = summary_public[summary_public["model"].isin([public_model_label(BASE_CONVEX_MODEL_NAME), public_model_label(IMPROVED_MODEL_NAME)])].copy()
     ablation["selected_candidate"] = ablation["model"].eq(public_model_label(IMPROVED_MODEL_NAME))
-    ablation["selected_candidate_name"] = np.where(ablation["selected_candidate"], selected_row["candidate_name"], "")
+    ablation["selected_candidate_name"] = np.where(
+        ablation["selected_candidate"],
+        "AFML rolling OOS selection",
+        "",
+    )
     ablation["selected_parameters"] = np.where(
         ablation["selected_candidate"],
-        (
-            f"lambda_cvar={selected_row['lambda_cvar']}, lambda_turnover={selected_row['lambda_turnover']}, "
-            f"lambda_budget={selected_row['lambda_budget']}, upper_bound_i={selected_row['upper_bound_i']}, "
-            f"cvar_alpha={selected_row['cvar_alpha']}, covariance={selected_row['covariance_estimator']}, "
-            f"lookback={selected_row['lookback_window']}, return_reward={selected_row['return_reward']}"
-        ),
+        "quarterly selection; 24m train; 6m validation; 1 trading-day embargo; see afml_oos_selection.csv",
         "baseline",
     )
     ablation.to_csv(resolve_path("results/tables/convex_adaptive_ablation.csv"), index=False)
@@ -563,8 +610,8 @@ def main() -> None:
 
     print("\nConvex Adaptive Summary:")
     print(summary[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "calmar_ratio", "cvar_95_daily_loss", "turnover_adjusted_sharpe"]])
-    print("\nSelected improvement candidate:")
-    print(candidates[candidates["selected"]].T)
+    print("\nAFML rolling OOS candidate selection counts:")
+    print(oos_selection["selected_candidate_id"].value_counts())
     print("Pipeline completed successfully.")
 
 

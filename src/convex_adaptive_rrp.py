@@ -396,3 +396,156 @@ def run_convex_adaptive_backtest(
         pd.DataFrame(graph_rows),
         pd.DataFrame(regime_rows),
     )
+
+
+def run_convex_adaptive_schedule_backtest(
+    returns: pd.DataFrame,
+    schedule: pd.DataFrame,
+    candidate_configs: dict[str, ConvexRRPConfig],
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Run one continuous OOS path while candidate parameters change over time.
+
+    Schedule boundaries force a rebalance from the public portfolio's actual
+    prior weights, so parameter changes incur their full transaction cost.
+    Candidate selection itself is performed separately using completed
+    validation windows only.
+    """
+    required = {"test_start", "test_end", "selected_candidate_id"}
+    missing = required.difference(schedule.columns)
+    if missing:
+        raise ValueError(f"schedule missing columns: {sorted(missing)}")
+    if schedule.empty:
+        raise ValueError("schedule is empty")
+
+    data = returns.copy()
+    data.index = pd.to_datetime(data.index)
+    data = data.sort_index()
+    planned = schedule.copy().sort_values("test_start").reset_index(drop=True)
+    planned["test_start"] = pd.to_datetime(planned["test_start"])
+    planned["test_end"] = pd.to_datetime(planned["test_end"])
+    unknown = sorted(set(planned["selected_candidate_id"]) - set(candidate_configs))
+    if unknown:
+        raise ValueError(f"schedule references unknown candidates: {unknown}")
+
+    output_start = pd.Timestamp(planned["test_start"].min())
+    output_end = pd.Timestamp(planned["test_end"].max())
+    output_index = data.index[(data.index >= output_start) & (data.index <= output_end)]
+    assignment = pd.Series(index=output_index, dtype="object")
+    for row in planned.itertuples(index=False):
+        mask = (assignment.index >= row.test_start) & (assignment.index <= row.test_end)
+        if assignment.loc[mask].notna().any():
+            raise ValueError("schedule test windows overlap")
+        assignment.loc[mask] = row.selected_candidate_id
+    if assignment.isna().any():
+        raise ValueError("schedule does not continuously cover the OOS trading index")
+
+    candidate_switch_dates = set(pd.DatetimeIndex(planned["test_start"]))
+    # The evaluation inception needs one initial allocation.  Later parameter
+    # changes preserve the existing holdings until the normal monthly
+    # rebalance, so the public strategy does not add quarterly trades.
+    forced_rebalances = {output_start}
+    frequencies = {cfg.rebalance_frequency for cfg in candidate_configs.values()}
+    rebalance_by_frequency = {
+        frequency: rebalance_dates_for_frequency(data.loc[output_index], frequency)
+        for frequency in frequencies
+    }
+    n_assets = len(data.columns)
+    weights = np.zeros(n_assets)
+    nav_gross = 1.0
+    nav_net = 1.0
+    regime_state: dict = {}
+    rows: list[dict[str, object]] = []
+    solver_rows: list[dict[str, object]] = []
+    graph_rows: list[dict[str, object]] = []
+    regime_rows: list[dict[str, object]] = []
+
+    for date in output_index:
+        candidate_id = str(assignment.loc[date])
+        cfg = candidate_configs[candidate_id]
+        is_rebalance = date in forced_rebalances or date in rebalance_by_frequency[cfg.rebalance_frequency]
+        turnover = 0.0
+        if is_rebalance:
+            window_full = data[data.index < date].iloc[-cfg.lookback_days:]
+            active_cols = investable_columns(window_full, min_observations=min(60, cfg.lookback_days))
+            window = window_full[active_cols]
+            if len(window) >= 30 and len(active_cols) > 1:
+                previous = weights.copy()
+                previous_active = pd.Series(previous, index=data.columns).reindex(active_cols).fillna(0.0).values
+                graph = rolling_correlation_graph_features(window) if cfg.use_graph_features else {}
+                if cfg.use_graph_features:
+                    graph_rows.append({"date": date, "selected_candidate_id": candidate_id, **graph})
+                if cfg.use_online_regime:
+                    regime_state = online_regime_state(window, regime_state, graph, cfg.trading_days_per_year)
+                else:
+                    regime_state = {
+                        "regime_label": "medium_risk",
+                        "raw_stress_score": 0.0,
+                        "smoothed_stress_score": 0.0,
+                    }
+                budget = adaptive_budget_target(window, graph, regime_state["regime_label"])
+                active_weights, diag = solve_convex_rrp(
+                    window,
+                    previous_active,
+                    cfg,
+                    budget,
+                    graph,
+                    regime_state["regime_label"],
+                )
+                weights = expand_weights(active_weights, active_cols, data.columns)
+                if cfg.vol_target_enabled:
+                    from src.risk_overlay import RiskOverlayConfig as _OvCfg, vol_target_scale
+
+                    portfolio_history = pd.Series(
+                        window_full.fillna(0.0).values @ weights,
+                        index=window_full.index,
+                    )
+                    scalar = vol_target_scale(
+                        portfolio_history,
+                        _OvCfg(target_vol=cfg.vol_target, max_risk_scale=1.0),
+                    )
+                    weights = weights * scalar
+                turnover = float(np.abs(weights - previous).sum())
+                solver_rows.append({"date": date, "selected_candidate_id": candidate_id, **diag})
+                regime_rows.append({"date": date, "selected_candidate_id": candidate_id, **regime_state})
+
+        invested = float(np.abs(weights).sum())
+        residual = 1.0 - invested
+        if residual > 1e-6 and invested > 1e-6 and "日利ETF" in data.columns:
+            weights[data.columns.get_loc("日利ETF")] += residual
+        gross_return = portfolio_return_for_available(data.loc[date], weights)
+        transaction_cost = cfg.transaction_cost_bps / 10000.0 * turnover if is_rebalance else 0.0
+        net_return = gross_return - transaction_cost
+        nav_gross *= 1.0 + gross_return
+        nav_net *= 1.0 + net_return
+        result_row: dict[str, object] = {
+            "date": date,
+            "selected_candidate_id": candidate_id,
+            "portfolio_return": net_return,
+            "gross_return": gross_return,
+            "net_return": net_return,
+            "transaction_cost": transaction_cost,
+            "turnover": turnover,
+            "is_rebalance_day": is_rebalance,
+            "is_candidate_switch_day": date in candidate_switch_dates,
+            "nav_gross": nav_gross,
+            "nav_net": nav_net,
+        }
+        for position, asset in enumerate(data.columns):
+            result_row[f"weight_{asset}"] = weights[position]
+        rows.append(result_row)
+
+    solver_df = pd.DataFrame(solver_rows)
+    if not solver_df.empty:
+        inaccurate = (
+            solver_df["inaccurate_solution"].fillna(False)
+            if "inaccurate_solution" in solver_df
+            else pd.Series(False, index=solver_df.index)
+        )
+        inaccurate_count = int(inaccurate.sum())
+        inaccurate_ratio = inaccurate_count / len(solver_df)
+        solver_df["inaccurate_ratio_overall"] = inaccurate_ratio
+        print(
+            f"[Scheduled Solver QA] inaccurate_count={inaccurate_count}, "
+            f"total_rebalance={len(solver_df)}, inaccurate_ratio={inaccurate_ratio:.4f}"
+        )
+    return pd.DataFrame(rows), solver_df, pd.DataFrame(graph_rows), pd.DataFrame(regime_rows)
