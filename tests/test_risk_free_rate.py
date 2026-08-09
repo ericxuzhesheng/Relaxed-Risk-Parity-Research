@@ -182,19 +182,7 @@ def test_metrics_reject_nonzero_scalar_risk_free_rate() -> None:
         calculate_metrics(nav, risk_free_returns=0.0182)
 
 
-def test_public_improved_model_is_frozen_to_candidate_03() -> None:
-    from scripts.run_convex_adaptive_rrp import PRIMARY_CANDIDATE_ID, candidate_configurations
+def test_public_improved_model_uses_afml_rolling_oos_selection() -> None:
+    from scripts.run_convex_adaptive_rrp import PUBLIC_SELECTION_METHOD
 
-    candidates = dict(candidate_configurations(transaction_cost_bps=3.0))
-    primary = candidates[PRIMARY_CANDIDATE_ID]
-
-    assert PRIMARY_CANDIDATE_ID == "candidate_03"
-    assert primary.lookback_days == 252
-    assert primary.covariance_method == "ewma"
-    assert primary.max_weight == pytest.approx(0.40)
-    assert primary.turnover_cap == pytest.approx(0.60)
-    assert primary.turnover_penalty == pytest.approx(0.02)
-    assert primary.budget_penalty == pytest.approx(0.25)
-    assert primary.cvar_penalty == pytest.approx(0.15)
-    assert primary.return_reward == pytest.approx(0.06)
-    assert primary.portfolio_vol_cap == pytest.approx(0.025)
+    assert PUBLIC_SELECTION_METHOD == "afml_rolling_oos"
