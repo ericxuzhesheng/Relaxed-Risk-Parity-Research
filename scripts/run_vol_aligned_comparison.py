@@ -27,7 +27,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.metrics import calculate_metrics
-from src.utils import RISK_FREE_RATE_ANNUAL, get_config, resolve_path
+from src.utils import get_config, resolve_path
 
 
 logger = logging.getLogger("run_vol_aligned_comparison")
@@ -49,7 +49,7 @@ def _vol_aligned_metrics(
     improved_returns: pd.Series,
     target_vol: float,
     trading_days: int,
-    risk_free: float,
+    risk_free: pd.Series | float | None,
 ) -> dict[str, float]:
     realized_vol = float(improved_returns.std() * np.sqrt(trading_days))
     if realized_vol <= 0.0:
@@ -91,7 +91,7 @@ def main() -> None:
             continue
         target_vol = float(summary.loc[target_model, "annualized_volatility"])
         metrics = _vol_aligned_metrics(
-            improved_returns, target_vol, trading_days, RISK_FREE_RATE_ANNUAL
+            improved_returns, target_vol, trading_days, config["risk_free_rate"]
         )
         rows.append(
             {

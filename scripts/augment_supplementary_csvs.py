@@ -46,6 +46,25 @@ from src.utils import get_config, resolve_path
 logger = logging.getLogger("augment_supplementary_csvs")
 
 
+def _normalize_public_labels() -> None:
+    paths = [
+        "results/tables/convex_adaptive_performance_summary.csv",
+        "results/tables/convex_adaptive_ablation.csv",
+        "results/tables/convex_adaptive_transaction_cost_summary.csv",
+        "results/tables/convex_adaptive_solver_diagnostics.csv",
+    ]
+    for relative in paths:
+        path = Path(resolve_path(relative))
+        if not path.exists():
+            continue
+        frame = pd.read_csv(path)
+        if "model" not in frame.columns:
+            continue
+        frame["model"] = frame["model"].map(public_model_label)
+        frame.to_csv(path, index=False)
+        logger.info("normalized public model labels -> %s", path)
+
+
 def _augment_summary(returns: pd.DataFrame, config: dict, eval_start: str) -> None:
     summary_path = Path(resolve_path("results/tables/convex_adaptive_performance_summary.csv"))
     summary = pd.read_csv(summary_path)
@@ -128,8 +147,9 @@ def _write_transaction_cost_breakeven() -> None:
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
-    eval_start = config.get("plot_start_date", "2019-01-01")
+    eval_start = config.get("evaluation_start_date", "2018-01-02")
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
+    _normalize_public_labels()
     _augment_summary(returns, config, eval_start)
     _write_candidate_grid(config)
     _write_subperiod_dispersion()

@@ -51,7 +51,7 @@ def _load_improved_returns() -> pd.Series:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--eval-start", default="2019-01-01")
+    parser.add_argument("--eval-start", default="2018-01-02")
     parser.add_argument("--n-resamples", type=int, default=2000)
     parser.add_argument("--block-size", type=int, default=21)
     parser.add_argument("--seed", type=int, default=20260511)
@@ -147,7 +147,7 @@ def main() -> None:
         pairs=pairs,
         n_resamples=args.n_resamples,
         block_size=args.block_size,
-        risk_free_rate=config.get("risk_free_rate", 0.0182),
+        risk_free_rate=config.get("risk_free_rate"),
         trading_days=args.trading_days,
         seed=args.seed,
     )

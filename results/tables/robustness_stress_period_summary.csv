@@ -1,13 +1,10 @@
 stress_period,model,observations,cumulative_return,annualized_return,sharpe_ratio,max_drawdown,cvar_95_daily_loss,stress_identification
-highest_realized_volatility,Global Relaxed Risk Parity,258,0.054058134566479676,0.05083669316028461,0.5132440312480129,-0.04822570481154631,0.009170616254767004,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Global Relaxed Risk Parity,260,-0.043871316773100966,-0.02906536621266531,-1.3735855444851972,-0.05153529373737109,0.007563871900839167,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Global Relaxed Risk Parity,274,-0.1511491879785103,-0.13526448910609368,-2.852083376353866,-0.16404243199897028,0.009115591136371554,ex_post_equal_weight_universe
-highest_realized_volatility,Defensive Dynamic Relaxed Risk Parity,232,0.04220443713733557,0.03408792833851182,0.23365467901801967,-0.055510359710467694,0.009395335510615117,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Defensive Dynamic Relaxed Risk Parity,250,-0.07957113542210204,-0.06490534062139341,-1.8824894460477077,-0.07825419758055796,0.008367442279639965,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Defensive Dynamic Relaxed Risk Parity,246,-0.1958181880485017,-0.19034745447712564,-3.3336902064016307,-0.1999902216380448,0.009560947389676945,ex_post_equal_weight_universe
-highest_realized_volatility,Convex Adaptive Global RRP,258,0.0904458505312915,0.08497022285953304,0.9494907399340302,-0.05753135304060275,0.009282006872241347,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Convex Adaptive Global RRP,260,-0.11620969866243702,-0.10104899864904793,-1.9635829593949004,-0.1126653260835715,0.008388559794901546,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Convex Adaptive Global RRP,274,-0.22226827324765686,-0.199831985554205,-3.505279472418325,-0.22792641285436976,0.00871946799799841,ex_post_equal_weight_universe
-highest_realized_volatility,Improved Convex Adaptive Global RRP,258,0.06861250228730009,0.06449752235291317,0.7373845392337478,-0.05993857906966149,0.008524769336306661,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Improved Convex Adaptive Global RRP,260,-0.08821395729772696,-0.07625347446033026,-1.7809999429950405,-0.08980830870118806,0.007367224993025877,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Improved Convex Adaptive Global RRP,274,-0.1872192614093583,-0.16793185839357316,-3.4393423989143996,-0.19334125628423293,0.007758368219734115,ex_post_equal_weight_universe
+highest_realized_volatility,Global Relaxed Risk Parity,467,0.0,0.0,0.0,0.0,0.0,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Global Relaxed Risk Parity,469,-0.08322257538071054,-0.04402168981270682,-1.9736821947556007,-0.09395935742341865,0.0060266129011181625,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Global Relaxed Risk Parity,464,-0.13199397650388556,-0.07145290759673562,-2.6598790976468054,-0.13373512523227205,0.007810252736980309,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Defensive Dynamic Relaxed Risk Parity,201,-0.07658110236136761,-0.09207649391403294,-2.2342308481053745,-0.08711313896246431,0.007646560638898711,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Defensive Dynamic Relaxed Risk Parity,135,-0.13858208953452356,-0.23579960103570896,-4.101992784153788,-0.13877794228807228,0.010356050441445207,ex_post_equal_weight_universe
+highest_realized_volatility,Convex Adaptive Global RRP,467,0.0,0.0,0.0,0.0,0.0,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Convex Adaptive Global RRP,469,-0.18860642659681492,-0.10263169783465653,-0.9370755935526028,-0.2415147697694796,0.021751763577207,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Convex Adaptive Global RRP,464,-0.3878194263067887,-0.2266299533820163,-1.84369109000726,-0.3878194263067887,0.029662499437925437,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Improved Convex Adaptive Global RRP,84,-0.041129298817746185,-0.10766559555212396,-3.2479072376731035,-0.04502759258240685,0.00579078202443136,ex_post_equal_weight_universe

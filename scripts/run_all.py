@@ -30,16 +30,28 @@ logger = logging.getLogger("run_all")
 
 
 PIPELINE: list[tuple[str, list[str]]] = [
-    ("update_etf_data", ["python", "scripts/update_etf_data.py"]),
+    ("update_etf_data", ["python", "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260731"]),
+    ("update_risk_free_rate", ["python", "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260731"]),
+    ("barra_exposure_correlation", ["python", "scripts/run_barra_exposure_correlation.py"]),
     ("convex_adaptive_rrp", ["python", "scripts/run_convex_adaptive_rrp.py"]),
     ("benchmark_suite", ["python", "scripts/run_benchmark_suite.py"]),
+    ("hrp_comparison", ["python", "scripts/run_hrp_comparison.py"]),
     ("walkforward_validation", ["python", "scripts/run_walkforward_validation.py"]),
     ("cscv_pbo", ["python", "scripts/run_cscv_pbo.py"]),
-    ("frozen_oos_validation", ["python", "scripts/run_frozen_oos_validation.py"]),
     ("robustness_tests", ["python", "scripts/run_robustness_tests.py"]),
     ("vol_aligned_comparison", ["python", "scripts/run_vol_aligned_comparison.py"]),
     ("sharpe_diff_tests", ["python", "scripts/run_sharpe_diff_tests.py"]),
     ("monthly_hs300_comparison", ["python", "scripts/run_monthly_hs300_comparison.py"]),
+    ("rebalance_frequency_sensitivity", ["python", "scripts/run_rebalance_frequency_sensitivity.py"]),
+    ("extended_sample_robustness", ["python", "scripts/run_extended_sample_robustness.py"]),
+    ("cvar_sensitivity", ["python", "scripts/run_cvar_sensitivity.py"]),
+    ("enhanced_cscv_pbo", ["python", "scripts/run_enhanced_cscv_pbo.py"]),
+    ("parameter_sensitivity", ["python", "scripts/run_parameter_sensitivity.py"]),
+    ("overlay_sensitivity", ["python", "scripts/run_overlay_sensitivity.py"]),
+    ("regime_covariance_experiment", ["python", "scripts/run_regime_covariance_experiment.py"]),
+    ("regime_oos_validation", ["python", "scripts/run_regime_oos_validation.py"]),
+    ("asset_pricing_diagnostics", ["python", "scripts/run_asset_pricing_diagnostics.py"]),
+    ("weight_path_diagnostics", ["python", "scripts/run_weight_path_diagnostics.py"]),
     ("generate_thesis_numbers", ["python", "scripts/generate_thesis_numbers.py"]),
 ]
 
@@ -49,7 +61,7 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--skip-data",
         action="store_true",
-        help="Skip update_etf_data.py (reuse cached prices in data/processed/).",
+        help="Skip ETF and risk-free data refreshes (reuse cached data in data/processed/).",
     )
     parser.add_argument(
         "--smoke",
@@ -71,7 +83,15 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _stage_command(name: str, base: list[str], smoke: bool) -> list[str]:
-    if smoke and name in {"cscv_pbo", "robustness_tests"}:
+    if smoke and name in {
+        "cscv_pbo",
+        "robustness_tests",
+        "extended_sample_robustness",
+        "cvar_sensitivity",
+        "enhanced_cscv_pbo",
+        "parameter_sensitivity",
+        "asset_pricing_diagnostics",
+    }:
         return base + ["--smoke"]
     return base
 
@@ -84,7 +104,7 @@ def main() -> int:
     failures: list[str] = []
 
     for name, base_command in PIPELINE:
-        if args.skip_data and name == "update_etf_data":
+        if args.skip_data and name in {"update_etf_data", "update_risk_free_rate"}:
             logger.info("[%s] skipped (--skip-data)", name)
             continue
         if selected is not None and name not in selected:

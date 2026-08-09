@@ -22,79 +22,10 @@
 \school{特拉华数据科学学院}
 \major{金融数学（量化分析方向）}
 \supervisor{王磊}
-\date{2026年5月}
+\date{2026年8月}
 
-% ── 数值宏（全部来自 generated_numbers.tex）──────────────────────────────────
-\newcommand{\etfCount}{30}
-\newcommand{\evalStartDate}{2019-01-01}
-\newcommand{\evalEndDate}{2026-07-31}
-\newcommand{\evalMonths}{91}
-\newcommand{\txCostBps}{3}
-\newcommand{\riskFreeRate}{1.82\%}
-\newcommand{\dataFirstDate}{2015-11-19}
-\newcommand{\dataLastDate}{2026-07-31}
-% Global RRP
-\newcommand{\globalNetReturn}{4.67\%}
-\newcommand{\globalVolatility}{4.16\%}
-\newcommand{\globalSharpe}{0.686}
-\newcommand{\globalSortino}{0.815}
-\newcommand{\globalMaxDD}{-5.91\%}
-\newcommand{\globalMonthlyTurnover}{23.63\%}
-% Convex Adaptive
-\newcommand{\convexNetReturn}{6.67\%}
-\newcommand{\convexVolatility}{5.19\%}
-\newcommand{\convexSharpe}{0.935}
-\newcommand{\convexSortino}{1.455}
-\newcommand{\convexMaxDD}{-5.74\%}
-\newcommand{\convexMonthlyTurnover}{1.31\%}
-% Improved Convex（主模型）
-\newcommand{\improvedNetReturn}{5.98\%}
-\newcommand{\improvedVolatility}{2.91\%}
-\newcommand{\improvedSharpe}{1.430}
-\newcommand{\improvedSortino}{2.165}
-\newcommand{\improvedMaxDD}{-4.03\%}
-\newcommand{\improvedCalmar}{1.486}
-\newcommand{\improvedMonthlyTurnover}{2.09\%}
-% HERC
-\newcommand{\hercNetReturn}{2.29\%}
-\newcommand{\hercVolatility}{0.61\%}
-\newcommand{\hercSharpe}{0.774}
-\newcommand{\hercSortino}{1.168}
-\newcommand{\hercMaxDD}{-0.56\%}
-\newcommand{\hercMonthlyTurnover}{6.21\%}
-% 等权 / 60-40
-\newcommand{\equalNetReturn}{10.00\%}
-\newcommand{\equalSharpe}{0.735}
-\newcommand{\equalSortino}{1.179}
-\newcommand{\equalMaxDD}{-13.79\%}
-\newcommand{\equalMonthlyTurnover}{1.21\%}
-\newcommand{\sixtyFortyNetReturn}{7.45\%}
-\newcommand{\sixtyFortySharpe}{0.624}
-\newcommand{\sixtyFortySortino}{1.002}
-\newcommand{\sixtyFortyMaxDD}{-14.99\%}
-\newcommand{\sixtyFortyMonthlyTurnover}{1.40\%}
-% Walk-forward
-\newcommand{\wfSharpeMean}{1.116}
-\newcommand{\wfSharpeMedian}{1.014}
-\newcommand{\wfReturnMean}{7.18\%}
-\newcommand{\wfReturnMedian}{6.37\%}
-\newcommand{\wfDDMean}{-2.07\%}
-% 统计检验
-\newcommand{\improvedVsGlobalDiff}{0.744}
-\newcommand{\improvedVsGlobalPValue}{0.005}
-% 调仓频率敏感性
-\newcommand{\freqWeeklyNetReturn}{5.78\%}
-\newcommand{\freqWeeklySharpe}{1.362}
-\newcommand{\freqWeeklyMaxDD}{-4.06\%}
-\newcommand{\freqWeeklyMonthlyTurnover}{3.23\%}
-\newcommand{\freqBiweeklyNetReturn}{5.78\%}
-\newcommand{\freqBiweeklySharpe}{1.366}
-\newcommand{\freqBiweeklyMaxDD}{-4.15\%}
-\newcommand{\freqBiweeklyMonthlyTurnover}{2.66\%}
-\newcommand{\freqQuarterlyNetReturn}{5.96\%}
-\newcommand{\freqQuarterlySharpe}{1.410}
-\newcommand{\freqQuarterlyMaxDD}{-4.03\%}
-\newcommand{\freqQuarterlyMonthlyTurnover}{1.65\%}
+% ── 数值宏：与论文共用同一流水线生成文件 ───────────────────────────────────────
+\input{../thesis_latex/generated_numbers.tex}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -349,7 +280,7 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[shrink=4]{四模型定位与参数冻结策略}
+\begin{frame}[shrink=4]{四模型定位与滚动选择策略}
   \footnotesize\renewcommand{\arraystretch}{1.3}
   \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{2.8cm}@{}}
     \toprule
@@ -357,19 +288,19 @@
     \midrule
     Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
     Convex Adaptive  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
-    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（主结果 candidate\_03）} & \textbf{主模型} \\
+    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（03/04/05 滚动选择）} & \textbf{主模型} \\
     HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
     \bottomrule
   \end{tabular}
   \vspace{0.4em}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
-      \textbf{参数固定与验证角色}
+      \textbf{滚动选择与验证角色}
       \begin{enumerate}
-        \item 历史评价从 36 个候选中选出 candidate\_03
-        \item 稳健性与敏感性诊断均固定该候选，不再重选
-        \item 伪冻结窗口为 2025-01-02—\evalEndDate{}
-        \item 因该区间可能曾被观察，不作为严格未见样本证据
+        \item 公开主模型为2018年起连续拼接的滚动样本外自动选择路径
+        \item 36组网格仅输出当期探索诊断，不覆盖主结果
+        \item 2015--2017用于执行预热，2018年重新初始化公开选择状态
+        \item 每期仅使用已完成历史窗；测试窗不参与重新选择
       \end{enumerate}
     \end{column}
     \begin{column}{0.44\textwidth}
@@ -397,16 +328,16 @@
       \toprule
       类别 & 代表品种 & 类别 & 代表品种 \\
       \midrule
-      债券（4）     & 国债、信用债、可转债、货币      & 行业与消费（3） & 证券、军工、消费 \\
-      A股宽基（5）  & 沪深300/500/1000、创业板、红利  & 港股与贵金属（2）& 恒生ETF、白银LOF \\
-      中国科技与先进制造（7） & 半导体、AI、机器人、新能源、     & 全球股票（4）  & 纳指、标普500、日经、欧洲 \\
-                  & 中韩半导体、科创50、云计算      & 大宗商品（5）  & 黄金、有色、豆粕、煤炭、原油 \\
+      债券与现金（5） & 可转债、国债、10年国债、信用债、日利 & 行业与消费（3） & 证券、军工、消费 \\
+      A股宽基（6）  & 沪深300/500/1000/2000、创业板、红利 & 港股（1） & 恒生ETF \\
+      中国科技与成长（4） & 半导体、AI、新能源、科创50 & 全球股票（4） & 纳指、标普500、日经、欧洲 \\
+      贵金属（2） & 黄金、白银 & 大宗商品与资源（5） & 有色期货、能源化工期货、豆粕、煤炭、原油 \\
       \bottomrule
     \end{tabular}
   \end{center}
   \vspace{0.3em}
   \footnotesize\centering
-  数据起始 \dataFirstDate{}（含训练期）\\
+  最长有效行情起始 \dataFirstDate{}；主池累计60个有效观察后动态进入，6支候选固定隔离\\
   评价区间 \evalStartDate{}—\evalEndDate{}，共 \evalMonths{} 个月度观察点，\txCostBps{} bps 单边成本
 \end{frame}
 
@@ -450,13 +381,13 @@
       \textbf{Improved Convex} & \textbf{\improvedNetReturn} & \textbf{\improvedSharpe} & \textbf{\improvedSortino} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
       HERC            & \hercNetReturn    & \hercSharpe    & \hercSortino    & \hercMaxDD    & \hercMonthlyTurnover \\
       \midrule
-      等权基准        & \equalNetReturn   & \equalSharpe   & \equalSortino   & \equalMaxDD   & \equalMonthlyTurnover \\
+      等权基准        & \equalWeightNetReturn   & \equalWeightSharpe   & \equalWeightSortino   & \equalWeightMaxDD   & \equalWeightMonthlyTurnover \\
       60/40 基准      & \sixtyFortyNetReturn & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover \\
       \bottomrule
     \end{tabular}
   \end{center}
   \vspace{0.2em}
-  \scriptsize 无风险利率 \riskFreeRate{}；净年化收益已扣除 \txCostBps{} bps 单边成本
+  \scriptsize 月度1年期中债收益率均值 \riskFreeRate{}；Sharpe按滞后一月的日化序列计算；净收益已扣除 \txCostBps{} bps 单边成本
 \end{frame}
 
 \begin{frame}{净值路径：全模型对比}
@@ -489,7 +420,7 @@
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item Improved Convex 最大回撤 \improvedMaxDD{}，显著优于等权 \equalMaxDD{} 和 60/40 \sixtyFortyMaxDD{}
+        \item Improved Convex 最大回撤 \improvedMaxDD{}，显著优于等权 \equalWeightMaxDD{} 和 60/40 \sixtyFortyMaxDD{}
       \end{itemize}
     \end{column}
     \begin{column}{0.50\textwidth}
@@ -633,7 +564,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  Improved Convex 净收益 \improvedNetReturn{}，回撤 \improvedMaxDD{}；等权收益更高（\equalNetReturn{}）但回撤 \equalMaxDD{} 为代价；60/40 回撤最深（\sixtyFortyMaxDD{}）
+  Improved Convex 净收益 \improvedNetReturn{}，回撤 \improvedMaxDD{}；等权收益更高（\equalWeightNetReturn{}）但回撤 \equalWeightMaxDD{} 为代价；60/40 回撤最深（\sixtyFortyMaxDD{}）
 \end{frame}
 
 \begin{frame}{与沪深 300 月度收益散点对比}
@@ -672,13 +603,13 @@
   组合对各风险因子的敞口随市场环境动态调整，整体保持分散而非单一因子押注
 \end{frame}
 
-\begin{frame}{参数动态时序：$\lambda$ 选择的演变}
+\begin{frame}{候选参数时序诊断}
   \begin{center}
     \includegraphics[width=0.88\textwidth,height=0.66\textheight,keepaspectratio]{showcase_parameter_timeline.png}
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  各惩罚系数在样本期内的时序变化；冻结参数后所有系数固定不变，图示用于诊断候选参数的历史行为
+  图示用于诊断候选参数的历史行为；公开主路径仅在预先声明的低换手候选族中按已完成历史窗滚动选择，不使用完整样本排名回填
 \end{frame}
 
 \begin{frame}{风险覆盖层消融实验}
@@ -787,7 +718,7 @@
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item 已测试范围内 Sharpe 对收益倾斜项最敏感；将其设为 0 后 Sharpe 仍为 1.331
+        \item 单因素扰动保持已发布滚动选择日历不变，用于检验局部参数稳定性而非重新选模
       \end{itemize}
     \end{column}
     \begin{column}{0.50\textwidth}
@@ -826,7 +757,7 @@
   \end{center}
   \vspace{-0.2em}
   \begin{alertblock}{解释口径}
-    \scriptsize 固定 candidate\_03 参数，仅改变调仓日历。月度净收益与 Sharpe 在本次样本中最高；周度和双周换手升至 \freqWeeklyMonthlyTurnover{} / \freqBiweeklyMonthlyTurnover{}，季度换手最低。月度是预设实施规则，并非根据本次排名事后重选。
+    \scriptsize 保持已发布滚动样本外选择日历不变，仅改变调仓频率。月度净收益与 Sharpe 在本次样本中最高；周度和双周换手升至 \freqWeeklyMonthlyTurnover{} / \freqBiweeklyMonthlyTurnover{}，季度换手最低。月度是预设实施规则，并非根据本次排名事后重选。
   \end{alertblock}
 \end{frame}
 
@@ -857,13 +788,13 @@
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item 训练期与 OOS 期绩效差距在可接受范围内，未见明显过拟合迹象
+        \item 24 个季度测试窗平均 Sharpe 为 1.131，平均月换手率为 1.37\%
       \end{itemize}
     \end{column}
     \begin{column}{0.50\textwidth}
       \footnotesize
       \begin{itemize}
-        \item 参数冻结策略（不在 OOS 期重新优化）是保持诊断结果干净的关键
+        \item 每个测试窗开始前完成选择，测试窗内不重新选模；该结果仍非未来保证
       \end{itemize}
     \end{column}
   \end{columns}
@@ -875,7 +806,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  增强版 CSCV 使用 36 个候选、10 个时间区块和 12 个组合分割，PBO=0.250；candidate\_03 同时用于主结果和伪冻结诊断，后者不构成严格未见样本证据
+  增强版 CSCV 使用36个探索候选、10个时间区块和12个组合分割，PBO=0.167；公开主路径仅在预先声明的低换手候选族内按历史置信集自动选择，完整样本排名不回填历史权重
 \end{frame}
 
 \begin{frame}{协方差估计器对比：Sharpe 与换手}
@@ -893,7 +824,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  样本协方差、EWMA（基准）、收缩估计三种方案下，结论方向一致；EWMA 在换手稳定性上最优
+  样本协方差、EWMA（基准）、收缩估计三种方案下，低换手和浅回撤方向一致；Ledoit--Wolf 的 Sharpe 略高，但月换手也更高
 \end{frame}
 
 \begin{frame}[shrink=3]{状态条件协方差：Regime Parity 思想的样本外验证}
@@ -905,11 +836,11 @@
         \item 无条件协方差混合平静/压力两态，\textbf{低估危机期协动}
         \item 沿 Ielpo 等（2024）\textbf{Regime Parity} 思想：按状态分别估计协方差，再以状态频率先验 $\pi$ 加权合成
         \item 本文为其\textbf{协方差层近似}，可与 CVaR、换手惩罚兼容
-        \item 防过拟合：先验仅在\textbf{设计窗 2019–2023 盲选}，留出窗评估
+        \item 防过拟合：先验仅在\textbf{设计窗 2018–2023 选择}，后续时间窗评估
       \end{itemize}
       \vspace{0.3em}
       \begin{block}{盲选结果}
-        \scriptsize 设计窗独立选出激进先验：$\pi=0.67$、先验权重 $1.00$
+        \scriptsize 设计窗独立选出危机先验：$\pi=0.60$、先验权重 $0.75$
       \end{block}
     \end{column}
     \begin{column}{0.52\textwidth}
@@ -920,20 +851,20 @@
         \toprule
         配置 & Sharpe & 最大回撤 & 净年化 \\
         \midrule
-        EWMA 基准      & 1.546 & $-2.08\%$ & 6.40\% \\
+        EWMA 基准      & 1.816 & $-1.95\%$ & 6.58\% \\
         \rowcolor{swufeLight}
-        \textbf{状态条件} & \textbf{1.594} & $-2.58\%$ & \textbf{6.40\%} \\
+        \textbf{状态条件} & \textbf{1.715} & $-2.66\%$ & \textbf{6.16\%} \\
         \bottomrule
       \end{tabular}
       \end{center}\vspace{-0.5em}
-      \textbf{完整评价窗 2019–2026}
+      \textbf{完整评价窗 2018–2026}
       \begin{center}\vspace{-0.35em}
       \begin{tabular}{@{}lccc@{}}
         \toprule
         配置 & Sharpe & 最大回撤 & 月换手 \\
         \midrule
-        EWMA 基准      & 1.430 & $-4.03\%$ & 2.09\% \\
-        状态条件        & 1.419 & $-3.91\%$ & 2.24\% \\
+        EWMA 基准      & 1.171 & $-3.79\%$ & 1.86\% \\
+        状态条件        & 1.117 & $-3.64\%$ & 1.80\% \\
         \bottomrule
       \end{tabular}
       \end{center}\vspace{-0.5em}
@@ -941,7 +872,7 @@
   \end{columns}
   \vspace{-0.3em}
   \begin{alertblock}{诚实边界}
-    \scriptsize 留出窗 Sharpe/CVaR 改善但回撤加深；全窗回撤/CVaR 略优但 Sharpe/换手略差，因此仅作\textbf{主模型的稳健性补充}。
+    \scriptsize 状态条件版本在两个时间序贯评价窗及完整评价窗均未提高 Sharpe；仅保留为\textbf{主模型的稳健性补充}，不替换公开滚动 OOS 路径。
   \end{alertblock}
 \end{frame}
 
@@ -1000,7 +931,7 @@
   \begin{swufekeypoints}
     \swufepoint{三维权衡形成折中}{01}{Improved Convex 月换手从 \globalMonthlyTurnover{} 降至 \improvedMonthlyTurnover{}，净 Sharpe 升至 \improvedSharpe{}（统计显著，$p=\improvedVsGlobalPValue$），最大回撤收窄至 \improvedMaxDD{}——优势在于低波动、浅回撤与可控换手，代价是权益强势阶段收益弹性有限}
     \swufepoint{HERC 需结合权重解释}{02}{HERC 年化波动率仅 \hercVolatility{}，净收益 \hercNetReturn{}，其 Sharpe = \hercSharpe{} 主要来自接近全仓债券的低波动结构；因此应作为层次化配置基准，而非与主模型作单一指标排序}
-    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和冻结参数设定；Walk-forward、参数扰动和调仓频率检验确认结论在区间内相对稳定。月度调仓本次恰好排名第一，但实施规则并非按事后收益选择，也不代表对未来绩效的预测}
+    \swufepoint{结论有明确的适用边界}{03}{所有数字均条件于 \evalStartDate{}—\evalEndDate{} 这一特定样本区间和滚动选择规则；Walk-forward、参数扰动和调仓频率检验用于约束结论强度。月度调仓本次恰好排名第一，但实施规则并非按事后收益选择，也不代表对未来绩效的预测}
   \end{swufekeypoints}
 \end{frame}
 
@@ -1022,46 +953,6 @@
         \item[\textcolor{swufeGold}{$\triangleright$}] \textbf{更长历史区间}：含 2015 股灾、2020 新冠的完整周期验证
         \item[\textcolor{swufeGold}{$\triangleright$}] \textbf{精细化成本建模}：滑点、冲击成本的非线性建模与动态换手策略
       \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}[shrink=4]{经典全天候期货基准：对照实验}
-  \small
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.53\textwidth}
-      \textbf{实验定位}
-      \begin{itemize}
-        \item 主结果仍基于 \textbf{30 支 ETF、纯多头、无杠杆} 约束
-        \item 对照实验构造 Classic All Weather Futures Benchmark
-        \item 三个风险桶：权益/增长、久期/通缩、通胀/商品
-        \item 桶内 180 日滚动逆波动，桶间采用 30/40/30 经典风险预算
-        \item 目标波动率版本设 8\% / 10\%，最大名义敞口 4.0x
-      \end{itemize}
-      \vspace{0.4em}
-      \begin{alertblock}{解释边界}
-        \footnotesize 该实验扣除 5 bps 成本，仅是补充基准；22 个品种中 Y/OI/ZC 较早停更且价格会前向填充，故不复现桥水真实组合。
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \scriptsize
-      \renewcommand{\arraystretch}{1.22}
-      \resizebox{\linewidth}{!}{%
-      \begin{tabular}{@{}lrrrr@{}}
-        \toprule
-        场景 & 收益 & 波动 & Sharpe & 回撤 \\
-        \midrule
-        ETF 基准 & \improvedNetReturn{} & \improvedVolatility{} & \improvedSharpe{} & \improvedMaxDD{} \\
-        全天候 1.0x & 3.99\% & 2.10\% & 1.035 & -1.58\% \\
-        目标波动 8\% & 9.80\% & 7.70\% & 1.037 & -7.21\% \\
-        目标波动 10\% & 10.04\% & 8.08\% & 1.018 & -7.21\% \\
-        \bottomrule
-      \end{tabular}
-      }
-      \vspace{0.8em}
-      \begin{block}{核心含义}
-        \footnotesize 杠杆化全天候显著提高绝对收益，更接近经典全天候逻辑；但 Sharpe 仍低于 Improved Convex，说明主模型优势来自约束优化而非单纯名义敞口放大。
-      \end{block}
     \end{column}
   \end{columns}
 \end{frame}

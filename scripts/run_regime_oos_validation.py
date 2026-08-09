@@ -4,11 +4,11 @@ from __future__ import annotations
 
 The state-frequency prior sweep in ``run_regime_covariance_experiment`` showed
 that an aggressive prior improves the Improved Convex Adaptive RRP over the full
-2019.. evaluation window. That selection inspected the whole period, so the
+2018.. evaluation window. That selection inspected the whole period, so the
 prior choice could be in-sample overfitting. This script removes that look-ahead:
 
 * **Selection stage** — the regime prior is chosen *only* on a design window
-  (default 2019-01-01..2023-12-31) by the repository's ``validation_score``;
+  (default 2018-01-02..2023-12-31) by the repository's ``validation_score``;
   the backtest history is truncated at the design end so selection never sees
   post-design data.
 * **Out-of-sample stage** — the design-selected prior, the default prior, the
@@ -77,7 +77,7 @@ def with_regime(cfg: ConvexRRPConfig, method: str, crisis_prior: float | None = 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="OOS validation of the regime-conditional covariance prior.")
-    parser.add_argument("--design-start", default="2019-01-01")
+    parser.add_argument("--design-start", default="2018-01-02")
     parser.add_argument("--design-end", default="2023-12-31")
     parser.add_argument("--oos-start", default="2024-01-01")
     parser.add_argument("--secondary-holdout", default="2025-01-01")
@@ -135,7 +135,7 @@ def main() -> None:
                 "sharpe": metrics["sharpe"], "max_drawdown": metrics["max_drawdown"], "calmar": metrics["calmar"],
                 "cvar": metrics["cvar"], "avg_monthly_turnover": metrics["avg_monthly_turnover"],
                 "solver_fallback_rate": fallback, "validation_status": VALIDATION_STATUS,
-                "selection_rule": "regime prior chosen on design window only (2019..design_end)",
+                "selection_rule": "regime prior chosen on design window only (2018..design_end)",
             })
     oos = pd.DataFrame(oos_rows)
 

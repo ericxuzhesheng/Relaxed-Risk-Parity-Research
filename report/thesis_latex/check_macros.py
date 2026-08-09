@@ -10,7 +10,7 @@ defined = set(re.findall(r'\\newcommand[{]\\([^}]+)[}]', nums))
 
 keywords = ['return','sharpe','vol','drawdown','calmar','turnover','sortino',
             'net','hrp','herc','global','improved','convex','defensive',
-            'walkforward','frozen','cost','breakeven','eval','months','data',
+            'walkforward','cost','breakeven','eval','months','data',
             'etf','rebal','cvar','riskfree','aligned']
 
 candidates = set()

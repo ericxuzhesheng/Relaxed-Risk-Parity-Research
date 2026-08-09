@@ -10,7 +10,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.run_convex_adaptive_rrp import candidate_configurations
+from scripts.run_convex_adaptive_rrp import PUBLIC_LOW_TURNOVER_CANDIDATE_IDS, candidate_configurations
 from src.data_loader import load_data
 from src.utils import get_config, resolve_path
 from src.validation import (
@@ -121,7 +121,6 @@ def main() -> None:
         validation_kind = "intermediate"
 
     requested_eval_start = args.eval_start
-    requested_frozen_start = None
 
     config = get_config({"transaction_cost_bps": 3.0})
     eval_start = effective_evaluation_start(args.eval_start, config)
@@ -140,7 +139,6 @@ def main() -> None:
         num_blocks=None,
         num_combinations=None,
         requested_eval_start=requested_eval_start,
-        requested_frozen_start=requested_frozen_start,
         train_years=args.train_years,
         validation_years=args.validation_years,
         test_years=args.test_years,
@@ -155,12 +153,17 @@ def main() -> None:
     run_metadata["selection_rule"] = "highest validation-window score within each split"
     run_metadata["limitations"] = "Validation-window selection is followed by test reporting; bounded runs are intermediate validation evidence."
 
-    candidates = candidate_configurations(config["transaction_cost_bps"])
-    candidates = candidate_configurations(config["transaction_cost_bps"])
+    candidates = [
+        item
+        for item in candidate_configurations(config["transaction_cost_bps"])
+        if item[0] in PUBLIC_LOW_TURNOVER_CANDIDATE_IDS
+    ]
     if args.max_candidates is not None:
         candidates = candidates[: args.max_candidates]
     if not candidates:
         raise ValueError("Candidate configurations are unavailable.")
+    run_metadata["candidate_count"] = len(candidates)
+    run_metadata["selection_rule"] = "highest validation-window score within the predeclared low-turnover family"
 
     splits = generate_walkforward_splits(
         returns,

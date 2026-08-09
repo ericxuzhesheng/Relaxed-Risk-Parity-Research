@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -13,6 +14,12 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from scripts.run_convex_adaptive_rrp import monthly_rebalance_dates
+from scripts.public_oos import (
+    load_public_oos_result,
+    modal_selected_config,
+    reprice_public_result,
+    run_public_oos_variant,
+)
 from src.backtest import run_static_backtest
 from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
 from src.covariance_estimators import estimate_covariance
@@ -20,6 +27,7 @@ from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.metrics import calculate_metrics, drawdown_series
+from src.risk_free import load_daily_risk_free_returns
 from src.risk_overlay import RiskOverlayConfig, apply_risk_overlay, apply_trend_confirmation, transaction_cost_rate
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp
 from src.utils import apply_asset_class_budget_multipliers, get_config, infer_asset_class
@@ -130,23 +138,8 @@ def selected_improved_config(transaction_cost_bps: float, candidates_path: Path,
             cvar_beta=0.95,
             return_reward=0.05,
         )
-    candidates = pd.read_csv(candidates_path)
-    selected = candidates[candidates["selected"].astype(str).str.lower().eq("true")]
-    if selected.empty:
-        raise ValueError(f"No selected improved row found in {candidates_path}")
-    row = selected.iloc[0]
-    return ConvexRRPConfig(
-        transaction_cost_bps=transaction_cost_bps,
-        lookback_days=int(row["lookback_window"]),
-        covariance_method=str(row["covariance_estimator"]),
-        max_weight=float(row["upper_bound_i"]),
-        turnover_cap=None if pd.isna(row["turnover_cap"]) else float(row["turnover_cap"]),
-        turnover_penalty=float(row["lambda_turnover"]),
-        budget_penalty=float(row["lambda_budget"]),
-        cvar_penalty=float(row["lambda_cvar"]),
-        cvar_beta=float(row["cvar_alpha"]),
-        return_reward=float(row["return_reward"]),
-    )
+    _candidate_id, cfg = modal_selected_config(transaction_cost_bps)
+    return cfg
 
 
 def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config: dict) -> pd.DataFrame:
@@ -202,7 +195,13 @@ def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config:
     return pd.DataFrame(rows)
 
 
-def build_models(returns: pd.DataFrame, config: dict, improved_cfg: ConvexRRPConfig, include_dynamic: bool = True) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
+def build_models(
+    returns: pd.DataFrame,
+    config: dict,
+    improved_cfg: ConvexRRPConfig,
+    include_dynamic: bool = True,
+    public_improved_result: pd.DataFrame | None = None,
+) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
     models = {
         GLOBAL_RRP: run_static_backtest(returns, model_type="relaxed", config_overrides=config),
     }
@@ -219,7 +218,11 @@ def build_models(returns: pd.DataFrame, config: dict, improved_cfg: ConvexRRPCon
     if len(returns) < 260:
         base_cfg.lookback_days = min(base_cfg.lookback_days, 60)
     base, base_solver, _, _ = run_convex_adaptive_backtest(returns, base_cfg)
-    improved, improved_solver, _, _ = run_convex_adaptive_backtest(returns, improved_cfg)
+    if public_improved_result is None:
+        improved, improved_solver, _, _ = run_convex_adaptive_backtest(returns, improved_cfg)
+    else:
+        improved = public_improved_result.copy()
+        improved_solver = pd.DataFrame()
     models[CONVEX_DISPLAY] = base
     models[IMPROVED_DISPLAY] = improved
     solvers = []
@@ -354,15 +357,40 @@ def covariance_summary(returns: pd.DataFrame, config: dict, improved_cfg: Convex
     for method in methods:
         global_result = run_global_covariance_diagnostic(returns, method, config)
         rows.append({**summarize_window(GLOBAL_RRP, global_result, "full_available_sample", config), "covariance_estimator": method})
-        for label, cfg in [
-            (CONVEX_DISPLAY, ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55, covariance_method=method, lookback_days=min(improved_cfg.lookback_days, 240))),
-            (IMPROVED_DISPLAY, ConvexRRPConfig(**{**improved_cfg.__dict__, "covariance_method": method})),
-        ]:
-            if smoke:
-                cfg.lookback_days = min(cfg.lookback_days, 60)
-                cfg.max_weight = max(cfg.max_weight, 0.60)
-            result, _, _, _ = run_convex_adaptive_backtest(returns, cfg)
-            rows.append({**summarize_window(label, result, "full_available_sample", config), "covariance_estimator": method})
+        base_cfg = ConvexRRPConfig(
+            transaction_cost_bps=config["transaction_cost_bps"],
+            budget_penalty=0.55,
+            covariance_method=method,
+            lookback_days=min(improved_cfg.lookback_days, 240),
+        )
+        if smoke:
+            base_cfg.lookback_days = min(base_cfg.lookback_days, 60)
+            base_cfg.max_weight = max(base_cfg.max_weight, 0.60)
+        base_result, _, _, _ = run_convex_adaptive_backtest(returns, base_cfg)
+        rows.append(
+            {
+                **summarize_window(CONVEX_DISPLAY, base_result, "full_available_sample", config),
+                "covariance_estimator": method,
+            }
+        )
+        if smoke:
+            candidate_cfg = replace(
+                improved_cfg,
+                covariance_method=method,
+                lookback_days=min(improved_cfg.lookback_days, 60),
+                max_weight=max(improved_cfg.max_weight, 0.60),
+            )
+            improved_result, _, _, _ = run_convex_adaptive_backtest(returns, candidate_cfg)
+        else:
+            improved_result, _ = run_public_oos_variant(
+                returns,
+                transaction_cost_bps=config["transaction_cost_bps"],
+                transform=lambda cfg, estimator=method: replace(cfg, covariance_method=estimator),
+            )
+        improved_row = summarize_window(IMPROVED_DISPLAY, improved_result, "full_available_sample", config)
+        improved_row["covariance_estimator"] = method
+        improved_row["diagnostic_scope"] = "published_afml_oos_selection_schedule_held_constant"
+        rows.append(improved_row)
     dynamic = run_dynamic_rrp_selection(
         returns,
         [{"lambda_pen": 0.10, "m": 1.9, "bond_leverage_upper": 1.4}, {"lambda_pen": 1.90, "m": 3.0, "bond_leverage_upper": 1.8}],
@@ -375,13 +403,30 @@ def covariance_summary(returns: pd.DataFrame, config: dict, improved_cfg: Convex
     return pd.DataFrame(rows)
 
 
-def transaction_cost_summary(returns: pd.DataFrame, base_config: dict, candidates_path: Path, smoke: bool) -> pd.DataFrame:
+def transaction_cost_summary(
+    returns: pd.DataFrame,
+    base_config: dict,
+    candidates_path: Path,
+    smoke: bool,
+    public_improved_result: pd.DataFrame | None = None,
+) -> pd.DataFrame:
     levels = [0, 5, 10, 20, 50]
     rows = []
     for bps in levels:
         cfg = get_config({**base_config, "transaction_cost_bps": float(bps)})
         improved_cfg = selected_improved_config(float(bps), candidates_path, smoke)
-        models, _ = build_models(returns, cfg, improved_cfg, include_dynamic=not smoke)
+        repriced = (
+            reprice_public_result(public_improved_result, bps)
+            if public_improved_result is not None
+            else None
+        )
+        models, _ = build_models(
+            returns,
+            cfg,
+            improved_cfg,
+            include_dynamic=not smoke,
+            public_improved_result=repriced,
+        )
         for name, result in models.items():
             row = summarize_window(name, result, "full_available_sample", cfg)
             row["transaction_cost_bps"] = bps
@@ -413,6 +458,7 @@ def stress_summary(returns: pd.DataFrame, models: dict[str, pd.DataFrame], confi
             if sample.empty:
                 continue
             nav = (1.0 + sample[ret_col].fillna(0.0)).cumprod()
+            nav.index = sample["date"]
             metrics = calculate_metrics(nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
             rows.append(
                 {
@@ -431,7 +477,7 @@ def stress_summary(returns: pd.DataFrame, models: dict[str, pd.DataFrame], confi
 
 
 def parameter_perturbation(returns: pd.DataFrame, config: dict, baseline_cfg: ConvexRRPConfig, smoke: bool) -> pd.DataFrame:
-    cases: list[tuple[str, ConvexRRPConfig]] = [("selected_baseline", baseline_cfg)]
+    transforms: list[tuple[str, callable]] = [("public_schedule_baseline", lambda cfg: cfg)]
     attrs = [
         ("lambda_cvar", "cvar_penalty"),
         ("lambda_turnover", "turnover_penalty"),
@@ -440,20 +486,40 @@ def parameter_perturbation(returns: pd.DataFrame, config: dict, baseline_cfg: Co
     ]
     for public_name, attr in attrs:
         for scale in [0.75, 1.25]:
-            params = baseline_cfg.__dict__.copy()
-            params[attr] = float(params[attr]) * scale
-            cases.append((f"{public_name}_{scale:.2f}x", ConvexRRPConfig(**params)))
+            transforms.append(
+                (
+                    f"{public_name}_{scale:.2f}x",
+                    lambda cfg, field=attr, multiplier=scale: replace(
+                        cfg, **{field: float(getattr(cfg, field)) * multiplier}
+                    ),
+                )
+            )
     for bump in [-0.05, 0.05]:
-        params = baseline_cfg.__dict__.copy()
-        params["max_weight"] = min(1.0, max(1.0 / returns.shape[1], float(params["max_weight"]) + bump))
-        cases.append((f"upper_bound_i_{bump:+.2f}", ConvexRRPConfig(**params)))
+        transforms.append(
+            (
+                f"upper_bound_i_{bump:+.2f}",
+                lambda cfg, delta=bump: replace(
+                    cfg,
+                    max_weight=min(1.0, max(1.0 / returns.shape[1], float(cfg.max_weight) + delta)),
+                ),
+            )
+        )
     for lookback in [180, 240, 252]:
-        params = baseline_cfg.__dict__.copy()
-        params["lookback_days"] = min(lookback, max(45, len(returns) // 2)) if smoke else lookback
-        cases.append((f"lookback_{lookback}", ConvexRRPConfig(**params)))
+        adjusted = min(lookback, max(45, len(returns) // 2)) if smoke else lookback
+        transforms.append((f"lookback_{lookback}", lambda cfg, days=adjusted: replace(cfg, lookback_days=days)))
     rows = []
-    for case, cfg in cases:
-        result, solver, _, _ = run_convex_adaptive_backtest(returns, cfg)
+    for case, transform in transforms:
+        cfg = transform(baseline_cfg)
+        if smoke:
+            result, solver, _, _ = run_convex_adaptive_backtest(returns, cfg)
+            scope = "smoke_modal_candidate"
+        else:
+            result, solver = run_public_oos_variant(
+                returns,
+                transaction_cost_bps=config["transaction_cost_bps"],
+                transform=transform,
+            )
+            scope = "published_afml_oos_selection_schedule_held_constant"
         row = summarize_window(IMPROVED_DISPLAY, result, "full_available_sample", config)
         row["case"] = case
         row["fallback_rate"] = float(solver["fallback_used"].mean()) if not solver.empty else 0.0
@@ -463,6 +529,8 @@ def parameter_perturbation(returns: pd.DataFrame, config: dict, baseline_cfg: Co
         row["lambda_ref"] = cfg.return_reward
         row["lambda_budget"] = cfg.budget_penalty
         row["upper_bound_i"] = cfg.max_weight
+        row["diagnostic_scope"] = scope
+        row["candidate_reselection"] = False
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -476,7 +544,8 @@ def no_lookahead_audit() -> pd.DataFrame:
             {"component": "convex_adaptive_covariance", "uses_future_data": False, "lag_applied": "window index < rebalance date", "validation_method": "trailing_window_check", "notes": "Convex backtest estimates covariance from trailing returns only."},
             {"component": "adaptive_budget_target", "uses_future_data": False, "lag_applied": "trailing lookback window", "validation_method": "input_dependency_review", "notes": "Budget target is derived from past-window asset risk and bounded state inputs."},
             {"component": "transaction_cost_scenarios", "uses_future_data": False, "lag_applied": "cost applied on rebalance turnover", "validation_method": "fixed_scenario_review", "notes": "Cost levels are fixed diagnostics and are not selected from outcomes."},
-            {"component": "parameter_perturbation", "uses_future_data": False, "lag_applied": "selected row read once", "validation_method": "one_at_a_time_validation", "notes": "One-at-a-time perturbations around the selected public configuration; no candidate search is performed."},
+            {"component": "afml_oos_candidate_selection", "uses_future_data": False, "lag_applied": "six-month validation plus one-trading-day embargo", "validation_method": "quarterly_rolling_oos", "notes": "Each public OOS window is selected before its test start; test observations are never recycled into that selection."},
+            {"component": "parameter_perturbation", "uses_future_data": False, "lag_applied": "published OOS schedule held constant", "validation_method": "one_at_a_time_validation", "notes": "Uniform perturbations are applied to every candidate config while historical OOS candidate choices remain unchanged."},
             {"component": "stress_period_identification", "uses_future_data": True, "lag_applied": "not used for trading", "validation_method": "ex_post_evaluation_only", "notes": "Stress periods are identified ex post solely for evaluation."},
             {"component": "solver_diagnostics", "uses_future_data": False, "lag_applied": "per-rebalance solve record", "validation_method": "diagnostic_log_review", "notes": "Solver status summarizes optimization diagnostics after the fact."},
             {"component": "moving_block_bootstrap", "uses_future_data": False, "lag_applied": "resamples realized validation returns", "validation_method": "distributional_resampling", "notes": "Bootstrap is validation-only and does not select or retune parameters."},
@@ -588,7 +657,12 @@ def moving_block_bootstrap(models: dict[str, pd.DataFrame], config: dict, n_boot
     rows = []
     draws = []
     for name, result in models.items():
-        returns = _daily_returns(result).values
+        dated_returns = _daily_returns(result)
+        returns = dated_returns.values
+        risk_free = load_daily_risk_free_returns(
+            dated_returns.index,
+            trading_days_per_year=config["trading_days_per_year"],
+        ).values
         n = len(returns)
         if n < 30:
             continue
@@ -597,12 +671,17 @@ def moving_block_bootstrap(models: dict[str, pd.DataFrame], config: dict, n_boot
         model_drawdowns = []
         for sample_id in range(n_bootstrap):
             pieces = []
+            risk_free_pieces = []
             while sum(len(piece) for piece in pieces) < n:
                 start = int(rng.choice(starts))
-                pieces.append(returns[start : min(start + block_size, n)])
+                stop = min(start + block_size, n)
+                pieces.append(returns[start:stop])
+                risk_free_pieces.append(risk_free[start:stop])
             sample = np.concatenate(pieces)[:n]
-            sample_nav = pd.Series((1.0 + sample).cumprod())
-            metrics = calculate_metrics(sample_nav, config.get("risk_free_rate", 0.0), config["trading_days_per_year"])
+            sample_risk_free = np.concatenate(risk_free_pieces)[:n]
+            sample_nav = pd.Series((1.0 + sample).cumprod(), index=dated_returns.index)
+            sampled_rf = pd.Series(sample_risk_free, index=dated_returns.index)
+            metrics = calculate_metrics(sample_nav, sampled_rf, config["trading_days_per_year"])
             model_sharpes.append(metrics["sharpe_ratio"])
             model_drawdowns.append(metrics["max_drawdown"])
             draws.append({"model": name, "sample_id": sample_id, "bootstrap_sharpe": metrics["sharpe_ratio"], "bootstrap_max_drawdown": metrics["max_drawdown"]})
@@ -738,14 +817,36 @@ def main() -> None:
         improved_cfg.lookback_days = min(improved_cfg.lookback_days, 60)
         improved_cfg.max_weight = max(improved_cfg.max_weight, 0.60)
 
+    public_improved_result = None if args.smoke else load_public_oos_result()
     print("Running fixed public models...")
-    models, solver_diag = build_models(returns, base_config, improved_cfg, include_dynamic=True)
+    models, solver_diag = build_models(
+        returns,
+        base_config,
+        improved_cfg,
+        include_dynamic=True,
+        public_improved_result=public_improved_result,
+    )
+    if not args.smoke:
+        published_solver_path = tables / "convex_adaptive_solver_diagnostics.csv"
+        if published_solver_path.exists():
+            published_solver = pd.read_csv(published_solver_path)
+            if "model" in published_solver:
+                published_solver = published_solver[
+                    published_solver["model"].astype(str).str.contains("Improved", case=False, na=False)
+                ]
+                solver_diag = pd.concat([solver_diag, published_solver], ignore_index=True)
     print("Writing subperiod robustness...")
     sub = subperiod_summary(models, base_config)
     print("Writing covariance robustness...")
     cov = covariance_summary(returns, base_config, improved_cfg, args.smoke)
     print("Writing transaction cost robustness...")
-    costs = transaction_cost_summary(returns, base_config, candidates_path, args.smoke)
+    costs = transaction_cost_summary(
+        returns,
+        base_config,
+        candidates_path,
+        args.smoke,
+        public_improved_result=public_improved_result,
+    )
     print("Writing stress and parameter diagnostics...")
     stress = stress_summary(returns, models, base_config)
     perturb = parameter_perturbation(returns, base_config, improved_cfg, args.smoke)

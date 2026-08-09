@@ -4,8 +4,12 @@ import pandas as pd
 
 def _aligned_risk_free_returns(
     returns: pd.Series,
-    risk_free_returns: pd.Series | float | int,
+    risk_free_returns: pd.Series | float | int | None,
 ) -> pd.Series:
+    if risk_free_returns is None:
+        from src.risk_free import load_daily_risk_free_returns
+
+        return load_daily_risk_free_returns(returns.index)
     if np.isscalar(risk_free_returns):
         if float(risk_free_returns) != 0.0:
             raise TypeError("risk_free_returns must be a daily risk-free return Series, not a nonzero scalar")
@@ -22,7 +26,7 @@ def _aligned_risk_free_returns(
 
 def calculate_metrics(
     nav_series: pd.Series,
-    risk_free_returns: pd.Series | float | int = 0.0,
+    risk_free_returns: pd.Series | float | int | None = None,
     trading_days: int = 243,
 ) -> dict:
     nav_series = pd.Series(nav_series, dtype=float).sort_index()

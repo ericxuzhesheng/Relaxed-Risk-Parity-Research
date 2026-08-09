@@ -19,7 +19,7 @@ volatility-target overlay is preserved and absolute numbers align with the
 README dashboard). It then:
 
 1. A/B tests the standard EWMA covariance against the regime-conditional
-   estimator at its default prior, over the full 2019-01-01..end window plus
+   estimator at its default prior, over the full 2018-01-02..end window plus
    three China-market stress sub-periods; and
 2. sweeps the state-frequency prior (``regime_crisis_prior`` x
    ``regime_prior_weight``) to check whether a stronger stress tilt changes
@@ -47,7 +47,7 @@ from src.data_loader import load_data
 from src.utils import get_config, resolve_path
 
 
-# China-market stress windows inside the 2019-01-01.. evaluation period.
+# China-market stress windows inside the 2018-01-02.. evaluation period.
 STRESS_PERIODS: dict[str, tuple[str, str]] = {
     "covid_2020Q1": ("2020-01-20", "2020-04-30"),
     "selloff_2022": ("2022-01-01", "2022-10-31"),
@@ -123,7 +123,7 @@ def with_overrides(cfg: ConvexRRPConfig, **overrides) -> ConvexRRPConfig:
 def load_returns(quick: bool, cutoff: str) -> pd.DataFrame:
     if quick:
         rng = np.random.default_rng(7)
-        dates = pd.bdate_range("2019-01-01", periods=320)
+        dates = pd.bdate_range("2018-01-02", periods=320)
         base = rng.normal(0.0003, 0.006, size=(len(dates), 6))
         base[120:150] += rng.normal(0.0, 0.02, size=(30, 6))
         return pd.DataFrame(base, index=dates, columns=[f"asset_{i}" for i in range(6)])
@@ -149,7 +149,7 @@ def main() -> None:
     args = parser.parse_args()
 
     config = get_config({"transaction_cost_bps": 3.0})
-    eval_start = config.get("plot_start_date", "2019-01-01")
+    eval_start = config.get("evaluation_start_date", "2018-01-02")
     returns = load_returns(args.quick, args.cutoff)
     print(f"Sample: {returns.index.min().date()} .. {returns.index.max().date()} ({len(returns)} rows, {returns.shape[1]} assets)")
 

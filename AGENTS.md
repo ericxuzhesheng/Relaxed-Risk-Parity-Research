@@ -71,27 +71,26 @@ Do claim where appropriate:
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 | Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
 
-Current results (evaluation from `2019-01-01` to `2026-07-31`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2015-11-19; latest cache date is 2026-07-31; point-in-time universe filtering applied):
-
-> The active-universe configuration and price cache were rotated on `2026-08-07` for the next monthly research update. The performance results below are the last completed backtest snapshot for the preceding universe; no backtest has yet been run on the rotated universe.
+Current results (evaluation from `2018-01-02` to `2026-07-31`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2007-01-18; latest cache date is 2026-07-31; 60-observation point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.98%** | **2.91%** | **1.430** | **2.165** | **-4.03%** | **1.486** | **2.09%** |
-| Convex Adaptive Global RRP | 6.67% | 5.19% | 0.935 | 1.455 | -5.74% | 1.162 | 1.31% |
-| Global RRP | 4.67% | 4.16% | 0.686 | 0.815 | -5.91% | 0.791 | 23.63% |
-| Defensive Dynamic RRP | 4.85% | 4.40% | 0.690 | 0.879 | -7.12% | 0.682 | 24.65% |
-| HERC Benchmark | 2.29% | 0.61% | 0.774 | 1.168 | -0.56% | 4.113 | 6.21% |
-| HRP Benchmark | 1.72% | 0.18% | -0.550 | -0.905 | -0.08% | 21.323 | 1.29% |
-| Equal Weight | 10.00% | 11.13% | 0.735 | 1.179 | -13.79% | 0.725 | 1.21% |
+| **Improved Convex Adaptive Global RRP** | **5.60%** | **2.88%** | **1.186** | **1.699** | **-3.81%** | **1.469** | **1.96%** |
+| Convex Adaptive Global RRP | 9.35% | 17.25% | 0.484 | 0.708 | -28.87% | 0.324 | 0.00% |
+| Global RRP | 4.28% | 4.13% | 0.534 | 0.748 | -6.32% | 0.677 | 24.51% |
+| Defensive Dynamic RRP | 5.09% | 4.71% | 0.637 | 0.898 | -6.64% | 0.767 | 24.58% |
+| HERC Benchmark | 2.57% | 0.72% | 0.646 | 0.933 | -0.69% | 3.727 | 9.12% |
+| HRP Benchmark | 2.07% | 0.26% | -0.117 | -0.180 | -0.19% | 10.958 | 2.34% |
+| Equal Weight | 7.73% | 10.56% | 0.561 | 0.806 | -12.89% | 0.599 | 0.96% |
+| 60/40 Benchmark | 6.45% | 8.52% | 0.533 | 0.767 | -13.99% | 0.461 | 0.99% |
 
-**Key interpretation:** Improved Convex Adaptive Global RRP achieves Sharpe 1.430 and Sortino 2.165, delivering 5.98% net annual return with max drawdown -4.03% at 2.09% average monthly turnover. The model prioritizes implementability through CVaR constraints, a low-turnover penalty, and group weight limits. The evaluation window runs from 2019-01-01 through 2026-07-31, with point-in-time investability filtering so later-listed ETFs only enter after sufficient valid observations. Results are presented as research diagnostics and historical validation evidence, not as forward-looking performance guarantees. HRP's near-zero volatility (0.18%) drives its minimal downside but also leaves minimal opportunity for excess return.
+**Key interpretation:** The public Improved Convex Adaptive Global RRP is a stitched rolling OOS path: each selection uses only prior data, applies a 95% confidence set, and resolves statistically tied candidates by the pre-declared low-turnover order. It delivers 5.60% net annual return, 2.88% volatility, 1.186 Sharpe, 1.699 Sortino, and -3.81% maximum drawdown at 1.96% average monthly turnover. The 36-configuration grid is exploratory only. Sharpe and Sortino use the final valid monthly 1-year ChinaBond government yield, lagged one month and compounded to a daily rate over 243 trading days. Results are historical research diagnostics, not forward-looking guarantees.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Data range: `2015-11-19` to `2026-07-31`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-07-31`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -148,7 +147,8 @@ Candidate universe: **6 ETFs**, excluded from the active 30 and from backtests u
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
-python scripts/update_etf_data.py --provider tushare --start-date 20150101
+python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20260731
+python scripts/update_risk_free_rate.py --start-date 20000101 --end-date 20260731
 ```
 
 ### After running — refresh artifacts in this order before any commit:

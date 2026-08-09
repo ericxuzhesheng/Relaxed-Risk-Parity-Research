@@ -1,8 +1,7 @@
 """Statistical tests for pairwise Sharpe-ratio differences.
 
-The thesis claims Improved Convex Adaptive RRP delivers Sharpe 1.326 versus
-0.693 for Global RRP. Single-path Sharpe estimates have non-trivial sampling
-error, especially on serially dependent daily return series, so this module
+Single-path Sharpe estimates have non-trivial sampling error, especially on
+serially dependent daily return series, so this module
 implements a block-bootstrap test for the null hypothesis that the *paired*
 Sharpe difference equals zero.
 
@@ -25,6 +24,8 @@ from typing import Iterable
 import numpy as np
 import pandas as pd
 
+from src.metrics import _aligned_risk_free_returns
+
 
 @dataclass(frozen=True)
 class SharpeDifferenceResult:
@@ -44,7 +45,7 @@ class SharpeDifferenceResult:
 
 def annualized_sharpe(
     returns: pd.Series,
-    risk_free_rate: float = 0.0,
+    risk_free_rate: pd.Series | float | int | None = 0.0,
     trading_days: int = 243,
 ) -> float:
     """Annualized Sharpe ratio from a daily return series.
@@ -58,13 +59,12 @@ def annualized_sharpe(
     series = pd.Series(returns).astype(float).dropna()
     if len(series) < 2:
         return 0.0
-    nav = (1.0 + series).cumprod()
-    total_return = float(nav.iloc[-1] / nav.iloc[0] - 1.0)
-    annualized_return = (1.0 + total_return) ** (trading_days / len(nav)) - 1.0
+    risk_free = _aligned_risk_free_returns(series, risk_free_rate)
+    excess = series - risk_free
     annualized_vol = float(series.std() * np.sqrt(trading_days))
     if annualized_vol <= 0.0:
         return 0.0
-    return float((annualized_return - risk_free_rate) / annualized_vol)
+    return float(excess.mean() / series.std() * np.sqrt(trading_days))
 
 
 def _aligned_pair(
@@ -92,7 +92,7 @@ def sharpe_difference_block_bootstrap(
     model_b: str = "model_b",
     n_resamples: int = 2000,
     block_size: int = 21,
-    risk_free_rate: float = 0.0,
+    risk_free_rate: pd.Series | float | int | None = 0.0,
     trading_days: int = 243,
     confidence_level: float = 0.95,
     seed: int = 0,
@@ -119,8 +119,9 @@ def sharpe_difference_block_bootstrap(
         )
 
     rng = np.random.default_rng(seed)
-    sharpe_a_obs = annualized_sharpe(pd.Series(a, index=index), risk_free_rate, trading_days)
-    sharpe_b_obs = annualized_sharpe(pd.Series(b, index=index), risk_free_rate, trading_days)
+    aligned_rf = _aligned_risk_free_returns(pd.Series(a, index=index), risk_free_rate)
+    sharpe_a_obs = annualized_sharpe(pd.Series(a, index=index), aligned_rf, trading_days)
+    sharpe_b_obs = annualized_sharpe(pd.Series(b, index=index), aligned_rf, trading_days)
     diff_obs = float(sharpe_a_obs - sharpe_b_obs)
 
     n_blocks = int(np.ceil(n / block_size))
@@ -130,9 +131,10 @@ def sharpe_difference_block_bootstrap(
         idx = np.concatenate([np.arange(s, s + block_size) for s in starts])[:n]
         a_star = a[idx]
         b_star = b[idx]
+        rf_star = aligned_rf.to_numpy()[idx]
         ts = pd.DatetimeIndex(index)  # original date index for cumprod
-        sharpe_a_star = annualized_sharpe(pd.Series(a_star, index=ts), risk_free_rate, trading_days)
-        sharpe_b_star = annualized_sharpe(pd.Series(b_star, index=ts), risk_free_rate, trading_days)
+        sharpe_a_star = annualized_sharpe(pd.Series(a_star, index=ts), pd.Series(rf_star, index=ts), trading_days)
+        sharpe_b_star = annualized_sharpe(pd.Series(b_star, index=ts), pd.Series(rf_star, index=ts), trading_days)
         diffs[r] = sharpe_a_star - sharpe_b_star
 
     alpha = 1.0 - confidence_level

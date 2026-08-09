@@ -3,7 +3,6 @@ from __future__ import annotations
 import itertools
 import json
 from dataclasses import asdict
-from typing import Iterable
 
 import numpy as np
 import pandas as pd
@@ -135,53 +134,6 @@ def generate_nested_splits(
     )
     for i, split in enumerate(splits, start=1):
         split["split_id"] = f"nested_{i:02d}"
-    return splits
-
-
-def generate_frozen_oos_split(
-    returns: pd.DataFrame,
-    frozen_start: str | pd.Timestamp = "2025-01-01",
-) -> dict[str, pd.Timestamp]:
-    data = ensure_datetime_index(returns)
-    requested = pd.Timestamp(frozen_start)
-    test_start = next_trading_day(data.index, requested, inclusive=True)
-    train = data[data.index < test_start]
-    test = data[data.index >= test_start]
-    if train.empty or test.empty:
-        raise ValueError("Frozen OOS split requires non-empty pre-frozen and frozen periods.")
-    return {
-        "split_id": "frozen_oos",
-        "train_start": pd.Timestamp(train.index.min()),
-        "train_end": pd.Timestamp(train.index.max()),
-        "test_start": pd.Timestamp(test.index.min()),
-        "test_end": pd.Timestamp(test.index.max()),
-        "requested_frozen_start": requested,
-    }
-
-
-def generate_retrospective_holdout_splits(
-    returns: pd.DataFrame,
-    holdout_starts: Iterable[str | pd.Timestamp],
-) -> list[dict[str, pd.Timestamp]]:
-    data = ensure_datetime_index(returns)
-    splits = []
-    for i, holdout_start in enumerate(holdout_starts, start=1):
-        requested = pd.Timestamp(holdout_start)
-        test_start = next_trading_day(data.index, requested, inclusive=True)
-        train = data[data.index < test_start]
-        test = data[data.index >= test_start]
-        if train.empty or test.empty:
-            raise ValueError("Retrospective holdout split requires non-empty pre-holdout and holdout periods.")
-        splits.append(
-            {
-                "split_id": f"holdout_{i:02d}",
-                "train_start": pd.Timestamp(train.index.min()),
-                "train_end": pd.Timestamp(train.index.max()),
-                "test_start": pd.Timestamp(test.index.min()),
-                "test_end": pd.Timestamp(test.index.max()),
-                "requested_holdout_start": requested,
-            }
-        )
     return splits
 
 
@@ -406,7 +358,6 @@ def validation_run_metadata(
     num_blocks: int | None = None,
     num_combinations: int | None = None,
     requested_eval_start: pd.Timestamp | str | None = None,
-    requested_frozen_start: pd.Timestamp | str | None = None,
     **extra: object,
 ) -> dict:
     def iso_date(value: pd.Timestamp | str | None) -> str | None:
@@ -427,8 +378,6 @@ def validation_run_metadata(
         "selection_rule": selection_rule,
         "limitations": limitations,
     }
-    if requested_frozen_start is not None:
-        metadata["requested_frozen_start"] = iso_date(requested_frozen_start)
     metadata.update(extra)
     return metadata
 

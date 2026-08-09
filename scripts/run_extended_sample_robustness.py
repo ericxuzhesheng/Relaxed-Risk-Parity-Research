@@ -11,7 +11,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from scripts.run_convex_adaptive_rrp import BASE_CONVEX_MODEL_NAME, IMPROVED_MODEL_NAME
-from scripts.run_frozen_oos_validation import selected_candidate
+from scripts.public_oos import load_public_oos_result, modal_selected_config
 from src.backtest import run_static_backtest
 from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
 from src.data_loader import load_data
@@ -120,20 +120,28 @@ def summarize_result(name: str, result: pd.DataFrame, eval_start_date: str, conf
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run extended-sample robustness diagnostics for the thesis models.")
     parser.add_argument("--output-dir", default="results/tables")
-    parser.add_argument("--eval-start", default="2019-01-01")
-    parser.add_argument("--sample-start", default="2019-01-02")
+    parser.add_argument("--eval-start", default="2018-01-02")
+    parser.add_argument("--sample-start", default="2018-01-02")
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
 
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
-    returns = returns[(returns.index >= pd.Timestamp(args.sample_start)) & (returns.index <= pd.Timestamp("2026-04-30"))]
+    returns = returns[
+        (returns.index >= pd.Timestamp(args.sample_start))
+        & (returns.index <= pd.Timestamp(config["evaluation_end_date"]))
+    ]
     if returns.empty:
         raise ValueError("Extended sample returns are empty.")
     if args.smoke:
         returns = returns.iloc[:260].copy()
 
-    base_candidate_id, base_cfg = selected_candidate(config["transaction_cost_bps"])
+    if args.smoke:
+        base_candidate_id, base_cfg = modal_selected_config(config["transaction_cost_bps"])
+        improved_result = run_convex_adaptive_backtest(returns, base_cfg)[0]
+    else:
+        base_candidate_id = "afml_rolling_oos_schedule"
+        improved_result = load_public_oos_result()
     timeline = point_in_time_universe_timeline(returns)
     universe_stats = {
         "avg_available_assets": float(timeline["available_assets"].mean()) if not timeline.empty else 0.0,
@@ -157,7 +165,7 @@ def main() -> None:
             returns,
             ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55),
         )[0],
-        IMPROVED_MODEL_NAME: run_convex_adaptive_backtest(returns, base_cfg)[0],
+        IMPROVED_MODEL_NAME: improved_result,
         "HRP Benchmark": run_point_in_time_hrp_like(returns, "hrp", config["transaction_cost_bps"]),
         "HERC Benchmark": run_point_in_time_hrp_like(returns, "herc", config["transaction_cost_bps"]),
     }
@@ -167,8 +175,9 @@ def main() -> None:
     summary["base_candidate_id"] = base_candidate_id
     summary["validation_status"] = "extended_sample_robustness"
     summary["notes"] = (
-        "Point-in-time extended sample robustness over 2018-01-02 to 2026-04-30; "
-        "early-listed ETFs are filtered through trailing availability checks."
+        f"Point-in-time extended sample robustness over {args.eval_start} to {config['evaluation_end_date']}; "
+        "early-listed ETFs are filtered through trailing availability checks; the Improved model is the "
+        "published AFML rolling OOS path."
     )
 
     output_dir = Path(resolve_path(args.output_dir))

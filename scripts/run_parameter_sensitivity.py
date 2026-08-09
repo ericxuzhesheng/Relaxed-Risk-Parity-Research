@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import asdict
+from dataclasses import asdict, replace
 from pathlib import Path
 
 import pandas as pd
@@ -11,11 +11,11 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.run_frozen_oos_validation import selected_candidate
+from scripts.public_oos import modal_selected_config, run_public_oos_variant
 from src.convex_adaptive_rrp import ConvexRRPConfig
 from src.data_loader import load_data
 from src.utils import get_config, resolve_path
-from src.validation import VALIDATION_STATUS, candidate_params_json, ensure_datetime_index, evaluate_candidate_window
+from src.validation import VALIDATION_STATUS, candidate_params_json, ensure_datetime_index, result_window_metrics
 
 
 def build_variants(base: ConvexRRPConfig) -> list[tuple[str, str, ConvexRRPConfig]]:
@@ -64,7 +64,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run one-at-a-time parameter sensitivity around the selected improved candidate.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None, help="Accepted for CLI consistency; ignored.")
-    parser.add_argument("--eval-start", default="2019-01-01")
+    parser.add_argument("--eval-start", default="2018-01-02")
     parser.add_argument("--smoke", action="store_true")
     return parser
 
@@ -76,7 +76,8 @@ def main() -> None:
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
     metric_start = pd.Timestamp(args.eval_start)
     returns = returns[returns.index <= returns.index.max()]
-    base_id, base_cfg = selected_candidate(config["transaction_cost_bps"])
+    _modal_candidate_id, base_cfg = modal_selected_config(config["transaction_cost_bps"])
+    base_id = "afml_rolling_oos_schedule"
     variants = build_variants(base_cfg)
     if args.smoke:
         variants = variants[:4]
@@ -84,15 +85,18 @@ def main() -> None:
     rows = []
     for i, (variant_id, parameter, cfg) in enumerate(variants, start=1):
         print(f"Running sensitivity variant {i}/{len(variants)}: {variant_id}")
-        metrics, fallback_rate, _ = evaluate_candidate_window(
-            returns,
-            cfg,
-            returns.index.min(),
-            returns.index.max(),
-            metric_start,
-            returns.index.max(),
-            config,
+        transform = (
+            (lambda original: original)
+            if parameter == "base"
+            else (lambda original, field=parameter, value=getattr(cfg, parameter): replace(original, **{field: value}))
         )
+        result, solver = run_public_oos_variant(
+            returns,
+            transaction_cost_bps=config["transaction_cost_bps"],
+            transform=transform,
+        )
+        metrics = result_window_metrics(result, metric_start, returns.index.max(), config)
+        fallback_rate = float(solver["fallback_used"].mean()) if not solver.empty else 1.0
         rows.append(
             {
                 "variant_id": variant_id,
@@ -102,6 +106,8 @@ def main() -> None:
                 "solver_fallback_rate": fallback_rate,
                 **metrics,
                 "validation_status": VALIDATION_STATUS,
+                "diagnostic_scope": "published_afml_oos_selection_schedule_held_constant",
+                "candidate_reselection": False,
             }
         )
     detail = pd.DataFrame(rows)
@@ -124,6 +130,7 @@ def main() -> None:
         .reset_index()
     )
     summary["validation_status"] = VALIDATION_STATUS
+    summary["diagnostic_scope"] = "published_afml_oos_selection_schedule_held_constant"
 
     output_dir = Path(resolve_path(args.output_dir))
     output_dir.mkdir(parents=True, exist_ok=True)

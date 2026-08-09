@@ -8,8 +8,8 @@
 
 ### 模型解释
 
-- Global Relaxed Risk Parity 是解释基准组合。当前 `global_risk` beta 为 0.115，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
-- Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 0.076；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
+- Global Relaxed Risk Parity 是解释基准组合。当前 `global_risk` beta 为 33.697，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
+- Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 19.742；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
 - Convex Adaptive Global RRP 是凸优化增强的基础版本，用于区分基础约束优化与改进配置的解释差异。
 - Defensive Dynamic Relaxed Risk Parity 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
 
@@ -29,8 +29,8 @@ The factor proxies are broad equal-weight proxies inferred from the existing ret
 
 ### Model Interpretation
 
-- Global Relaxed Risk Parity is the reference RRP portfolio. Its current `global_risk` beta is 0.115, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
-- Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is 0.076; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
+- Global Relaxed Risk Parity is the reference RRP portfolio. Its current `global_risk` beta is 33.697, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
+- Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is 19.742; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
 - Convex Adaptive Global RRP is the base convex enhancement and helps separate base optimizer behavior from the improved configuration.
 - Defensive Dynamic Relaxed Risk Parity is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
 

@@ -49,13 +49,13 @@ git push origin main
 
 ### 数据长度要求
 
-评估窗口从 **2019-01-01** 开始（全30支ETF均可投资的最早时间点）。  
-新增ETF的上市日期必须在 **2018年年底之前**，否则在评估窗口开始时仍未上市，会被点在时过滤器排除，导致该ETF在绝大多数回测期间无法参与优化，降低分散化效果。
+评估窗口从 **2018-01-02** 开始，采用时点可投过滤；ETF累计达到60个有效观察后才进入组合。
+新增ETF可以晚上市，但其上市前和观察期不足阶段不会参与优化，因此必须同时评估新增风险来源的价值与实际可用历史长度。
 
 ```
-ETF上市日期 < 2018-12-31  →  可以有效参与2019年起的回测
-ETF上市日期 > 2019-01-01  →  早期被排除，实际作用大打折扣
-ETF上市日期 > 2022-01-01  →  极短历史，几乎不参与回测，强烈不建议
+ETF在2018年初已有60个有效观察  →  可从评价起点参与回测
+ETF在评价期内上市              →  满足60个有效观察后动态进入
+ETF历史很短                    →  仅适合作为候选或未来实盘池诊断
 ```
 
 ### 相关性检查
@@ -355,18 +355,20 @@ df = pd.read_csv("results/tables/convex_adaptive_performance_summary.csv")
 print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_monthly_turnover"]])
 ```
 
-### 合理范围参考（基于2019-2026评估窗口）
+### 当前结果参考（2018-01-02 至 2026-07-31）
 
-| 模型 | Sharpe合理范围 | 月换手率合理范围 |
+| 模型 | 当前 Sharpe | 当前月换手率 |
 |------|-------------|---------------|
-| Improved Convex Adaptive Global RRP | 1.2 - 1.6 | 2% - 6% |
-| Convex Adaptive Global RRP | 0.8 - 1.2 | 0.5% - 3% |
-| Global RRP | 0.5 - 0.9 | 15% - 25% |
-| Equal Weight | 0.7 - 1.0 | 1% - 2% |
+| Improved Convex Adaptive Global RRP | 1.186 | 1.96% |
+| Convex Adaptive Global RRP | 0.484 | 0.00% |
+| Global RRP | 0.534 | 24.51% |
+| Equal Weight | 0.561 | 0.96% |
+
+这些数字只用于发现流水线异常，不是未来运行必须落入的“合理区间”。ETF 资产池或数据更新后，应重新读取权威 CSV，而不是以本表反向调参。
 
 ### 结果变差的常见原因
 
-1. **新ETF历史太短**：检查 `asset_descriptive_statistics.csv` 中新ETF的 `available_observations`，若 < 1000条（上市晚于2019年），该ETF在评估期前段会被点在时过滤器排除，等效于分散化资产减少。
+1. **新ETF历史太短**：检查 `asset_descriptive_statistics.csv` 中新ETF的 `available_observations`。主池 ETF 只有累计达到 60 个有效观察后才会被点在时过滤器纳入，因此晚上市资产不会被回填到上市前。
 
 2. **相关性过高**：新ETF与同板块ETF相关性 > 0.90，几乎不提供额外分散化，优化器无法利用。
 
@@ -376,59 +378,18 @@ print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_mon
 
 ---
 
-## 附：当前资产池（2026-05-15版本）
+## 附：当前资产池（2026-07-31）
 
-| 类别 | ETF | Ticker | 上市日期 | 备注 |
-|------|-----|--------|---------|------|
-| government bond | 国债ETF | 511010.SH | 2013-03 | 充足 |
-| credit bond | 信用债ETF | 511030.SH | 2019-03 | 充足 |
-| convertible bond | 可转债ETF | 511380.SH | 2020-04 | 较短 |
-| money market | 日利ETF | 511880.SH | 2013-08 | 充足 |
-| china equity | 沪深300ETF | 510300.SH | 2012-05 | 充足 |
-| china equity | 中证500ETF | 510500.SH | 2013-03 | 充足 |
-| china equity | 中证1000ETF | 512100.SH | 2014-01 | 充足 |
-| china equity | 创业板ETF | 159915.SZ | 2011-09 | 充足 |
-| china equity dividend | 红利ETF | 510880.SH | 2006-11 | 充足 |
-| china tech equity | 半导体ETF | 512480.SH | 2019-06 | 可用 |
-| china tech equity | 人工智能ETF | 159819.SZ | 2020-09 | 较短 |
-| china advanced manufacturing | 机器人ETF | 562500.SH | 2021-12 | 短 |
-| china new energy | 新能源ETF | 516160.SH | 2021-02 | 短 |
-| china tech equity | **半导体设备ETF** | **159516.SZ** | **2023-07** | ⚠️极短 |
-| china tech equity | 通信ETF | 159695.SZ | 2023-05 | ⚠️极短 |
-| china tech equity | 云计算ETF | 516980.SH | 2021-06 | 短 |
-| china finance | 证券ETF | 512880.SH | 2013-05 | 充足 |
-| china defense | 军工ETF | 512660.SH | 2013-05 | 充足 |
-| china consumer | 消费ETF | 159928.SZ | 2009-02 | 充足 |
-| hong kong equity | 恒生ETF | 159920.SZ | 2012-05 | 充足 |
-| commodity | **白银LOF** | **161226.SZ** | 2014-12 | 充足 |
-| global equity | 纳指ETF | 159941.SZ | 2013-05 | 充足 |
-| global equity | 标普500ETF | 513500.SH | 2013-07 | 充足 |
-| global equity | 日经225ETF | 513880.SH | 2019-06 | 可用 |
-| global equity | 欧洲ETF | 513030.SH | 2015-09 | 充足 |
-| commodity | 黄金ETF | 518880.SH | 2013-08 | 充足 |
-| commodity equity | 有色ETF | 159980.SZ | 2019-12 | 可用 |
-| commodity | 豆粕ETF | 159985.SZ | 2019-12 | 可用 |
-| commodity | 煤炭ETF | 515220.SH | 2020-03 | 较短 |
-| commodity | 原油ETF | 162411.SZ | 2004-06 | 充足 |
+资产池的唯一权威来源是 `src/asset_universe.py`。当前主池为 30 支 ETF、8 类风险来源，候选池为 6 支 ETF；两者无重叠。主池新增中证2000ETF（563300.SH）、能源化工期货ETF（159981.SZ）和10年国债ETF（511260.SH），机器人ETF（562500.SH）、中韩半导体ETF（513310.SH）和证券公司先锋策略ETF（516980.SH）转入候选池。沙特ETF、巴西ETF和30年国债ETF也仅在候选池中。
 
-**⚠️ 注意**：标记为"极短"的ETF（半导体设备、通信）在2019-2026评估期的前半段不参与组合优化，建议下次修改时优先考虑替换这两个品种。
+候选池不参与回测，只参与 36 支资产的 Barra-style 代理敞口与相关性诊断。`516980.SH` 的官方名称为华富中证证券公司先锋策略ETF，不应再标作云计算ETF。
 
 ---
 
 ## 关于可改进的方向
 
-如果希望进一步提升 Improved Convex Adaptive Global RRP 的 Sharpe：
-
-1. **替换半导体设备ETF（159516.SZ）**：该ETF仅668条数据（2023-07上市），在评估期前4.5年完全缺席。可考虑替换为：
-   - 半导体ETF（512480.SH）— 但已在资产池中
-   - 芯片ETF (159995.SZ) — 需确认与现有半导体ETF相关性
-   - 电子ETF (159864.SZ 或 516600.SH) — 起始日期需查验
-
-2. **替换通信ETF（159695.SZ）**：同样2023-05上市，数据极短。
-
-3. **调整超参数**：修改 `scripts/run_convex_adaptive_rrp.py` 中的候选参数网格（lookback、max_weight、turnover_cap、cvar_beta等），重跑网格搜索。
+下次月度品种评审应先比较候选池与主池的代理敞口、收益相关性、历史覆盖和数据质量，再决定是否调整 ETF。参数研究与品种调整必须分开：完整 36 组参数网格只作探索与 CSCV/PBO 诊断，公开主路径仍由预先声明的低换手候选族按历史可得数据滚动选择，不能用完整样本最优参数覆盖历史结果。
 
 ---
 
-*最后更新：2026-05-15*  
-*对应 git commit: ETF universe - replace 消费电子/恒生科技/科创50*
+*最后更新：2026-08-10*

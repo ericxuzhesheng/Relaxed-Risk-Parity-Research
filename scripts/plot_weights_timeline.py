@@ -23,7 +23,10 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "src"))
+
+from src.utils import get_config
 
 # ── colour palette per asset class ───────────────────────────────────────────
 ASSET_CLASS_COLOR = {
@@ -45,8 +48,9 @@ ASSET_CLASS_COLOR = {
     "commodity equity":        "#bf812d",   # brown-gold
 }
 
-EVAL_START = "2019-01-01"
-EVAL_END   = "2026-04-30"
+_CONFIG = get_config()
+EVAL_START = _CONFIG["evaluation_start_date"]
+EVAL_END = _CONFIG["evaluation_end_date"]
 
 
 def _load_weights() -> tuple[pd.DataFrame, list[str]]:

@@ -5,7 +5,8 @@ global_rrp_covariance,False,window index < rebalance date,trailing_window_check,
 convex_adaptive_covariance,False,window index < rebalance date,trailing_window_check,Convex backtest estimates covariance from trailing returns only.
 adaptive_budget_target,False,trailing lookback window,input_dependency_review,Budget target is derived from past-window asset risk and bounded state inputs.
 transaction_cost_scenarios,False,cost applied on rebalance turnover,fixed_scenario_review,Cost levels are fixed diagnostics and are not selected from outcomes.
-parameter_perturbation,False,selected row read once,one_at_a_time_validation,One-at-a-time perturbations around the selected public configuration; no candidate search is performed.
+afml_oos_candidate_selection,False,six-month validation plus one-trading-day embargo,quarterly_rolling_oos,Each public OOS window is selected before its test start; test observations are never recycled into that selection.
+parameter_perturbation,False,published OOS schedule held constant,one_at_a_time_validation,Uniform perturbations are applied to every candidate config while historical OOS candidate choices remain fixed.
 stress_period_identification,True,not used for trading,ex_post_evaluation_only,Stress periods are identified ex post solely for evaluation.
 solver_diagnostics,False,per-rebalance solve record,diagnostic_log_review,Solver status summarizes optimization diagnostics after the fact.
 moving_block_bootstrap,False,resamples realized validation returns,distributional_resampling,Bootstrap is validation-only and does not select or retune parameters.

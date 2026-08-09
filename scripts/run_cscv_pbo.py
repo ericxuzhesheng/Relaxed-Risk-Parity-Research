@@ -39,8 +39,8 @@ def dump_candidate_grid(candidates, output_dir: Path) -> Path:
     The CSCV diagnostic exercises a parameter grid that is constructed
     procedurally in ``scripts/run_convex_adaptive_rrp.candidate_configurations``.
     Persisting the grid as a flat table makes the appendix reproducible and
-    lets reviewers correlate ``candidate_09`` (referenced by the frozen-OOS
-    validation) with the parameters it actually represents.
+    lets reviewers map every reported candidate identifier to the parameters
+    it actually represents.
     """
     rows = []
     for candidate_id, cfg in candidates:
@@ -71,7 +71,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run CSCV/PBO diagnostics for convex adaptive candidates.")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--max-candidates", type=int, default=None)
-    parser.add_argument("--eval-start", default="2019-01-01")
+    parser.add_argument("--eval-start", default="2018-01-02")
     parser.add_argument("--num-blocks", type=int, default=8)
     parser.add_argument("--max-combinations", type=int, default=None)
     parser.add_argument("--smoke", action="store_true")
@@ -82,11 +82,10 @@ def main() -> None:
         validation_kind = "smoke"
         args.max_candidates = args.max_candidates or 2
         args.max_combinations = args.max_combinations or 2
-    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2019-01-01":
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2018-01-02":
         validation_kind = "intermediate"
 
     requested_eval_start = args.eval_start
-    requested_frozen_start = None
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
@@ -101,7 +100,7 @@ def main() -> None:
     validation_kind = "formal"
     if args.smoke:
         validation_kind = "smoke"
-    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2019-01-01":
+    elif args.max_candidates is not None or args.max_combinations is not None or args.num_blocks != 8 or args.eval_start != "2018-01-02":
         validation_kind = "intermediate"
     elif len(candidates) < len(candidate_configurations(config["transaction_cost_bps"])):
         validation_kind = "intermediate"
@@ -118,7 +117,6 @@ def main() -> None:
         num_blocks=len(blocks),
         num_combinations=len(combos),
         requested_eval_start=requested_eval_start,
-        requested_frozen_start=requested_frozen_start,
     )
     candidate_block_metrics: dict[str, dict[int, dict]] = {}
     for i, (candidate_id, cfg) in enumerate(candidates, start=1):

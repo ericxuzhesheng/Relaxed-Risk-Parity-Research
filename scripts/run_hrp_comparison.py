@@ -66,7 +66,7 @@ def _summarize(name: str, result: pd.DataFrame, eval_start_date: str, config: di
     nav = _nav_from_result(result, eval_start_date)
     metrics = calculate_metrics(
         nav,
-        risk_free_rate=config["risk_free_rate"],
+        risk_free_returns=config["risk_free_rate"],
         trading_days=config["trading_days_per_year"],
     )
     metrics["model"] = name
@@ -93,15 +93,12 @@ def _make_weight_result(returns: pd.DataFrame, weights_by_date: pd.DataFrame) ->
 
 
 def run_equal_weight(returns: pd.DataFrame) -> pd.DataFrame:
-    rows = []
-    for date in returns.index:
-        history = returns[returns.index < date]
-        active = investable_columns(history, min_observations=30)
-        weights = pd.Series(0.0, index=returns.columns)
-        if active:
-            weights.loc[active] = 1.0 / len(active)
-        rows.append(weights)
-    weights = pd.DataFrame(rows, index=returns.index, columns=returns.columns)
+    data = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
+    prior_counts = data.notna().cumsum().shift(1, fill_value=0)
+    prior_std = data.expanding(min_periods=2).std().shift(1)
+    active = prior_counts.ge(30) & prior_std.gt(0.0)
+    active_count = active.sum(axis=1).replace(0, np.nan)
+    weights = active.astype(float).div(active_count, axis=0).fillna(0.0)
     return _make_weight_result(returns, weights)
 
 

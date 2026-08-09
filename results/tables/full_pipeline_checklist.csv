@@ -1,17 +1,4 @@
 step,critical,return_code,status,command
-rrp_pipeline,True,0,passed,python.exe scripts/run_rrp_pipeline.py --mode full --diagnostics full
-showcase_optimization,False,0,passed,python.exe scripts/optimize_showcase_rrp.py
-hrp_comparison,False,0,passed,python.exe scripts/run_hrp_comparison.py
-convex_adaptive_rrp,True,0,passed,python.exe scripts/run_convex_adaptive_rrp.py
-monthly_hs300_comparison,False,0,passed,python.exe scripts/run_monthly_hs300_comparison.py
-rebalance_frequency_sensitivity,False,0,passed,python.exe scripts/run_rebalance_frequency_sensitivity.py
-extended_sample_robustness,False,0,passed,python.exe scripts/run_extended_sample_robustness.py
-cvar_sensitivity,False,0,passed,python.exe scripts/run_cvar_sensitivity.py
-enhanced_cscv_pbo,False,0,passed,python.exe scripts/run_enhanced_cscv_pbo.py
-holdout_validation,False,0,passed,python.exe scripts/run_holdout_validation.py
-benchmark_suite,True,0,passed,python.exe scripts/run_benchmark_suite.py
-robustness_tests,False,0,passed,python.exe scripts/run_robustness_tests.py
-asset_pricing_diagnostics,False,0,passed,python.exe scripts/run_asset_pricing_diagnostics.py
 expected_output,True,0,present,results\tables\performance_summary.csv
 expected_output,True,0,present,results\tables\convex_adaptive_performance_summary.csv
 expected_output,True,0,present,results\tables\benchmark_performance_summary.csv
@@ -25,6 +12,12 @@ expected_output,True,0,present,results\tables\extended_sample_robustness_summary
 expected_output,True,0,present,results\tables\rebalance_frequency_sensitivity.csv
 expected_output,True,0,present,results\tables\cvar_sensitivity_summary.csv
 expected_output,True,0,present,results\tables\cscv_pbo_enhanced_summary.csv
-expected_output,True,0,present,results\tables\holdout_validation_summary.csv
+expected_output,True,0,present,results\tables\walkforward_validation_summary.csv
+expected_output,True,0,present,results\tables\afml_oos_selection.csv
+expected_output,True,0,present,data\processed\risk_free_rate_monthly.csv
+expected_output,True,0,present,data\processed\barra_style_exposure_correlation.csv
 expected_output,True,0,present,docs\MODEL_GOVERNANCE.md
 expected_output,True,0,present,report\thesis_latex\main.tex
+expected_output,True,0,present,report\thesis_latex\main.pdf
+expected_output,True,0,present,report\ppt\rrp_defense.tex
+expected_output,True,0,present,report\ppt\rrp_defense.pdf

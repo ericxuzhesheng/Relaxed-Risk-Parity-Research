@@ -32,7 +32,6 @@ def test_full_pipeline_checklist_generation(tmp_path):
 
 def test_new_validation_scripts_exist():
     for path in [
-        Path("scripts/run_holdout_validation.py"),
         Path("scripts/run_cvar_sensitivity.py"),
         Path("scripts/run_enhanced_cscv_pbo.py"),
         Path("scripts/run_extended_sample_robustness.py"),
@@ -50,7 +49,6 @@ def test_pipeline_includes_new_diagnostics():
         "enhanced_cscv_pbo",
     ]:
         assert step in pipeline
-    assert "holdout_validation" not in pipeline
 
 
 def test_governance_doc_listed_in_pipeline():

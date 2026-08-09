@@ -66,6 +66,8 @@ def _missing_observation_months(
 ) -> pd.PeriodIndex:
     data = _normalize_daily(daily)
     expected = pd.period_range(pd.Timestamp(start_date).to_period("M"), pd.Timestamp(end_date).to_period("M"), freq="M")
+    if data.empty:
+        return expected
     observed = pd.PeriodIndex(data["trade_date"].dt.to_period("M").unique(), freq="M")
     return expected.difference(observed)
 

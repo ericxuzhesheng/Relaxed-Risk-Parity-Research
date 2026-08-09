@@ -83,6 +83,7 @@ def expected_outputs() -> list[Path]:
         ROOT_DIR / "results/tables/rebalance_frequency_sensitivity.csv",
         ROOT_DIR / "results/tables/cvar_sensitivity_summary.csv",
         ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv",
+        ROOT_DIR / "results/tables/walkforward_validation_summary.csv",
         ROOT_DIR / "results/tables/afml_oos_selection.csv",
         ROOT_DIR / "data/processed/risk_free_rate_monthly.csv",
         ROOT_DIR / "data/processed/barra_style_exposure_correlation.csv",

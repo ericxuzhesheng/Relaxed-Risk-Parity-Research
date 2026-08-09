@@ -20,6 +20,7 @@ report/thesis_latex/build_check*.txt
 report/thesis_latex/xdvipdfmx_check.txt
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/chinabond_1y_yield_daily.csv
 results/figures/*
 results/tables/*
 results/quick/
@@ -71,8 +72,6 @@ results/quick/
 !results/tables/nested_validation_summary.csv
 !results/tables/cscv_pbo_results.csv
 !results/tables/cscv_pbo_summary.csv
-!results/tables/frozen_oos_validation.csv
-!results/tables/frozen_oos_validation_notes.csv
 !results/tables/parameter_sensitivity.csv
 !results/tables/parameter_sensitivity_summary.csv
 !results/tables/parameter_stability.csv
@@ -120,8 +119,6 @@ results/quick/
 !results/tables/cvar_sensitivity_summary.csv
 !results/tables/cscv_pbo_enhanced_results.csv
 !results/tables/cscv_pbo_enhanced_summary.csv
-!results/tables/holdout_validation.csv
-!results/tables/holdout_validation_summary.csv
 !results/tables/sharpe_difference_tests.csv
 !results/tables/transaction_cost_breakeven.csv
 !results/tables/vol_aligned_comparison.csv

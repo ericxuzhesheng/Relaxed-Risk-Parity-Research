@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -10,8 +11,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.run_frozen_oos_validation import selected_candidate
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from scripts.public_oos import modal_selected_config, run_public_oos_variant
+from src.convex_adaptive_rrp import ConvexRRPConfig
 from src.data_loader import load_data
 from src.utils import get_config, resolve_path
 from src.validation import candidate_params_json, ensure_datetime_index, result_window_metrics
@@ -66,8 +67,8 @@ def apply_sample_window(
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Run CVaR sensitivity diagnostics for the convex adaptive candidate.")
     parser.add_argument("--output-dir", default="results/tables")
-    parser.add_argument("--eval-start", default="2019-01-01")
-    parser.add_argument("--sample-start", default="2019-01-02")
+    parser.add_argument("--eval-start", default="2018-01-02")
+    parser.add_argument("--sample-start", default="2018-01-02")
     parser.add_argument("--sample-end", default=None, help="Inclusive cutoff; defaults to the latest available observation.")
     parser.add_argument("--smoke", action="store_true")
     return parser
@@ -78,11 +79,13 @@ def main() -> None:
 
     config = get_config({"transaction_cost_bps": 3.0})
     returns = ensure_datetime_index(load_data(source="tushare", force_update=False))
-    returns = apply_sample_window(returns, args.sample_start, args.sample_end)
+    if args.sample_end is not None:
+        returns = returns[returns.index <= pd.Timestamp(args.sample_end)]
     if returns.empty:
         raise ValueError("CVaR sensitivity returns are empty.")
 
-    candidate_id, base_cfg = selected_candidate(config["transaction_cost_bps"])
+    _modal_candidate_id, base_cfg = modal_selected_config(config["transaction_cost_bps"])
+    candidate_id = "afml_rolling_oos_schedule"
     variants = build_variants(base_cfg)
     if args.smoke:
         variants = variants[:4]
@@ -91,7 +94,15 @@ def main() -> None:
     for i, variant in enumerate(variants, start=1):
         cfg = variant["cfg"]
         print(f"Running CVaR sensitivity variant {i}/{len(variants)}: {variant['variant_id']}")
-        result, solver_diag, _, _ = run_convex_adaptive_backtest(returns, cfg)
+        result, solver_diag = run_public_oos_variant(
+            returns,
+            transaction_cost_bps=config["transaction_cost_bps"],
+            transform=lambda original, beta=float(variant["cvar_beta"]), days=int(variant["lookback_days"]): replace(
+                original,
+                cvar_beta=beta,
+                lookback_days=days,
+            ),
+        )
         metrics = result_window_metrics(result, pd.Timestamp(args.eval_start), returns.index.max(), config)
         detail_rows.append(
             {
@@ -102,6 +113,8 @@ def main() -> None:
                 "is_baseline": bool(variant["is_baseline"]),
                 "params_json": candidate_params_json(cfg),
                 "solver_fallback_rate": float(solver_diag["fallback_used"].mean()) if not solver_diag.empty else 1.0,
+                "diagnostic_scope": "published_afml_oos_selection_schedule_held_constant",
+                "candidate_reselection": False,
                 **metrics,
             }
         )
@@ -163,8 +176,8 @@ def main() -> None:
     summary["eval_end"] = pd.Timestamp(returns.index.max()).date().isoformat()
     summary["candidate_count"] = len(variants)
     summary["notes"] = (
-        "Parameter sensitivity over CVaR confidence levels 90%, 95%, 97.5% and 99% "
-        "with lookbacks 126/252/504."
+        "Uniform sensitivity over CVaR confidence levels 90%, 95%, 97.5% and 99% with "
+        "lookbacks 126/252/504; the published AFML OOS candidate schedule is held constant."
     )
 
     output_dir = Path(resolve_path(args.output_dir))

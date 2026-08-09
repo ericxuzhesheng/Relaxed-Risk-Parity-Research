@@ -34,14 +34,6 @@ def test_walkforward_and_nested_splits_are_chronological() -> None:
         assert split["validation_end"] < split["test_start"] <= split["test_end"]
 
 
-def test_frozen_oos_split_starts_at_or_after_requested_date() -> None:
-    from src.validation import generate_frozen_oos_split
-
-    split = generate_frozen_oos_split(synthetic_returns(), "2022-01-01")
-    assert split["test_start"] >= pd.Timestamp("2022-01-01")
-    assert split["train_end"] < split["test_start"]
-
-
 def test_cscv_splits_are_complementary() -> None:
     from src.validation import generate_cscv_splits
 
@@ -76,7 +68,7 @@ def test_readme_describes_current_validation_layer() -> None:
     for needle in [
         "cscv-pbo",
         "walk-forward",
-        "holdout",
+        "rolling oos",
         "block bootstrap",
         "covariance robustness",
         "parameter perturbation",
@@ -104,19 +96,6 @@ def test_readme_uses_current_model_and_robustness_framing() -> None:
         "out-of-sample",
     ]:
         assert needle in text, needle
-
-
-def test_holdout_split_generator_returns_chronological_splits() -> None:
-    from src.validation import generate_retrospective_holdout_splits
-
-    dates = pd.bdate_range("2020-01-01", periods=900)
-    returns = pd.DataFrame({"asset_a": 0.0002}, index=dates)
-    splits = generate_retrospective_holdout_splits(returns, ["2022-01-01", "2023-01-01"])
-    assert len(splits) == 2
-    for split in splits:
-        assert split["split_id"].startswith("holdout_")
-        assert split["train_end"] < split["test_start"]
-        assert split["test_start"] >= pd.Timestamp(split["requested_holdout_start"])
 
 
 def test_governance_doc_exists() -> None:

@@ -12,8 +12,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.run_convex_adaptive_rrp import candidate_configurations, summarize_result
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from scripts.public_oos import run_public_oos_variant
+from scripts.run_convex_adaptive_rrp import summarize_result
 from src.data_loader import load_data
 from src.utils import get_config, resolve_path
 
@@ -26,41 +26,23 @@ FREQUENCIES = [
 ]
 
 
-def selected_improved_config(transaction_cost_bps: float) -> tuple[str, ConvexRRPConfig]:
-    """Return the currently selected Improved model config from the candidate table."""
-    candidates_path = Path(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"))
-    selected_id = ""
-    if candidates_path.exists():
-        candidates = pd.read_csv(candidates_path)
-        if "selected" in candidates.columns and "candidate_id" in candidates.columns:
-            selected = candidates[candidates["selected"].astype(str).str.lower().eq("true")]
-            if not selected.empty:
-                selected_id = str(selected.iloc[0]["candidate_id"])
-    configs = dict(candidate_configurations(transaction_cost_bps))
-    if selected_id and selected_id in configs:
-        return selected_id, configs[selected_id]
-    if "candidate_23" in configs:
-        return "candidate_23", configs["candidate_23"]
-    raise RuntimeError(
-        "Could not infer the selected Improved Convex Adaptive Global RRP configuration."
-    )
-
-
 def run_frequency_sensitivity(
     returns: pd.DataFrame,
     eval_start_date: str,
     config: dict,
 ) -> pd.DataFrame:
     rows = []
-    selected_id, base_cfg = selected_improved_config(config["transaction_cost_bps"])
     for code, label in FREQUENCIES:
-        cfg = replace(base_cfg, rebalance_frequency=code)
-        result, solver, _, _ = run_convex_adaptive_backtest(returns, cfg)
+        result, solver = run_public_oos_variant(
+            returns,
+            transaction_cost_bps=config["transaction_cost_bps"],
+            transform=lambda cfg, frequency=code: replace(cfg, rebalance_frequency=frequency),
+        )
         metrics = summarize_result(
             f"Improved Convex Adaptive Global RRP - {label}",
             result,
             eval_start_date,
-            {**config, "transaction_cost_bps": cfg.transaction_cost_bps},
+            config,
         )
         eval_result = result[pd.to_datetime(result["date"]) >= pd.Timestamp(eval_start_date)]
         rebalance_count = int(eval_result["is_rebalance_day"].sum())
@@ -70,7 +52,7 @@ def run_frequency_sensitivity(
             {
                 "frequency_code": code,
                 "frequency_label": label,
-                "selected_candidate_id": selected_id,
+                "selected_candidate_id": "afml_rolling_oos_schedule",
                 "rebalance_count": rebalance_count,
                 "active_rebalance_count": active_rebalance_count,
                 "solver_fallback_rate": fallback_rate,
@@ -93,8 +75,8 @@ def run_frequency_sensitivity(
         table[f"delta_vs_monthly_{col}"] = table[col] - float(monthly[col])
     table["same_parameters_except_frequency"] = True
     table["interpretation_note"] = (
-        "Frequency-only robustness check for the current Improved model; "
-        "parameters are not re-selected by frequency."
+        "Frequency-only robustness check for the public AFML rolling OOS schedule; "
+        "the published historical candidate choices are held constant and not re-selected by frequency."
     )
     return table
 
@@ -141,7 +123,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run frequency-only rebalance sensitivity for the Improved Convex Adaptive Global RRP."
     )
-    parser.add_argument("--eval-start-date", default="2019-01-01")
+    parser.add_argument("--eval-start-date", default="2018-01-02")
     parser.add_argument("--source", default="tushare")
     parser.add_argument("--output-dir", default="results/tables")
     parser.add_argument("--figure-dir", default="results/figures")

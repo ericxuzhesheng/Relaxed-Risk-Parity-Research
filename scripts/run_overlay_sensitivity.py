@@ -66,7 +66,7 @@ def _summarize(result: pd.DataFrame, eval_start: pd.Timestamp, trading_days: int
     net_return = eval_result["portfolio_return"].fillna(0.0)
     nav = (1.0 + net_return).cumprod()
     nav.index = pd.to_datetime(eval_result["date"])
-    metrics = calculate_metrics(nav, risk_free_rate=0.0182, trading_days=trading_days)
+    metrics = calculate_metrics(nav, risk_free_returns=None, trading_days=trading_days)
     months = pd.to_datetime(eval_result["date"]).dt.to_period("M").nunique()
     avg_monthly_turnover = float(eval_result["turnover"].fillna(0.0).sum() / max(months, 1))
     return {
@@ -84,7 +84,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", default="tushare")
     parser.add_argument("--force-update", action="store_true")
-    parser.add_argument("--eval-start", default="2019-01-01")
+    parser.add_argument("--eval-start", default="2018-01-02")
     parser.add_argument("--trading-days", type=int, default=243)
     args = parser.parse_args()
 

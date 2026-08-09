@@ -25,14 +25,16 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.asset_universe import ETF_UNIVERSE, AssetMapping
-from src.utils import RISK_FREE_RATE_ANNUAL, resolve_path
+from src.risk_free import load_monthly_risk_free
+from src.utils import get_config, resolve_path
 
 
 logger = logging.getLogger("generate_thesis_numbers")
 
 # Evaluation window — update here when the researcher extends the backtest.
-_EVAL_START_DATE = "2019-01-01"
-_EVAL_END_DATE = "2026-07-31"  # user-approved performance evaluation cutoff
+_CONFIG = get_config()
+_EVAL_START_DATE = _CONFIG["evaluation_start_date"]
+_EVAL_END_DATE = _CONFIG["evaluation_end_date"]
 
 # Section display names for ETF pool and stats tables.
 _ASSET_CLASS_SECTION: dict[str, str] = {
@@ -63,8 +65,8 @@ _SHORT_HISTORY_OBS = 1200
 MODEL_SLUGS: dict[str, str] = {
     "Global RRP": "global",
     "Defensive Dynamic RRP": "defensive",
-    "Convex Adaptive Global Relaxed Risk Parity": "convex",
-    "Improved Convex Adaptive Global Relaxed Risk Parity": "improved",
+    "Convex Adaptive Global RRP": "convex",
+    "Improved Convex Adaptive Global RRP": "improved",
     "HRP Benchmark": "hrp",
     "HERC Benchmark": "herc",
     "Equal Weight": "equalWeight",
@@ -327,6 +329,8 @@ def _percent_summary_rows(summary: pd.DataFrame) -> list[str]:
         lines.append(f"\\newcommand{{\\{slug}Sortino}}{{{_num(row['sortino_ratio'])}}}")
         lines.append(f"\\newcommand{{\\{slug}MaxDD}}{{{_pct(row['max_drawdown'])}}}")
         lines.append(f"\\newcommand{{\\{slug}Calmar}}{{{_num(row['calmar_ratio'])}}}")
+        if "cvar_95_daily_loss" in row.index:
+            lines.append(f"\\newcommand{{\\{slug}Cvar}}{{{_pct(row['cvar_95_daily_loss'])}}}")
         lines.append(
             f"\\newcommand{{\\{slug}MonthlyTurnover}}"
             f"{{{_pct(row['avg_monthly_turnover'])}}}"
@@ -421,45 +425,6 @@ def _walkforward_rows() -> list[str]:
     return lines
 
 
-def _frozen_oos_rows() -> list[str]:
-    path = resolve_path("results/tables/frozen_oos_validation.csv")
-    if not Path(path).exists():
-        return []
-    df = pd.read_csv(path)
-    if df.empty:
-        return []
-    row = df.iloc[0]
-    lines = ["% --- Frozen OOS candidate parameters (results/tables/frozen_oos_validation.csv) ---"]
-    param_map = {
-        "frozenOosCandidate": ("selected_candidate_id", lambda v: str(v).replace("_", r"\_")),
-        "frozenOosLookback": ("lookback_days", lambda v: str(int(float(v)))),
-        "frozenOosCovariance": ("covariance_method", str),
-        "frozenOosMaxWeight": ("max_weight", lambda v: _pct(float(v))),
-        "frozenOosTurnoverCap": (
-            "turnover_cap",
-            lambda v: _pct(float(v)) if str(v).lower() not in {"nan", "none", ""} else "无上限",
-        ),
-        "frozenOosTurnoverPenalty": ("turnover_penalty", lambda v: _num(float(v))),
-        "frozenOosCvarPenalty": ("cvar_penalty", lambda v: _num(float(v))),
-        "frozenOosBudgetPenalty": ("budget_penalty", lambda v: _num(float(v))),
-        "frozenOosCvarBeta": ("cvar_beta", lambda v: _num(float(v))),
-        "frozenOosReturnReward": ("return_reward", lambda v: _num(float(v))),
-        "frozenOosNetReturn": ("net_annual_return", lambda v: _pct(float(v))),
-        "frozenOosSharpe": ("sharpe_ratio", lambda v: _num(float(v))),
-        "frozenOosMaxDD": ("max_drawdown", lambda v: _pct(float(v))),
-    }
-    for tex_name, (column, fmt) in param_map.items():
-        if column not in row.index:
-            continue
-        try:
-            value = fmt(row[column])
-        except (TypeError, ValueError):
-            continue
-        lines.append(f"\\newcommand{{\\{tex_name}}}{{{value}}}")
-    lines.append("")
-    return lines
-
-
 def _breakeven_rows() -> list[str]:
     path = resolve_path("results/tables/transaction_cost_breakeven.csv")
     if not Path(path).exists():
@@ -548,11 +513,6 @@ _FALLBACK_MACROS: list[str] = [
     "walkforwardNetreturnMean", "walkforwardNetreturnStd", "walkforwardNetreturnMin",
     "walkforwardNetreturnMax", "walkforwardNetreturnPFive", "walkforwardNetreturnPNinetyFive",
     "walkforwardMaxddMean",
-    # Frozen OOS
-    "frozenOosCandidate", "frozenOosLookback", "frozenOosCovariance", "frozenOosMaxWeight",
-    "frozenOosTurnoverCap", "frozenOosTurnoverPenalty", "frozenOosCvarPenalty",
-    "frozenOosBudgetPenalty", "frozenOosCvarBeta", "frozenOosReturnReward",
-    "frozenOosNetReturn", "frozenOosSharpe", "frozenOosMaxDD",
     # Transaction-cost break-even
     "costBreakevenImprovedVsGlobal", "costBreakevenGlobalVsEqual", "costBreakevenDefensiveVsEqual",
     # Rebalance-frequency sensitivity
@@ -650,7 +610,18 @@ def main() -> None:
         header.append(f"\\newcommand{{\\dataFirstDate}}{{{first_date}}}")
     if last_date is not None:
         header.append(f"\\newcommand{{\\dataLastDate}}{{{last_date}}}")
-    header.append(f"\\newcommand{{\\riskFreeRate}}{{{_pct(RISK_FREE_RATE_ANNUAL)}}}")
+    monthly_rf = load_monthly_risk_free()
+    effective = monthly_rf[
+        monthly_rf["effective_month"].between(
+            pd.Timestamp(_EVAL_START_DATE).to_period("M"),
+            pd.Timestamp(_EVAL_END_DATE).to_period("M"),
+        )
+    ]
+    if effective.empty:
+        raise ValueError("No monthly risk-free rates cover the evaluation period.")
+    header.append(f"\\newcommand{{\\riskFreeRate}}{{{_pct(float(effective['annual_yield'].mean()))}}}")
+    header.append(f"\\newcommand{{\\riskFreeRateMin}}{{{_pct(float(effective['annual_yield'].min()))}}}")
+    header.append(f"\\newcommand{{\\riskFreeRateMax}}{{{_pct(float(effective['annual_yield'].max()))}}}")
     header.append("")
 
     content = (
@@ -660,7 +631,6 @@ def main() -> None:
         + _rebalance_frequency_rows(freq_df)
         + _asset_stat_macros(stats_df)
         + _walkforward_rows()
-        + _frozen_oos_rows()
         + _breakeven_rows()
         + _vol_aligned_rows()
         + _sharpe_diff_rows()

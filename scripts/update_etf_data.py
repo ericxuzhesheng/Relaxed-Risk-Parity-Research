@@ -127,8 +127,8 @@ def fetch_from_yfinance(start_date: str, end_date: str | None) -> pd.DataFrame:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Refresh tradable ETF adjusted-close prices from Tushare.")
-    parser.add_argument("--start-date", default="20180101", help="Inclusive Tushare start date, YYYYMMDD.")
-    parser.add_argument("--end-date", default=None, help="Inclusive Tushare end date, YYYYMMDD. Defaults to today.")
+    parser.add_argument("--start-date", default="20000101", help="Inclusive Tushare start date, YYYYMMDD.")
+    parser.add_argument("--end-date", default="20260731", help="Inclusive Tushare end date, YYYYMMDD.")
     parser.add_argument("--provider", choices=["auto", "tushare", "akshare", "yfinance"], default="auto", help="Use Tushare, AkShare, yfinance, or automatic fallback.")
     args = parser.parse_args()
 
