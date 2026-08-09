@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 import pandas as pd
@@ -11,6 +12,8 @@ import pandas as pd
 ROOT_DIR = Path(__file__).resolve().parent.parent
 RAW_RISK_FREE_PATH = ROOT_DIR / "data" / "raw" / "chinabond_1y_yield_daily.csv"
 MONTHLY_RISK_FREE_PATH = ROOT_DIR / "data" / "processed" / "risk_free_rate_monthly.csv"
+
+RiskFreeFetcher = Callable[[str, str], pd.DataFrame]
 
 
 def _normalize_daily(frame: pd.DataFrame) -> pd.DataFrame:
@@ -54,6 +57,43 @@ def merge_provider_yields(primary: pd.DataFrame, fallback: pd.DataFrame) -> pd.D
         dates = combined.loc[duplicated, "trade_date"].dt.strftime("%Y-%m-%d").unique().tolist()
         raise ValueError(f"duplicate risk-free observations remain on {dates}")
     return combined.sort_values("trade_date").reset_index(drop=True)
+
+
+def _missing_observation_months(
+    daily: pd.DataFrame,
+    start_date: str | pd.Timestamp,
+    end_date: str | pd.Timestamp,
+) -> pd.PeriodIndex:
+    data = _normalize_daily(daily)
+    expected = pd.period_range(pd.Timestamp(start_date).to_period("M"), pd.Timestamp(end_date).to_period("M"), freq="M")
+    observed = pd.PeriodIndex(data["trade_date"].dt.to_period("M").unique(), freq="M")
+    return expected.difference(observed)
+
+
+def collect_risk_free_history(
+    start_date: str,
+    end_date: str,
+    *,
+    primary_fetcher: RiskFreeFetcher,
+    fallback_fetcher: RiskFreeFetcher,
+    required_start_date: str | None = None,
+) -> pd.DataFrame:
+    """Fetch primary history, fill from official fallback, and require every month."""
+    coverage_start = required_start_date or start_date
+    try:
+        primary = primary_fetcher(start_date, end_date)
+    except Exception:
+        primary = pd.DataFrame(columns=["trade_date", "yield_pct", "provider"])
+    missing = _missing_observation_months(primary, coverage_start, end_date)
+    fallback = pd.DataFrame(columns=["trade_date", "yield_pct", "provider"])
+    if len(missing):
+        fallback = fallback_fetcher(start_date, end_date)
+    combined = merge_provider_yields(primary, fallback)
+    remaining = _missing_observation_months(combined, coverage_start, end_date)
+    if len(remaining):
+        labels = ", ".join(str(month) for month in remaining)
+        raise ValueError(f"missing monthly risk-free observations for {labels}")
+    return combined
 
 
 def build_monthly_rates(daily: pd.DataFrame) -> pd.DataFrame:
