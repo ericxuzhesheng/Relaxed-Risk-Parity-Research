@@ -122,6 +122,39 @@ def test_collect_history_uses_fallback_for_missing_months_and_fails_closed() -> 
         )
 
 
+def test_incremental_refresh_reuses_history_and_refetches_last_month(tmp_path) -> None:
+    from scripts.update_risk_free_rate import incremental_refresh_start, merge_incremental_history
+
+    cached = _daily(
+        [
+            ("2026-05-29", 1.42, "chinabond_official"),
+            ("2026-06-30", 1.36, "chinabond_official"),
+        ]
+    )
+    raw_path = tmp_path / "risk_free_daily.csv"
+    cached.to_csv(raw_path, index=False)
+
+    assert incremental_refresh_start("2000-01-01", raw_path) == "2026-06-01"
+
+    fetched = _daily(
+        [
+            ("2026-06-30", 1.36, "tushare_yc_cb"),
+            ("2026-07-31", 1.35, "tushare_yc_cb"),
+        ]
+    )
+    combined = merge_incremental_history(cached, fetched)
+    assert combined["trade_date"].dt.strftime("%Y-%m-%d").tolist() == [
+        "2026-05-29",
+        "2026-06-30",
+        "2026-07-31",
+    ]
+
+    conflicting = fetched.copy()
+    conflicting.loc[conflicting["trade_date"].eq("2026-06-30"), "yield_pct"] = 1.37
+    with pytest.raises(ValueError, match="provider conflict"):
+        merge_incremental_history(cached, conflicting)
+
+
 def test_metrics_use_aligned_daily_excess_returns() -> None:
     from src.metrics import calculate_metrics
 
