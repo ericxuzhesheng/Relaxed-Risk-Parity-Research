@@ -21,12 +21,31 @@ from src.risk_free import (  # noqa: E402
     RAW_RISK_FREE_PATH,
     build_monthly_rates,
     collect_risk_free_history,
+    merge_provider_yields,
 )
 
 
 TUSHARE_SOURCE_URL = "https://tushare.pro/document/2?doc_id=201"
 CHINABOND_HISTORY_URL = "https://yield.chinabond.com.cn/cbweb-czb-web/czb/historyQuery"
 CHINABOND_REFERER = "https://yield.chinabond.com.cn/cbweb-czb-web/czb/showHistory?locale=cn_ZH&nameType=1"
+
+
+def incremental_refresh_start(requested_start: str, raw_path: Path = RAW_RISK_FREE_PATH) -> str:
+    """Start at the first day of the latest cached month for overlap auditing."""
+    requested = pd.Timestamp(requested_start)
+    if not raw_path.exists() or raw_path.stat().st_size == 0:
+        return requested.strftime("%Y-%m-%d")
+    cached_dates = pd.read_csv(raw_path, usecols=["trade_date"])["trade_date"]
+    latest = pd.to_datetime(cached_dates, errors="coerce").max()
+    if pd.isna(latest):
+        return requested.strftime("%Y-%m-%d")
+    overlap_start = latest.to_period("M").start_time
+    return max(requested, overlap_start).strftime("%Y-%m-%d")
+
+
+def merge_incremental_history(cached: pd.DataFrame, fetched: pd.DataFrame) -> pd.DataFrame:
+    """Merge a refresh into the audit cache, rejecting changed same-day values."""
+    return merge_provider_yields(fetched, cached)
 
 
 def _date_chunks(start_date: str, end_date: str) -> list[tuple[pd.Timestamp, pd.Timestamp]]:
@@ -139,35 +158,51 @@ def main() -> None:
     start_date = pd.Timestamp(args.start_date).strftime("%Y-%m-%d")
     end_date = pd.Timestamp(args.end_date).strftime("%Y-%m-%d")
     required_start = pd.Timestamp(args.required_start_date).strftime("%Y-%m-%d")
+    refresh_start = incremental_refresh_start(start_date)
+    cached = (
+        pd.read_csv(RAW_RISK_FREE_PATH)
+        if RAW_RISK_FREE_PATH.exists() and RAW_RISK_FREE_PATH.stat().st_size > 0
+        else pd.DataFrame(columns=["trade_date", "yield_pct", "provider"])
+    )
 
     if args.provider == "tushare":
-        daily = collect_risk_free_history(
-            start_date,
+        refreshed = collect_risk_free_history(
+            refresh_start,
             end_date,
             primary_fetcher=fetch_tushare_yields,
             fallback_fetcher=lambda _start, _end: pd.DataFrame(
                 columns=["trade_date", "yield_pct", "provider"]
             ),
-            required_start_date=required_start,
+            required_start_date=refresh_start,
         )
     elif args.provider == "chinabond":
-        daily = collect_risk_free_history(
-            start_date,
+        refreshed = collect_risk_free_history(
+            refresh_start,
             end_date,
             primary_fetcher=fetch_chinabond_yields,
             fallback_fetcher=lambda _start, _end: pd.DataFrame(
                 columns=["trade_date", "yield_pct", "provider"]
             ),
-            required_start_date=required_start,
+            required_start_date=refresh_start,
         )
     else:
-        daily = collect_risk_free_history(
-            start_date,
+        refreshed = collect_risk_free_history(
+            refresh_start,
             end_date,
             primary_fetcher=fetch_tushare_yields,
             fallback_fetcher=fetch_chinabond_yields,
-            required_start_date=required_start,
+            required_start_date=refresh_start,
         )
+    merged = merge_incremental_history(cached, refreshed)
+    daily = collect_risk_free_history(
+        start_date,
+        end_date,
+        primary_fetcher=lambda _start, _end: merged,
+        fallback_fetcher=lambda _start, _end: pd.DataFrame(
+            columns=["trade_date", "yield_pct", "provider"]
+        ),
+        required_start_date=required_start,
+    )
     write_outputs(daily)
     monthly = build_monthly_rates(daily)
     print(f"Wrote {RAW_RISK_FREE_PATH}")
