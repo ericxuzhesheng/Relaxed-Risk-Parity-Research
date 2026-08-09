@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import os
 import sys
 from pathlib import Path
@@ -385,24 +386,56 @@ def run_improvement_search(
         risk_free_returns=config.get("risk_free_rate"),
         trading_days_per_year=config["trading_days_per_year"],
     )
-    oos_selection = select_public_low_turnover_oos_candidates(
-        oos_scores,
-        eligible_candidate_ids=PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
-        turnover_limit=0.02,
-        switch_confidence=0.95,
-        trading_days_per_year=config["trading_days_per_year"],
-    )
+    return build_public_oos_from_scores(returns, eval_start_date, config, candidates, oos_scores)
+
+
+def build_public_oos_from_scores(
+    returns: pd.DataFrame,
+    eval_start_date: str,
+    config: dict,
+    candidates: pd.DataFrame,
+    oos_scores: pd.DataFrame,
+) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Build the public schedule from an already-audited complete score table."""
+    candidate_configs = dict(candidate_configurations(config["transaction_cost_bps"]))
+    expected_ids = set(candidate_configs)
+    actual_ids = set(oos_scores["candidate_id"].astype(str))
+    if actual_ids != expected_ids:
+        raise ValueError("Cached OOS scores do not match the complete current candidate grid")
+    split_counts = oos_scores.groupby("split_id")["candidate_id"].nunique()
+    if split_counts.empty or not split_counts.eq(len(expected_ids)).all():
+        raise ValueError("Cached OOS scores are incomplete for one or more splits")
+    warmup_start = public_execution_warmup_start(returns, eval_start_date)
+    if pd.Timestamp(oos_scores["test_start"].min()) != warmup_start:
+        raise ValueError("Cached OOS scores do not start at the configured execution warm-up")
+    if pd.Timestamp(oos_scores["test_end"].max()) != pd.Timestamp(config["evaluation_end_date"]):
+        raise ValueError("Cached OOS scores do not end at the configured evaluation date")
+
+    candidates = candidates.copy()
+    oos_scores = oos_scores.copy()
     evaluation_start = pd.Timestamp(eval_start_date)
     oos_scores["phase"] = np.where(
         pd.to_datetime(oos_scores["test_start"]) < evaluation_start,
         "execution_warmup",
         "public_oos",
     )
-    oos_selection["phase"] = np.where(
-        pd.to_datetime(oos_selection["test_start"]) < evaluation_start,
-        "execution_warmup",
-        "public_oos",
-    )
+    selection_parts = []
+    for phase in ("execution_warmup", "public_oos"):
+        phase_scores = oos_scores[oos_scores["phase"].eq(phase)]
+        if phase_scores.empty:
+            raise ValueError(f"Missing {phase} candidate scores")
+        phase_selection = select_public_low_turnover_oos_candidates(
+            phase_scores,
+            eligible_candidate_ids=PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
+            turnover_limit=0.02,
+            switch_confidence=0.95,
+            trading_days_per_year=config["trading_days_per_year"],
+        )
+        phase_selection["phase"] = phase
+        selection_parts.append(phase_selection)
+    oos_selection = pd.concat(selection_parts, ignore_index=True).sort_values(
+        "test_start", kind="mergesort"
+    ).reset_index(drop=True)
     parameter_rows = {
         candidate_id: config_fields(candidate_id, cfg)
         for candidate_id, cfg in candidate_configs.items()
@@ -529,7 +562,7 @@ def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics
     readme_path.write_text(text, encoding="utf-8")
 
 
-def main() -> None:
+def main(*, reuse_candidate_scores: bool = False) -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
     eval_start_date = config["evaluation_start_date"]
@@ -582,9 +615,17 @@ def main() -> None:
     base_result.to_csv(resolve_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     base_solver.insert(0, "model", BASE_CONVEX_MODEL_NAME)
     baseline_summary = summarize_result(BASE_CONVEX_MODEL_NAME, base_result, eval_start_date, config)
-    candidates, improved_result, improved_solver, oos_selection, oos_scores = run_improvement_search(
-        returns, eval_start_date, config
-    )
+    if reuse_candidate_scores:
+        print("Reusing the complete current candidate score cache...")
+        candidates = pd.read_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"))
+        oos_scores = pd.read_csv(resolve_path("results/tables/afml_oos_candidate_scores.csv"))
+        candidates, improved_result, improved_solver, oos_selection, oos_scores = build_public_oos_from_scores(
+            returns, eval_start_date, config, candidates, oos_scores
+        )
+    else:
+        candidates, improved_result, improved_solver, oos_selection, oos_scores = run_improvement_search(
+            returns, eval_start_date, config
+        )
     improved_result.to_csv(resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     candidates.to_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"), index=False)
     oos_selection.to_csv(resolve_path("results/tables/afml_oos_selection.csv"), index=False)
@@ -659,4 +700,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Run the convex adaptive RRP research pipeline")
+    parser.add_argument(
+        "--reuse-candidate-scores",
+        action="store_true",
+        help="Reuse a complete, date-matched candidate score cache and rebuild only the public schedule",
+    )
+    args = parser.parse_args()
+    main(reuse_candidate_scores=args.reuse_candidate_scores)
