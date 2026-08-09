@@ -399,6 +399,11 @@ def run_improvement_search(
         risk_free_returns=config.get("risk_free_rate"),
         trading_days_per_year=config["trading_days_per_year"],
     )
+    parameter_json = {
+        candidate_id: config_fields(candidate_id, cfg)["selected_params_json"]
+        for candidate_id, cfg in candidate_configs.items()
+    }
+    oos_scores["candidate_params_json"] = oos_scores["candidate_id"].map(parameter_json)
     return build_public_oos_from_scores(returns, eval_start_date, config, candidates, oos_scores)
 
 
@@ -415,6 +420,20 @@ def build_public_oos_from_scores(
     actual_ids = set(oos_scores["candidate_id"].astype(str))
     if actual_ids != expected_ids:
         raise ValueError("Cached OOS scores do not match the complete current candidate grid")
+    if "candidate_params_json" not in oos_scores:
+        raise ValueError("Cached OOS scores lack candidate parameter signatures")
+    expected_params = {
+        candidate_id: config_fields(candidate_id, cfg)["selected_params_json"]
+        for candidate_id, cfg in candidate_configs.items()
+    }
+    observed_params = oos_scores.groupby("candidate_id")["candidate_params_json"].agg(
+        lambda values: set(values.dropna().astype(str))
+    )
+    for candidate_id, expected_json in expected_params.items():
+        if observed_params.get(candidate_id, set()) != {expected_json}:
+            raise ValueError(
+                f"Cached OOS scores use stale parameters for {candidate_id}"
+            )
     split_counts = oos_scores.groupby("split_id")["candidate_id"].nunique()
     if split_counts.empty or not split_counts.eq(len(expected_ids)).all():
         raise ValueError("Cached OOS scores are incomplete for one or more splits")

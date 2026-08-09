@@ -269,6 +269,38 @@ def test_public_candidate_family_keeps_grid_size_and_applies_cash_concentration_
         }
 
 
+def test_cached_oos_scores_fail_closed_when_candidate_parameters_change() -> None:
+    from scripts.run_convex_adaptive_rrp import (
+        build_public_oos_from_scores,
+        candidate_configurations,
+    )
+    from src.utils import get_config
+
+    candidate_ids = [candidate_id for candidate_id, _ in candidate_configurations(3.0)]
+    stale_scores = pd.DataFrame(
+        {
+            "split_id": "afml_oos_01",
+            "candidate_id": candidate_ids,
+            "candidate_params_json": "stale-parameters",
+            "test_start": "2015-01-05",
+            "test_end": "2026-07-31",
+        }
+    )
+    returns = pd.DataFrame(
+        {"asset": [0.0, 0.0]},
+        index=pd.to_datetime(["2015-01-05", "2026-07-31"]),
+    )
+
+    with pytest.raises(ValueError, match="stale parameters"):
+        build_public_oos_from_scores(
+            returns,
+            "2018-01-02",
+            get_config(),
+            pd.DataFrame({"candidate_id": candidate_ids}),
+            stale_scores,
+        )
+
+
 def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypatch: pytest.MonkeyPatch) -> None:
     import src.convex_adaptive_rrp as module
     from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_schedule_backtest
