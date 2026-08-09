@@ -15,6 +15,8 @@ PUBLIC_MODEL_LABELS = {
     "Dynamic_RRP": "Defensive Dynamic RRP",
     "Dynamic RRP": "Defensive Dynamic RRP",
     "Defensive Dynamic Relaxed Risk Parity": "Defensive Dynamic RRP",
+    "Convex Adaptive Global Relaxed Risk Parity": "Convex Adaptive Global RRP",
+    "Improved Convex Adaptive Global Relaxed Risk Parity": "Improved Convex Adaptive Global RRP",
     "Dynamic_RRP_before": "Defensive Dynamic RRP before overlay optimization",
     "Current_Dynamic_RRP": "Defensive Dynamic RRP before overlay optimization",
     "HRP": "HRP Benchmark",
