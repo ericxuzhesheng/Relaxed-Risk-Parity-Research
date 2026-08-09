@@ -9,12 +9,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # 国债收益率曲线（Wind/CSMAR 同步收录）。引文键 chinabond2026 用于
 # references.bib 中的 Sharpe 分母口径说明。如需重估，请同步更新
 # scripts/generate_thesis_numbers.py 中 \riskFreeRate 宏对应的数值。
-RISK_FREE_RATE_ANNUAL: float = 0.0182
-
 DEFAULT_CONFIG = {
     "lookback_weeks": 48,
     "trading_days_per_year": 243,
-    "plot_start_date": "2019-01-01",
+    "evaluation_start_date": "2018-01-02",
+    "evaluation_end_date": "2026-07-31",
+    "data_start_date": "2000-01-01",
+    "plot_start_date": "2018-01-02",
     "lambda_pen": 1.9,
     "m": 1.9,
     "optim_tol": 1e-6,
@@ -23,7 +24,7 @@ DEFAULT_CONFIG = {
     "max_single_asset_weight": 1.0,
     "bond_keywords": ["国债", "信用票", "美债", "债"],
     "bond_leverage_upper": 1.4,
-    "risk_free_rate": RISK_FREE_RATE_ANNUAL,
+    "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
     "target_vol": 0.060,
     "gross_exposure_cap": 1.50,
     "turnover_cap": 0.25,

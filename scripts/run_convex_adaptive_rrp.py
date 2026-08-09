@@ -27,6 +27,7 @@ from src.visualization import plot_drawdown_comparison, plot_metric_comparison, 
 
 BASE_CONVEX_MODEL_NAME = "Convex Adaptive Global Relaxed Risk Parity"
 IMPROVED_MODEL_NAME = "Improved Convex Adaptive Global Relaxed Risk Parity"
+PRIMARY_CANDIDATE_ID = "candidate_03"
 
 
 def ensure_output_dirs() -> None:

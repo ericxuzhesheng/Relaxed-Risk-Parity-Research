@@ -1,15 +1,45 @@
 import numpy as np
 import pandas as pd
 
-def calculate_metrics(nav_series: pd.Series, risk_free_rate: float = 0.0, trading_days: int = 243) -> dict:
+
+def _aligned_risk_free_returns(
+    returns: pd.Series,
+    risk_free_returns: pd.Series | float | int,
+) -> pd.Series:
+    if np.isscalar(risk_free_returns):
+        if float(risk_free_returns) != 0.0:
+            raise TypeError("risk_free_returns must be a daily risk-free return Series, not a nonzero scalar")
+        return pd.Series(0.0, index=returns.index, name="risk_free_return")
+    series = pd.Series(risk_free_returns, dtype=float).sort_index()
+    if not isinstance(series.index, pd.DatetimeIndex):
+        series.index = pd.to_datetime(series.index)
+    aligned = series.reindex(returns.index)
+    if aligned.isna().any():
+        dates = aligned.index[aligned.isna()].strftime("%Y-%m-%d").tolist()
+        raise ValueError(f"daily risk-free returns missing dates: {dates[:5]}")
+    return aligned
+
+
+def calculate_metrics(
+    nav_series: pd.Series,
+    risk_free_returns: pd.Series | float | int = 0.0,
+    trading_days: int = 243,
+) -> dict:
+    nav_series = pd.Series(nav_series, dtype=float).sort_index()
     returns = nav_series.pct_change().dropna()
+    rf = _aligned_risk_free_returns(returns, risk_free_returns)
+    excess_returns = returns - rf
     total_return = nav_series.iloc[-1] / nav_series.iloc[0] - 1
     annualized_return = (1 + total_return) ** (trading_days / len(nav_series)) - 1
     annualized_vol = returns.std() * np.sqrt(trading_days)
-    sharpe = (annualized_return - risk_free_rate) / annualized_vol if annualized_vol > 0 else 0
-    downside = returns[returns < 0.0]
-    downside_vol = downside.std() * np.sqrt(trading_days) if len(downside) > 1 else 0.0
-    sortino = (annualized_return - risk_free_rate) / downside_vol if downside_vol > 0 else 0.0
+    sharpe = excess_returns.mean() / returns.std() * np.sqrt(trading_days) if annualized_vol > 0 else 0.0
+    downside = excess_returns.clip(upper=0.0)
+    downside_deviation = float(np.sqrt(downside.pow(2).mean()))
+    sortino = (
+        excess_returns.mean() / downside_deviation * np.sqrt(trading_days)
+        if downside_deviation > 0
+        else 0.0
+    )
     
     max_drawdown = (nav_series / nav_series.cummax() - 1).min()
     calmar = annualized_return / abs(max_drawdown) if max_drawdown != 0 else 0
