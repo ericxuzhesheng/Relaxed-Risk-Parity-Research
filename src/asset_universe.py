@@ -19,8 +19,8 @@ ETF_UNIVERSE: tuple[AssetMapping, ...] = (
     # ── 债券类 ────────────────────────────────────────────────────────────────
     AssetMapping("中证转债",      "可转债ETF",   "511380.SH", "convertible bond",
                  "Convertible-bond ETF providing equity-linked credit exposure with downside protection."),
-    AssetMapping("国债ETF",       "国债ETF",     "511010.SH", "government bond",
-                 "Government bond ETF for duration exposure; the duration anchor of the risk parity portfolio."),
+    AssetMapping("国债ETF",       "5年国债ETF",  "511010.SH", "government bond",
+                 "Five-year government bond ETF for duration exposure; the duration anchor of the risk parity portfolio."),
     AssetMapping("10年国债ETF",   "10年国债ETF", "511260.SH", "government bond",
                  "Ten-year government bond ETF adding an explicit medium-long duration risk source."),
     AssetMapping("信用债ETF",     "信用债ETF",   "511030.SH", "credit bond",

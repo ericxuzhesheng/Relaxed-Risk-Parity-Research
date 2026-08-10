@@ -95,7 +95,7 @@ Current universe: **30 ETFs** across **8 categories**. Longest valid data range:
 | ETF | Ticker | Category |
 |---|---|---|
 | 可转债ETF | 511380.SH | convertible bond |
-| 国债ETF | 511010.SH | government bond |
+| 5年国债ETF | 511010.SH | government bond |
 | 10年国债ETF | 511260.SH | government bond |
 | 信用债ETF | 511030.SH | credit bond |
 | 日利ETF | 511880.SH | money market |

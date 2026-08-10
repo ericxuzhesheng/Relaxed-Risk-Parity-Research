@@ -22,7 +22,7 @@ from src.visualization import plot_drawdown_comparison, plot_nav_comparison, plo
 
 LOCAL_ASSETS = [
     "可转债ETF",
-    "国债ETF",
+    "5年国债ETF",
     "信用债ETF",
     "日利ETF",
     "沪深300ETF",

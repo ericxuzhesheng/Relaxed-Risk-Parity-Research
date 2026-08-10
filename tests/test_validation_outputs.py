@@ -144,6 +144,14 @@ def test_generated_asset_table_combines_identity_and_performance() -> None:
         assert heading in tex
     for etf in ETF_UNIVERSE:
         assert etf.ticker in tex
+    assert "5年国债ETF & 511010.SH" in tex
+
+
+def test_documents_record_future_public_reits_etf_review() -> None:
+    for path in [Path("report/thesis_latex/main.tex"), Path("report/ppt/rrp_defense.tex")]:
+        tex = path.read_text(encoding="utf-8")
+        assert "公募 REITs ETF" in tex
+        assert "资产池评审" in tex
 
 
 def test_stale_turnover_cvar_numbers_absent_from_readme_and_thesis() -> None:

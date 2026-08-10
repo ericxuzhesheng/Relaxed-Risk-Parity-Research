@@ -73,7 +73,7 @@
 
 | 类别 | ETF 数量 | 代表性标的 |
 |---|---:|---|
-| 债券与现金 | 5 | 可转债ETF、国债ETF、10年国债ETF、信用债ETF、日利ETF |
+| 债券与现金 | 5 | 可转债ETF、5年国债ETF、10年国债ETF、信用债ETF、日利ETF |
 | A股宽基 | 6 | 沪深300ETF、中证500ETF、中证1000ETF、中证2000ETF、创业板ETF、红利ETF |
 | 中国科技与成长 | 4 | 半导体ETF、人工智能ETF、新能源ETF、科创50ETF |
 | 中国行业与消费 | 3 | 证券ETF、军工ETF、消费ETF |
@@ -83,6 +83,8 @@
 | 大宗商品与资源 | 5 | 有色金属期货ETF、能源化工期货ETF、豆粕ETF、煤炭ETF、原油ETF |
 
 候选池共 6 只，暂不进入回测：30年国债ETF（511090.SH）、中韩半导体ETF（513310.SH）、证券公司先锋策略ETF（516980.SH）、沙特ETF（520830.SH）、巴西ETF（520870.SH）、机器人ETF（562500.SH）。其中 `516980.SH` 此前在项目中误标为“云计算ETF”，现已按 Tushare 官方基金信息更正。
+
+若未来出现具备足够流动性和可用历史的公募 REITs ETF，项目将在下一轮资产池评审中重点评估其纳入价值，以补充基础设施与不动产收益来源。
 
 本次同时生成了 36 只 ETF 的 7 维 Barra-style 代理敞口及相关性诊断，覆盖中国市场、规模、价值、久期、信用、商品和全球股票风险源。该结果是基于 ETF 收益率构造的透明代理，并非商业 MSCI Barra 模型数据；方法定义与完整矩阵见 `data/processed/barra_style_methodology.json` 和 `data/processed/barra_style_exposure_correlation.csv`。
 
@@ -127,7 +129,7 @@ Improved Convex Adaptive Global Relaxed Risk Parity 是自 2018-01-02 起连续�
 
 <p align="center"><img src="results/figures/improved_weights_timeline.png" width="860" alt="Improved Convex Adaptive Global RRP Weights"></p>
 
-组合长期以国债ETF和日利ETF为稳定底仓，黄金ETF提供尾部风险和通胀对冲，A股宽基与全球股票暴露随协方差结构动态调整。2020 年 3 月流动性冲击期间，组合明显向债券和现金管理工具倾斜，体现自适应风险预算的防御特征。
+组合长期以5年国债ETF和日利ETF为稳定底仓，黄金ETF提供尾部风险和通胀对冲，A股宽基与全球股票暴露随协方差结构动态调整。2020 年 3 月流动性冲击期间，组合明显向债券和现金管理工具倾斜，体现自适应风险预算的防御特征。
 
 <!-- BEGIN MONTHLY_HS300_COMPARISON_CN -->
 ### 与沪深300ETF的月度收益对比
@@ -239,7 +241,7 @@ The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset cat
 
 | Category | ETF Count | Representative Exposures |
 |---|---:|---|
-| Bonds and cash | 5 | Convertible bond, government bond, 10-year government bond, credit bond, money market |
+| Bonds and cash | 5 | Convertible bond, 5-year government bond, 10-year government bond, credit bond, money market |
 | China broad equity | 6 | CSI 300, CSI 500, CSI 1000, CSI 2000, ChiNext, dividend |
 | China technology and growth | 4 | Semiconductor, AI, new energy, STAR 50 |
 | China sectors and consumer | 3 | Securities, defense, consumer |
@@ -249,6 +251,8 @@ The universe is defined in `src/asset_universe.py`: **30 ETFs across 8 asset cat
 | Commodities and resources | 5 | Non-ferrous metals futures, energy and chemicals futures, soybean meal, coal, crude oil |
 
 The six-ETF candidate pool, excluded from backtests until the next universe review, is: 30-year government bond (511090.SH), China-Korea semiconductor (513310.SH), securities-company pioneer strategy (516980.SH), Saudi Arabia (520830.SH), Brazil (520870.SH), and robotics (562500.SH). Tushare's official fund record identifies `516980.SH` as a securities-company strategy ETF; the former project label “cloud computing ETF” was incorrect and has been corrected.
+
+If a public REITs ETF develops sufficient liquidity and usable history, the next universe review will evaluate it as an infrastructure and real-estate income sleeve.
 
 This update also produces seven-dimensional Barra-style proxy exposures and exposure correlations for all 36 ETFs, covering China market, size, value, duration, credit, commodity, and global-equity risk sources. These are transparent ETF-return proxies, not licensed MSCI Barra model data; see `data/processed/barra_style_methodology.json` and `data/processed/barra_style_exposure_correlation.csv` for the definitions and full matrix.
 

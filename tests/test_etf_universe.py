@@ -14,6 +14,7 @@ def test_asset_mapping_is_etf_only_and_complete():
     assert mapping["ticker"].str.endswith((".SH", ".SZ")).all()
     assert not {"0-5中高信用票", "中证转债", "豆粕连续"}.intersection(mapping["new_name"])
     assert len(mapping) == 30
+    assert mapping.loc[mapping["ticker"] == "511010.SH", "new_name"].item() == "5年国债ETF"
 
 
 def test_price_to_returns_preserves_pre_listing_nan():
