@@ -121,19 +121,29 @@ def test_thesis_limitations_match_current_structure() -> None:
     tex = Path("report/thesis_latex/main.tex").read_text(encoding="utf-8")
     for old_marker in ["A 类", "B 类", "C 类", "已被实证或诊断澄清"]:
         assert old_marker not in tex
-    assert "\\subsection{研究不足}" in tex
-    assert "\\subsection{后续研究方向}" in tex
+    assert "\\subsection{研究边界与后续方向}" in tex
+    assert "\\label{tab:limitations}" in tex
     for limitation_marker in [
-        "买卖价差",
+        "价差",
         "成交量",
         "冲击成本",
-        "负债现金流预测",
+        "现金流",
         "久期缺口",
         "评价区间",
-        "市场相关性结构",
-        "不构成对未来长期表现的预测",
+        "当前市场结构",
+        "不构成未来收益保证",
     ]:
         assert limitation_marker in tex
+
+
+def test_generated_asset_table_combines_identity_and_performance() -> None:
+    from src.asset_universe import ETF_UNIVERSE
+
+    tex = Path("report/thesis_latex/generated_asset_stats_table.tex").read_text(encoding="utf-8")
+    for heading in ["ETF", "代码", "类别", "样本数", "年化收益", "年化波动", "最大回撤"]:
+        assert heading in tex
+    for etf in ETF_UNIVERSE:
+        assert etf.ticker in tex
 
 
 def test_stale_turnover_cvar_numbers_absent_from_readme_and_thesis() -> None:
