@@ -78,6 +78,11 @@ results/quick/
 !results/tables/afml_diagnostics.csv
 !results/tables/pbo_diagnostic.csv
 !results/tables/hrp_comparison.csv
+!results/tables/regime_covariance_experiment_summary.csv
+!results/tables/regime_covariance_experiment_stress.csv
+!results/tables/regime_covariance_experiment_sweep.csv
+!results/tables/regime_oos_selection.csv
+!results/tables/regime_oos_validation.csv
 !results/tables/dynamic_overlay_diagnostics.csv
 !results/tables/showcase_performance_summary.csv
 !results/tables/showcase_improvement_attribution.csv

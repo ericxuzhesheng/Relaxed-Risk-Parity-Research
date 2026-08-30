@@ -250,8 +250,8 @@
     模型 & 核心特征 & 角色 \\
     \midrule
     Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
-    Convex Adaptive  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
-    \textbf{Improved Convex} & \textbf{+ CVaR 约束 + 换手惩罚（03/04/05 滚动选择）} & \textbf{主模型} \\
+    \shortstack[l]{Convex Adaptive\\Global RRP}  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
+    \textbf{\shortstack[l]{Improved Convex Adaptive\\Global RRP}} & \textbf{+ CVaR 约束 + 换手惩罚（03/04/05 滚动选择）} & \textbf{主模型} \\
     HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
     \bottomrule
   \end{tabular}
@@ -338,12 +338,12 @@
       \midrule
       Global RRP      & \globalNetReturn  & \globalVolatility  & \globalSharpe  & \globalMaxDD  & \globalMonthlyTurnover \\
       Defensive Dynamic RRP & \defensiveNetReturn & \defensiveVolatility & \defensiveSharpe & \defensiveMaxDD & \defensiveMonthlyTurnover \\
-      Convex Adaptive & \convexNetReturn  & \convexVolatility  & \convexSharpe  & \convexMaxDD  & \convexMonthlyTurnover \\
+      \shortstack[l]{Convex Adaptive\\Global RRP} & \convexNetReturn  & \convexVolatility  & \convexSharpe  & \convexMaxDD  & \convexMonthlyTurnover \\
       \rowcolor{swufeLight}
-      \textbf{Improved Convex} & \textbf{\improvedNetReturn} & \textbf{\improvedVolatility} & \textbf{\improvedSharpe} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
+      \textbf{\shortstack[l]{Improved Convex Adaptive\\Global RRP}} & \textbf{\improvedNetReturn} & \textbf{\improvedVolatility} & \textbf{\improvedSharpe} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
       \midrule
-      HRP             & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD & \hrpMonthlyTurnover \\
-      HERC            & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD & \hercMonthlyTurnover \\
+      HRP Benchmark   & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD & \hrpMonthlyTurnover \\
+      HERC Benchmark  & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD & \hercMonthlyTurnover \\
       等权基准        & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightMaxDD & \equalWeightMonthlyTurnover \\
       60/40 基准      & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover \\
       \bottomrule
@@ -387,7 +387,7 @@
     \end{column}
   \end{columns}
   \vspace{0.2em}
-  \scriptsize\centering Improved Convex 以较低收益弹性换取更低波动；HERC 的平缓路径来自债券集中
+  \scriptsize\centering Improved Convex Adaptive Global RRP 以较低收益弹性换取更低波动；HERC Benchmark 的平缓路径来自债券集中
 \end{frame}
 
 \begin{frame}{换手约束与交易成本}
@@ -413,7 +413,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  Improved Convex 的 95\% 日度 CVaR 为 \improvedCvar{}，低于 Global RRP 的 \globalCvar{}；该结果来自 CVaR、换手惩罚和组别边界的共同作用
+  Improved Convex Adaptive Global RRP 的 95\% 日度 CVaR 为 \improvedCvar{}，低于 Global RRP 的 \globalCvar{}；该结果来自 CVaR、换手惩罚和组别边界的共同作用
 \end{frame}
 
 \begin{frame}{资产组权重路径：各类别占比演变}
@@ -422,7 +422,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  Improved Convex 的债券权重约 70\%，商品约 14\%--16\%；组别边界与换手惩罚共同限制集中度和权重跳变
+  Improved Convex Adaptive Global RRP 的债券权重约 70\%，商品约 14\%--16\%；组别边界与换手惩罚共同限制集中度和权重跳变
 \end{frame}
 
 \begin{frame}{HERC 权重路径：为何 Sharpe 的经济含义有限}
@@ -461,7 +461,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  Improved Convex 净收益 \improvedNetReturn{}，回撤 \improvedMaxDD{}；等权收益更高（\equalWeightNetReturn{}）但回撤 \equalWeightMaxDD{} 为代价；60/40 回撤最深（\sixtyFortyMaxDD{}）
+  Improved Convex Adaptive Global RRP 净收益 \improvedNetReturn{}，回撤 \improvedMaxDD{}；等权收益更高（\equalWeightNetReturn{}）但回撤 \equalWeightMaxDD{} 为代价；60/40 Benchmark 回撤最深（\sixtyFortyMaxDD{}）
 \end{frame}
 
 \begin{frame}{与沪深 300 月度收益散点对比}
@@ -470,7 +470,7 @@
   \end{center}
   \vspace{-0.2em}
   \footnotesize\centering
-  Improved Convex 对 A 股下行的防御性：沪深 300 大跌月份，组合回撤幅度明显收窄，体现跨资产分散的实际效果
+  Improved Convex Adaptive Global RRP 对 A 股下行的防御性：沪深 300 大跌月份，组合回撤幅度明显收窄，体现跨资产分散的实际效果
 \end{frame}
 
 \begin{frame}{风险归因与收益归因}
@@ -530,7 +530,7 @@
       \begin{block}{核心含义}
         \footnotesize
         \begin{itemize}
-          \item Improved Convex 优势\textbf{统计显著}（$p=\improvedVsGlobalPValue$）
+          \item Improved Convex Adaptive Global RRP 优势\textbf{统计显著}（$p=\improvedVsGlobalPValue$）
           \item 仅降换手不足以产生显著 Sharpe 提升
           \item \textbf{CVaR + 换手约束}共同塑造低风险路径
         \end{itemize}
@@ -657,9 +657,9 @@
         \toprule
         配置 & Sharpe & 最大回撤 & 净年化 \\
         \midrule
-        EWMA 基准      & 1.816 & $-1.95\%$ & 6.58\% \\
+        EWMA 基准      & \RegimeBaselineSharpe & \RegimeBaselineMaxDD & \RegimeBaselineNetReturn \\
         \rowcolor{swufeLight}
-        \textbf{状态条件} & \textbf{1.715} & $-2.66\%$ & \textbf{6.16\%} \\
+        \textbf{状态条件} & \textbf{\RegimeSelectedSharpe} & \textbf{\RegimeSelectedMaxDD} & \textbf{\RegimeSelectedNetReturn} \\
         \bottomrule
       \end{tabular}
       \end{center}
@@ -686,7 +686,7 @@
   \end{columns}
   \vspace{0.2em}
   \footnotesize\centering
-  历史压力期中，Improved Convex 的完整约束组合对应 \improvedMaxDD{} 的最大回撤
+  历史压力期中，Improved Convex Adaptive Global RRP 的完整约束组合对应 \improvedMaxDD{} 的最大回撤
 \end{frame}
 
 % ════════════════════════════════════════════════════════════════════════════
@@ -705,7 +705,7 @@
 
 \begin{frame}{三条核心结论}
   \begin{swufekeypoints}
-    \swufepoint{可实施性}{01}{Improved Convex 的 Sharpe 为 \improvedSharpe{}，最大回撤 \improvedMaxDD{}，月均换手 \improvedMonthlyTurnover{}。三项指标共同改善，夏普差异检验显著。}
+    \swufepoint{可实施性}{01}{Improved Convex Adaptive Global RRP 的 Sharpe 为 \improvedSharpe{}，最大回撤 \improvedMaxDD{}，月均换手 \improvedMonthlyTurnover{}。三项指标共同改善，夏普差异检验显著。}
     \swufepoint{基准解释}{02}{HERC 的 \hercSharpe{} Sharpe 来自债券集中和 \hercVolatility{} 的极低波动。权重结构比单一排名更能说明模型差异。}
     \swufepoint{适用边界}{03}{结论条件于 \evalStartDate{}—\evalEndDate{} 的历史样本、无杠杆约束和 3 bps 成本。权益强势期可能明显滞后。}
   \end{swufekeypoints}

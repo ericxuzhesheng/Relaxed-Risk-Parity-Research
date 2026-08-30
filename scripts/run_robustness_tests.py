@@ -27,16 +27,17 @@ from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.metrics import calculate_metrics, drawdown_series
+from src.public_labels import apply_public_model_labels
 from src.risk_free import load_daily_risk_free_returns
 from src.risk_overlay import RiskOverlayConfig, apply_risk_overlay, apply_trend_confirmation, transaction_cost_rate
 from src.risk_parity import optimize_with_leverage, solve_relaxed_rp
 from src.utils import apply_asset_class_budget_multipliers, get_config, infer_asset_class
 
-GLOBAL_RRP = "Global Relaxed Risk Parity"
+GLOBAL_RRP = "Global RRP"
 IMPROVED_INTERNAL = "Improved Convex Adaptive Global Relaxed Risk Parity"
 IMPROVED_DISPLAY = "Improved Convex Adaptive Global RRP"
 CONVEX_DISPLAY = "Convex Adaptive Global RRP"
-DYNAMIC_RRP = "Defensive Dynamic Relaxed Risk Parity"
+DYNAMIC_RRP = "Defensive Dynamic RRP"
 
 TABLES = [
     "robustness_subperiod_summary.csv",
@@ -804,10 +805,47 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke", action="store_true", help="Run a fast deterministic smoke diagnostic.")
     parser.add_argument("--output-root", type=Path, default=ROOT_DIR / "results", help="Directory containing tables/ and figures/ outputs.")
+    parser.add_argument("--reuse-existing", action="store_true", help="Refresh public labels and figures from current authoritative CSVs.")
     args = parser.parse_args()
 
     tables, figures = output_dirs(args.output_root)
     base_config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
+    if args.reuse_existing:
+        names = [
+            "robustness_subperiod_summary.csv", "robustness_subperiod_dispersion.csv",
+            "robustness_covariance_summary.csv", "robustness_transaction_cost_summary.csv",
+            "transaction_cost_breakeven.csv", "robustness_stress_period_summary.csv",
+            "robustness_parameter_perturbation.csv", "robustness_no_lookahead_audit.csv",
+            "robustness_solver_stability.csv", "robustness_block_bootstrap_summary.csv",
+            "robustness_overfitting_diagnostic.csv", "robustness_overall_summary.csv",
+            "showcase_v3_candidate_ranking.csv",
+        ]
+        loaded: dict[str, pd.DataFrame] = {}
+        for name in names:
+            frame = apply_public_model_labels(pd.read_csv(tables / name))
+            frame.to_csv(tables / name, index=False)
+            loaded[name] = frame
+        returns = load_return_universe(False)
+        global_result = run_static_backtest(returns, model_type="relaxed", config_overrides=base_config)
+        base_result = pd.read_csv(ROOT_DIR / "results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv")
+        improved_result = load_public_oos_result()
+        _, bootstrap_draws = moving_block_bootstrap(
+            {GLOBAL_RRP: global_result, CONVEX_DISPLAY: base_result, IMPROVED_DISPLAY: improved_result},
+            base_config,
+            n_bootstrap=200,
+        )
+        write_figures(
+            figures,
+            loaded["robustness_subperiod_summary.csv"],
+            loaded["robustness_transaction_cost_summary.csv"],
+            loaded["robustness_covariance_summary.csv"],
+            loaded["robustness_parameter_perturbation.csv"],
+            loaded["robustness_stress_period_summary.csv"],
+            bootstrap_draws,
+            loaded["robustness_overfitting_diagnostic.csv"],
+        )
+        print(f"Refreshed public robustness labels and figures in {args.output_root}")
+        return
     if args.smoke:
         base_config.update({"lookback_weeks": 12, "optim_maxiter": 200})
     returns = load_return_universe(args.smoke)

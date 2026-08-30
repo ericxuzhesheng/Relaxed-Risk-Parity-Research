@@ -113,7 +113,7 @@ def parameter_instability(result: pd.DataFrame) -> float:
 
 def public_candidate_label(name: object) -> str:
     labels = {
-        "preserve_current_global_rrp": "Preserve Global Relaxed Risk Parity",
+        "preserve_current_global_rrp": "Preserve Global RRP",
         "current_dynamic": "Defensive Dynamic RRP before overlay optimization",
         "drawdown_balanced": "Balanced drawdown scaling",
         "soft_trend_short_confirm": "Soft trend filter with short confirmation",
@@ -418,13 +418,13 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
     dynamic_row = public_summary[public_summary["model"].isin(["Defensive Dynamic RRP", "Defensive Dynamic Relaxed Risk Parity"])].iloc[0]
     global_row = public_summary[public_summary["model"].isin(["Global RRP", "Global Relaxed Risk Parity"])].iloc[0]
     dynamic_positioning = (
-        "Defensive Dynamic Relaxed Risk Parity is not designed to mechanically maximize Sharpe. "
+        "Defensive Dynamic RRP is not designed to mechanically maximize Sharpe. "
         "Its role is to reduce risk exposure during adverse regimes, so it should be evaluated together "
         "with maximum drawdown, Calmar ratio, downside behavior, and turnover."
     )
     if dynamic_row["sharpe_ratio"] < global_row["sharpe_ratio"]:
         dynamic_positioning += (
-            " In the current regenerated results, its Sharpe remains below Global Relaxed Risk Parity; "
+            " In the current regenerated results, its Sharpe remains below Global RRP; "
             "the overlay prioritizes downside control and stability over pure Sharpe maximization."
         )
     showcase_table = _metric_table(
@@ -478,8 +478,8 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
         "|---|---|---|",
         "| Standard Risk Parity | 基准模型 | 传统风险贡献均衡组合 |",
         "| Local Relaxed Risk Parity | 本土宽松模型 | 在风险平价约束中引入松弛项，平衡风险均衡与收益目标 |",
-        "| Global Relaxed Risk Parity | 主展示模型 | 扩展到全球多资产配置，是当前收益效率最高的主模型 |",
-        "| Defensive Dynamic Relaxed Risk Parity | 防御型动态模型 | 在全球宽松风险平价基础上加入风险覆盖层，管理回撤、趋势、波动率和换手 |",
+        "| Global RRP | 主展示模型 | 扩展到全球多资产配置，是当前收益效率最高的主模型 |",
+        "| Defensive Dynamic RRP | 防御型动态模型 | 在全球宽松风险平价基础上加入风险覆盖层，管理回撤、趋势、波动率和换手 |",
         "| HRP Benchmark / HERC Benchmark | 横向 benchmark | 用于检验层次聚类配置是否能替代 RRP 型全球配置 |",
         "",
         dynamic_positioning,
@@ -556,8 +556,8 @@ def write_readme(summary: pd.DataFrame, eval_start_date: str) -> None:
         "|---|---|---|",
         "| Standard Risk Parity | Baseline | Classical risk-contribution balancing |",
         "| Local Relaxed Risk Parity | Local relaxed model | Balances risk parity with return objectives through relaxation terms |",
-        "| Global Relaxed Risk Parity | Main showcase model | Global multi-asset extension and the main return-efficient model |",
-        "| Defensive Dynamic Relaxed Risk Parity | Defensive overlay | Manages drawdown, trend, volatility, re-entry, and turnover controls |",
+        "| Global RRP | Main showcase model | Global multi-asset extension and the main return-efficient model |",
+        "| Defensive Dynamic RRP | Defensive overlay | Manages drawdown, trend, volatility, re-entry, and turnover controls |",
         "| HRP Benchmark / HERC Benchmark | Benchmarks | Hierarchical allocation references, not the main contribution |",
         "",
         dynamic_positioning,

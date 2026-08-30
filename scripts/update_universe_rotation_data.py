@@ -152,7 +152,7 @@ def _build_active_prices(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Apply the approved 30-ETF universe rotation without backtesting.")
     parser.add_argument("--start-date", default="20150101")
-    parser.add_argument("--end-date", default="20260807")
+    parser.add_argument("--end-date", default="20260828")
     parser.add_argument("--active-cutoff", default="2026-08-28")
     args = parser.parse_args()
 

@@ -231,7 +231,7 @@ def rolling_beta_summary(
     model_names: list[str] | None = None,
     window: int = 252,
 ) -> pd.DataFrame:
-    selected = model_names or ["Global Relaxed Risk Parity", "Improved Convex Adaptive Global RRP"]
+    selected = model_names or ["Global RRP", "Improved Convex Adaptive Global RRP"]
     rows = []
     for name in selected:
         if name not in models:

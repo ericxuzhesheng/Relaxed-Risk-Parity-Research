@@ -11,6 +11,7 @@ PUBLIC_MODEL_LABELS = {
     "V3_Global_RRP": "Global RRP",
     "V3 Global RRP": "Global RRP",
     "Global Relaxed Risk Parity": "Global RRP",
+    "Preserve Global Relaxed Risk Parity": "Preserve Global RRP",
     "Global RRP": "Global RRP",
     "Dynamic_RRP": "Defensive Dynamic RRP",
     "Dynamic RRP": "Defensive Dynamic RRP",
@@ -46,6 +47,8 @@ def public_model_label(name: object) -> str:
 
 def apply_public_model_labels(df, column: str = "model"):
     out = df.copy()
-    if column in out.columns:
-        out[column] = out[column].map(public_model_label)
+    columns = [column] if column != "model" else ["model", "model_a", "model_b"]
+    for target in columns:
+        if target in out.columns:
+            out[target] = out[target].map(public_model_label)
     return out

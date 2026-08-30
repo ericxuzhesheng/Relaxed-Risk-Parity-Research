@@ -105,7 +105,7 @@
 | Equal Weight | 8.27% | 10.57% | 0.61 | 0.88 | -12.88% | 0.64 | 0.95% |
 | 60/40 Benchmark | 6.62% | 9.80% | 0.49 | 0.71 | -19.52% | 0.34 | 0.93% |
 
-Improved Convex Adaptive Global Relaxed Risk Parity 是自 2018-01-02 起连续拼接的 AFML 风格滚动样本外路径。每季度候选仅依据已完成的六个月验证窗选择，并设置一个交易日的隔离期。
+Improved Convex Adaptive Global RRP 是自 2018-01-02 起连续拼接的 AFML 风格滚动样本外路径。每季度候选仅依据已完成的六个月验证窗选择，并设置一个交易日的隔离期。
 
 ### 2026 年 9 月持仓
 
@@ -292,7 +292,7 @@ The updater prefers [Tushare `yc_cb`](https://tushare.pro/document/2?doc_id=201)
 | Equal Weight | 8.27% | 10.57% | 0.61 | 0.88 | -12.88% | 0.64 | 0.95% |
 | 60/40 Benchmark | 6.62% | 9.80% | 0.49 | 0.71 | -19.52% | 0.34 | 0.93% |
 
-Improved Convex Adaptive Global Relaxed Risk Parity is one continuous AFML-inspired rolling OOS path from 2018-01-02. Each quarterly candidate is selected from the completed six-month validation window after a one-trading-day embargo.
+Improved Convex Adaptive Global RRP is one continuous AFML-inspired rolling OOS path from 2018-01-02. Each quarterly candidate is selected from the completed six-month validation window after a one-trading-day embargo.
 
 ### September 2026 Holdings
 

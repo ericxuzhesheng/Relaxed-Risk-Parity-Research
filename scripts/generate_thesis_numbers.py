@@ -510,6 +510,98 @@ def _sharpe_diff_rows() -> list[str]:
     return lines
 
 
+def _latest_diagnostic_rows() -> list[str]:
+    """Generate thesis macros from current robustness and attribution CSVs."""
+    lines = ["% --- Current robustness and attribution diagnostics ---"]
+
+    sub = pd.read_csv(resolve_path("results/tables/robustness_subperiod_summary.csv"))
+    improved = sub[
+        sub["model"].isin([
+            "Improved Convex Adaptive Global RRP",
+            "Improved Convex Adaptive Global Relaxed Risk Parity",
+        ])
+        & sub["window"].isin(["full_available_sample", "pre_2020", "2020_2021", "post_2021", "post_2022"])
+    ]
+    global_rrp = sub[
+        sub["model"].isin(["Global RRP", "Global Relaxed Risk Parity"])
+        & sub["window"].eq("post_2021")
+    ]
+    if improved.empty or global_rrp.empty:
+        raise ValueError("Current fixed subperiod diagnostics are incomplete.")
+    weak = improved.loc[improved["sharpe_ratio"].idxmin()]
+    improved_post = improved[improved["window"].eq("post_2021")].iloc[0]
+    weakest_window = str(weak["window"]).replace("_", r"\_")
+    lines.extend([
+        f"\\newcommand{{\\subperiodImprovedSharpeMin}}{{{_num(improved['sharpe_ratio'].min())}}}",
+        f"\\newcommand{{\\subperiodImprovedSharpeMax}}{{{_num(improved['sharpe_ratio'].max())}}}",
+        f"\\newcommand{{\\subperiodImprovedSharpeMean}}{{{_num(improved['sharpe_ratio'].mean())}}}",
+        f"\\newcommand{{\\subperiodImprovedWeakestWindow}}{{{weakest_window}}}",
+        f"\\newcommand{{\\subperiodImprovedWeakestSharpe}}{{{_num(float(weak['sharpe_ratio']))}}}",
+        f"\\newcommand{{\\subperiodGlobalPostSharpe}}{{{_num(float(global_rrp.iloc[0]['sharpe_ratio']))}}}",
+        f"\\newcommand{{\\subperiodImprovedPostSharpe}}{{{_num(float(improved_post['sharpe_ratio']))}}}",
+    ])
+
+    factors = pd.read_csv(resolve_path("results/tables/asset_pricing_factor_exposure_summary.csv"))
+    for labels, slug in [
+        (["Global RRP", "Global Relaxed Risk Parity"], "Global"),
+        (["Improved Convex Adaptive Global RRP", "Improved Convex Adaptive Global Relaxed Risk Parity"], "Improved"),
+    ]:
+        row = factors[factors["model"].isin(labels)].iloc[0]
+        values = {
+            "EquityExposure": _num(float(row["avg_exposure_equity"])),
+            "BondExposure": _num(float(row["avg_exposure_bond"])),
+            "CommodityExposure": _num(float(row["avg_exposure_commodity_gold"])),
+            "DefensiveExposure": _num(float(row["avg_exposure_defensive"])),
+            "MaxExposure": _num(float(row["max_asset_class_exposure"])),
+            "RSquared": _num(float(row["r_squared"])),
+            "Alpha": _pct(float(row["alpha_annualized"])),
+            "AlphaTstat": _num(float(row["alpha_tstat"]), 2),
+        }
+        lines.extend(f"\\newcommand{{\\factor{slug}{name}}}{{{value}}}" for name, value in values.items())
+
+    return_attr = pd.read_csv(resolve_path("results/tables/asset_pricing_return_attribution.csv"))
+    risk_attr = pd.read_csv(resolve_path("results/tables/asset_pricing_risk_attribution.csv"))
+    labels = ["Improved Convex Adaptive Global RRP", "Improved Convex Adaptive Global Relaxed Risk Parity"]
+    ret = return_attr[return_attr["model"].isin(labels)].set_index("asset_class")
+    risk = risk_attr[risk_attr["model"].isin(labels)].set_index("asset_class")
+    class_slugs = {"equity": "Equity", "bond": "Bond", "commodity_gold": "Commodity", "defensive": "Defensive"}
+    for asset_class, slug in class_slugs.items():
+        lines.append(f"\\newcommand{{\\attr{slug}ReturnShare}}{{{_pct(float(ret.loc[asset_class, 'share_of_average_portfolio_return']), 1)}}}")
+        lines.append(f"\\newcommand{{\\attr{slug}RiskShare}}{{{_pct(float(risk.loc[asset_class, 'variance_share_approx']), 1)}}}")
+    residual = 1.0 - float(ret["share_of_average_portfolio_return"].sum())
+    lines.append(f"\\newcommand{{\\attrResidualReturnShare}}{{{_pct(residual, 1)}}}")
+
+    bootstrap = pd.read_csv(resolve_path("results/tables/robustness_block_bootstrap_summary.csv"))
+    bootstrap_models = [
+        (["Global RRP", "Global Relaxed Risk Parity"], "BootstrapGlobal"),
+        (["Convex Adaptive Global RRP", "Convex Adaptive Global Relaxed Risk Parity"], "BootstrapConvex"),
+        (["Improved Convex Adaptive Global RRP", "Improved Convex Adaptive Global Relaxed Risk Parity"], "BootstrapImproved"),
+    ]
+    for labels, slug in bootstrap_models:
+        row = bootstrap[bootstrap["model"].isin(labels)].iloc[0]
+        lines.extend([
+            f"\\newcommand{{\\{slug}SharpeMean}}{{{_num(float(row['bootstrap_sharpe_mean']))}}}",
+            f"\\newcommand{{\\{slug}SharpePFive}}{{{_num(float(row['bootstrap_sharpe_p05']))}}}",
+            f"\\newcommand{{\\{slug}SharpePFifty}}{{{_num(float(row['bootstrap_sharpe_p50']))}}}",
+            f"\\newcommand{{\\{slug}SharpePNinetyFive}}{{{_num(float(row['bootstrap_sharpe_p95']))}}}",
+            f"\\newcommand{{\\{slug}MDDMean}}{{{_pct(float(row['bootstrap_max_drawdown_mean']))}}}",
+            f"\\newcommand{{\\{slug}MDDPFive}}{{{_pct(float(row['bootstrap_max_drawdown_p05']))}}}",
+        ])
+
+    regime = pd.read_csv(resolve_path("results/tables/regime_oos_validation.csv"))
+    regime = regime[regime["holdout"].eq("oos_2024")].set_index("arm")
+    for arm, slug in [("baseline_ewma", "RegimeBaseline"), ("regime_selected", "RegimeSelected")]:
+        row = regime.loc[arm]
+        lines.extend([
+            f"\\newcommand{{\\{slug}Sharpe}}{{{_num(float(row['sharpe']))}}}",
+            f"\\newcommand{{\\{slug}MaxDD}}{{{_pct(float(row['max_drawdown']))}}}",
+            f"\\newcommand{{\\{slug}NetReturn}}{{{_pct(float(row['net_annual_return']))}}}",
+            f"\\newcommand{{\\{slug}Cvar}}{{{_pct(float(row['cvar']), 3)}}}",
+        ])
+    lines.append("")
+    return lines
+
+
 _FALLBACK_MACROS: list[str] = [
     # Per-ETF stat macros
     "dailEtfVol", "goldEtfReturn", "goldEtfVol", "silverLofReturn", "silverLofVol",
@@ -641,6 +733,7 @@ def main() -> None:
         + _breakeven_rows()
         + _vol_aligned_rows()
         + _sharpe_diff_rows()
+        + _latest_diagnostic_rows()
     )
     out_path = out_dir / "generated_numbers.tex"
     out_path.write_text("\n".join(content) + "\n", encoding="utf-8")

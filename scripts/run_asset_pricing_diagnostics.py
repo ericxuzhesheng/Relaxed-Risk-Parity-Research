@@ -12,16 +12,17 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from scripts.run_rrp_pipeline import _parameter_grid
-from src.asset_pricing_diagnostics import build_factor_proxies, run_diagnostics, write_outputs
+from src.asset_pricing_diagnostics import DiagnosticOutputs, build_factor_proxies, run_diagnostics, write_outputs
+from src.public_labels import apply_public_model_labels
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
 from src.utils import get_config, resolve_path
 
-GLOBAL_LABEL = "Global Relaxed Risk Parity"
+GLOBAL_LABEL = "Global RRP"
 IMPROVED_CONVEX_LABEL = "Improved Convex Adaptive Global RRP"
 BASE_CONVEX_LABEL = "Convex Adaptive Global RRP"
-DYNAMIC_LABEL = "Defensive Dynamic Relaxed Risk Parity"
+DYNAMIC_LABEL = "Defensive Dynamic RRP"
 
 
 def _project_path(path: str | Path) -> Path:
@@ -44,10 +45,10 @@ def _load_returns(smoke: bool) -> pd.DataFrame:
 
 def load_or_build_models(returns: pd.DataFrame, smoke: bool) -> dict[str, pd.DataFrame]:
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
-    print("Building in-memory Global Relaxed Risk Parity diagnostics input...")
+    print("Building in-memory Global RRP diagnostics input...")
     global_rrp = run_static_backtest(returns, model_type="relaxed", config_overrides=config)
 
-    print("Building in-memory Defensive Dynamic Relaxed Risk Parity diagnostics input...")
+    print("Building in-memory Defensive Dynamic RRP diagnostics input...")
     dynamic = run_dynamic_rrp_selection(
         returns,
         _parameter_grid(smoke),
@@ -171,10 +172,10 @@ def write_report(outputs, output_root: Path) -> Path:
 
 ### 模型解释
 
-- Global Relaxed Risk Parity 是解释基准组合。当前 `global_risk` beta 为 {global_beta:.3f}，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
+- Global RRP 是解释基准组合。当前 `global_risk` beta 为 {global_beta:.3f}，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
 - Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 {improved_beta:.3f}；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
 - Convex Adaptive Global RRP 是凸优化增强的基础版本，用于区分基础约束优化与改进配置的解释差异。
-- Defensive Dynamic Relaxed Risk Parity 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
+- Defensive Dynamic RRP 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
 
 ### 归因
 
@@ -192,10 +193,10 @@ The factor proxies are broad equal-weight proxies inferred from the existing ret
 
 ### Model Interpretation
 
-- Global Relaxed Risk Parity is the reference RRP portfolio. Its current `global_risk` beta is {global_beta:.3f}, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
+- Global RRP is the reference RRP portfolio. Its current `global_risk` beta is {global_beta:.3f}, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
 - Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is {improved_beta:.3f}; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
 - Convex Adaptive Global RRP is the base convex enhancement and helps separate base optimizer behavior from the improved configuration.
-- Defensive Dynamic Relaxed Risk Parity is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
+- Defensive Dynamic RRP is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
 
 ### Attribution
 
@@ -215,17 +216,27 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run interpretation-only asset-pricing diagnostics.")
     parser.add_argument("--smoke", action="store_true", help="Run a small fast diagnostics pass.")
     parser.add_argument("--output-root", type=Path, default=ROOT_DIR, help="Directory where report/results outputs are written.")
+    parser.add_argument("--reuse-existing", action="store_true", help="Refresh public labels, figures, and report from existing diagnostic CSVs.")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     output_root = args.output_root.resolve()
-    returns = _load_returns(args.smoke)
-    factors = build_factor_proxies(returns)
-    print(f"Available factor proxies: {', '.join(factors.columns)}")
-    models = load_or_build_models(returns, args.smoke)
-    outputs = run_diagnostics(models, returns)
+    if args.reuse_existing:
+        tables = output_root / "results" / "tables"
+        outputs = DiagnosticOutputs(
+            factor_exposure_summary=apply_public_model_labels(pd.read_csv(tables / "asset_pricing_factor_exposure_summary.csv")),
+            return_attribution=apply_public_model_labels(pd.read_csv(tables / "asset_pricing_return_attribution.csv")),
+            risk_attribution=apply_public_model_labels(pd.read_csv(tables / "asset_pricing_risk_attribution.csv")),
+            rolling_beta_summary=apply_public_model_labels(pd.read_csv(tables / "asset_pricing_rolling_beta_summary.csv")),
+        )
+    else:
+        returns = _load_returns(args.smoke)
+        factors = build_factor_proxies(returns)
+        print(f"Available factor proxies: {', '.join(factors.columns)}")
+        models = load_or_build_models(returns, args.smoke)
+        outputs = run_diagnostics(models, returns)
     table_paths = write_outputs(outputs, output_root)
     figure_paths = write_figures(outputs, output_root)
     report_path = write_report(outputs, output_root)

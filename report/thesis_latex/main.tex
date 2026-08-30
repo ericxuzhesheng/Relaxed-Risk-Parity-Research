@@ -140,7 +140,7 @@ Risk parity replaces expected-return estimation with risk budgeting, which makes
 
 This thesis tests a Relaxed Risk Parity framework on \etfCount{} tradable ETFs spanning eight asset groups---bonds, China broad equity, China technology, China sector/consumption, Hong Kong equity, global equity, precious metals, and commodities. The evaluation window is \evalStartDate{} to \evalEndDate{} (\evalMonths{} monthly observations), with \txCostBps-bp one-way transaction costs and no lookahead. Four models are compared: Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, and HERC. HRP remains a benchmark; its money-market concentration produces low volatility and limited return opportunity.
 
-Global RRP earns \globalNetReturn{} net annual return at a Sharpe of \globalSharpe{}, but its \globalMonthlyTurnover{} average monthly turnover creates a real cost drag. Adding CVaR constraints, a turnover penalty, and group weight bounds in Improved Convex Adaptive Global RRP cuts turnover to \improvedMonthlyTurnover{} while lifting net return to \improvedNetReturn{}, Sharpe to \improvedSharpe{}, Sortino to \improvedSortino{}, and capping drawdown at \improvedMaxDD{}. HERC posts a Sharpe of \hercSharpe{}---that number comes from near-zero portfolio volatility via heavy bond concentration, not from multi-asset diversification. Improved Convex does not win on every single metric, but it has no obvious weak spot across return, drawdown, and turnover.
+Global RRP earns \globalNetReturn{} net annual return at a Sharpe of \globalSharpe{}, but its \globalMonthlyTurnover{} average monthly turnover creates a real cost drag. Adding CVaR constraints, a turnover penalty, and group weight bounds in Improved Convex Adaptive Global RRP cuts turnover to \improvedMonthlyTurnover{} while lifting net return to \improvedNetReturn{}, Sharpe to \improvedSharpe{}, Sortino to \improvedSortino{}, and capping drawdown at \improvedMaxDD{}. HERC Benchmark posts a Sharpe of \hercSharpe{}---that number comes from near-zero portfolio volatility via heavy bond concentration, not from multi-asset diversification. Improved Convex Adaptive Global RRP does not win on every single metric, but it has no obvious weak spot across return, drawdown, and turnover.
 
 All results are conditional on this evaluation period and constraint settings. They do not predict future performance.
 
@@ -459,7 +459,7 @@ Improved Convex Adaptive Global RRP 在收益、下行风险和换手之间形�
 
 \subsection{净值路径与回撤分析}
 \figpair{convex_adaptive_nav_comparison.png}{convex_adaptive_drawdown_comparison.png}{核心模型累计净值路径比较}{核心模型回撤路径比较}{fig:nav}{fig:drawdown}
-图 \ref{fig:nav} 展示了六个核心模型在评价区间内的累计净值路径。Convex Adaptive 与 Improved Convex Adaptive Global RRP 在多数阶段净值较高，后者路径更平稳；HERC 的曲线接近缓斜直线，与其近乎全仓债券的结构一致。图 \ref{fig:drawdown} 中，Improved Convex Adaptive Global RRP 最大回撤为 \improvedMaxDD，优于 Global RRP 的 \globalMaxDD，两者最深回撤均发生于 2022 年市场下行期。
+图 \ref{fig:nav} 展示了六个核心模型在评价区间内的累计净值路径。Convex Adaptive Global RRP 与 Improved Convex Adaptive Global RRP 在多数阶段净值较高，后者路径更平稳；HERC Benchmark 的曲线接近缓斜直线，与其近乎全仓债券的结构一致。图 \ref{fig:drawdown} 中，Improved Convex Adaptive Global RRP 最大回撤为 \improvedMaxDD，优于 Global RRP 的 \globalMaxDD，两者最深回撤均发生于 2022 年市场下行期。
 
 \subsection{换手率与权重结构分析}
 \figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
@@ -475,18 +475,20 @@ Improved Convex Adaptive Global RRP 在收益、下行风险和换手之间形�
 \small
 \caption{主要模型阶段性资产组平均权重（2021--2022 与 2023--2025）}
 \label{tab:weight_path_stage}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llrrrrr}
 \toprule
 Model & Stage & Bonds & China Eq. & HK Eq. & Global Eq. & Commodities \\
 \midrule
-Improved Convex & 2021--2022 & 71.71\% & 8.19\% & 0.62\% & 5.72\% & 13.75\% \\
-Improved Convex & 2023--2025 & 70.31\% & 6.91\% & 0.28\% & 6.96\% & 15.54\% \\
+Improved Convex Adaptive Global RRP & 2021--2022 & 71.71\% & 8.19\% & 0.62\% & 5.72\% & 13.75\% \\
+Improved Convex Adaptive Global RRP & 2023--2025 & 70.31\% & 6.91\% & 0.28\% & 6.96\% & 15.54\% \\
 Global RRP & 2021--2022 & 67.38\% & 15.73\% & 1.20\% & 5.89\% & 9.80\% \\
 Global RRP & 2023--2025 & 92.93\% & 3.23\% & 0.75\% & 2.29\% & 4.79\% \\
 HERC & 2021--2022 & 95.24\% & 1.67\% & 0.16\% & 0.98\% & 1.96\% \\
 HERC & 2023--2025 & 94.11\% & 2.12\% & 0.19\% & 1.03\% & 2.55\% \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
 图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 解释了绩效差异。Improved Convex Adaptive Global RRP 的债券权重约为 70\%--72\%，商品约为 14\%--16\%，两个阶段变化有限。Global RRP 的债券权重由 67.38\% 升至 92.93\%，说明缺少换手约束时模型会更快转向低波动资产。HERC 的债券权重约为 94\%--95\%，跨类别分散较弱。日利 ETF 始终触及 30\% 现金组上限，是主模型的最大单一持仓。
@@ -504,7 +506,7 @@ HERC & 2023--2025 & 94.11\% & 2.12\% & 0.19\% & 1.03\% & 2.55\% \\
 
 \figwide{asset_pricing_factor_exposure.png}{核心模型因子暴露汇总（全样本回归）}{fig:factor_exposure}
 
-图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示资产类别平均资金暴露与五因子代理回归诊断。Global RRP 的权益、债券与商品/黄金平均资金暴露分别为 $0.147$、$0.099$ 与 $0.049$，回归 $R^2=0.531$，年化 $\alpha=0.33\%$（$t=0.50$）。Improved Convex Adaptive Global RRP 的对应暴露分别为 $0.131$、$0.392$ 与 $0.139$，回归 $R^2=0.757$，年化 $\alpha=1.78\%$（$t=3.25$）。因子由同一 ETF 资产池构造，代理因子之间存在共线性，回归系数本身不宜作结构性解释，因此表中采用更直观的资金暴露并同时披露回归拟合与 alpha 诊断。
+图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示资产类别平均资金暴露与五因子代理回归诊断。Global RRP 的权益、债券与商品/黄金平均资金暴露分别为 $\factorGlobalEquityExposure$、$\factorGlobalBondExposure$ 与 $\factorGlobalCommodityExposure$，回归 $R^2=\factorGlobalRSquared$，年化 $\alpha=\factorGlobalAlpha$（$t=\factorGlobalAlphaTstat$）。Improved Convex Adaptive Global RRP 的对应暴露分别为 $\factorImprovedEquityExposure$、$\factorImprovedBondExposure$ 与 $\factorImprovedCommodityExposure$，回归 $R^2=\factorImprovedRSquared$，年化 $\alpha=\factorImprovedAlpha$（$t=\factorImprovedAlphaTstat$）。因子由同一 ETF 资产池构造，代理因子之间存在共线性，回归系数本身不宜作结构性解释，因此表中采用更直观的资金暴露并同时披露回归拟合与 alpha 诊断。
 
 \begin{table}[H]
 \centering
@@ -512,15 +514,17 @@ HERC & 2023--2025 & 94.11\% & 2.12\% & 0.19\% & 1.03\% & 2.55\% \\
 \setlength{\tabcolsep}{3pt}
 \caption{核心模型资产类别平均资金暴露与五因子回归诊断}
 \label{tab:factor_exposure}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrrr}
 \toprule
 Model & Equity & Bond & Commodity & Defensive & Max Class & $R^2$ & $\alpha$ (Annualized) \\
 \midrule
-Global RRP & 0.147 & 0.099 & 0.049 & 0.026 & 0.147 & 0.531 & 0.33\% \\
-Improved Convex & 0.131 & 0.392 & 0.139 & 0.037 & 0.392 & 0.757 & 1.78\% \\
+Global RRP & \factorGlobalEquityExposure & \factorGlobalBondExposure & \factorGlobalCommodityExposure & \factorGlobalDefensiveExposure & \factorGlobalMaxExposure & \factorGlobalRSquared & \factorGlobalAlpha \\
+Improved Convex Adaptive Global RRP & \factorImprovedEquityExposure & \factorImprovedBondExposure & \factorImprovedCommodityExposure & \factorImprovedDefensiveExposure & \factorImprovedMaxExposure & \factorImprovedRSquared & \factorImprovedAlpha \\
 \bottomrule
 \multicolumn{8}{l}{\footnotesize 因子均为代理因子，不对应特定标准化指数。} \\
 \end{tabular}
+}
 \end{table}
 
 \figwide{asset_pricing_rolling_betas.png}{Improved Convex Adaptive Global RRP 滚动因子暴露（252日窗口）}{fig:rolling_betas}
@@ -529,7 +533,7 @@ Improved Convex & 0.131 & 0.392 & 0.139 & 0.037 & 0.392 & 0.757 & 1.78\% \\
 
 \figpair{asset_pricing_return_attribution.png}{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:return_attr}{fig:risk_attr}
 
-表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，权益与商品/黄金贡献接近，分别为 30.0\% 和 30.0\%，债券贡献 24.5\%。风险方面，权益资产类别方差份额最高（53.6\%），商品/黄金为 30.3\%，债券为 4.5\%。这说明主模型并非没有权益风险，而是通过债券、商品和防御性资产降低了单一风险来源的集中度。
+表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，权益与商品/黄金贡献接近，分别为 \attrEquityReturnShare{} 和 \attrCommodityReturnShare{}，债券贡献 \attrBondReturnShare。风险方面，权益资产类别方差份额最高（\attrEquityRiskShare），商品/黄金为 \attrCommodityRiskShare，债券为 \attrBondRiskShare。这说明主模型并非没有权益风险，而是通过债券、商品和防御性资产降低了单一风险来源的集中度。
 
 \begin{table}[H]
 \centering
@@ -540,15 +544,15 @@ Improved Convex & 0.131 & 0.392 & 0.139 & 0.037 & 0.392 & 0.757 & 1.78\% \\
 \toprule
 Factor & Return Share & Variance Share \\
 \midrule
-权益 & 30.0\% & 53.6\% \\
-债券 & 24.5\% & 4.5\% \\
-商品/黄金 & 30.0\% & 30.3\% \\
-防御性 & 4.9\% & 11.5\% \\
+权益 & \attrEquityReturnShare & \attrEquityRiskShare \\
+债券 & \attrBondReturnShare & \attrBondRiskShare \\
+商品/黄金 & \attrCommodityReturnShare & \attrCommodityRiskShare \\
+防御性 & \attrDefensiveReturnShare & \attrDefensiveRiskShare \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-归因结果说明 Improved Convex Adaptive Global RRP 的历史收益并非由单一资产类别主导，权益、商品/黄金与债券三类的已归因收益份额较为接近；未归因残差约占 10.6\%。债券风险份额仅 4.5\%，体现了低波动资产在风险预算框架中的缓冲作用。HERC 债券集中度高，收益与风险来源均较单一。
+归因结果说明 Improved Convex Adaptive Global RRP 的历史收益并非由单一资产类别主导，权益、商品/黄金与债券三类的已归因收益份额较为接近；未归因残差约占 \attrResidualReturnShare。债券风险份额仅 \attrBondRiskShare，体现了低波动资产在风险预算框架中的缓冲作用。HERC Benchmark 债券集中度高，收益与风险来源均较单一。
 
 \subsection{小结}
 各模型绩效差异背后是不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内体现为低波动、浅回撤和可控换手之间的折中，而不是最高收益模型；HERC 夏普比率有竞争力，但回撤幅度、换手频率和暴露集中度与主模型差异显著。比较这几个模型时，最好同时看指标和权重路径，而不是只看排名。
@@ -559,7 +563,7 @@ Factor & Return Share & Variance Share \\
 \figpair{robustness_subperiod_sharpe.png}{robustness_subperiod_drawdown.png}{子区间夏普比率稳健性}{子区间最大回撤稳健性}{fig:sub_sharpe}{fig:sub_drawdown}
 图 \ref{fig:sub_sharpe}--\ref{fig:sub_drawdown} 展示各子区间的夏普比率和最大回撤。子区间指标通常比全样本波动更大，这里的用途是观察结论在哪些阶段有所减弱，而非寻找”最优子区间”。
 
-跨 5 个固定子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [0.570, 1.239]，均值 0.949，无一子区间出现负值。其最弱子区间为 2021 年后的收紧期（post\_2021），对应全球权益和债券同步承压的市场环境；在该子区间内 Global RRP 的夏普比率降至 0.034，而 Improved Convex 仍维持在 0.570，展示出相对较强的下行防护能力，但这也是主模型在固定子区间内表现最弱的阶段，需要明确披露。
+跨 5 个固定子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [\subperiodImprovedSharpeMin, \subperiodImprovedSharpeMax]，均值 \subperiodImprovedSharpeMean，无一子区间出现负值。其最弱子区间为 \subperiodImprovedWeakestWindow，Sharpe 为 \subperiodImprovedWeakestSharpe。2021 年后的收紧期（post\_2021）中，Global RRP 的 Sharpe 为 \subperiodGlobalPostSharpe，而 Improved Convex Adaptive Global RRP 为 \subperiodImprovedPostSharpe，显示主模型在全球权益与债券同步承压阶段仍保持较强的历史下行防护能力。
 
 \figmaybe{robustness_stress_period_performance.png}{压力期表现检验}{fig:stress}
 压力期检验用于观察极端阶段组合反应。压力期标签是事后贴上去的，只用于观察组合在特定阶段的行为，不作为调参依据。
@@ -616,7 +620,7 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
 本文比较了 sample covariance、Ledoit-Wolf 收缩以及不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 显示主要结论不依赖单一协方差估计器，但选择不同估计器会影响权重细节和换手水平。
 
-状态条件先验只在 2018--2023 年设计窗内选定，再固定到 2024 年和 2025 年起始的留出窗。2024 年留出窗中，状态条件估计器的 Sharpe 为 1.715，低于 EWMA 的 1.816；CVaR 略降，但最大回撤由 $-1.95\%$ 扩大至 $-2.66\%$。其余窗口亦未形成一致改善，因此不替换公开主路径。
+状态条件先验只在 2018--2023 年设计窗内选定，再固定到 2024 年和 2025 年起始的留出窗。2024 年留出窗中，状态条件估计器的 Sharpe 为 \RegimeSelectedSharpe，低于 EWMA 的 \RegimeBaselineSharpe；95\% 日度 CVaR 由 \RegimeBaselineCvar{} 略降至 \RegimeSelectedCvar，但最大回撤由 \RegimeBaselineMaxDD{} 扩大至 \RegimeSelectedMaxDD。其余窗口亦未形成一致改善，因此不替换公开主路径。
 
 \figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
 本文以 CSCV/PBO 诊断参数选择偏差\cite{white2000reality,harvey2015backtesting,bailey2014probability,bailey2017pbo}。36 个候选、10 个时间区块和 12 个分割得到 PBO 0.417、平均样本外相对秩 0.375。该结果只说明样本内胜出候选落入样本外后半区的比例低于一半；分割数量有限，不能视为未来表现保证。
@@ -636,19 +640,21 @@ Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
 \setlength{\tabcolsep}{4pt}
 \caption{分块自助法绩效分布（200 次重抽样，块长 21 日）}
 \label{tab:bootstrap_summary}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
 Model & Sharpe Mean & Sharpe P5 & Sharpe P50 & Sharpe P95 & MDD Mean & MDD P5 \\
 \midrule
-Global RRP & 0.499 & 0.157 & 0.503 & 0.839 & $-$7.59\% & $-$12.04\% \\
-Convex Adaptive & 0.606 & 0.272 & 0.605 & 0.955 & $-$31.28\% & $-$44.71\% \\
-Improved Convex & 1.147 & 0.655 & 1.108 & 1.781 & $-$3.88\% & $-$5.80\% \\
+Global RRP & \BootstrapGlobalSharpeMean & \BootstrapGlobalSharpePFive & \BootstrapGlobalSharpePFifty & \BootstrapGlobalSharpePNinetyFive & \BootstrapGlobalMDDMean & \BootstrapGlobalMDDPFive \\
+Convex Adaptive Global RRP & \BootstrapConvexSharpeMean & \BootstrapConvexSharpePFive & \BootstrapConvexSharpePFifty & \BootstrapConvexSharpePNinetyFive & \BootstrapConvexMDDMean & \BootstrapConvexMDDPFive \\
+Improved Convex Adaptive Global RRP & \BootstrapImprovedSharpeMean & \BootstrapImprovedSharpePFive & \BootstrapImprovedSharpePFifty & \BootstrapImprovedSharpePNinetyFive & \BootstrapImprovedMDDMean & \BootstrapImprovedMDDPFive \\
 \bottomrule
 \multicolumn{7}{l}{\footnotesize P5/P50/P95 为对应分位数，MDD P5 为最大回撤的第 5 百分位（最差情形）。} \\
 \end{tabular}
+}
 \end{table}
 
-Improved Convex 的 Sharpe P5 为 0.655，高于 Global RRP 的 0.157；P50 为 1.108，低于全样本点估计。分块自助法仅刻画历史路径扰动，不能替代真实样本外检验。
+Improved Convex Adaptive Global RRP 的 Sharpe P5 为 \BootstrapImprovedSharpePFive，高于 Global RRP 的 \BootstrapGlobalSharpePFive；P50 为 \BootstrapImprovedSharpePFifty，低于全样本点估计。分块自助法仅刻画历史路径扰动，不能替代真实样本外检验。
 
 第二个是成对夏普差异检验。\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
 
@@ -664,9 +670,9 @@ Improved Convex 的 Sharpe P5 为 0.655，高于 Global RRP 的 0.157；P50 为 
 \toprule
 Model A & Model B & Observed Diff. & CI Low & CI High & $p$ Value \\
 \midrule
-Improved Convex Adaptive RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
-Improved Convex Adaptive RRP & Defensive Dynamic RRP & \improvedVsDefensiveDiff & \improvedVsDefensiveCILow & \improvedVsDefensiveCIHigh & \improvedVsDefensivePValue \\
-Improved Convex Adaptive RRP & Equal Weight & \improvedVsEqualDiff & \improvedVsEqualCILow & \improvedVsEqualCIHigh & \improvedVsEqualPValue \\
+Improved Convex Adaptive Global RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
+Improved Convex Adaptive Global RRP & Defensive Dynamic RRP & \improvedVsDefensiveDiff & \improvedVsDefensiveCILow & \improvedVsDefensiveCIHigh & \improvedVsDefensivePValue \\
+Improved Convex Adaptive Global RRP & Equal Weight & \improvedVsEqualDiff & \improvedVsEqualCILow & \improvedVsEqualCIHigh & \improvedVsEqualPValue \\
 Global RRP & Equal Weight & \globalVsEqualDiff & \globalVsEqualCILow & \globalVsEqualCIHigh & \globalVsEqualPValue \\
 Defensive Dynamic RRP & Equal Weight & \defensiveVsEqualDiff & \defensiveVsEqualCILow & \defensiveVsEqualCIHigh & \defensiveVsEqualPValue \\
 \bottomrule

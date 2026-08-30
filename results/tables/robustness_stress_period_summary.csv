@@ -1,10 +1,10 @@
 stress_period,model,observations,cumulative_return,annualized_return,sharpe_ratio,max_drawdown,cvar_95_daily_loss,stress_identification
-highest_realized_volatility,Global Relaxed Risk Parity,469,0.0,0.0,0.0,0.0,0.0,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Global Relaxed Risk Parity,471,-0.07083684553717717,-0.03719596792308355,-1.8682048905163293,-0.08171868228802248,0.0055088049440888106,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Global Relaxed Risk Parity,464,-0.14737689885002236,-0.08010763709358015,-2.835372791680582,-0.15315822195779416,0.007868770539959052,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Defensive Dynamic Relaxed Risk Parity,193,-0.06882236361697869,-0.08613534206792361,-2.151741905338883,-0.07970847821420723,0.0071511695140968005,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Defensive Dynamic Relaxed Risk Parity,157,-0.15417689854736172,-0.22858503289337084,-4.2002987942367405,-0.15875739400933075,0.010057985287473002,ex_post_equal_weight_universe
+highest_realized_volatility,Global RRP,469,0.0,0.0,0.0,0.0,0.0,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Global RRP,471,-0.0708368455371771,-0.0371959679230835,-1.868204890516329,-0.0817186822880224,0.0055088049440888,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Global RRP,464,-0.1473768988500223,-0.0801076370935801,-2.835372791680582,-0.1531582219577941,0.007868770539959,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Defensive Dynamic RRP,193,-0.0688223636169786,-0.0861353420679236,-2.151741905338883,-0.0797084782142072,0.0071511695140968,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Defensive Dynamic RRP,157,-0.1541768985473617,-0.2285850328933708,-4.2002987942367405,-0.1587573940093307,0.010057985287473,ex_post_equal_weight_universe
 highest_realized_volatility,Convex Adaptive Global RRP,469,0.0,0.0,0.0,0.0,0.0,ex_post_equal_weight_universe
-deepest_equal_weight_drawdown,Convex Adaptive Global RRP,471,-0.14583825428062114,-0.0781082401448544,-0.7672119883229808,-0.25993155783810407,0.020197955883648564,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Convex Adaptive Global RRP,464,-0.43456359373698983,-0.2581404847874268,-2.078630938284804,-0.44555614303480007,0.02970287770299085,ex_post_equal_weight_universe
-worst_10pct_monthly_returns,Improved Convex Adaptive Global RRP,84,-0.041176325852550044,-0.10779346405241552,-3.2439330198748615,-0.04513181630405072,0.005801493766820399,ex_post_equal_weight_universe
+deepest_equal_weight_drawdown,Convex Adaptive Global RRP,471,-0.1458382542806211,-0.0781082401448544,-0.7672119883229808,-0.259931557838104,0.0201979558836485,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Convex Adaptive Global RRP,464,-0.4345635937369898,-0.2581404847874268,-2.078630938284804,-0.4455561430348,0.0297028777029908,ex_post_equal_weight_universe
+worst_10pct_monthly_returns,Improved Convex Adaptive Global RRP,84,-0.04117632585255,-0.1077934640524155,-3.243933019874861,-0.0451318163040507,0.0058014937668203,ex_post_equal_weight_universe
