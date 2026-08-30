@@ -353,6 +353,26 @@
   \scriptsize\centering \evalStartDate{}—\evalEndDate{}；月度调仓；净收益扣除 \txCostBps{} bps 单边成本
 \end{frame}
 
+\begin{frame}{2026 年 9 月模型持仓}
+  \begin{columns}[T]
+    \begin{column}{0.56\textwidth}
+      \centering
+      \IfFileExists{generated_next_month_holdings_slide.tex}{\input{generated_next_month_holdings_slide.tex}}{\textbf{[Run scripts/export_next_month_holdings.py]}}
+    \end{column}
+    \begin{column}{0.40\textwidth}
+      \small
+      \begin{itemize}
+        \item 使用截至 2026-08-28 的可得数据
+        \item 日利、信用债及 5/10 年国债构成稳定底仓
+        \item 黄金、红利、商品与全球股票提供风险分散
+        \item 完整 26 项实质非零权重合计 100\%
+      \end{itemize}
+      \vspace{0.4em}
+      \scriptsize 历史模型输出，不构成未来收益保证。
+    \end{column}
+  \end{columns}
+\end{frame}
+
 \begin{frame}{净值与回撤路径}
   \begin{columns}[T]
     \begin{column}{0.50\textwidth}
@@ -590,7 +610,7 @@
     \begin{column}{0.50\textwidth}
       \centering
       \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{showcase_pbo_heatmap.png}\\
-      \footnotesize 增强版 CSCV/PBO 为 0.167
+      \footnotesize 增强版 CSCV/PBO 为 0.417
     \end{column}
   \end{columns}
   \vspace{0.2em}

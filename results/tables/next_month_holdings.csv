@@ -1,0 +1,27 @@
+holding_month,as_of_date,model,selected_candidate_id,etf,ticker,asset_class,weight,weight_pct
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,日利ETF,511880.SH,money market,0.3000000002,30.0000000250
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,信用债ETF,511030.SH,credit bond,0.1631828908,16.3182890780
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,5年国债ETF,511010.SH,government bond,0.1320060073,13.2006007340
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,10年国债ETF,511260.SH,government bond,0.0882585213,8.8258521282
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,黄金ETF,518880.SH,commodity,0.0540028315,5.4002831487
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,红利ETF,510880.SH,china equity dividend,0.0349031376,3.4903137649
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,可转债ETF,511380.SH,convertible bond,0.0334413974,3.3441397415
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,豆粕ETF,159985.SZ,commodity,0.0305422669,3.0542266901
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,标普500ETF,513500.SH,global equity,0.0301268810,3.0126881046
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,原油ETF,162411.SZ,commodity,0.0242135692,2.4213569222
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,纳指ETF,159941.SZ,global equity,0.0159738192,1.5973819220
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,有色金属期货ETF,159980.SZ,commodity,0.0154758219,1.5475821915
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,半导体ETF,512480.SH,china tech equity,0.0143110637,1.4311063696
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,日经225ETF,513880.SH,global equity,0.0122247891,1.2224789055
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,能源化工期货ETF,159981.SZ,commodity,0.0098435943,0.9843594277
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,欧洲ETF,513030.SH,global equity,0.0078886561,0.7888656065
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,消费ETF,159928.SZ,china consumer,0.0075051973,0.7505197331
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,中证2000ETF,563300.SH,china equity,0.0071871012,0.7187101158
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,中证1000ETF,512100.SH,china equity,0.0060921977,0.6092197683
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,军工ETF,512660.SH,china defense,0.0051343841,0.5134384090
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,煤炭ETF,515220.SH,commodity,0.0039664256,0.3966425597
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,人工智能ETF,159819.SZ,china tech equity,0.0021853525,0.2185352502
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,创业板ETF,159915.SZ,china equity,0.0011074727,0.1107472669
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,新能源ETF,516160.SH,china new energy,0.0002955915,0.0295591542
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,恒生ETF,159920.SZ,hong kong equity,0.0000749994,0.0074999385
+2026-09,2026-08-28,Improved Convex Adaptive Global RRP,candidate_03,沪深300ETF,510300.SH,china equity,0.0000560301,0.0056030139

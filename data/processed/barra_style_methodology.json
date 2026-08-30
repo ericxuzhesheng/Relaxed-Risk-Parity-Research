@@ -3,7 +3,7 @@
   "official_barra_model": false,
   "warning": "These are reproducible ETF-return proxies, not licensed MSCI Barra exposures.",
   "analysis_start": "2020-01-20",
-  "analysis_end": "2026-07-31",
+  "analysis_end": "2026-08-28",
   "active_etf_count": 30,
   "candidate_etf_count": 6,
   "minimum_pairwise_observations": 120,

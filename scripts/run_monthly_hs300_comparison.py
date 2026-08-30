@@ -28,7 +28,7 @@ README_EN_END = "<!-- END MONTHLY_HS300_COMPARISON_EN -->"
 THESIS_BEGIN = "% BEGIN MONTHLY_HS300_COMPARISON"
 THESIS_END = "% END MONTHLY_HS300_COMPARISON"
 DEFAULT_START_DATE = "2018-01-02"
-DEFAULT_END_DATE = "2026-07-31"
+DEFAULT_END_DATE = "2026-08-28"
 
 
 def _pct(value: float, digits: int = 2) -> str:
@@ -299,9 +299,9 @@ def update_thesis_body() -> None:
     core_table = text.find(r"\label{tab:core_perf}")
     if core_table < 0:
         raise ValueError("could not find core performance table anchor in thesis main.tex")
-    anchor = text.find(r"\subsection{HRP", core_table)
+    anchor = text.find(r"\subsection{净值路径与回撤分析}", core_table)
     if anchor < 0:
-        raise ValueError("could not find post-performance HRP subsection anchor in thesis main.tex")
+        raise ValueError("could not find post-performance NAV subsection anchor in thesis main.tex")
     text = text[:anchor] + block + "\n\n" + text[anchor:]
     main_path.write_text(text, encoding="utf-8")
 

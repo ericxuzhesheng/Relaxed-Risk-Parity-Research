@@ -14,8 +14,8 @@ The 36-configuration grid is exploratory. It supports sensitivity, CSCV/PBO, and
 
 ## Data and timing
 
-- Evaluation window: 2018-01-02 to 2026-07-31.
-- ETF request window: 2000-01-01 to 2026-07-31; each ETF keeps its longest available history.
+- Evaluation window: 2018-01-02 to 2026-08-28.
+- ETF request window: 2000-01-01 to 2026-08-28; each ETF keeps its longest available history.
 - Active universe: 30 ETFs; candidate universe: 6 ETFs; no overlap.
 - Point-in-time entry: at least 60 valid observations.
 - Risk-free rate: monthly one-year ChinaBond government yield, lagged one month and converted with 243 trading days.

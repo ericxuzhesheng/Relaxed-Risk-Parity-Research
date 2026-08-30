@@ -74,7 +74,7 @@ def _summarize(name: str, result: pd.DataFrame, eval_start_date: str, config: di
     nav = _nav_from_result(result, eval_start_date)
     metrics = calculate_metrics(
         nav,
-        risk_free_rate=config["risk_free_rate"],
+        risk_free_returns=config["risk_free_rate"],
         trading_days=config["trading_days_per_year"],
     )
     metrics = add_turnover_adjusted_metrics(metrics, eval_result["turnover"], config.get("transaction_cost_bps", 3.0))

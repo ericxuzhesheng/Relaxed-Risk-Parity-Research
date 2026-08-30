@@ -1,4 +1,31 @@
 step,critical,return_code,status,command
+barra_exposure_correlation,True,0,passed,.venv\Scripts\python.exe scripts/run_barra_exposure_correlation.py
+rrp_pipeline,True,0,passed,.venv\Scripts\python.exe scripts/run_rrp_pipeline.py --mode full --diagnostics full
+showcase_optimization,False,0,passed,.venv\Scripts\python.exe scripts/optimize_showcase_rrp.py
+hrp_comparison,False,0,passed,.venv\Scripts\python.exe scripts/run_hrp_comparison.py
+convex_adaptive_rrp,True,0,passed,.venv\Scripts\python.exe scripts/run_convex_adaptive_rrp.py
+walkforward_validation,False,0,passed,.venv\Scripts\python.exe scripts/run_walkforward_validation.py
+cscv_pbo,False,0,passed,.venv\Scripts\python.exe scripts/run_cscv_pbo.py
+monthly_hs300_comparison,False,0,passed,.venv\Scripts\python.exe scripts/run_monthly_hs300_comparison.py
+rebalance_frequency_sensitivity,False,0,passed,.venv\Scripts\python.exe scripts/run_rebalance_frequency_sensitivity.py
+extended_sample_robustness,False,0,passed,.venv\Scripts\python.exe scripts/run_extended_sample_robustness.py
+cvar_sensitivity,False,0,passed,.venv\Scripts\python.exe scripts/run_cvar_sensitivity.py
+enhanced_cscv_pbo,False,0,passed,.venv\Scripts\python.exe scripts/run_enhanced_cscv_pbo.py
+parameter_sensitivity,False,0,passed,.venv\Scripts\python.exe scripts/run_parameter_sensitivity.py
+overlay_sensitivity,False,0,passed,.venv\Scripts\python.exe scripts/run_overlay_sensitivity.py
+regime_covariance_experiment,False,0,passed,.venv\Scripts\python.exe scripts/run_regime_covariance_experiment.py
+regime_oos_validation,False,0,passed,.venv\Scripts\python.exe scripts/run_regime_oos_validation.py
+vol_aligned_comparison,False,0,passed,.venv\Scripts\python.exe scripts/run_vol_aligned_comparison.py
+sharpe_diff_tests,False,0,passed,.venv\Scripts\python.exe scripts/run_sharpe_diff_tests.py
+benchmark_suite,True,0,passed,.venv\Scripts\python.exe scripts/run_benchmark_suite.py
+robustness_tests,False,0,passed,.venv\Scripts\python.exe scripts/run_robustness_tests.py
+asset_pricing_diagnostics,False,0,passed,.venv\Scripts\python.exe scripts/run_asset_pricing_diagnostics.py
+weight_path_diagnostics,False,0,passed,.venv\Scripts\python.exe scripts/run_weight_path_diagnostics.py
+plot_weights_timeline,False,0,passed,.venv\Scripts\python.exe scripts/plot_weights_timeline.py
+augment_supplementary_csvs,False,0,passed,.venv\Scripts\python.exe scripts/augment_supplementary_csvs.py
+generate_thesis_numbers,True,0,passed,.venv\Scripts\python.exe scripts/generate_thesis_numbers.py
+asset_descriptive_statistics,True,0,passed,.venv\Scripts\python.exe scripts/run_asset_descriptive_statistics.py
+export_next_month_holdings,True,0,passed,.venv\Scripts\python.exe scripts/export_next_month_holdings.py
 expected_output,True,0,present,results\tables\performance_summary.csv
 expected_output,True,0,present,results\tables\convex_adaptive_performance_summary.csv
 expected_output,True,0,present,results\tables\benchmark_performance_summary.csv
@@ -14,6 +41,8 @@ expected_output,True,0,present,results\tables\cvar_sensitivity_summary.csv
 expected_output,True,0,present,results\tables\cscv_pbo_enhanced_summary.csv
 expected_output,True,0,present,results\tables\walkforward_validation_summary.csv
 expected_output,True,0,present,results\tables\afml_oos_selection.csv
+expected_output,True,0,present,results\tables\asset_descriptive_statistics.csv
+expected_output,True,0,present,results\tables\next_month_holdings.csv
 expected_output,True,0,present,data\processed\risk_free_rate_monthly.csv
 expected_output,True,0,present,data\processed\barra_style_exposure_correlation.csv
 expected_output,True,0,present,docs\MODEL_GOVERNANCE.md

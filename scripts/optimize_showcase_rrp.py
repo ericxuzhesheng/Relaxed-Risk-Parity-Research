@@ -56,7 +56,7 @@ def summarize(name: str, result: pd.DataFrame, eval_start_date: str, config: dic
     nav = nav_from_result(result, eval_start_date)
     metrics = calculate_metrics(
         nav,
-        risk_free_rate=config.get("risk_free_rate", 0.0),
+        risk_free_returns=config.get("risk_free_rate", 0.0),
         trading_days=config["trading_days_per_year"],
     )
     dates = pd.to_datetime(eval_result["date"])

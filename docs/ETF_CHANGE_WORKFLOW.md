@@ -355,14 +355,14 @@ df = pd.read_csv("results/tables/convex_adaptive_performance_summary.csv")
 print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_monthly_turnover"]])
 ```
 
-### 当前结果参考（2018-01-02 至 2026-07-31）
+### 当前结果参考（2018-01-02 至 2026-08-28）
 
 | 模型 | 当前 Sharpe | 当前月换手率 |
 |------|-------------|---------------|
-| Improved Convex Adaptive Global RRP | 1.186 | 1.96% |
-| Convex Adaptive Global RRP | 0.484 | 0.00% |
-| Global RRP | 0.534 | 24.51% |
-| Equal Weight | 0.561 | 0.96% |
+| Improved Convex Adaptive Global RRP | 1.272 | 1.95% |
+| Convex Adaptive Global RRP | 0.481 | 0.00% |
+| Global RRP | 0.629 | 24.08% |
+| Equal Weight | 0.610 | 0.95% |
 
 这些数字只用于发现流水线异常，不是未来运行必须落入的“合理区间”。ETF 资产池或数据更新后，应重新读取权威 CSV，而不是以本表反向调参。
 
@@ -378,7 +378,7 @@ print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_mon
 
 ---
 
-## 附：当前资产池（2026-07-31）
+## 附：当前资产池（2026-08-28）
 
 资产池的唯一权威来源是 `src/asset_universe.py`。当前主池为 30 支 ETF、8 类风险来源，候选池为 6 支 ETF；两者无重叠。主池新增中证2000ETF（563300.SH）、能源化工期货ETF（159981.SZ）和10年国债ETF（511260.SH），机器人ETF（562500.SH）、中韩半导体ETF（513310.SH）和证券公司先锋策略ETF（516980.SH）转入候选池。沙特ETF、巴西ETF和30年国债ETF也仅在候选池中。
 
@@ -392,4 +392,4 @@ print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_mon
 
 ---
 
-*最后更新：2026-08-10*
+*最后更新：2026-08-30*

@@ -10,7 +10,7 @@ DEFAULT_CONFIG = {
     "lookback_weeks": 48,
     "trading_days_per_year": 243,
     "evaluation_start_date": "2018-01-02",
-    "evaluation_end_date": "2026-07-31",
+    "evaluation_end_date": "2026-08-28",
     "data_start_date": "2000-01-01",
     "plot_start_date": "2018-01-02",
     "lambda_pen": 1.9,

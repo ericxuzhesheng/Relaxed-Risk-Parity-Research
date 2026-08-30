@@ -132,7 +132,7 @@ def adjusted_fund_close(close: pd.Series, adj_factor: pd.Series) -> pd.Series:
     return close_values * aligned_factor / base
 
 
-def fetch_from_tushare(start_date: str = "20000101", end_date: str | None = "20260731") -> pd.DataFrame:
+def fetch_from_tushare(start_date: str = "20000101", end_date: str | None = "20260828") -> pd.DataFrame:
     config = get_config()
     token = config.get("tushare_token", "")
     if not token:

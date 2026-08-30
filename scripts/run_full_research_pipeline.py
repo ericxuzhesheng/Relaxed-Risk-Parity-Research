@@ -26,13 +26,14 @@ def steps(quick: bool) -> list[PipelineStep]:
         rrp_cmd.append("--fast-mode")
     quick_root = ROOT_DIR / "results" / "quick"
     return [
-        PipelineStep("update_etf_data", [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260731"], True),
-        PipelineStep("update_risk_free_rate", [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260731"], True),
+        PipelineStep("update_etf_data", [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260828"], True),
+        PipelineStep("update_risk_free_rate", [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260828"], True),
         PipelineStep("barra_exposure_correlation", [python, "scripts/run_barra_exposure_correlation.py"], True),
         PipelineStep("rrp_pipeline", rrp_cmd, True, [ROOT_DIR / "results/tables/performance_summary.csv"] if quick else None),
         PipelineStep("showcase_optimization", [python, "scripts/optimize_showcase_rrp.py"], False, [ROOT_DIR / "results/tables/showcase_performance_summary.csv"] if quick else None),
         PipelineStep("hrp_comparison", [python, "scripts/run_hrp_comparison.py"], False, [ROOT_DIR / "results/tables/hrp_comparison.csv"] if quick else None),
         PipelineStep("convex_adaptive_rrp", [python, "scripts/run_convex_adaptive_rrp.py"], True, [ROOT_DIR / "results/tables/convex_adaptive_performance_summary.csv"] if quick else None),
+        PipelineStep("export_next_month_holdings", [python, "scripts/export_next_month_holdings.py"], True),
         PipelineStep("walkforward_validation", [python, "scripts/run_walkforward_validation.py", *(["--smoke"] if quick else [])], False, [ROOT_DIR / "results/tables/walkforward_validation_summary.csv"] if quick else None),
         PipelineStep("cscv_pbo", [python, "scripts/run_cscv_pbo.py", *(["--smoke"] if quick else [])], False, [ROOT_DIR / "results/tables/cscv_pbo_summary.csv"] if quick else None),
         PipelineStep("monthly_hs300_comparison", [python, "scripts/run_monthly_hs300_comparison.py"], False, [ROOT_DIR / "results/tables/improved_rrp_vs_hs300_monthly_returns.csv"] if quick else None),
@@ -64,6 +65,7 @@ def steps(quick: bool) -> list[PipelineStep]:
         PipelineStep("weight_path_diagnostics", [python, "scripts/run_weight_path_diagnostics.py"], False),
         PipelineStep("plot_weights_timeline", [python, "scripts/plot_weights_timeline.py"], False),
         PipelineStep("augment_supplementary_csvs", [python, "scripts/augment_supplementary_csvs.py"], False),
+        PipelineStep("asset_descriptive_statistics", [python, "scripts/run_asset_descriptive_statistics.py"], True),
         PipelineStep("generate_thesis_numbers", [python, "scripts/generate_thesis_numbers.py"], True),
     ]
 
@@ -72,6 +74,7 @@ def expected_outputs() -> list[Path]:
     return [
         ROOT_DIR / "results/tables/performance_summary.csv",
         ROOT_DIR / "results/tables/convex_adaptive_performance_summary.csv",
+        ROOT_DIR / "results/tables/next_month_holdings.csv",
         ROOT_DIR / "results/tables/benchmark_performance_summary.csv",
         ROOT_DIR / "results/tables/benchmark_turnover_summary.csv",
         ROOT_DIR / "results/tables/benchmark_drawdown_summary.csv",
@@ -85,6 +88,7 @@ def expected_outputs() -> list[Path]:
         ROOT_DIR / "results/tables/cscv_pbo_enhanced_summary.csv",
         ROOT_DIR / "results/tables/walkforward_validation_summary.csv",
         ROOT_DIR / "results/tables/afml_oos_selection.csv",
+        ROOT_DIR / "results/tables/asset_descriptive_statistics.csv",
         ROOT_DIR / "data/processed/risk_free_rate_monthly.csv",
         ROOT_DIR / "data/processed/barra_style_exposure_correlation.csv",
         ROOT_DIR / "docs/MODEL_GOVERNANCE.md",
@@ -183,15 +187,20 @@ def compile_pdf() -> None:
             continue
         print(f"\nCompiling {label} PDF with three XeLaTeX passes...")
         try:
-            return_code = 0
-            for _ in range(3):
-                result = subprocess.run(
-                    ["xelatex", "-interaction=nonstopmode", "-halt-on-error", filename],
-                    cwd=tex_dir,
-                )
-                return_code = result.returncode
+            result = subprocess.run(
+                ["xelatex", "-interaction=nonstopmode", "-halt-on-error", filename],
+                cwd=tex_dir,
+            )
+            return_code = result.returncode
+            if return_code == 0 and filename == "main.tex":
+                return_code = subprocess.run(["bibtex", "main"], cwd=tex_dir).returncode
+            for _ in range(2):
                 if return_code != 0:
                     break
+                return_code = subprocess.run(
+                    ["xelatex", "-interaction=nonstopmode", "-halt-on-error", filename],
+                    cwd=tex_dir,
+                ).returncode
             if return_code == 0:
                 print(f"{label} PDF compiled successfully.")
             else:
@@ -199,6 +208,13 @@ def compile_pdf() -> None:
         except FileNotFoundError:
             print("Warning: xelatex not found on PATH; PDFs were not compiled.", file=sys.stderr)
             return
+
+
+def selected_steps(quick: bool, skip_data: bool) -> list[PipelineStep]:
+    pipeline_steps = steps(quick)
+    if skip_data:
+        return [step for step in pipeline_steps if step.name not in {"update_etf_data", "update_risk_free_rate"}]
+    return pipeline_steps
 
 
 def cleanup() -> None:
@@ -211,11 +227,12 @@ def cleanup() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full thesis research reproduction pipeline.")
     parser.add_argument("--quick", action="store_true", help="Use smoke/fast modes for diagnostics where supported.")
+    parser.add_argument("--skip-data", action="store_true", help="Reuse ETF and risk-free data refreshed immediately before this run.")
     args = parser.parse_args()
     rows = []
     failed_critical = False
     try:
-        for step in steps(args.quick):
+        for step in selected_steps(args.quick, args.skip_data):
             row = run_step(step, args.quick)
             rows.append(row)
             if row["status"] == "critical_failed":

@@ -111,6 +111,7 @@ results/quick/
 !results/tables/benchmark_turnover_summary.csv
 !results/tables/benchmark_drawdown_summary.csv
 !results/tables/full_pipeline_checklist.csv
+!results/tables/next_month_holdings.csv
 !results/tables/covariance_robustness_summary.csv
 !results/tables/covariance_estimator_diagnostics.csv
 !results/tables/extended_sample_robustness_summary.csv
