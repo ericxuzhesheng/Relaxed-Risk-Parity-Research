@@ -10,6 +10,9 @@
 \coveradvisor{王磊}
 \coverdate{2026年8月}
 
+\usepackage{xcolor}
+\definecolor{holdingRed}{HTML}{B53B4A}
+\definecolor{holdingBlue}{HTML}{194F7D}
 \graphicspath{{../../results/figures/}}
 
 \hypersetup{
@@ -36,7 +39,7 @@
   \IfFileExists{../../results/figures/#1}{
     \begin{figure}[tbp]
       \centering
-      \includegraphics[width=0.84\textwidth]{#1}
+      \includegraphics[width=0.98\textwidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
@@ -341,7 +344,7 @@ HRP Benchmark 和 HERC Benchmark 通过层次聚类分配风险，作为优化�
 \IfFileExists{../../results/figures/asset_graph_stress_timeline.pdf}{
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.84\textwidth]{asset_graph_stress_timeline.pdf}
+    \includegraphics[width=0.98\textwidth]{asset_graph_stress_timeline.pdf}
     \caption{资产池跨类别相关结构}
     \label{fig:asset_graph}
   \end{figure}
@@ -423,8 +426,7 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 主表沿用历史尾均值统计以保证核心模型之间一致；约束实验采用分位点质量可拆分的精确经验 CVaR，与凸辅助变量形式一致。两者均以 95\% 为研究口径，未搜索置信水平。
 
 \subsection{每周持仓与收益明细}
-\input{generated_next_month_holdings.tex}
-完整记录覆盖 444 次调仓和 13,320 条资产观察，每期列示全部 30 只 ETF，保留零权重及微小权重。逐项记录信息截止日、交易前漂移权重、目标权重、权重变化和成本。周度收益区分自然周实际收益与新持仓生效后的持有期收益，后者截至下一调仓日前一交易日。样本末周和末次持有期均为截断观察。可筛选工作簿与对应 CSV 位于项目的 results/tables 目录，逐年周度热力图另存为独立 PDF。上表仅作为期末摘要，完整记录以逐周明细为准。
+完整逐周记录保存在仓库 results/tables 目录下的持仓、权重矩阵与周收益 CSV 中，可核查目标权重、漂移权重、换手及成本。自然周收益覆盖该周实际交易日，不能归因于周末新持仓。样本末周为截断观察。逐周目标权重中有 11 只 ETF 在全部调仓日均小到以百分比保留四位小数时显示为零。资产池覆盖范围与实际持仓分散程度因此需要区分。实施阶段采用平方跟踪误差与换手惩罚，并未要求每只资产持有正权重；零初始权重与换手惩罚可以使新增资产长期保持近零配置。逐资产原因仍需结合当期参考权重和约束进行诊断。
 
 \section{约束诊断与研究边界}
 \subsection{集中度和风险控制消融}

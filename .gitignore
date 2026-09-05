@@ -145,11 +145,9 @@ backtest/V3/*
 !results/tables/comparison_*_returns.csv
 !results/figures/primary_weights.png
 !results/figures/primary_weights.pdf
-!results/figures/primary_weekly_weights_by_year.pdf
 !results/figures/convex_adaptive_*_comparison.pdf
 !results/figures/rebalance_frequency_sensitivity.pdf
 !results/figures/asset_graph_stress_timeline.pdf
-!results/tables/primary_weekly_holdings.xlsx
 results/tables/*.inspect.ndjson
 results/tables/primary_weekly_workbook_data.json
 *.nav

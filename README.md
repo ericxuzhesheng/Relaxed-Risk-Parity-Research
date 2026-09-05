@@ -54,17 +54,13 @@ CVaR 用于描述历史尾部损失，主模型未启用相应惩罚。
 
 ### 每周完整持仓
 
-[下载 Excel](results/tables/primary_weekly_holdings.xlsx)，可按调仓日或 ETF 筛选。共 444 次调仓、13,320 条资产记录，每期保留全部 30 只 ETF，包括零权重。表内列出信息截止日、交易前漂移权重、目标权重、增减仓、换手与成本。
-
-收益分为自然周实际收益和本次新持仓的持有期收益。两者覆盖不同日期，不能混用；样本末周与末次持有期均标明截断。查看[每周收益 CSV](results/tables/primary_weekly_summary.csv)、[全部持仓 CSV](results/tables/primary_weekly_holdings.csv)、[权重矩阵 CSV](results/tables/primary_weekly_weights.csv)或[逐年周度持仓图 PDF](results/figures/primary_weekly_weights_by_year.pdf)。
-
-当前展示图均提供 300 dpi PNG 与同名矢量 PDF。持仓图单列现金，其余 29 只 ETF 使用共同的线性色阶，不合并为“其他”。
+完整周度记录保存在仓库的[持仓明细](results/tables/primary_weekly_holdings.csv)、[权重矩阵](results/tables/primary_weekly_weights.csv)和[周收益](results/tables/primary_weekly_summary.csv)中，论文与答辩展示持仓结构及结果解释。每期保留全部 30 只资产，末周截断单独标注。正文图采用红蓝配色，提供 300 dpi PNG 与矢量 PDF。
 
 ### 数据与复现
 
 资产池含 30 只 ETF，覆盖 8 类资产，另有 6 只候选 ETF 不参与回测。每只资产须有 60 个有效历史观察才可进入组合。缓存覆盖 2007-01-18 至 2026-08-31，上市前价格不回填。
 
-配置 `TUSHARE_TOKEN` 后运行以下命令。Python 依赖见 `requirements.txt`，PDF 编译需要 XeLaTeX 和 BibTeX，Excel 导出需要 Node.js 与 `@oai/artifact-tool`。可通过 `NODE_BINARY` 指定 Node 可执行文件，`NODE_PATH` 指定包目录。
+配置 `TUSHARE_TOKEN` 后运行以下命令。Python 依赖见 `requirements.txt`，PDF 编译需要 XeLaTeX 和 BibTeX。
 
 ```powershell
 python scripts/run_primary_publication_pipeline.py
@@ -78,15 +74,15 @@ python scripts/run_primary_publication_pipeline.py
 | 信息时序与约束检查 | [发布审计](results/tables/primary_publication_audit.json) |
 | 约束实验 | [约束比较](results/tables/primary_constraint_comparison.csv) |
 | 自然年结果 | [年度绩效](results/tables/primary_annual_summary.csv) |
-| 每周持仓与收益 | [完整 Excel](results/tables/primary_weekly_holdings.xlsx) |
+| 每周持仓与收益 | [持仓 CSV](results/tables/primary_weekly_holdings.csv) · [周收益 CSV](results/tables/primary_weekly_summary.csv) |
 | 资产池 | [资产定义](src/asset_universe.py) |
 | 研究边界 | [模型说明](docs/MODEL_GOVERNANCE.md) |
 
-只重建周度表与图表时，依次运行 `python scripts/export_primary_weekly_holdings.py` 和 `python scripts/render_publication_figures.py`。Excel 使用 `node scripts/export_primary_weekly_workbook.mjs` 生成，需要可用的 `@oai/artifact-tool` 包。归档诊断只用于追溯，参考教材不随项目发布。
+周度明细由 `scripts/export_primary_weekly_holdings.py` 导出。归档诊断只用于追溯，参考教材不随项目发布。
 
 ## English
 
-The [weekly workbook](results/tables/primary_weekly_holdings.xlsx) contains all 444 rebalance decisions and 13,320 ETF records, with pretrade weights, targets, changes and costs. Calendar-week returns and subsequent holding-period returns are separate; the final week and holding period are truncated at the sample boundary. All 30 ETFs remain visible, including zero weights. Publication charts have matching vector PDFs and 300-dpi PNGs.
+Complete weekly holdings, target weights and returns are stored in repository CSV files. The thesis and presentation show allocation figures and interpretation. The final sample week is marked as truncated. Charts use a red–blue palette with vector PDF and 300-dpi PNG output.
 
 ### Models and method
 

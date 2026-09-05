@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.public_labels import PUBLICATION_MODELS, validate_publication_models
 
-COLORS = ["#0072B2", "#D55E00", "#009E73", "#CC79A7", "#E69F00", "#555555", "#56B4E9"]
+COLORS = ["#B53B4A", "#194F7D", "#528BB5", "#7C2036", "#DB8790", "#687887", "#92B6D0"]
 STYLES = ["-", "--", "-.", ":", (0,(5,2,1,2)), (0,(3,1)), (0,(1,1))]
 OUT = ROOT / "results/figures"
 
@@ -81,7 +81,7 @@ def frequency():
     d=pd.read_csv(ROOT/'results/tables/rebalance_frequency_sensitivity.csv').set_index('frequency_code').loc[['W','2W','M','Q']]
     fig,axes=plt.subplots(2,2,figsize=(10.8,6.1))
     for j,(ax,col,title) in enumerate(zip(axes.flat,['net_annual_return','sharpe_ratio','max_drawdown','avg_monthly_turnover'],['Net annual return','Sharpe (zero risk-free)','Maximum drawdown','Monthly turnover'])):
-        vals=d[col].to_numpy();ax.bar(np.arange(4),vals,width=.54,color=[COLORS[0]]+['#AAB9C8']*3,zorder=3)
+        vals=d[col].to_numpy();ax.bar(np.arange(4),vals,width=.54,color=[COLORS[0],COLORS[1],COLORS[2],COLORS[6]],zorder=3)
         ax.set_xticks(range(4),['Weekly','Biweekly','Monthly','Quarterly']);ax.set_title(f"({chr(97+j)})  {title}",loc='left',pad=12)
         ax.axhline(0,color='#A0A7AF',lw=.6);ax.grid(axis='y')
         lo=min(0,vals.min());hi=max(0,vals.max());span=hi-lo
@@ -105,24 +105,13 @@ def weekly_weights():
     # Linear color scale is stated explicitly and shared by every non-cash asset.
     im=b.imshow(other.to_numpy().T,aspect='auto',interpolation='nearest',cmap='Blues',vmin=0,vmax=float(other.max().max()))
     b.set_yticks(range(len(other.columns)),other.columns,fontfamily='Microsoft YaHei',fontsize=8)
-    b.set_title('(b)  All remaining ETFs at every weekly rebalance',loc='left',pad=12)
+    b.set_title('(b)  Non-cash ETF weights',loc='left',pad=12)
     ticks=[i for i,date in enumerate(d.index) if i==0 or date.year!=d.index[i-1].year]
     b.set_xticks(ticks,[str(d.index[i].year) for i in ticks]);b.set_xlabel('Rebalance date')
     b.tick_params(axis='y',length=0)
     cb=fig.colorbar(im,ax=[a,b],fraction=.025,pad=.02);cb.ax.yaxis.set_major_formatter(PercentFormatter(1));cb.set_label('Target weight (linear scale)')
     fig.subplots_adjust(left=.17,right=.86,bottom=.07,top=.96,hspace=.28)
     save(fig,'primary_weights')
-    # One page per year exposes every week; full numeric weights remain in CSV/XLSX.
-    from matplotlib.backends.backend_pdf import PdfPages
-    with PdfPages(OUT/'primary_weekly_weights_by_year.pdf') as pdf:
-        for year,g in d.groupby(d.index.year):
-            fig,ax=plt.subplots(figsize=(14,9))
-            im=ax.imshow(g.to_numpy().T,aspect='auto',interpolation='nearest',cmap='Blues',vmin=0,vmax=1)
-            ax.set_yticks(range(len(g.columns)),g.columns,fontfamily='Microsoft YaHei',fontsize=8)
-            ax.set_xticks(range(len(g)),g.index.strftime('%m-%d'),rotation=90,fontsize=6)
-            ax.set_title(f'{year}  |  Weekly target weights',loc='left',pad=15)
-            ax.set_xlabel('Actual rebalance date');fig.colorbar(im,ax=ax,format=PercentFormatter(1),fraction=.025,pad=.02)
-            fig.tight_layout();pdf.savefig(fig,bbox_inches='tight');plt.close(fig)
 
 
 def correlation():

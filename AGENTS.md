@@ -130,7 +130,7 @@ Candidate universe: **6 ETFs**, excluded from the active 30 and from backtests u
 
 ## Pipeline Run Protocol (mandatory)
 
-The publication pipeline exports every weekly holding and redraws all currently published figures from saved results. `primary_weekly_holdings.xlsx` contains all 30 ETFs at each decision, with separate calendar-week and holding-period returns. Retain sample-boundary flags. Excel export requires Node.js and `@oai/artifact-tool`; `NODE_BINARY` and `NODE_PATH` can select the local runtime. Keep matching vector PDF and 300-dpi PNG figures.
+The publication pipeline stores complete weekly holdings in repository CSV files. Do not embed detailed weekly holdings tables in thesis or presentation appendices. Keep all 30 ETFs at each decision and sample-boundary flags. Do not generate a standalone weekly workbook or annual holdings PDF. Publication charts use a red–blue palette with matching vector PDF and 300-dpi PNG output.
 
 **Every pipeline run must follow this sequence:**
 

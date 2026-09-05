@@ -23,7 +23,6 @@ def main():
         [python, "scripts/generate_thesis_numbers.py"],
         [python, "scripts/generate_primary_publication.py"],
         [python, "scripts/export_primary_weekly_holdings.py"],
-        [os.environ.get("NODE_BINARY", "node"), "scripts/export_primary_weekly_workbook.mjs"],
         [python, "scripts/render_publication_figures.py"],
     ]
     try:

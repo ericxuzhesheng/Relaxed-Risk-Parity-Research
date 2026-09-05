@@ -1,7 +1,6 @@
 """Export every weekly decision and reconcile calendar-week and holding-period P&L."""
 from pathlib import Path
 import sys
-import json
 import numpy as np
 import pandas as pd
 
@@ -86,20 +85,6 @@ def main():
     weekly.to_csv(tables / "primary_weekly_summary.csv", index=False, encoding="utf-8-sig")
     holdings.to_csv(tables / "primary_weekly_holdings.csv", index=False, encoding="utf-8-sig")
     wide.to_csv(tables / "primary_weekly_weights.csv", encoding="utf-8-sig")
-    notes = [
-        "Improved Convex Adaptive Global RRP",
-        "每次调仓保留全部 30 只 ETF，零权重和微小权重不删除。",
-        "自然周收益覆盖该周全部实际交易日，不能归因于周末新持仓。",
-        "目标权重于调仓日按既有记账约定生效，持有期截至下一调仓日前一交易日。",
-        "最后一周与最后持有期截至样本终点，属于截断观察。首个调仓日前的收益包含在自然周收益中。",
-        "权重变化为目标权重减交易前漂移权重，换手为各资产变化绝对值之和。",
-        "成本为换手乘以单边 3 bps。权重、收益与成本使用小数单位，0.01 表示 1%。",
-        "信息截止日严格早于调仓日。实际成交价和容量需独立验证。",
-    ]
-    payload = {"notes": notes, "summary": [weekly.columns.tolist(), *weekly.values.tolist()],
-               "holdings": [holdings.columns.tolist(), *holdings.values.tolist()],
-               "weights": [["rebalance_date", *wide.columns.tolist()], *wide.reset_index().values.tolist()]}
-    (tables / "primary_weekly_workbook_data.json").write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
     print(f"Validated {len(weekly)} weeks, {len(holdings)} asset rows, 30 assets per week")
 
 

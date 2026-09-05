@@ -10,6 +10,8 @@
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{colortbl}
+\definecolor{holdingRed}{HTML}{B53B4A}
+\definecolor{holdingBlue}{HTML}{194F7D}
 
 % 图片搜索路径。results/figures 和本地 logo
 \graphicspath{{../../results/figures/}{assets/logos/}}
@@ -33,7 +35,7 @@
 \newcommand{\figframe}[4]{%
   \begin{frame}{#1}
     \begin{center}
-      \includegraphics[width=#3\textwidth,height=0.62\textheight,keepaspectratio]{#2}
+      \includegraphics[width=#3\textwidth,height=0.70\textheight,keepaspectratio]{#2}
     \end{center}
     \begin{center}\scriptsize #4\end{center}
   \end{frame}%
@@ -147,7 +149,7 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 \item 现金单列，其余资产使用共同线性色阶
 \item 平均现金权重 \primaryCashMean
 \item 最高现金权重 \primaryCashMax
-\item 逐年图可查看每次调仓日期
+\item 仓库权重矩阵保留每次调仓记录
 \end{itemize}
 \end{column}
 \end{columns}
@@ -181,16 +183,14 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 2026 年仅截至 \evalEndDate。表中列示年化指标。
 \end{frame}
 \figframe{主模型参数下的频率对照}{rebalance_frequency_sensitivity.pdf}{0.86}{仅改变周、双周、月、季度日历。周频为指定配置，排名属于描述性结果}
-\begin{frame}{每周完整配置记录}
+\begin{frame}{周度持仓的阅读口径}
 \begin{itemize}
-\item 444 次调仓，13,320 条资产记录，每期保留全部 30 只 ETF
-\item 按调仓日或 ETF 筛选，查看交易前权重、目标权重与增减仓
-\item 换手与成本逐项核对，信息截止日严格早于调仓日
-\item 自然周收益与新持仓的持有期收益分别列示
-\item 样本末周和最后持有期标明截断，不视作完整周
+\item 完整周度持仓保存在仓库 CSV 中，可逐期核查
+\item 记录包含目标权重、漂移权重、周收益、换手与成本
+\item 11 只 ETF 的权重始终接近零，资产池数量不等于实际分散程度
+\item 自然周收益覆盖该周实际交易日，不能归因于周末新持仓
+\item 末周为样本边界截断观察
 \end{itemize}
-\medskip
-\scriptsize 完整工作簿与对应 CSV 位于 results/tables；逐年周度图位于 results/figures。
 \end{frame}
 \begin{frame}{验证与研究边界}
 \begin{itemize}
