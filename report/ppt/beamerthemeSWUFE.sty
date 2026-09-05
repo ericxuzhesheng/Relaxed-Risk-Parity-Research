@@ -135,22 +135,17 @@
     % Gold baseline accent.
     \fill[swufeGold] (current page.south west) rectangle ([yshift=0.16cm]current page.south east);
   \end{tikzpicture}
-  \vspace*{0.4cm}
-  {\sffamily\bfseries\normalsize\color{swufeGold}\rule[0.12em]{0.45em}{0.45em}\hspace{0.4em}}{\sffamily\bfseries\normalsize\color{white}\swufeUniversityCN\par}
-  \vspace{0.55cm}
-  {\usebeamerfont{title}\color{white}\inserttitle\par}
-  \vspace{0.35cm}
-  {\color{swufeGold}\rule{2.6cm}{2.2pt}\par}
-  \vspace{0.3cm}
-  {\usebeamerfont{subtitle}\color{white!88}\insertsubtitle\par}
-  \vfill
-  {\sffamily\tiny\setlength{\extrarowheight}{1.0pt}%
-    \begin{tabular}{@{}>{\bfseries\color{swufeGold}}l >{\color{white}}p{3.7cm} @{\hspace{0.5cm}}>{\bfseries\color{swufeGold}}l >{\color{white}}p{4.0cm}@{}}
-      学生姓名 & \insertauthor & 学号 & \swufeStudentID \\
-      学院/专业 & \swufeSchool\ /\ \swufeMajor & 指导老师 & \swufeSupervisor \\
-      答辩日期 & \insertdate & 学校 & \swufeUniversityCN \\
-    \end{tabular}\par}
-  \vspace*{0.5cm}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north west,text=white,font=\sffamily\bfseries\normalsize] at ([xshift=0.85cm,yshift=-0.6cm]current page.north west) {\swufeUniversityCN};
+    \node[anchor=north west,text=white,text width=13.8cm,align=left,font=\sffamily\bfseries\LARGE] at ([xshift=0.85cm,yshift=-1.8cm]current page.north west) {\inserttitle};
+    \draw[swufeGold,line width=2pt] ([xshift=0.85cm,yshift=-3.55cm]current page.north west) -- ++(2.6cm,0);
+    \node[anchor=north west,text=white,font=\sffamily\normalsize] at ([xshift=0.85cm,yshift=-3.9cm]current page.north west) {\insertsubtitle};
+    \node[anchor=south west,text=white,text width=13.5cm,align=left,font=\sffamily\small] at ([xshift=0.85cm,yshift=0.65cm]current page.south west) {
+      \insertauthor\quad\swufeStudentID\qquad 指导老师\quad\swufeSupervisor\\[0.3em]
+      \swufeSchool\quad\swufeMajor\\[0.3em]
+      \insertdate
+    };
+  \end{tikzpicture}
 }
 
 \setbeamertemplate{frametitle}{%

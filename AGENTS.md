@@ -21,19 +21,17 @@ This is a portfolio optimization and risk-budgeting research project, not a shor
 
 ## Core Models and Public Labels
 
-Use the following public-facing labels in README, tables, figures, and reports:
+Use exactly these seven model names in publication prose, tables and figures. Parameter and frequency variants are experiments, not additional models.
 
-| Public Label | Internal Role |
+| Public label | Role |
 |---|---|
-| Standard Risk Parity | Baseline risk-budgeting reference |
-| Local Relaxed Risk Parity | RRP in local asset pool only |
-| Global RRP | Global risk-budgeting comparison |
-| Convex Adaptive Global RRP | Convexified relaxed risk-budgeting approximation |
-| Improved Convex Adaptive Global RRP | Weekly primary convex model, no cash or asset concentration caps |
-| HRP Benchmark | Hierarchical risk-allocation benchmark |
-| HERC Benchmark | Hierarchical risk-allocation benchmark |
-
-**Do not use:** V1 / V2 / V3 / V3_Global_RRP / Dynamic_RRP_before — these are internal variable names only.
+| Improved Convex Adaptive Global RRP | Primary weekly model |
+| Global RRP | Comparison |
+| Convex Adaptive Global RRP | Comparison |
+| HRP Benchmark | Comparison |
+| HERC Benchmark | Comparison |
+| Equal Weight | Comparison |
+| 60/40 Benchmark | Comparison |
 
 ---
 
@@ -42,7 +40,7 @@ Use the following public-facing labels in README, tables, figures, and reports:
 Current model positioning:
 
 - **Improved Convex Adaptive Global RRP** is the primary model: weekly, no cash-group or individual-asset concentration caps, long-only and unlevered. Non-cash group bounds and turnover controls remain.
-- **Global RRP**, Convex Adaptive Global RRP, HRP/HERC, Equal Weight and 60/40 are comparisons.
+- **Global RRP**, Convex Adaptive Global RRP, HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are comparisons.
 - Headline Sharpe and Sortino use rf=0. Report the lagged ChinaBond opportunity-cost Sharpe separately.
 - Selection of the weekly unconcentrated specification followed historical research. Do not claim untouched OOS model-selection evidence or future guarantees.
 - The frozen schedule uses candidate_03, whose CVaR penalty is zero. Do not attribute performance to an active CVaR constraint.
@@ -131,6 +129,8 @@ Candidate universe: **6 ETFs**, excluded from the active 30 and from backtests u
 ---
 
 ## Pipeline Run Protocol (mandatory)
+
+The publication pipeline exports every weekly holding and redraws all currently published figures from saved results. `primary_weekly_holdings.xlsx` contains all 30 ETFs at each decision, with separate calendar-week and holding-period returns. Retain sample-boundary flags. Excel export requires Node.js and `@oai/artifact-tool`; `NODE_BINARY` and `NODE_PATH` can select the local runtime. Keep matching vector PDF and 300-dpi PNG figures.
 
 **Every pipeline run must follow this sequence:**
 

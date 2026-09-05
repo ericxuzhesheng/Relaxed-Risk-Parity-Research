@@ -28,6 +28,7 @@ if str(ROOT_DIR) not in sys.path:
 from src.asset_universe import ETF_UNIVERSE, AssetMapping
 from src.risk_free import load_monthly_risk_free
 from src.utils import get_config, resolve_path
+from src.public_labels import validate_publication_models
 
 
 logger = logging.getLogger("generate_thesis_numbers")
@@ -700,6 +701,7 @@ def main() -> None:
             f"performance summary not found at {summary_path}; run scripts/run_convex_adaptive_rrp.py first"
         )
     summary = pd.read_csv(summary_path)
+    validate_publication_models(summary["model"])
 
     stats_path = resolve_path("results/tables/asset_descriptive_statistics.csv")
     if not Path(stats_path).exists():

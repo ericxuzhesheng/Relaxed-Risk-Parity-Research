@@ -113,7 +113,7 @@ def plot_frequency_sensitivity(table: pd.DataFrame, output_path: Path) -> None:
                 va="bottom" if y >= 0 else "top",
                 fontsize=9,
             )
-    fig.suptitle("Rebalance Frequency Sensitivity: Improved Convex Adaptive Global RRP")
+    fig.suptitle("Rebalance Frequency Sensitivity")
     fig.tight_layout(rect=[0, 0, 1, 0.94])
     fig.savefig(output_path, dpi=180, bbox_inches="tight")
     plt.close(fig)

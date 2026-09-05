@@ -4,102 +4,112 @@
 
 ## 中文
 
-### 主模型与研究问题
+### 研究与模型
 
-**Improved Convex Adaptive Global RRP** 是本项目主模型：在中国市场可交易的 30 只全球多资产 ETF 中，以凸优化生成多头、无杠杆配置，每周最后一个实际交易日调仓。模型取消现金组与单资产集中度上限，保留其他组别边界、换手惩罚、80% 单期换手硬上限和单边 3 bps 成本。Global RRP、基础凸模型、HRP、HERC、等权及 60/40 均为对照。
+项目研究风险预算和实施约束如何影响全球 ETF 配置。正式比较包含七个模型。**Improved Convex Adaptive Global RRP** 为主模型，每周最后一个实际交易日调仓。其余六个模型作为月频对照，名单见下表。
 
-研究检验风险预算参考与实施约束如何影响组合，而不是直接最大化全样本夏普。第一阶段求解凸对数障碍风险预算参考，第二阶段跟踪参考权重并惩罚换手。当前主模型的方差、收益奖励与 CVaR 惩罚系数均为零，不能将其回撤表现归因于 CVaR 约束。
+主模型先求风险预算参考权重，再通过凸优化平衡参考权重偏离与换手成本。它采用多头、无杠杆配置，取消现金组和单资产集中度上限，保留其他组别边界及 80% 单期换手上限。当前 CVaR 惩罚为零，尾部风险通过历史损失指标观察。
 
-### 主要实证结果
+### 绩效与解释
 
-评价区间 **2018-01-02 至 2026-08-31**，243 日年化，无风险利率固定为 **0**，保留实际极端收益。主模型为周频，其余核心模型保留月频，频率影响另作同参数对照。每项指标均扣除同一单边 3 bps 约定成本，不代表实测成交成本。
+统一评价区间为 **2018-01-02 至 2026-08-31**，按 243 日年化，无风险利率为 **0**。净收益扣除单边 3 bps 的约定成本，收益数据保留真实极端值。
 
-| Model | Net annual return | Annual vol | Sharpe | Sortino | Max drawdown | Calmar | Avg monthly turnover |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | 2.92% | 1.56% | 1.859 | 2.648 | -2.63% | 1.110 | 4.36% |
-| Global RRP | 2.40% | 0.58% | 4.103 | 6.496 | -1.01% | 2.384 | 12.89% |
-| Convex Adaptive Global RRP | 5.87% | 6.02% | 0.979 | 1.382 | -8.18% | 0.718 | 2.59% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 10.758 | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 1.597 | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 0.505 | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 0.348 | 4.21% |
+| 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
+|---|---:|---:|---:|---:|---:|---:|
+| Improved Convex Adaptive Global RRP | 2.92% | 1.56% | 1.859 | 2.648 | -2.63% | 4.36% |
+| Global RRP | 2.40% | 0.58% | 4.103 | 6.496 | -1.01% | 12.89% |
+| Convex Adaptive Global RRP | 5.87% | 6.02% | 0.979 | 1.382 | -8.18% | 2.59% |
+| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
+| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
+| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
+| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
 
-来源：[权威绩效 CSV](results/tables/convex_adaptive_performance_summary.csv)。主模型净年化收益 **2.92%**、波动 **1.56%**、夏普 **1.859**、最大回撤 **-2.63%**。平均现金类 ETF 权重 **70.23%**，最高 **86.61%**。以滞后一月的 1 年期中债国债收益率作为机会成本，同一组合夏普为 **0.529**。零利率是报告口径，不增加实际收益；近现金对照可能呈现更高夏普。
+数字来自[绩效表](results/tables/convex_adaptive_performance_summary.csv)。主模型平均持有 **70.23%** 现金类 ETF，最高 **86.61%**。同一收益路径以滞后一月的中债 1 年期国债利率为机会成本时，夏普为 **0.529**。高现金权重有助于解释低波动，也使零利率夏普对评价口径较敏感。
 
-主模型规格经历史约束实验后选定，冻结既有候选日历（当前全部为 `candidate_03`）并统一施加周频和取消集中度上限的变换。每期风险输入只使用调仓日前数据，但模型规格选择是事后的，结果属于探索性历史证据，不能称作未参与选择的独立样本外验证，也不保证未来夏普达到 1.0。
+主模型配置是在查看历史约束实验后选定的。逐期输入只使用调仓日前数据，规格选择仍属于事后研究。后续需要冻结配置并用新增数据检验，历史夏普不保证未来表现。
 
-### 结果与约束解释
+### 图表
 
 ![累计净值](results/figures/convex_adaptive_nav_comparison.png)
 
-净值图比较主模型与所有核心对照，结合收益与风险尺度解读，不按主模型身份预设胜负。
+累计净值比较七个模型的收益路径。
 
-![回撤](results/figures/convex_adaptive_drawdown_comparison.png)
+![历史回撤](results/figures/convex_adaptive_drawdown_comparison.png)
 
-回撤体现历史风险路径；现金集中度是解释低波动的重要组成部分。
+回撤与现金权重共同反映组合承担的风险。
 
-![换手](results/figures/convex_adaptive_turnover_comparison.png)
+![平均月度换手](results/figures/convex_adaptive_turnover_comparison.png)
 
-月均换手是按自然月汇总的交易量，主模型实际每周调仓。
+换手按自然月汇总，主模型实际每周调仓。
 
-![CVaR](results/figures/convex_adaptive_cvar_comparison.png)
+![历史尾部损失](results/figures/convex_adaptive_cvar_comparison.png)
 
-CVaR 为历史尾部损失诊断。研究约束采用 95% 精确经验 CVaR（分位点质量可拆分），核心对照表保留项目历史尾均值定义。
+CVaR 用于描述历史尾部损失，主模型未启用相应惩罚。
 
-![调仓频率](results/figures/rebalance_frequency_sensitivity.png)
+![调仓频率比较](results/figures/rebalance_frequency_sensitivity.png)
 
-频率实验在主模型参数下仅改变日历。周频是当前指定配置，频率排名属于描述性结果。
+频率实验保持主模型参数不变，仅调整日历，不另计为模型。
 
-![主模型权重](results/figures/primary_weights.png)
+![持仓结构](results/figures/primary_weights.png)
 
-### 可复现入口
+### 每周完整持仓
 
-在已配置 `TUSHARE_TOKEN` 的环境中执行：
+[下载 Excel](results/tables/primary_weekly_holdings.xlsx)，可按调仓日或 ETF 筛选。共 444 次调仓、13,320 条资产记录，每期保留全部 30 只 ETF，包括零权重。表内列出信息截止日、交易前漂移权重、目标权重、增减仓、换手与成本。
+
+收益分为自然周实际收益和本次新持仓的持有期收益。两者覆盖不同日期，不能混用；样本末周与末次持有期均标明截断。查看[每周收益 CSV](results/tables/primary_weekly_summary.csv)、[全部持仓 CSV](results/tables/primary_weekly_holdings.csv)、[权重矩阵 CSV](results/tables/primary_weekly_weights.csv)或[逐年周度持仓图 PDF](results/figures/primary_weekly_weights_by_year.pdf)。
+
+当前展示图均提供 300 dpi PNG 与同名矢量 PDF。持仓图单列现金，其余 29 只 ETF 使用共同的线性色阶，不合并为“其他”。
+
+### 数据与复现
+
+资产池含 30 只 ETF，覆盖 8 类资产，另有 6 只候选 ETF 不参与回测。每只资产须有 60 个有效历史观察才可进入组合。缓存覆盖 2007-01-18 至 2026-08-31，上市前价格不回填。
+
+配置 `TUSHARE_TOKEN` 后运行以下命令。Python 依赖见 `requirements.txt`，PDF 编译需要 XeLaTeX 和 BibTeX，Excel 导出需要 Node.js 与 `@oai/artifact-tool`。可通过 `NODE_BINARY` 指定 Node 可执行文件，`NODE_PATH` 指定包目录。
 
 ```powershell
 python scripts/run_primary_publication_pipeline.py
 ```
 
-该入口先刷新 ETF 和利率数据，重算主模型、核心对照、频率实验与描述统计，生成论文数字和权重快照，编译论文与答辩 PDF，最后清理临时文件。使用固定资产池、评价日期和成本，不扩展参数搜索。依赖见 `requirements.txt`；PDF 编译需要 XeLaTeX 和 BibTeX。
+入口依次刷新数据、运行回测、生成图表与论文数字、编译 PDF 并清理临时文件。
 
-| 核验内容 | 文件 |
+| 内容 | 文件 |
 |---|---|
-| 主模型实际配置 | [primary_model_configuration.json](results/tables/primary_model_configuration.json) |
-| 时序、约束与复现检查 | [primary_publication_audit.json](results/tables/primary_publication_audit.json) |
-| 集中度与风险约束对照 | [primary_constraint_comparison.csv](results/tables/primary_constraint_comparison.csv) |
-| 分自然年结果 | [primary_annual_summary.csv](results/tables/primary_annual_summary.csv) |
-| 期末持仓快照（非整月指令） | [next_month_holdings.csv](results/tables/next_month_holdings.csv) |
-| 资产池单一来源 | [asset_universe.py](src/asset_universe.py) |
-| 模型与证据边界 | [MODEL_GOVERNANCE.md](docs/MODEL_GOVERNANCE.md) |
+| 主模型参数 | [配置记录](results/tables/primary_model_configuration.json) |
+| 信息时序与约束检查 | [发布审计](results/tables/primary_publication_audit.json) |
+| 约束实验 | [约束比较](results/tables/primary_constraint_comparison.csv) |
+| 自然年结果 | [年度绩效](results/tables/primary_annual_summary.csv) |
+| 每周持仓与收益 | [完整 Excel](results/tables/primary_weekly_holdings.xlsx) |
+| 资产池 | [资产定义](src/asset_universe.py) |
+| 研究边界 | [模型说明](docs/MODEL_GOVERNANCE.md) |
 
-资产池覆盖 8 类，另有 6 只候选 ETF 不参与回测。每只 ETF 至少具有 60 个有效历史观察方可进入当期组合。收益只前向填充已出现的价格，不回填上市前数据，不按全样本均值和标准差剔除极端值。缓存实际覆盖 2007-01-18 至 2026-08-31。
-
-`results/legacy_monthly_reference/` 与其他尚未纳入本次主模型发布入口的历史诊断仅供追溯，不作为当前主模型的显著性或稳健性证明。参考教材 PDF/EPUB 不包含在发布提交中。
+只重建周度表与图表时，依次运行 `python scripts/export_primary_weekly_holdings.py` 和 `python scripts/render_publication_figures.py`。Excel 使用 `node scripts/export_primary_weekly_workbook.mjs` 生成，需要可用的 `@oai/artifact-tool` 包。归档诊断只用于追溯，参考教材不随项目发布。
 
 ## English
 
-### Primary specification
+The [weekly workbook](results/tables/primary_weekly_holdings.xlsx) contains all 444 rebalance decisions and 13,320 ETF records, with pretrade weights, targets, changes and costs. Calendar-week returns and subsequent holding-period returns are separate; the final week and holding period are truncated at the sample boundary. All 30 ETFs remain visible, including zero weights. Publication charts have matching vector PDFs and 300-dpi PNGs.
 
-**Improved Convex Adaptive Global RRP** is the designated primary model. It rebalances on the last actual trading day of each week, removes the cash-group and individual-asset concentration caps, and retains the other group bounds, turnover penalty, 80% turnover limit and 3-bp one-way cost assumption. It is long-only and unlevered. Global RRP, the base convex model, HRP, HERC, Equal Weight and 60/40 are comparisons.
+### Models and method
 
-Weights are produced by a convex risk-budget reference followed by a convex tracking and turnover problem. The active specification has zero expected-return reward, zero variance penalty and zero CVaR penalty. CVaR is a diagnostic for this specification.
+The project compares seven models. **Improved Convex Adaptive Global RRP** is the primary model and rebalances on the last trading day of each week. The other six models retain monthly schedules.
 
-### Performance and interpretation
+The primary model tracks a convex risk-budget reference and penalizes turnover. It is long-only and unlevered, with no cash-group or individual-asset concentration cap. Other group bounds and the 80% turnover limit remain. The active CVaR penalty is zero.
 
-All headline metrics use unfiltered realized returns, the same 2018-01-02 to 2026-08-31 evaluation window, 243 trading days per year and a **zero risk-free rate**. The primary model is weekly; core comparisons retain their monthly schedules. Separate frequency experiments isolate the calendar effect.
+### Performance
 
-| Model | Net annual return | Annual vol | Sharpe | Sortino | Max drawdown | Calmar | Avg monthly turnover |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | 2.92% | 1.56% | 1.859 | 2.648 | -2.63% | 1.110 | 4.36% |
-| Global RRP | 2.40% | 0.58% | 4.103 | 6.496 | -1.01% | 2.384 | 12.89% |
-| Convex Adaptive Global RRP | 5.87% | 6.02% | 0.979 | 1.382 | -8.18% | 0.718 | 2.59% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 10.758 | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 1.597 | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 0.505 | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 0.348 | 4.21% |
+The common evaluation window is **2018-01-02 to 2026-08-31**. Returns retain extreme observations, deduct the assumed 3-bp one-way cost, and use 243-day annualization with a **zero risk-free rate**.
 
-The primary model averages **70.23%** in the money-market ETF, reaching **86.61%**. Its Sharpe is **0.529** with the lagged one-year ChinaBond government yield as opportunity cost, compared with **1.859** at zero risk-free. The convention changes the reported ratio, not portfolio returns. Near-cash comparisons can have higher zero-rate Sharpe ratios.
+| Model | Net return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
+|---|---:|---:|---:|---:|---:|---:|
+| Improved Convex Adaptive Global RRP | 2.92% | 1.56% | 1.859 | 2.648 | -2.63% | 4.36% |
+| Global RRP | 2.40% | 0.58% | 4.103 | 6.496 | -1.01% | 12.89% |
+| Convex Adaptive Global RRP | 5.87% | 6.02% | 0.979 | 1.382 | -8.18% | 2.59% |
+| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
+| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
+| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
+| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
 
-The specification was chosen after inspecting historical constraint experiments. It replays a frozen candidate schedule with uniform weekly and concentration-cap changes. Inputs at each rebalance use prior data, but specification selection is retrospective. These results are exploratory historical evidence, not untouched out-of-sample model-selection evidence or a future performance guarantee.
+The primary model averages **70.23%** in the money-market ETF, reaching **86.61%**. Its Sharpe is **0.529** when lagged one-year ChinaBond yields are used as opportunity cost. Cash concentration and the rate convention both matter when interpreting the headline ratio.
 
-Run `python scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set to reproduce the current publication. The authoritative CSV, audit, configuration and annual results are linked above. Historical diagnostics outside this publication pipeline are archival and do not validate the current primary model. Reference textbooks are excluded from the published repository changes.
+The specification was selected after reviewing historical experiments. Rebalance inputs use prior data, while specification selection is retrospective. Validation on new data is still required. The designation of a primary model does not imply the highest Sharpe among comparisons.
+
+Run `python scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set to reproduce the results and PDFs. The linked files above provide parameters, audits, annual results and holdings. Constraint and frequency variants are experiments within the seven-model study. Archived diagnostics do not validate the current specification.

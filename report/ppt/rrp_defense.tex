@@ -1,8 +1,8 @@
 % ============================================================
 %  宽松风险平价答辩 PPT
-%  编译：xelatex rrp_defense.tex  →  rrp_defense.pdf
-%  位置：report/defense_ppt/
-%  图片：../../results/figures/（相对于本文件）
+%  编译。xelatex rrp_defense.tex  →  rrp_defense.pdf
+%  位置。report/defense_ppt/
+%  图片。../../results/figures/（相对于本文件）
 % ============================================================
 \documentclass[aspectratio=169,11pt]{beamer}
 \usepackage{beamerthemeSWUFE}
@@ -11,7 +11,7 @@
 \usepackage{array}
 \usepackage{colortbl}
 
-% 图片搜索路径：results/figures 和本地 logo
+% 图片搜索路径。results/figures 和本地 logo
 \graphicspath{{../../results/figures/}{assets/logos/}}
 
 % ── 封面信息 ─────────────────────────────────────────────────────────────────
@@ -24,11 +24,11 @@
 \supervisor{王磊}
 \date{2026年8月}
 
-% ── 数值宏：与论文共用同一流水线生成文件 ───────────────────────────────────────
+% ── 数值宏。与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
 \input{../thesis_latex/generated_primary_numbers.tex}
 
-% ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
+% ── 辅助命令。图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
 \newcommand{\figframe}[4]{%
   \begin{frame}{#1}
@@ -53,7 +53,7 @@
 \end{frame}
 \begin{frame}{数据与评价口径}
 \begin{itemize}
-\item 评价区间：\evalStartDate{} 至 \evalEndDate{}
+\item 评价区间为 \evalStartDate{} 至 \evalEndDate{}
 \item \primaryObservations{} 个日收益观察，243 日年化，无风险利率为零
 \item 主模型每周最后一个实际交易日调仓，共 \primaryRebalances{} 次
 \item 单边成本 \txCostBps{} bps，为固定研究约定
@@ -88,15 +88,15 @@
 \end{tabular}
 \medskip
 
-这些参数继承自研究配置，未宣称为实测最优值。现金无额外上限，但受多头单位预算约束。
+参数沿用研究配置。现金权重受多头单位预算约束。
 \end{frame}
 \begin{frame}{时序与选择边界}
 \begin{itemize}
 \item 每期优化只使用严格早于调仓日的数据
 \item 沿用当日目标权重乘当日收益并扣成本的日频记账约定
-\item 冻结既有候选日历，基础候选为 \texttt{candidate\_03}
+\item 固定参数日历，统一采用周频和当前约束
 \item 周频与取消上限规格是在历史实验后选定的
-\item 因此属于探索性历史证据，不是独立样本外模型选择验证
+\item 结果属于探索性历史证据，需用新增样本验证
 \end{itemize}
 \end{frame}
 \section{实证结果}
@@ -123,21 +123,37 @@ Sortino & \improvedSortino\\
 Improved Convex Adaptive Global RRP & \improvedNetReturn & \improvedVolatility & \improvedSharpe & \improvedMaxDD\\
 Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalMaxDD\\
 Convex Adaptive Global RRP & \convexNetReturn & \convexVolatility & \convexSharpe & \convexMaxDD\\
-HRP & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD\\
-HERC & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD\\
+HRP Benchmark & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD\\
+HERC Benchmark & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD\\
 Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightMaxDD\\
-60/40 & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD\\\bottomrule
+60/40 Benchmark & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD\\\bottomrule
 \end{tabular}}
 \medskip
 
-主模型为周频，其余核心对照为月频。主模型身份不表示每项指标排名第一。
+主模型为周频，其余核心对照为月频。比较时同时考虑收益、风险与换手。
 \end{frame}
-\figframe{累计净值}{convex_adaptive_nav_comparison.png}{0.88}{相同日期与成本口径，结合风险尺度理解绝对收益差异}
-\figframe{历史回撤}{convex_adaptive_drawdown_comparison.png}{0.88}{主模型最大回撤为 \improvedMaxDD，未启用 CVaR 惩罚}
-\figframe{换手与实施成本}{convex_adaptive_turnover_comparison.png}{0.88}{换手影响成本。固定 3 bps 未计入实测价差、容量与市场冲击}
-\figframe{现金集中度}{primary_weights.png}{0.92}{平均现金类 ETF 权重 \primaryCashMean，最高 \primaryCashMax}
+\figframe{累计净值}{convex_adaptive_nav_comparison.pdf}{0.88}{相同日期与成本口径，结合风险尺度理解绝对收益差异}
+\figframe{历史回撤}{convex_adaptive_drawdown_comparison.pdf}{0.88}{主模型最大回撤为 \improvedMaxDD，未启用 CVaR 惩罚}
+\figframe{换手与实施成本}{convex_adaptive_turnover_comparison.pdf}{0.88}{换手影响成本。固定 3 bps 未计入实测价差、容量与市场冲击}
+\begin{frame}{逐周持仓结构}
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\includegraphics[width=\linewidth,height=0.76\textheight,keepaspectratio]{primary_weights.pdf}
+\end{column}
+\begin{column}{0.40\textwidth}
+\small
+\begin{itemize}
+\item 全部 30 只 ETF，逐周展示
+\item 现金单列，其余资产使用共同线性色阶
+\item 平均现金权重 \primaryCashMean
+\item 最高现金权重 \primaryCashMax
+\item 逐年图可查看每次调仓日期
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
 \begin{frame}{无风险利率与夏普解释}
-同一组合、同一权重、同一净收益路径：
+同一收益路径按两种利率计算夏普。
 \begin{center}
 \begin{tabular}{lr}
 \toprule
@@ -146,7 +162,7 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 滞后一月的中债 1 年期国债收益率 & \primaryChinaBondSharpe\\\bottomrule
 \end{tabular}
 \end{center}
-较高现金权重与极低波动会显著影响零利率比率。口径变化不创造额外收益，近现金对照也可能得到更高夏普。
+现金占比较高，夏普对利率口径较敏感。近现金对照也可能得到更高比率。
 \end{frame}
 \section{诊断与局限}
 \begin{frame}{约束消融}
@@ -162,15 +178,19 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 \input{../thesis_latex/generated_primary_annual.tex}
 \medskip
 
-2026 年仅截至 \evalEndDate。年度年化指标不是完整年度已实现收益。
+2026 年仅截至 \evalEndDate。表中列示年化指标。
 \end{frame}
-\figframe{主模型参数下的频率对照}{rebalance_frequency_sensitivity.png}{0.86}{仅改变周、双周、月、季度日历。周频为指定配置，排名属于描述性结果}
-\begin{frame}{期末持仓快照}
-\centering
-\input{generated_next_month_holdings_slide.tex}
+\figframe{主模型参数下的频率对照}{rebalance_frequency_sensitivity.pdf}{0.86}{仅改变周、双周、月、季度日历。周频为指定配置，排名属于描述性结果}
+\begin{frame}{每周完整配置记录}
+\begin{itemize}
+\item 444 次调仓，13,320 条资产记录，每期保留全部 30 只 ETF
+\item 按调仓日或 ETF 筛选，查看交易前权重、目标权重与增减仓
+\item 换手与成本逐项核对，信息截止日严格早于调仓日
+\item 自然周收益与新持仓的持有期收益分别列示
+\item 样本末周和最后持有期标明截断，不视作完整周
+\end{itemize}
 \medskip
-
-\footnotesize 展示期末最大持仓，不是下月整月固定指令。周频模型会在下一再平衡点重新求解。
+\scriptsize 完整工作簿与对应 CSV 位于 results/tables；逐年周度图位于 results/figures。
 \end{frame}
 \begin{frame}{验证与研究边界}
 \begin{itemize}
@@ -186,12 +206,12 @@ Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightShar
 \begin{itemize}
 \item 周频凸优化主模型在零利率口径下达到 \improvedSharpe{} 夏普
 \item 净收益为 \improvedNetReturn，平均现金类 ETF 权重为 \primaryCashMean
-\item 约束消融区分结构变化与统计口径变化
+\item 约束消融解释实际权重变化
 \item 其余模型提供对照，未来验证应冻结规格并使用新增数据
 \end{itemize}
 \medskip
 
-历史结果不保证未来收益或夏普达到同一水平。
+后续用新增数据检验稳定性。
 \end{frame}
 \begin{frame}[plain]\centering\Huge 谢谢各位老师\end{frame}
 \end{document}

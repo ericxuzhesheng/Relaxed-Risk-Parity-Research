@@ -702,9 +702,9 @@ def main() -> None:
     graph_diag_df = graph_feature_frame(returns, monthly_rebalance_dates(returns), 240)
     graph_diag_df.to_csv(resolve_path("results/tables/asset_graph_diagnostics.csv"), index=False)
 
-    nav_dict = {name: nav_from_return(result, "net_return" if "net_return" in result else "portfolio_return", eval_start_date) for name, result in models.items()}
-    plot_nav_comparison(nav_dict, f"Convex Adaptive RRP NAV since {eval_start_date}", resolve_path("results/figures/convex_adaptive_nav_comparison.png"))
-    plot_drawdown_comparison(nav_dict, f"Convex Adaptive RRP Drawdown since {eval_start_date}", resolve_path("results/figures/convex_adaptive_drawdown_comparison.png"))
+    nav_dict = {public_model_label(name): nav_from_return(result, "net_return" if "net_return" in result else "portfolio_return", eval_start_date) for name, result in models.items()}
+    plot_nav_comparison(nav_dict, f"Portfolio NAV since {eval_start_date}", resolve_path("results/figures/convex_adaptive_nav_comparison.png"))
+    plot_drawdown_comparison(nav_dict, f"Portfolio Drawdown since {eval_start_date}", resolve_path("results/figures/convex_adaptive_drawdown_comparison.png"))
     plot_transaction_cost(tc_summary, resolve_path("results/figures/convex_adaptive_transaction_cost_comparison.png"))
     plot_metric_comparison(summary_public, "avg_monthly_turnover", "Core Model Average Monthly Turnover", resolve_path("results/figures/convex_adaptive_turnover_comparison.png"), ylabel="Average monthly turnover")
     plot_metric_comparison(summary_public, "cvar_95_daily_loss", "Core Model CVaR Comparison", resolve_path("results/figures/convex_adaptive_cvar_comparison.png"), ylabel="95% daily CVaR")

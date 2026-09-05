@@ -17,7 +17,7 @@ from scripts.run_weekly_constraint_research import result_summary, check_result,
 from src.data_loader import load_data
 from src.utils import get_config
 
-LABELS = dict(zip(VARIANTS, ["月度集中度约束对照", "周频集中度约束对照", "仅取消现金上限", "仅取消单资产上限", "主模型：取消两项集中度上限", "取消换手硬上限", "Ledoit--Wolf", "相对 CVaR", "Ledoit--Wolf 与相对 CVaR"]))
+LABELS = dict(zip(VARIANTS, ["月度集中度约束对照", "周频集中度约束对照", "仅取消现金上限", "仅取消单资产上限", "取消两项集中度上限", "取消换手硬上限", "协方差收缩", "相对 CVaR", "协方差收缩与相对 CVaR"]))
 
 
 def tex_table(headers, rows, align):
