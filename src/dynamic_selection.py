@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from src.metrics import calculate_metrics
+from src.covariance_estimators import estimate_covariance
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_overlay import (
     RiskOverlayConfig,
@@ -37,7 +38,14 @@ def solve_rrp_window_weights(
     overlay = overlay_config or RiskOverlayConfig.from_config(cfg)
     n_assets = len(df_window.columns)
     mu = df_window.mean() * cfg["trading_days_per_year"]
-    sigma = df_window.cov() * cfg["trading_days_per_year"]
+    sigma = estimate_covariance(
+        df_window,
+        method=cfg.get("covariance_method", "sample"),
+        trading_days=cfg["trading_days_per_year"],
+        annualize=True,
+        allow_fallback=True,
+        point_in_time=True,
+    )
     theta = np.diag(np.diag(sigma))
     mu_filtered, trend_positive_count = apply_trend_confirmation(mu, df_window, overlay)
     r_base = mu.mean()

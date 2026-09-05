@@ -23,11 +23,11 @@ from src.backtest import run_static_backtest
 from src.benchmarks import run_benchmark_backtest
 from src.convex_adaptive_rrp import (
     ConvexRRPConfig,
+    drift_weights,
     run_convex_adaptive_backtest,
     run_convex_adaptive_schedule_backtest,
 )
 from src.data_loader import load_data
-from src.dynamic_selection import run_dynamic_rrp_selection
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.metrics import calculate_metrics
 from src.public_labels import apply_public_model_labels, public_model_label
@@ -43,6 +43,13 @@ EXPLORATORY_REFERENCE_CANDIDATE_ID = "candidate_03"
 PUBLIC_LOW_TURNOVER_CANDIDATE_IDS = ("candidate_03", "candidate_04", "candidate_05")
 PUBLIC_EXECUTION_WARMUP_MONTHS = 36
 PUBLIC_CASH_CONCENTRATION_CAP = 0.30
+PUBLIC_GROUP_BOUNDS = {
+    "cash": (0.0, PUBLIC_CASH_CONCENTRATION_CAP),
+    "bond": (0.0, 0.70),
+    "defensive": (0.0, 0.25),
+    "commodity_gold": (0.0, 0.40),
+    "equity": (0.0, 0.70),
+}
 PUBLIC_VALIDATION_TURNOVER_LIMIT = 0.04
 PUBLIC_REALIZED_TURNOVER_LIMIT = 0.02
 
@@ -150,6 +157,7 @@ def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: f
         for i, asset in enumerate(returns.columns):
             row[f"weight_{asset}"] = weights[i]
         rows.append(row)
+        weights = drift_weights(weights, returns.loc[date])
     return pd.DataFrame(rows)
 
 
@@ -170,11 +178,10 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
         "turnover_cap": 0.35,
         "turnover_penalty": 0.02,
         "budget_penalty": 0.35,
-        "cvar_penalty": 0.20,
+        "cvar_penalty": 0.0,
         "cvar_beta": 0.95,
-        "return_reward": 0.05,
-        "vol_target_enabled": True,
-        "vol_target": 0.035,
+        "return_reward": 0.0,
+        "use_transaction_cost_objective": True,
     }
     probe_winner = {
         "lookback_days": 252,
@@ -183,31 +190,28 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
         "turnover_cap": 0.80,
         "turnover_penalty": 0.01,
         "budget_penalty": 0.10,
-        "cvar_penalty": 0.08,
+        "cvar_penalty": 0.0,
         "cvar_beta": 0.95,
-        "return_reward": 0.05,
-        "vol_target_enabled": True,
-        "vol_target": 0.035,
+        "return_reward": 0.0,
+        "use_transaction_cost_objective": True,
     }
 
     add(incumbent)
     add(probe_winner)
 
-    vol_constrained = {
+    public_base = {
         "lookback_days": 252,
         "covariance_method": "ewma",
         "max_weight": 0.40,
-        "turnover_cap": 0.60,
+        "turnover_cap": 0.80,
         "turnover_penalty": 0.02,
         "budget_penalty": 0.25,
-        "cvar_penalty": 0.15,
         "cvar_beta": 0.95,
-        "return_reward": 0.06,
-        "portfolio_vol_cap_enabled": True,
-        "portfolio_vol_cap": 0.030,
+        "return_reward": 0.0,
+        "use_transaction_cost_objective": True,
     }
-    for cap in [0.025, 0.030, 0.035]:
-        add({**vol_constrained, "portfolio_vol_cap": cap})
+    for cvar_penalty in [0.00, 0.02, 0.05]:
+        add({**public_base, "cvar_penalty": cvar_penalty})
 
     for lookback_days in [120, 180, 252]:
         for budget_penalty in [0.05, 0.10]:
@@ -222,39 +226,40 @@ def candidate_configurations(transaction_cost_bps: float) -> list[tuple[str, Con
     for turnover_penalty in [0.00, 0.01, 0.02, 0.03]:
         add({**probe_winner, "turnover_penalty": turnover_penalty})
 
-    for turnover_cap in [0.35, 0.80, 1.00, None]:
+    for turnover_cap in [0.35, 0.60, 0.80, 1.00, None]:
         add({**probe_winner, "turnover_cap": turnover_cap})
 
-    for cvar_penalty in [0.05, 0.08, 0.10, 0.20]:
+    for cvar_penalty in [0.00, 0.02, 0.05, 0.08, 0.12, 0.20]:
         add({**probe_winner, "cvar_penalty": cvar_penalty})
 
-    for return_reward in [0.05, 0.06, 0.08, 0.10]:
-        add({**probe_winner, "return_reward": return_reward})
-
-    # probe_winner base + vol cap + varying return_reward — targets Sharpe ≥ 1.2
-    probe_vol_cap_base = {**probe_winner, "portfolio_vol_cap_enabled": True, "turnover_penalty": 0.02}
-    for ret_rw in [0.06, 0.08, 0.10]:
-        for cap in [0.025, 0.030]:
-            add({**probe_vol_cap_base, "return_reward": ret_rw, "portfolio_vol_cap": cap})
+    # Scale-normalized variance penalties give an always-feasible convex
+    # risk trade-off across the staggered point-in-time universe. Absolute
+    # volatility caps were removed because the early, narrow universe made
+    # 4%-6% caps infeasible while a universally feasible cap was nonbinding.
+    for variance_penalty in [0.02, 0.05, 0.10]:
+        add({**probe_winner, "variance_penalty": variance_penalty})
 
     for params in [
+        {**probe_winner, "max_weight": 0.30},
+        {**probe_winner, "max_weight": 0.35},
         {**probe_winner, "max_weight": 0.40},
+        {**probe_winner, "max_weight": 0.50},
         {**probe_winner, "covariance_method": "sample"},
         {**probe_winner, "cvar_beta": 0.90},
-        {**probe_winner, "lookback_days": 180, "max_weight": 0.40, "turnover_cap": 0.35, "turnover_penalty": 0.02, "budget_penalty": 0.35, "cvar_penalty": 0.10},
-        {**probe_winner, "lookback_days": 180, "max_weight": 0.40, "turnover_cap": 0.80, "turnover_penalty": 0.01, "budget_penalty": 0.10, "cvar_penalty": 0.08},
-        {**probe_winner, "lookback_days": 120, "max_weight": 0.45, "turnover_cap": 1.00, "turnover_penalty": 0.00, "budget_penalty": 0.05, "cvar_penalty": 0.05, "return_reward": 0.06},
-        {**probe_winner, "lookback_days": 252, "max_weight": 0.40, "turnover_cap": 0.35, "turnover_penalty": 0.03, "budget_penalty": 0.35, "cvar_penalty": 0.20, "cvar_beta": 0.90},
-        {**probe_winner, "lookback_days": 120, "covariance_method": "sample", "max_weight": 0.40, "turnover_cap": None, "turnover_penalty": 0.02, "budget_penalty": 0.10, "cvar_penalty": 0.10},
+        {**probe_winner, "cvar_beta": 0.975},
+        {**probe_winner, "ewma_halflife": 42},
+        {**probe_winner, "ewma_halflife": 126},
+        {**probe_winner, "turnover_cap": 0.20},
+        {**probe_winner, "budget_penalty": 0.20},
     ]:
         add(params)
+    if len(rows) != 36:
+        raise RuntimeError(f"Candidate grid must contain 36 unique specifications, got {len(rows)}")
     configurations = []
     for name, params in rows:
         governed = dict(params)
         if name in PUBLIC_LOW_TURNOVER_CANDIDATE_IDS:
-            governed["group_bounds"] = {
-                "cash": (0.0, PUBLIC_CASH_CONCENTRATION_CAP)
-            }
+            governed["group_bounds"] = PUBLIC_GROUP_BOUNDS.copy()
         configurations.append(
             (name, ConvexRRPConfig(transaction_cost_bps=transaction_cost_bps, **governed))
         )
@@ -318,6 +323,8 @@ def config_row(name: str, cfg: ConvexRRPConfig, metrics: dict, fallback_rate: fl
         "avg_monthly_turnover": metrics["avg_monthly_turnover"],
         "turnover_penalty": cfg.turnover_penalty,
         "cvar_penalty": cfg.cvar_penalty,
+        "cvar_limit": cfg.cvar_limit,
+        "cvar_limit_multiplier": cfg.cvar_limit_multiplier,
         "budget_penalty": cfg.budget_penalty,
         "max_weight": cfg.max_weight,
         "lookback_days": cfg.lookback_days,
@@ -580,7 +587,6 @@ def replace_latest_results_table(text: str, heading: str, rows: list[str], note:
 def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics: dict) -> None:
     public_models = [
         "Global Relaxed Risk Parity",
-        "Defensive Dynamic Relaxed Risk Parity",
         BASE_CONVEX_MODEL_NAME,
         IMPROVED_MODEL_NAME,
         "HRP Benchmark",
@@ -631,15 +637,6 @@ def main(*, reuse_candidate_scores: bool = False) -> None:
     static_diagnostics["universe"].to_csv(
         resolve_path("results/tables/static_backtest_universe_diagnostics.csv"), index=False
     )
-    print("Running Defensive Dynamic Relaxed Risk Parity...")
-    dynamic = run_dynamic_rrp_selection(
-        returns,
-        [{"lambda_pen": 0.10, "m": 1.9, "bond_leverage_upper": 1.4}, {"lambda_pen": 1.90, "m": 3.0, "bond_leverage_upper": 1.8}],
-        train_window_months=24,
-        selection_metric="utility",
-        top_k=2,
-        config_base=config,
-    )
     print("Running HRP and HERC benchmarks...")
     hrp = run_hrp_like(returns, "hrp", config["transaction_cost_bps"])
     herc = run_hrp_like(returns, "herc", config["transaction_cost_bps"])
@@ -676,7 +673,6 @@ def main(*, reuse_candidate_scores: bool = False) -> None:
 
     models: dict[str, pd.DataFrame] = {
         "Global Relaxed Risk Parity": global_rrp,
-        "Defensive Dynamic Relaxed Risk Parity": dynamic,
         BASE_CONVEX_MODEL_NAME: base_result,
         IMPROVED_MODEL_NAME: improved_result,
         "HRP Benchmark": hrp,

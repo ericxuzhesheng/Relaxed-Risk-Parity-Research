@@ -30,8 +30,8 @@ logger = logging.getLogger("run_all")
 
 
 PIPELINE: list[tuple[str, list[str]]] = [
-    ("update_etf_data", ["python", "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260828"]),
-    ("update_risk_free_rate", ["python", "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260828"]),
+    ("update_etf_data", ["python", "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"]),
+    ("update_risk_free_rate", ["python", "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260831"]),
     ("barra_exposure_correlation", ["python", "scripts/run_barra_exposure_correlation.py"]),
     ("convex_adaptive_rrp", ["python", "scripts/run_convex_adaptive_rrp.py"]),
     ("benchmark_suite", ["python", "scripts/run_benchmark_suite.py"]),

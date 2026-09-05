@@ -23,12 +23,20 @@ def test_sample_covariance_is_finite_square_and_preserves_order():
     assert np.isfinite(cov.values).all()
 
 
-def test_covariance_dimension_equals_input_asset_count_with_missing_column():
+def test_covariance_rejects_asset_without_observations():
     returns = sample_returns(k=3)
     returns["asset_missing"] = np.nan
-    cov = estimate_covariance(returns, method="sample")
-    assert cov.shape == (4, 4)
-    assert "asset_missing" in cov.columns
+    with pytest.raises(ValueError, match="at least two observations"):
+        estimate_covariance(returns, method="sample")
+
+
+def test_covariance_uses_common_complete_sample():
+    returns = sample_returns(k=3)
+    returns.loc[returns.index[:10], "asset_0"] = np.nan
+    returns.loc[returns.index[10:20], "asset_1"] = np.nan
+    result = estimate_covariance(returns, method="sample", return_diagnostics=True)
+    assert result.diagnostics["covariance_observations"] == len(returns) - 20
+    assert result.diagnostics["covariance_min_eigenvalue"] > 0.0
 
 
 def test_ledoit_wolf_success_when_sklearn_is_installed():

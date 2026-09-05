@@ -13,9 +13,12 @@ if str(ROOT_DIR) not in sys.path:
 from scripts.run_convex_adaptive_rrp import BASE_CONVEX_MODEL_NAME, IMPROVED_MODEL_NAME
 from scripts.public_oos import load_public_oos_result, modal_selected_config
 from src.backtest import run_static_backtest
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from src.convex_adaptive_rrp import (
+    ConvexRRPConfig,
+    drift_weights,
+    run_convex_adaptive_backtest,
+)
 from src.data_loader import load_data
-from src.dynamic_selection import run_dynamic_rrp_selection
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.public_labels import apply_public_model_labels
@@ -75,6 +78,10 @@ def run_point_in_time_hrp_like(returns: pd.DataFrame, model_type: str, transacti
                 "portfolio_return": gross - cost,
                 "turnover": turnover,
             }
+        )
+        weights = pd.Series(
+            drift_weights(weights.values, returns.loc[date]),
+            index=returns.columns,
         )
     return pd.DataFrame(rows)
 
@@ -153,14 +160,6 @@ def main() -> None:
 
     models: dict[str, pd.DataFrame] = {
         "Global Relaxed Risk Parity": run_static_backtest(returns, model_type="relaxed", config_overrides=config),
-        "Defensive Dynamic Relaxed Risk Parity": run_dynamic_rrp_selection(
-            returns,
-            [{"lambda_pen": 0.10, "m": 1.9, "bond_leverage_upper": 1.4}, {"lambda_pen": 1.90, "m": 3.0, "bond_leverage_upper": 1.8}],
-            train_window_months=24,
-            selection_metric="utility",
-            top_k=2,
-            config_base=config,
-        ),
         BASE_CONVEX_MODEL_NAME: run_convex_adaptive_backtest(
             returns,
             ConvexRRPConfig(transaction_cost_bps=config["transaction_cost_bps"], budget_penalty=0.55),

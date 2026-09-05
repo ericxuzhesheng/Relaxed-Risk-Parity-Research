@@ -13,7 +13,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.asset_universe import asset_mapping_frame, etf_names
-from src.data_loader import fetch_from_tushare
+from src.data_loader import fetch_from_tushare, fetch_tushare_trade_date_snapshots
 from src.utils import resolve_path
 
 
@@ -27,7 +27,7 @@ def _ensure_tushare_token(provider: str) -> None:
     and silently degraded data quality. This check surfaces the problem
     immediately so the operator can set the variable before any work happens.
     """
-    if provider in {"akshare", "yfinance"}:
+    if provider in {"akshare", "tencent", "yfinance"}:
         return
     token = os.environ.get("TUSHARE_TOKEN", "").strip()
     if not token:
@@ -35,11 +35,117 @@ def _ensure_tushare_token(provider: str) -> None:
             "TUSHARE_TOKEN is not set. Configure it before running update_etf_data.py.\n"
             "  PowerShell:  $env:TUSHARE_TOKEN = '<your token>'\n"
             "  bash:        export TUSHARE_TOKEN=<your token>\n"
-            "Or run with --provider akshare / --provider yfinance to skip Tushare."
+            "Or run with --provider akshare / --provider tencent / --provider yfinance "
+            "to skip Tushare."
         )
 
 
 LEGACY_NAMES = {"0-5中高信用票", "中证转债", "豆粕连续", "银华日利ETF"}
+
+
+def merge_adjusted_history(existing: pd.DataFrame, refreshed: pd.DataFrame) -> pd.DataFrame:
+    """Merge an overlapping adjusted-price refresh without a level break."""
+    old = existing.apply(pd.to_numeric, errors="coerce").sort_index().copy()
+    new = refreshed.apply(pd.to_numeric, errors="coerce").sort_index().copy()
+    old.index = pd.to_datetime(old.index)
+    new.index = pd.to_datetime(new.index)
+    if old.empty:
+        return new
+    if new.empty:
+        return old
+    if list(old.columns) != list(new.columns):
+        raise ValueError("Existing and refreshed ETF columns do not match.")
+
+    scaled = old.copy()
+    overlap = old.index.intersection(new.index)
+    if overlap.empty:
+        raise ValueError("Incremental ETF refresh requires at least one overlapping date.")
+    for column in old.columns:
+        common = pd.concat(
+            [old.loc[overlap, column].rename("old"), new.loc[overlap, column].rename("new")],
+            axis=1,
+        ).dropna()
+        if common.empty:
+            raise ValueError(f"No overlapping adjusted price for {column}.")
+        anchor = common.iloc[-1]
+        if float(anchor["old"]) == 0.0:
+            raise ValueError(f"Zero cached anchor price for {column}.")
+        scaled[column] *= float(anchor["new"] / anchor["old"])
+
+    return pd.concat([scaled, new]).groupby(level=0).last().sort_index()
+
+
+def refresh_tushare_prices(start_date: str, end_date: str) -> pd.DataFrame:
+    """Refresh only the uncached tail while preserving adjusted-price history."""
+    cache_path = resolve_path("data/processed/etf_prices_updated.csv")
+    if not cache_path.exists() or cache_path.stat().st_size == 0:
+        return fetch_from_tushare(start_date=start_date, end_date=end_date)
+
+    existing = pd.read_csv(cache_path, index_col=0, parse_dates=True).sort_index()
+    requested_end = pd.Timestamp(end_date)
+    cached_end = pd.Timestamp(existing.index.max())
+    if requested_end <= cached_end:
+        return existing.loc[existing.index <= requested_end]
+
+    snapshot_dates = [
+        date.strftime("%Y%m%d")
+        for date in pd.bdate_range(cached_end, requested_end)
+    ]
+    refreshed = fetch_tushare_trade_date_snapshots(snapshot_dates)
+    merged = merge_adjusted_history(existing, refreshed)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(cache_path)
+    return merged
+
+
+def refresh_akshare_prices(start_date: str, end_date: str) -> pd.DataFrame:
+    """Refresh the cached tail through AkShare after an explicit provider choice."""
+    cache_path = resolve_path("data/processed/etf_prices_updated.csv")
+    if not cache_path.exists() or cache_path.stat().st_size == 0:
+        return fetch_from_akshare(start_date, end_date)
+
+    existing = pd.read_csv(cache_path, index_col=0, parse_dates=True).sort_index()
+    requested_end = pd.Timestamp(end_date)
+    cached_start = pd.Timestamp(existing.index.min())
+    cached_end = pd.Timestamp(existing.index.max())
+    if requested_end <= cached_end:
+        return existing.loc[existing.index <= requested_end]
+
+    overlap_start = max(cached_start, cached_end - pd.Timedelta(days=10))
+    refreshed = fetch_from_akshare(
+        overlap_start.strftime("%Y%m%d"),
+        requested_end.strftime("%Y%m%d"),
+        write_cache=False,
+    )
+    merged = merge_adjusted_history(existing, refreshed)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(cache_path)
+    return merged
+
+
+def refresh_tencent_prices(start_date: str, end_date: str) -> pd.DataFrame:
+    """Refresh the cached tail through Tencent's public adjusted-price feed."""
+    cache_path = resolve_path("data/processed/etf_prices_updated.csv")
+    if not cache_path.exists() or cache_path.stat().st_size == 0:
+        return fetch_from_tencent(start_date, end_date)
+
+    existing = pd.read_csv(cache_path, index_col=0, parse_dates=True).sort_index()
+    requested_end = pd.Timestamp(end_date)
+    cached_start = pd.Timestamp(existing.index.min())
+    cached_end = pd.Timestamp(existing.index.max())
+    if requested_end <= cached_end:
+        return existing.loc[existing.index <= requested_end]
+
+    overlap_start = max(cached_start, cached_end - pd.Timedelta(days=10))
+    refreshed = fetch_from_tencent(
+        overlap_start.strftime("%Y%m%d"),
+        requested_end.strftime("%Y%m%d"),
+        write_cache=False,
+    )
+    merged = merge_adjusted_history(existing, refreshed)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    merged.to_csv(cache_path)
+    return merged
 
 
 def validate_prices(prices: pd.DataFrame) -> None:
@@ -60,7 +166,12 @@ def validate_prices(prices: pd.DataFrame) -> None:
             raise ValueError(f"{col} has unexpected values before first valid listing date.")
 
 
-def fetch_from_akshare(start_date: str, end_date: str | None) -> pd.DataFrame:
+def fetch_from_akshare(
+    start_date: str,
+    end_date: str | None,
+    *,
+    write_cache: bool = True,
+) -> pd.DataFrame:
     import akshare as ak
 
     frames = []
@@ -93,9 +204,64 @@ def fetch_from_akshare(start_date: str, end_date: str | None) -> pd.DataFrame:
         price.index = df["日期"]
         frames.append(price.sort_index().rename(row["new_name"]))
     prices = pd.concat(frames, axis=1).sort_index()
-    out = resolve_path("data/processed/etf_prices_updated.csv")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    prices.to_csv(out)
+    if write_cache:
+        out = resolve_path("data/processed/etf_prices_updated.csv")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        prices.to_csv(out)
+    return prices
+
+
+def fetch_from_tencent(
+    start_date: str,
+    end_date: str | None,
+    *,
+    write_cache: bool = True,
+) -> pd.DataFrame:
+    """Fetch adjusted ETF closes from Tencent's public daily-kline endpoint."""
+    import requests
+
+    start = pd.Timestamp(start_date).strftime("%Y-%m-%d")
+    end = pd.Timestamp(end_date or pd.Timestamp.today()).strftime("%Y-%m-%d")
+    frames = []
+    session = requests.Session()
+    session.headers.update({"User-Agent": "Mozilla/5.0"})
+    for _, row in asset_mapping_frame().iterrows():
+        ticker = str(row["ticker"])
+        market = "sh" if ticker.endswith(".SH") else "sz"
+        symbol = f"{market}{ticker.split('.')[0]}"
+        print(f"Syncing {row['new_name']} ({ticker}) via Tencent...")
+        last_error: Exception | None = None
+        for attempt in range(4):
+            try:
+                response = session.get(
+                    "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+                    params={"param": f"{symbol},day,{start},{end},30,qfq"},
+                    timeout=30,
+                )
+                response.raise_for_status()
+                payload = response.json()
+                symbol_data = payload.get("data", {}).get(symbol, {})
+                rows = symbol_data.get("qfqday") or symbol_data.get("day") or []
+                if not rows:
+                    raise ValueError("response contains no adjusted daily observations")
+                dates = pd.to_datetime([item[0] for item in rows])
+                closes = pd.to_numeric([item[2] for item in rows], errors="coerce")
+                frames.append(pd.Series(closes, index=dates, name=row["new_name"]))
+                break
+            except Exception as exc:
+                last_error = exc
+                if attempt < 3:
+                    time.sleep(1.5 * (attempt + 1))
+        else:
+            raise RuntimeError(
+                f"Tencent request failed for {row['new_name']} ({ticker})."
+            ) from last_error
+
+    prices = pd.concat(frames, axis=1).sort_index()
+    if write_cache:
+        out = resolve_path("data/processed/etf_prices_updated.csv")
+        out.parent.mkdir(parents=True, exist_ok=True)
+        prices.to_csv(out)
     return prices
 
 
@@ -128,8 +294,13 @@ def fetch_from_yfinance(start_date: str, end_date: str | None) -> pd.DataFrame:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Refresh tradable ETF adjusted-close prices from Tushare.")
     parser.add_argument("--start-date", default="20000101", help="Inclusive Tushare start date, YYYYMMDD.")
-    parser.add_argument("--end-date", default="20260828", help="Inclusive Tushare end date, YYYYMMDD.")
-    parser.add_argument("--provider", choices=["auto", "tushare", "akshare", "yfinance"], default="auto", help="Use Tushare, AkShare, yfinance, or automatic fallback.")
+    parser.add_argument("--end-date", default="20260831", help="Inclusive Tushare end date, YYYYMMDD.")
+    parser.add_argument(
+        "--provider",
+        choices=["auto", "tushare", "akshare", "tencent", "yfinance"],
+        default="auto",
+        help="Use Tushare, AkShare, Tencent, yfinance, or automatic fallback.",
+    )
     args = parser.parse_args()
 
     _ensure_tushare_token(args.provider)
@@ -140,19 +311,24 @@ def main() -> None:
     mapping.to_csv(mapping_path, index=False, encoding="utf-8-sig")
 
     if args.provider == "akshare":
-        prices = fetch_from_akshare(args.start_date, args.end_date)
+        prices = refresh_akshare_prices(args.start_date, args.end_date)
+    elif args.provider == "tencent":
+        prices = refresh_tencent_prices(args.start_date, args.end_date)
     elif args.provider == "yfinance":
         prices = fetch_from_yfinance(args.start_date, args.end_date)
     else:
         try:
-            prices = fetch_from_tushare(start_date=args.start_date, end_date=args.end_date)
+            prices = refresh_tushare_prices(args.start_date, args.end_date)
         except RuntimeError:
             if args.provider == "tushare":
                 raise
             try:
-                prices = fetch_from_akshare(args.start_date, args.end_date)
+                prices = refresh_akshare_prices(args.start_date, args.end_date)
             except Exception:
-                prices = fetch_from_yfinance(args.start_date, args.end_date)
+                try:
+                    prices = refresh_tencent_prices(args.start_date, args.end_date)
+                except Exception:
+                    prices = fetch_from_yfinance(args.start_date, args.end_date)
     validate_prices(prices)
     print(f"Wrote {resolve_path('data/processed/etf_prices_updated.csv')}")
     print(f"Wrote {mapping_path}")

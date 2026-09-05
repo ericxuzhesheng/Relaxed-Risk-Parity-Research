@@ -8,11 +8,9 @@
 
 ### 模型解释
 
-- Global RRP 是解释基准组合。当前 `global_risk` beta 为 33.657，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
-- Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 19.740；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
+- Global RRP 是解释基准组合。当前 `global_risk` beta 为 34.928，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
+- Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 20.105；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
 - Convex Adaptive Global RRP 是凸优化增强的基础版本，用于区分基础约束优化与改进配置的解释差异。
-- Defensive Dynamic RRP 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
-
 ### 归因
 
 收益归因使用已有每日权重和资产收益，将组合实现收益分摊到推断出的资产类别。风险归因使用协方差式波动贡献和压力回撤阶段平均贡献作为近似解释。
@@ -29,11 +27,9 @@ The factor proxies are broad equal-weight proxies inferred from the existing ret
 
 ### Model Interpretation
 
-- Global RRP is the reference RRP portfolio. Its current `global_risk` beta is 33.657, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
-- Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is 19.740; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
+- Global RRP is the reference RRP portfolio. Its current `global_risk` beta is 34.928, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
+- Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is 20.105; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
 - Convex Adaptive Global RRP is the base convex enhancement and helps separate base optimizer behavior from the improved configuration.
-- Defensive Dynamic RRP is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
-
 ### Attribution
 
 Return attribution allocates realized portfolio returns to inferred asset classes using available daily weights and asset returns. Risk attribution uses covariance-style volatility contribution and stress-period drawdown contribution approximations by asset class.

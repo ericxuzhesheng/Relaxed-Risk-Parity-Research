@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
+import cvxpy as cp
 
+from src.convex_adaptive_rrp import drift_weights
+from src.covariance_estimators import estimate_covariance
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_parity import solve_standard_rp
@@ -28,51 +30,42 @@ def equal_weight(returns_window: pd.DataFrame) -> pd.Series:
 
 
 def minimum_variance(returns_window: pd.DataFrame) -> pd.Series:
-    clean = returns_window.dropna(how="any")
-    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values
     n_assets = len(returns_window.columns)
-
-    def objective(w: np.ndarray) -> float:
-        return float(w @ cov @ w)
-
-    result = minimize(
-        objective,
-        np.ones(n_assets) / n_assets,
-        method="SLSQP",
-        bounds=[(0.0, 1.0)] * n_assets,
-        constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
-        options={"maxiter": 500, "ftol": 1e-10},
+    cov = estimate_covariance(returns_window, method="sample").values
+    weights = cp.Variable(n_assets)
+    problem = cp.Problem(
+        cp.Minimize(cp.quad_form(weights, cp.psd_wrap(cov))),
+        [weights >= 0.0, cp.sum(weights) == 1.0],
     )
-    weights = result.x if result.success else np.ones(n_assets) / n_assets
-    return pd.Series(clean_weights(weights), index=returns_window.columns)
+    if not problem.is_dcp():
+        raise RuntimeError("minimum-variance benchmark is not DCP compliant")
+    problem.solve(solver="CLARABEL", verbose=False)
+    if problem.status not in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE} or weights.value is None:
+        raise RuntimeError(f"minimum-variance benchmark failed with status={problem.status}")
+    return pd.Series(clean_weights(weights.value), index=returns_window.columns)
 
 
 def maximum_diversification(returns_window: pd.DataFrame) -> pd.Series:
-    clean = returns_window.dropna(how="any")
-    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values
+    cov = estimate_covariance(returns_window, method="sample").values
     vols = np.sqrt(np.clip(np.diag(cov), 1e-12, None))
     n_assets = len(returns_window.columns)
-
-    def objective(w: np.ndarray) -> float:
-        port_vol = np.sqrt(max(float(w @ cov @ w), 1e-12))
-        weighted_vol = float(w @ vols)
-        return -weighted_vol / port_vol
-
-    result = minimize(
-        objective,
-        np.ones(n_assets) / n_assets,
-        method="SLSQP",
-        bounds=[(0.0, 1.0)] * n_assets,
-        constraints=[{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}],
-        options={"maxiter": 500, "ftol": 1e-10},
+    scaled = cp.Variable(n_assets)
+    problem = cp.Problem(
+        cp.Minimize(cp.quad_form(scaled, cp.psd_wrap(cov))),
+        [scaled >= 0.0, vols @ scaled == 1.0],
     )
-    weights = result.x if result.success else np.ones(n_assets) / n_assets
-    return pd.Series(clean_weights(weights), index=returns_window.columns)
+    if not problem.is_dcp():
+        raise RuntimeError("maximum-diversification benchmark is not DCP compliant")
+    problem.solve(solver="CLARABEL", verbose=False)
+    if problem.status not in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE} or scaled.value is None:
+        raise RuntimeError(f"maximum-diversification benchmark failed with status={problem.status}")
+    return pd.Series(clean_weights(scaled.value), index=returns_window.columns)
 
 
 def classical_risk_parity(returns_window: pd.DataFrame) -> pd.Series:
-    clean = returns_window.dropna(how="any")
-    cov = (clean if not clean.empty else returns_window.fillna(0.0)).cov().values * 243
+    cov = estimate_covariance(
+        returns_window, method="sample", trading_days=243, annualize=True
+    ).values
     weights = solve_standard_rp(cov, len(returns_window.columns), config=get_config({"optim_maxiter": 500}))
     return pd.Series(clean_weights(weights), index=returns_window.columns)
 
@@ -151,4 +144,5 @@ def run_benchmark_backtest(
         for i, asset in enumerate(returns.columns):
             row[f"weight_{asset}"] = weights[i]
         rows.append(row)
+        weights = drift_weights(weights, returns.loc[date])
     return pd.DataFrame(rows)

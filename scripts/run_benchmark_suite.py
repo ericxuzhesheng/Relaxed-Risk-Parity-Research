@@ -20,10 +20,9 @@ from src.public_labels import apply_public_model_labels
 from src.utils import get_config
 
 MODEL_ORDER = [
-    "Global Relaxed Risk Parity",
+    "Global RRP",
     "Improved Convex Adaptive Global RRP",
     "Convex Adaptive Global RRP",
-    "Defensive Dynamic Relaxed Risk Parity",
     *BENCHMARK_BUILDERS.keys(),
 ]
 
@@ -163,7 +162,7 @@ def main() -> None:
         improved_cfg.lookback_days = min(improved_cfg.lookback_days, 60)
         improved_cfg.max_weight = max(improved_cfg.max_weight, 0.60)
 
-    models, _ = build_models(returns, config, improved_cfg, include_dynamic=True)
+    models, _ = build_models(returns, config, improved_cfg, include_dynamic=False)
     for name in BENCHMARK_BUILDERS:
         print(f"Running {name}...")
         models[name] = run_benchmark_backtest(

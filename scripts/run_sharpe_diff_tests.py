@@ -1,14 +1,14 @@
 """Run pairwise block-bootstrap Sharpe difference tests for the headline
 model comparison.
 
-Loads or recomputes the daily net return series for the four headline
+Loads or recomputes the daily net return series for the headline
 models and the Equal Weight benchmark, then runs
 ``sharpe_difference_block_bootstrap`` for every pair. Output is written to
 ``results/tables/sharpe_difference_tests.csv``.
 
 The published Improved Convex Adaptive RRP return series is loaded from
-the cached CSV; Global RRP and Defensive Dynamic RRP are recomputed via
-the standard backtest paths (cheap, default ~30 seconds) so the test uses
+the cached CSV; Global RRP is recomputed via the standard backtest path
+so the test uses
 exactly the same return convention as the rest of the pipeline.
 """
 
@@ -27,7 +27,6 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
-from src.dynamic_selection import run_dynamic_rrp_selection
 from src.statistical_tests import pairwise_sharpe_difference_table
 from src.utils import get_config, resolve_path
 
@@ -75,23 +74,6 @@ def main() -> None:
         .rename("Global RRP")
     )
 
-    logger.info("Running Defensive Dynamic RRP")
-    dynamic = run_dynamic_rrp_selection(
-        returns,
-        [
-            {"lambda_pen": 0.10, "m": 1.9, "bond_leverage_upper": 1.4},
-            {"lambda_pen": 1.90, "m": 3.0, "bond_leverage_upper": 1.8},
-        ],
-        train_window_months=24,
-        selection_metric="utility",
-        top_k=2,
-        config_base=config,
-    )
-    dynamic_series = (
-        dynamic.set_index("date")["portfolio_return"].astype(float)
-        .rename("Defensive Dynamic RRP")
-    )
-
     logger.info("Loading Improved Convex Adaptive RRP return series from cache")
     improved_series = _load_improved_returns()
     if improved_series.empty:
@@ -105,7 +87,6 @@ def main() -> None:
 
     series_map: dict[str, pd.Series] = {
         "Global RRP": global_series,
-        "Defensive Dynamic RRP": dynamic_series,
         "Equal Weight": equal_weight,
     }
     if not improved_series.empty:
@@ -125,14 +106,12 @@ def main() -> None:
         pairs.extend(
             [
                 ("Improved Convex Adaptive Global RRP", "Global RRP"),
-                ("Improved Convex Adaptive Global RRP", "Defensive Dynamic RRP"),
                 ("Improved Convex Adaptive Global RRP", "Equal Weight"),
             ]
         )
     pairs.extend(
         [
             ("Global RRP", "Equal Weight"),
-            ("Defensive Dynamic RRP", "Equal Weight"),
         ]
     )
 

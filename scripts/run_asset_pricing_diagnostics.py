@@ -11,18 +11,15 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-from scripts.run_rrp_pipeline import _parameter_grid
 from src.asset_pricing_diagnostics import DiagnosticOutputs, build_factor_proxies, run_diagnostics, write_outputs
 from src.public_labels import apply_public_model_labels
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
-from src.dynamic_selection import run_dynamic_rrp_selection
 from src.utils import get_config, resolve_path
 
 GLOBAL_LABEL = "Global RRP"
 IMPROVED_CONVEX_LABEL = "Improved Convex Adaptive Global RRP"
 BASE_CONVEX_LABEL = "Convex Adaptive Global RRP"
-DYNAMIC_LABEL = "Defensive Dynamic RRP"
 
 
 def _project_path(path: str | Path) -> Path:
@@ -48,19 +45,6 @@ def load_or_build_models(returns: pd.DataFrame, smoke: bool) -> dict[str, pd.Dat
     print("Building in-memory Global RRP diagnostics input...")
     global_rrp = run_static_backtest(returns, model_type="relaxed", config_overrides=config)
 
-    print("Building in-memory Defensive Dynamic RRP diagnostics input...")
-    dynamic = run_dynamic_rrp_selection(
-        returns,
-        _parameter_grid(smoke),
-        train_window_months=12 if smoke else 24,
-        selection_metric="utility",
-        top_k=1 if smoke else 2,
-        config_base=config,
-    )
-    if dynamic.empty:
-        dynamic = global_rrp.copy()
-        print("Defensive dynamic result was empty; using Global RRP as smoke-safe diagnostic placeholder.")
-
     improved = _read_cached_convex(_project_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"))
     base = _read_cached_convex(_project_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"))
     if smoke:
@@ -79,7 +63,6 @@ def load_or_build_models(returns: pd.DataFrame, smoke: bool) -> dict[str, pd.Dat
         GLOBAL_LABEL: global_rrp,
         IMPROVED_CONVEX_LABEL: improved,
         BASE_CONVEX_LABEL: base,
-        DYNAMIC_LABEL: dynamic,
     }
 
 
@@ -175,8 +158,6 @@ def write_report(outputs, output_root: Path) -> Path:
 - Global RRP 是解释基准组合。当前 `global_risk` beta 为 {global_beta:.3f}，因此其收益应放在广义多资产风险代理下理解，而不是解释为独立 alpha 预测。
 - Improved Convex Adaptive Global RRP 是受约束优化器结果。当前 `global_risk` beta 为 {improved_beta:.3f}；它相对 Global RRP 的差异应理解为暴露、换手、约束和尾部风险惩罚共同作用的结果。
 - Convex Adaptive Global RRP 是凸优化增强的基础版本，用于区分基础约束优化与改进配置的解释差异。
-- Defensive Dynamic RRP 是防御型风险覆盖模型。较低或不稳定的因子 beta 可能反映风险缩放和状态响应，而不是更强的因子择时能力。
-
 ### 归因
 
 收益归因使用已有每日权重和资产收益，将组合实现收益分摊到推断出的资产类别。风险归因使用协方差式波动贡献和压力回撤阶段平均贡献作为近似解释。
@@ -196,8 +177,6 @@ The factor proxies are broad equal-weight proxies inferred from the existing ret
 - Global RRP is the reference RRP portfolio. Its current `global_risk` beta is {global_beta:.3f}, so its returns are interpreted against the broad multi-asset proxy rather than as a standalone alpha forecast.
 - Improved Convex Adaptive Global RRP is interpreted as a constrained optimizer result. Its current `global_risk` beta is {improved_beta:.3f}; differences versus Global RRP should be read as exposure, turnover, constraint, and tail-risk penalty effects.
 - Convex Adaptive Global RRP is the base convex enhancement and helps separate base optimizer behavior from the improved configuration.
-- Defensive Dynamic RRP is a defensive overlay model. Lower or unstable factor betas can reflect risk scaling and regime response rather than superior factor timing.
-
 ### Attribution
 
 Return attribution allocates realized portfolio returns to inferred asset classes using available daily weights and asset returns. Risk attribution uses covariance-style volatility contribution and stress-period drawdown contribution approximations by asset class.

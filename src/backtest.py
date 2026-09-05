@@ -31,6 +31,7 @@ import numpy as np
 import pandas as pd
 
 from src.covariance_estimators import estimate_covariance
+from src.convex_adaptive_rrp import drift_weights
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.risk_overlay import (
@@ -379,6 +380,7 @@ def run_static_backtest(
         for j, asset in enumerate(returns.columns):
             res[f"weight_{asset}"] = current_weights[j]
         results.append(res)
+        current_weights = drift_weights(current_weights, returns.loc[d])
 
     if diagnostics_out is not None:
         diagnostics_out["solver"] = pd.DataFrame(solver_rows or [])

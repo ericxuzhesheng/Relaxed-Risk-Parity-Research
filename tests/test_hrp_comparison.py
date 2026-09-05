@@ -3,36 +3,24 @@ import pandas as pd
 
 from scripts.run_hrp_comparison import run_equal_weight
 from scripts.run_hrp_comparison import _summarize
-from src.investable import investable_columns
 
 
-def test_vectorized_equal_weight_matches_point_in_time_investability() -> None:
-    dates = pd.date_range("2020-01-01", periods=45, freq="B")
+def test_equal_weight_rebalances_monthly_and_drifts_between_rebalances() -> None:
+    dates = pd.date_range("2020-01-01", periods=100, freq="B")
     returns = pd.DataFrame(
         {
-            "full_history": np.linspace(-0.01, 0.01, len(dates)),
-            "late_listing": [np.nan] * 10 + list(np.linspace(-0.02, 0.02, len(dates) - 10)),
-            "constant": 0.0,
+            "asset_a": np.linspace(-0.01, 0.02, len(dates)),
+            "asset_b": np.linspace(0.015, -0.005, len(dates)),
         },
         index=dates,
     )
 
     result = run_equal_weight(returns)
-    weight_columns = [f"weight_{column}" for column in returns.columns]
-    actual = result.set_index("date")[weight_columns]
-    actual.columns = returns.columns
+    first_investment = result.index[result["turnover"].gt(0.0)][0]
 
-    expected_rows = []
-    for date in returns.index:
-        active = investable_columns(returns[returns.index < date], min_observations=30)
-        row = pd.Series(0.0, index=returns.columns)
-        if active:
-            row.loc[active] = 1.0 / len(active)
-        expected_rows.append(row)
-    expected = pd.DataFrame(expected_rows, index=returns.index)
-    expected.index.name = "date"
-
-    pd.testing.assert_frame_equal(actual, expected, check_freq=False)
+    assert result.loc[first_investment, "turnover"] == 1.0
+    assert result.loc[first_investment, "weight_asset_a"] == 0.5
+    assert result.loc[first_investment + 1, "weight_asset_a"] != 0.5
 
 
 def test_hrp_summary_accepts_date_aligned_risk_free_returns() -> None:

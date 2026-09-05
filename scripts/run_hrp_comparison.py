@@ -2,18 +2,15 @@ import os
 import sys
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.backtest import run_static_backtest
+from src.benchmarks import run_benchmark_backtest
 from src.data_loader import load_data
-from src.dynamic_selection import run_dynamic_rrp_selection
-from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 from src.metrics import calculate_metrics, calculate_turnover
 from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
@@ -77,71 +74,26 @@ def _summarize(name: str, result: pd.DataFrame, eval_start_date: str, config: di
     return metrics
 
 
-def _make_weight_result(returns: pd.DataFrame, weights_by_date: pd.DataFrame) -> pd.DataFrame:
-    rows = []
-    for date in returns.index:
-        weights = weights_by_date.loc[date].values
-        row = {
-            "date": date,
-            "portfolio_return": portfolio_return_for_available(returns.loc[date], weights),
-            "turnover": float(np.abs(weights_by_date.diff().fillna(0.0).loc[date]).sum()),
-        }
-        for asset, weight in zip(returns.columns, weights):
-            row[f"weight_{asset}"] = weight
-        rows.append(row)
-    return pd.DataFrame(rows)
-
-
-def run_equal_weight(returns: pd.DataFrame) -> pd.DataFrame:
-    data = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    prior_counts = data.notna().cumsum().shift(1, fill_value=0)
-    prior_std = data.expanding(min_periods=2).std().shift(1)
-    active = prior_counts.ge(30) & prior_std.gt(0.0)
-    active_count = active.sum(axis=1).replace(0, np.nan)
-    weights = active.astype(float).div(active_count, axis=0).fillna(0.0)
-    return _make_weight_result(returns, weights)
-
-
-def _min_variance_weights(window: pd.DataFrame) -> np.ndarray:
-    clean = window.dropna(how="any")
-    cov = (clean if not clean.empty else window.fillna(0.0)).cov().fillna(0.0).values * 10000.0
-    n_assets = cov.shape[0]
-    diag = np.diag(cov).copy()
-    positive = diag[diag > 0]
-    floor = positive.min() * 1e-6 if len(positive) else 1e-12
-    cov = cov.copy()
-    np.fill_diagonal(cov, np.maximum(diag, floor))
-    x0 = np.ones(n_assets) / n_assets
-
-    def objective(weights):
-        return float(weights @ cov @ weights)
-
-    constraints = [{"type": "eq", "fun": lambda weights: np.sum(weights) - 1.0}]
-    bounds = [(0.0, 1.0)] * n_assets
-    result = minimize(objective, x0, method="SLSQP", bounds=bounds, constraints=constraints)
-    if result.success:
-        weights = np.clip(result.x, 0.0, None)
-        total = weights.sum()
-        if total > 0:
-            return weights / total
-    return x0
+def run_equal_weight(
+    returns: pd.DataFrame,
+    transaction_cost_bps: float = 3.0,
+) -> pd.DataFrame:
+    """Run the equal-weight benchmark with monthly rebalancing and drift."""
+    return run_benchmark_backtest(
+        returns,
+        "Equal Weight Benchmark",
+        transaction_cost_bps=transaction_cost_bps,
+    )
 
 
 def run_minimum_variance(returns: pd.DataFrame, config: dict) -> pd.DataFrame:
-    rebalance_dates = set(returns.groupby(returns.index.to_period("M")).tail(1).index)
-    lookback = config["lookback_weeks"] * 5
-    current_weights = np.zeros(len(returns.columns))
-    weights = []
-    for date in returns.index:
-        if date in rebalance_dates:
-            window_full = returns[returns.index < date].iloc[-lookback:]
-            active_cols = investable_columns(window_full, min_observations=min(60, lookback))
-            window = window_full[active_cols]
-            if len(window) > 20 and len(active_cols) > 1:
-                current_weights = expand_weights(_min_variance_weights(window), active_cols, returns.columns)
-        weights.append(current_weights.copy())
-    weights_df = pd.DataFrame(weights, index=returns.index, columns=returns.columns)
-    return _make_weight_result(returns, weights_df)
+    """Run the minimum-variance benchmark under the common cost convention."""
+    return run_benchmark_backtest(
+        returns,
+        "Minimum Variance Benchmark",
+        lookback_days=config["lookback_weeks"] * 5,
+        transaction_cost_bps=config["transaction_cost_bps"],
+    )
 
 
 def main():
@@ -156,7 +108,9 @@ def main():
     assets_v3 = list(returns.columns)
 
     models = {
-        "Equal Weight": run_equal_weight(returns[assets_v3]),
+        "Equal Weight": run_equal_weight(
+            returns[assets_v3], config["transaction_cost_bps"]
+        ),
         "Minimum Variance": run_minimum_variance(returns[assets_v3], config),
         "Standard Risk Parity": run_static_backtest(returns[assets_v1], model_type="standard"),
         "Local Relaxed Risk Parity": run_static_backtest(returns[assets_v1], model_type="relaxed"),
@@ -164,23 +118,6 @@ def main():
         "HRP Benchmark": run_static_backtest(returns[assets_v3], model_type="hrp"),
         "HERC Benchmark": run_static_backtest(returns[assets_v3], model_type="herc"),
     }
-
-    dynamic_grid = [
-        {"lambda_pen": 0.01, "m": 1.0, "bond_leverage_upper": 1.2},
-        {"lambda_pen": 0.1, "m": 1.9, "bond_leverage_upper": 1.4},
-        {"lambda_pen": 1.0, "m": 2.5, "bond_leverage_upper": 1.4},
-        {"lambda_pen": 1.9, "m": 3.0, "bond_leverage_upper": 1.6},
-    ]
-    dynamic = run_dynamic_rrp_selection(
-        returns[assets_v3],
-        dynamic_grid,
-        train_window_months=24,
-        selection_metric="sharpe_ratio",
-        top_k=2,
-        config_base=config,
-    )
-    if not dynamic.empty:
-        models["Defensive Dynamic Relaxed Risk Parity"] = dynamic
 
     summaries = []
     nav_dict = {}

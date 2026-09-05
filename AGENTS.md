@@ -28,7 +28,6 @@ Use the following public-facing labels in README, tables, figures, and reports:
 | Standard Risk Parity | Baseline risk-budgeting reference |
 | Local Relaxed Risk Parity | RRP in local asset pool only |
 | Global RRP | Main return-efficient global model |
-| Defensive Dynamic RRP | Defensive risk-overlay experiment |
 | Convex Adaptive Global RRP | Convexified relaxed risk-budgeting approximation |
 | Improved Convex Adaptive Global RRP | Low-turnover CVaR-aware implementable refinement |
 | HRP Benchmark | Hierarchical risk-allocation benchmark |
@@ -43,8 +42,7 @@ Use the following public-facing labels in README, tables, figures, and reports:
 Always preserve this model positioning:
 
 - **Global RRP** is the main return-efficient global multi-asset model.
-- **Improved Convex Adaptive Global RRP** is the low-turnover, CVaR-aware, implementable convex optimization refinement.
-- **Defensive Dynamic RRP** is a defensive risk-overlay experiment, not the main return-maximizing model.
+- **Improved Convex Adaptive Global RRP** is the low-turnover, implementable convex optimization refinement with group limits and CVaR-aware candidate diagnostics.
 - **HRP / HERC** are benchmarks only, not the proposed main models.
 
 Do not overclaim. Do not claim:
@@ -71,26 +69,25 @@ Do claim where appropriate:
 | Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
 | Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
 
-Current results (evaluation from `2018-01-02` to `2026-08-28`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2007-01-18; latest cache date is 2026-08-28; 60-observation point-in-time universe filtering applied):
+Current results (evaluation from `2018-01-02` to `2026-08-31`, 3 bps transaction cost, monthly rebalancing; earliest valid ETF price observation in the current cache is 2007-01-18; latest cache date is 2026-08-31; 60-observation point-in-time universe filtering applied):
 
 | Model | Net Annual Return | Annual Vol | Sharpe | Sortino | Max Drawdown | Calmar | Avg Monthly TO |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| **Improved Convex Adaptive Global RRP** | **5.85%** | **2.88%** | **1.272** | **1.829** | **-3.83%** | **1.529** | **1.95%** |
-| Convex Adaptive Global RRP | 9.30% | 17.31% | 0.481 | 0.701 | -28.87% | 0.322 | 0.00% |
-| Global RRP | 4.70% | 4.16% | 0.629 | 0.886 | -6.39% | 0.737 | 24.08% |
-| Defensive Dynamic RRP | 5.21% | 4.72% | 0.663 | 0.936 | -7.02% | 0.742 | 24.23% |
-| HERC Benchmark | 2.62% | 0.72% | 0.732 | 1.062 | -0.69% | 3.803 | 9.01% |
-| HRP Benchmark | 2.06% | 0.26% | -0.124 | -0.190 | -0.19% | 10.901 | 2.34% |
-| Equal Weight | 8.27% | 10.57% | 0.610 | 0.877 | -12.88% | 0.642 | 0.95% |
-| 60/40 Benchmark | 6.62% | 9.80% | 0.493 | 0.710 | -19.52% | 0.339 | 0.93% |
+| **Improved Convex Adaptive Global RRP** | **5.85%** | **5.25%** | **0.716** | **1.018** | **-6.22%** | **0.940** | **1.06%** |
+| Convex Adaptive Global RRP | 5.41% | 4.81% | 0.690 | 0.986 | -5.28% | 1.025 | 2.22% |
+| Global RRP | 2.48% | 0.45% | 0.864 | 1.322 | -0.31% | 7.947 | 11.81% |
+| HERC Benchmark | 2.63% | 0.72% | 0.737 | 1.070 | -0.68% | 3.860 | 9.06% |
+| HRP Benchmark | 2.06% | 0.26% | -0.123 | -0.189 | -0.19% | 10.896 | 2.34% |
+| Equal Weight | 8.37% | 10.56% | 0.619 | 0.890 | -12.56% | 0.666 | 4.41% |
+| 60/40 Benchmark | 6.69% | 9.79% | 0.500 | 0.720 | -19.25% | 0.348 | 3.99% |
 
-**Key interpretation:** The public Improved Convex Adaptive Global RRP is a stitched rolling OOS path: each selection uses only prior data, applies a 95% confidence set, and resolves statistically tied candidates by the pre-declared low-turnover order. It delivers 5.85% net annual return, 2.88% volatility, 1.272 Sharpe, 1.829 Sortino, and -3.83% maximum drawdown at 1.95% average monthly turnover. The 36-configuration grid is exploratory only. Sharpe and Sortino use the final valid monthly 1-year ChinaBond government yield, lagged one month and compounded to a daily rate over 243 trading days. Results are historical research diagnostics, not forward-looking guarantees.
+**Key interpretation:** The public Improved Convex Adaptive Global RRP is a stitched rolling OOS path: each selection uses only prior data, applies a 95% confidence set, and resolves statistically tied candidates by the pre-declared low-turnover order. It delivers 5.85% net annual return, 5.25% volatility, 0.716 Sharpe, 1.018 Sortino, and -6.22% maximum drawdown at 1.06% average monthly turnover. The selected path uses candidate_03 throughout, whose CVaR penalty is zero; do not attribute its realized drawdown to a CVaR penalty. The 36-configuration grid and positive-CVaR variants are exploratory diagnostics only. Sharpe and Sortino use the final valid monthly 1-year ChinaBond government yield, lagged one month and compounded to a daily rate over 243 trading days. Results are historical research diagnostics, not forward-looking guarantees.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-08-28`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-08-31`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -147,8 +144,8 @@ Candidate universe: **6 ETFs**, excluded from the active 30 and from backtests u
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
-python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20260828
-python scripts/update_risk_free_rate.py --start-date 20000101 --end-date 20260828
+python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20260831
+python scripts/update_risk_free_rate.py --start-date 20000101 --end-date 20260831
 ```
 
 ### After running — refresh artifacts in this order before any commit:

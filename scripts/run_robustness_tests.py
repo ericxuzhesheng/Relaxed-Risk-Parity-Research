@@ -21,7 +21,11 @@ from scripts.public_oos import (
     run_public_oos_variant,
 )
 from src.backtest import run_static_backtest
-from src.convex_adaptive_rrp import ConvexRRPConfig, run_convex_adaptive_backtest
+from src.convex_adaptive_rrp import (
+    ConvexRRPConfig,
+    drift_weights,
+    run_convex_adaptive_backtest,
+)
 from src.covariance_estimators import estimate_covariance
 from src.data_loader import load_data
 from src.dynamic_selection import run_dynamic_rrp_selection
@@ -135,9 +139,9 @@ def selected_improved_config(transaction_cost_bps: float, candidates_path: Path,
             turnover_cap=0.80,
             turnover_penalty=0.02,
             budget_penalty=0.10,
-            cvar_penalty=0.08,
+            cvar_penalty=0.02,
             cvar_beta=0.95,
-            return_reward=0.05,
+            return_reward=0.0,
         )
     _candidate_id, cfg = modal_selected_config(transaction_cost_bps)
     return cfg
@@ -193,6 +197,7 @@ def run_global_covariance_diagnostic(returns: pd.DataFrame, method: str, config:
         nav *= 1.0 + net
         row = {"date": date, "portfolio_return": net, "gross_return": gross, "net_return": net, "turnover": turnover}
         rows.append(row)
+        weights = drift_weights(weights, returns.loc[date])
     return pd.DataFrame(rows)
 
 
@@ -200,7 +205,7 @@ def build_models(
     returns: pd.DataFrame,
     config: dict,
     improved_cfg: ConvexRRPConfig,
-    include_dynamic: bool = True,
+    include_dynamic: bool = False,
     public_improved_result: pd.DataFrame | None = None,
 ) -> tuple[dict[str, pd.DataFrame], pd.DataFrame]:
     models = {
@@ -392,15 +397,6 @@ def covariance_summary(returns: pd.DataFrame, config: dict, improved_cfg: Convex
         improved_row["covariance_estimator"] = method
         improved_row["diagnostic_scope"] = "published_afml_oos_selection_schedule_held_constant"
         rows.append(improved_row)
-    dynamic = run_dynamic_rrp_selection(
-        returns,
-        [{"lambda_pen": 0.10, "m": 1.9, "bond_leverage_upper": 1.4}, {"lambda_pen": 1.90, "m": 3.0, "bond_leverage_upper": 1.8}],
-        train_window_months=24,
-        selection_metric="utility",
-        top_k=2,
-        config_base=config,
-    )
-    rows.append({**summarize_window(DYNAMIC_RRP, dynamic, "full_available_sample", config), "covariance_estimator": "default_sample_reference"})
     return pd.DataFrame(rows)
 
 
@@ -425,7 +421,7 @@ def transaction_cost_summary(
             returns,
             cfg,
             improved_cfg,
-            include_dynamic=not smoke,
+            include_dynamic=False,
             public_improved_result=repriced,
         )
         for name, result in models.items():
@@ -823,6 +819,8 @@ def main() -> None:
         loaded: dict[str, pd.DataFrame] = {}
         for name in names:
             frame = apply_public_model_labels(pd.read_csv(tables / name))
+            if "model" in frame.columns:
+                frame = frame[~frame["model"].astype(str).eq("Defensive Dynamic RRP")].copy()
             frame.to_csv(tables / name, index=False)
             loaded[name] = frame
         returns = load_return_universe(False)
@@ -861,7 +859,7 @@ def main() -> None:
         returns,
         base_config,
         improved_cfg,
-        include_dynamic=True,
+        include_dynamic=False,
         public_improved_result=public_improved_result,
     )
     if not args.smoke:

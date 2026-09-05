@@ -26,11 +26,10 @@ def steps(quick: bool) -> list[PipelineStep]:
         rrp_cmd.append("--fast-mode")
     quick_root = ROOT_DIR / "results" / "quick"
     return [
-        PipelineStep("update_etf_data", [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260828"], True),
-        PipelineStep("update_risk_free_rate", [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260828"], True),
+        PipelineStep("update_etf_data", [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"], True),
+        PipelineStep("update_risk_free_rate", [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260831"], True),
         PipelineStep("barra_exposure_correlation", [python, "scripts/run_barra_exposure_correlation.py"], True),
         PipelineStep("rrp_pipeline", rrp_cmd, True, [ROOT_DIR / "results/tables/performance_summary.csv"] if quick else None),
-        PipelineStep("showcase_optimization", [python, "scripts/optimize_showcase_rrp.py"], False, [ROOT_DIR / "results/tables/showcase_performance_summary.csv"] if quick else None),
         PipelineStep("hrp_comparison", [python, "scripts/run_hrp_comparison.py"], False, [ROOT_DIR / "results/tables/hrp_comparison.csv"] if quick else None),
         PipelineStep("convex_adaptive_rrp", [python, "scripts/run_convex_adaptive_rrp.py"], True, [ROOT_DIR / "results/tables/convex_adaptive_performance_summary.csv"] if quick else None),
         PipelineStep("export_next_month_holdings", [python, "scripts/export_next_month_holdings.py"], True),
@@ -231,13 +230,34 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full thesis research reproduction pipeline.")
     parser.add_argument("--quick", action="store_true", help="Use smoke/fast modes for diagnostics where supported.")
     parser.add_argument("--skip-data", action="store_true", help="Reuse ETF and risk-free data refreshed immediately before this run.")
+    parser.add_argument(
+        "--start-at",
+        choices=[step.name for step in steps(False)],
+        help="Resume a failed run at this step and retain earlier passed checklist rows.",
+    )
     args = parser.parse_args()
-    rows = []
+    pipeline_steps = selected_steps(args.quick, args.skip_data)
+    rows: list[dict] = []
+    if args.start_at:
+        names = [step.name for step in pipeline_steps]
+        if args.start_at not in names:
+            raise ValueError(f"start step {args.start_at!r} is excluded by the current options")
+        start_index = names.index(args.start_at)
+        checklist_path = ROOT_DIR / "results/tables/full_pipeline_checklist.csv"
+        if checklist_path.exists():
+            previous = pd.read_csv(checklist_path)
+            earlier = set(names[:start_index])
+            previous = previous[
+                previous["step"].isin(earlier) & previous["status"].eq("passed")
+            ]
+            rows.extend(previous.to_dict("records"))
+        pipeline_steps = pipeline_steps[start_index:]
     failed_critical = False
     try:
-        for step in selected_steps(args.quick, args.skip_data):
+        for step in pipeline_steps:
             row = run_step(step, args.quick)
             rows.append(row)
+            write_checklist(rows)
             if row["status"] == "critical_failed":
                 failed_critical = True
                 break

@@ -151,7 +151,7 @@ def write_outputs(daily: pd.DataFrame) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start-date", default="20000101")
-    parser.add_argument("--end-date", default="20260828")
+    parser.add_argument("--end-date", default="20260831")
     parser.add_argument("--required-start-date", default="20171201")
     parser.add_argument("--provider", choices=["auto", "tushare", "chinabond"], default="auto")
     args = parser.parse_args()

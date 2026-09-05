@@ -21,10 +21,17 @@ EWMA_ALIASES = {
 
 def _clean_returns(returns_window: pd.DataFrame) -> pd.DataFrame:
     data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    data = data.dropna(axis=1, how="all")
+    missing_assets = data.columns[data.notna().sum() < 2].tolist()
+    if missing_assets:
+        raise ValueError(
+            "covariance estimation requires at least two observations for every asset; "
+            f"insufficient assets={missing_assets}"
+        )
     data = data.dropna(how="any")
-    if data.empty:
-        data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    if len(data) < 2:
+        raise ValueError(
+            "covariance estimation requires at least two common complete observations"
+        )
     return data
 
 
@@ -41,7 +48,7 @@ def _symmetrize(cov: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(values, index=cov.index, columns=cov.columns)
 
 
-def _repair_psd(cov: pd.DataFrame, jitter: float = 1e-10) -> tuple[pd.DataFrame, dict]:
+def _repair_psd(cov: pd.DataFrame, relative_floor: float = 1e-6) -> tuple[pd.DataFrame, dict]:
     cov = _symmetrize(cov).fillna(0.0)
     values = cov.values
     notes: list[str] = ["symmetrized"]
@@ -49,20 +56,25 @@ def _repair_psd(cov: pd.DataFrame, jitter: float = 1e-10) -> tuple[pd.DataFrame,
         return cov, {"covariance_psd_repaired": False, "covariance_jitter_added": 0.0, "covariance_psd_notes": "empty"}
 
     eigvals, eigvecs = np.linalg.eigh(values)
-    min_eig = float(eigvals.min())
+    min_eig_before = float(eigvals.min())
+    spectral_scale = max(float(eigvals.max()), float(np.max(np.diag(values))), 1e-12)
+    eigenvalue_floor = max(relative_floor * spectral_scale, 1e-12)
     jitter_added = 0.0
     repaired = False
-    if min_eig < jitter:
+    if min_eig_before < eigenvalue_floor:
         repaired = True
-        eigvals = np.clip(eigvals, jitter, None)
+        eigvals = np.clip(eigvals, eigenvalue_floor, None)
         values = eigvecs @ np.diag(eigvals) @ eigvecs.T
         values = (values + values.T) / 2.0
-        jitter_added = max(jitter - min_eig, 0.0)
+        jitter_added = max(eigenvalue_floor - min_eig_before, 0.0)
         notes.append("eigenvalue_floor")
     repaired_cov = pd.DataFrame(values, index=cov.index, columns=cov.columns)
     return repaired_cov, {
         "covariance_psd_repaired": repaired,
         "covariance_jitter_added": jitter_added,
+        "covariance_min_eigenvalue_before_repair": min_eig_before,
+        "covariance_eigenvalue_floor": eigenvalue_floor,
+        "covariance_relative_floor": float(relative_floor),
         "covariance_psd_notes": ";".join(notes),
     }
 

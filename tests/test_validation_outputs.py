@@ -86,25 +86,25 @@ def test_readme_uses_current_model_and_robustness_framing() -> None:
     for needle in [
         "Global RRP",
         "Improved Convex Adaptive Global RRP",
-        "Defensive Dynamic RRP",
         "HRP Benchmark",
         "HERC Benchmark",
         "CVaR",
         "turnover",
-        "Risk-overlay",
-        "Overfitting probability",
+        "proof against overfitting",
         "out-of-sample",
     ]:
         assert needle in text, needle
+    assert "Defensive Dynamic RRP" not in text
 
 
 def test_governance_doc_exists() -> None:
     path = Path("docs/MODEL_GOVERNANCE.md")
     assert path.exists()
     content = path.read_text(encoding="utf-8")
-    assert "lookback_days" in content
-    assert "cvar_beta" in content
-    assert "Change-Log" in content
+    assert "252-day EWMA window" in content
+    assert "soft CVaR penalties" in content
+    assert "candidate_03" in content
+    assert "Release checks" in content
 
 
 def test_thesis_body_no_engineer_path() -> None:

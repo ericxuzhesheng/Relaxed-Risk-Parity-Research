@@ -1,115 +1,128 @@
-"""SLSQP-based risk-parity solvers with explicit diagnostics.
+"""DCP-compliant risk-parity and relaxed risk-parity solvers.
 
-This module exposes the legacy ``solve_standard_rp``/``solve_relaxed_rp``/
-``optimize_with_leverage`` API used by ``src.backtest`` and the dynamic-selection
-pipeline. It previously hid SLSQP failures behind ``except: pass`` and silently
-fell back to equal weights. The implementation below preserves the original
-calling convention (callers still receive a weight array) but records the
-solver state — exception info, convergence status, message, objective value,
-and whether a fallback was used — into an optional ``diagnostics`` dict.
+The public API is retained for the backtest pipeline, but the former SLSQP
+programs have been replaced by convex formulations. Standard risk parity is
+obtained from the log-barrier risk-budgeting problem. Relaxed RRP uses a
+second convex program that trades reference tracking, portfolio variance and
+a soft expected-return shortfall. Bond leverage is represented by a separate
+exposure vector, so no weight-times-leverage product enters the optimization.
 
-The diagnostics dict is the recommended channel for surfacing solver failures
-into ``results/tables/`` artifacts. When ``diagnostics`` is ``None`` the
-solver still logs a ``logging.WARNING`` so silent failures never go unnoticed.
+All programs are checked for DCP compliance and fail closed. A failed solve
+therefore cannot silently replace a model portfolio with equal weights.
 """
 
 from __future__ import annotations
 
-import logging
 from typing import Tuple
+import warnings
 
+import cvxpy as cp
 import numpy as np
-from scipy.optimize import minimize
+
+from src.convex_adaptive_rrp import solve_risk_budget_reference
 
 
-logger = logging.getLogger(__name__)
-
-
-_EMPTY_DIAG = {
-    "solver_name": "scipy_slsqp",
-    "solver_success": False,
-    "solver_status": None,
-    "solver_message": "",
-    "objective_value": float("nan"),
-    "fallback_used": False,
-    "fallback_method": "",
-    "exception_type": "",
-    "exception_message": "",
-}
-
-
-def _new_diag() -> dict:
-    return dict(_EMPTY_DIAG)
+_SOLVERS = ("CLARABEL", "ECOS", "SCS")
 
 
 def _record(target: dict | None, payload: dict) -> None:
-    """Merge ``payload`` into the user-supplied diagnostics dict, if any."""
-    if target is None:
-        return
-    target.update(payload)
+    if target is not None:
+        target.clear()
+        target.update(payload)
 
 
-def _record_failure(
-    target: dict | None,
-    *,
-    function: str,
-    fallback_method: str,
-    solver_status: int | None = None,
-    solver_message: str = "",
-    objective_value: float = float("nan"),
-    exception: BaseException | None = None,
-) -> None:
-    payload = {
-        "solver_name": "scipy_slsqp",
-        "solver_success": False,
-        "solver_status": solver_status,
-        "solver_message": solver_message,
-        "objective_value": objective_value,
-        "fallback_used": True,
-        "fallback_method": fallback_method,
-        "exception_type": type(exception).__name__ if exception is not None else "",
-        "exception_message": str(exception) if exception is not None else "",
-    }
-    _record(target, payload)
-    if exception is not None:
-        logger.warning(
-            "%s: SLSQP raised %s (%s); using fallback=%s",
-            function,
-            payload["exception_type"],
-            payload["exception_message"],
-            fallback_method,
-        )
-    else:
-        logger.warning(
-            "%s: SLSQP did not converge (status=%s, message=%s); using fallback=%s",
-            function,
-            solver_status,
-            solver_message,
-            fallback_method,
-        )
-
-
-def _record_success(
-    target: dict | None,
-    *,
-    solver_status: int,
-    solver_message: str,
-    objective_value: float,
-) -> None:
-    _record(
-        target,
-        {
-            "solver_name": "scipy_slsqp",
-            "solver_success": True,
-            "solver_status": solver_status,
-            "solver_message": solver_message,
-            "objective_value": objective_value,
-            "fallback_used": False,
-            "fallback_method": "",
-            "exception_type": "",
-            "exception_message": "",
-        },
+def _validated_covariance(Sigma: np.ndarray, n_assets: int) -> tuple[np.ndarray, float]:
+    sigma = np.asarray(Sigma, dtype=float)
+    if sigma.shape != (n_assets, n_assets):
+        raise ValueError("covariance dimensions do not match n_assets")
+    if not np.isfinite(sigma).all():
+        raise ValueError("covariance contains non-finite values")
+    sigma = 0.5 * (sigma + sigma.T)
+    eigenvalues, eigenvectors = np.linalg.eigh(sigma)
+    scale = max(
+        float(np.max(np.abs(eigenvalues))),
+        float(np.max(np.diag(sigma))),
+        1e-12,
     )
+    if float(eigenvalues.min()) < -1e-8 * scale:
+        raise ValueError("covariance is not positive semidefinite")
+    floor = max(scale * 1e-6, 1e-12)
+    clipped = np.maximum(eigenvalues, floor)
+    adjustment = float(np.max(clipped - eigenvalues))
+    sigma_psd = (eigenvectors * clipped) @ eigenvectors.T
+    return 0.5 * (sigma_psd + sigma_psd.T), adjustment
+
+
+def _validated_bounds(config: dict, n_assets: int) -> tuple[float, float]:
+    lower, upper = config.get("asset_weight_bounds", (0.0, 1.0))
+    lower, upper = float(lower), float(upper)
+    if lower < 0.0 or upper <= lower:
+        raise ValueError("asset_weight_bounds must satisfy 0 <= lower < upper")
+    if n_assets * lower > 1.0 + 1e-10 or n_assets * upper < 1.0 - 1e-10:
+        raise ValueError("asset_weight_bounds are incompatible with the simplex")
+    return lower, upper
+
+
+def _solve(problem: cp.Problem, variables: tuple[cp.Variable, ...]) -> tuple[str, str]:
+    if not problem.is_dcp():
+        raise RuntimeError("risk-parity optimization is not DCP compliant")
+    errors: list[str] = []
+    installed = set(cp.installed_solvers())
+    for solver_name in _SOLVERS:
+        if solver_name not in installed:
+            continue
+        try:
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", message="Solution may be inaccurate")
+                problem.solve(solver=solver_name, verbose=False)
+        except Exception as exc:
+            errors.append(f"{solver_name}: {exc}")
+            continue
+        if problem.status == cp.OPTIMAL and all(
+            variable.value is not None for variable in variables
+        ):
+            return solver_name, str(problem.status)
+        errors.append(f"{solver_name}: status={problem.status}")
+    detail = "; ".join(errors) if errors else "no supported convex solver is installed"
+    raise RuntimeError(f"risk-parity optimization failed: {detail}")
+
+
+def _risk_budget_error(weights: np.ndarray, sigma: np.ndarray) -> float:
+    contributions = weights * (sigma @ weights)
+    total = float(contributions.sum())
+    if total <= 0.0:
+        return float("nan")
+    return float(np.max(np.abs(contributions / total - 1.0 / len(weights))))
+
+
+def _reference_with_bounds(
+    sigma: np.ndarray,
+    n_assets: int,
+    config: dict,
+) -> tuple[np.ndarray, dict]:
+    reference, reference_diag = solve_risk_budget_reference(
+        sigma, np.ones(n_assets) / n_assets
+    )
+    lower, upper = _validated_bounds(config, n_assets)
+    if reference.min() >= lower - 1e-10 and reference.max() <= upper + 1e-10:
+        return reference, reference_diag
+
+    weights = cp.Variable(n_assets)
+    problem = cp.Problem(
+        cp.Minimize(cp.sum_squares(weights - reference)),
+        [cp.sum(weights) == 1.0, weights >= lower, weights <= upper],
+    )
+    solver_name, status = _solve(problem, (weights,))
+    bounded = np.asarray(weights.value, dtype=float).reshape(-1)
+    bounded = np.clip(bounded, lower, upper)
+    bounded /= bounded.sum()
+    reference_diag.update(
+        {
+            "reference_projection_solver_name": solver_name,
+            "reference_projection_solver_status": status,
+        }
+    )
+    return bounded, reference_diag
 
 
 def solve_standard_rp(
@@ -118,77 +131,133 @@ def solve_standard_rp(
     config: dict,
     diagnostics: dict | None = None,
 ) -> np.ndarray:
-    """Solve the standard relaxed risk-parity LP-style program via SLSQP.
+    """Return the bounded equal-risk-budget portfolio from a convex program."""
+    sigma, psd_adjustment = _validated_covariance(Sigma, n_assets)
+    weights, reference_diag = _reference_with_bounds(sigma, n_assets, config)
+    payload = {
+        "solver_name": reference_diag["reference_solver_name"],
+        "solver_success": True,
+        "solver_status": reference_diag["reference_solver_status"],
+        "solver_message": "optimal convex log-barrier risk-budget solution",
+        "objective_value": float("nan"),
+        "problem_is_dcp": True,
+        "fallback_used": False,
+        "fallback_method": "",
+        "exception_type": "",
+        "exception_message": "",
+        "covariance_psd_adjustment": psd_adjustment,
+        "max_risk_budget_error": _risk_budget_error(weights, sigma),
+        **reference_diag,
+    }
+    _record(diagnostics, payload)
+    return weights
 
-    Returns the asset weight vector. On solver failure, returns equal weights
-    and records the failure in ``diagnostics`` (if provided)."""
-    if diagnostics is not None:
-        _record(diagnostics, _new_diag())
 
-    x0 = np.ones(n_assets) / n_assets
-    zeta0 = Sigma @ x0
-    sigma0 = np.sqrt(x0 @ Sigma @ x0)
-    psi0 = sigma0 / np.sqrt(n_assets)
-    gamma0 = np.min(x0 * zeta0)
-    v0 = np.concatenate((x0, zeta0, [psi0, gamma0]))
+def _solve_relaxed_exposure(
+    sigma: np.ndarray,
+    mu: np.ndarray,
+    n_assets: int,
+    bond_indices: list[int],
+    R_base: float,
+    is_relaxed: bool,
+    config: dict,
+    diagnostics: dict | None,
+) -> tuple[np.ndarray, np.ndarray]:
+    sigma, psd_adjustment = _validated_covariance(sigma, n_assets)
+    expected_returns = np.asarray(mu, dtype=float).reshape(-1)
+    if expected_returns.shape != (n_assets,) or not np.isfinite(expected_returns).all():
+        raise ValueError("mu must be a finite vector with n_assets entries")
+    lower, upper = _validated_bounds(config, n_assets)
+    bond_set = {int(i) for i in bond_indices}
+    if any(i < 0 or i >= n_assets for i in bond_set):
+        raise ValueError("bond_indices contains an out-of-range index")
+    leverage_upper = float(config.get("bond_leverage_upper", 1.0))
+    if leverage_upper < 1.0:
+        raise ValueError("bond_leverage_upper must be at least one")
 
-    def objective(v):
-        return v[2 * n_assets] - v[2 * n_assets + 1]
+    reference, reference_diag = _reference_with_bounds(sigma, n_assets, config)
+    weights = cp.Variable(n_assets)
+    exposure = cp.Variable(n_assets)
+    constraints = [
+        cp.sum(weights) == 1.0,
+        weights >= lower,
+        weights <= upper,
+        exposure >= 0.0,
+    ]
+    for i in range(n_assets):
+        if i in bond_set:
+            constraints.extend([exposure[i] >= weights[i], exposure[i] <= leverage_upper * weights[i]])
+        else:
+            constraints.append(exposure[i] == weights[i])
 
-    def eq_constraints(v):
-        x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-        return np.concatenate([zeta - Sigma @ x, [np.sum(x) - 1]])
+    reference_variance = max(float(reference @ sigma @ reference), 1e-12)
+    objective_terms = [cp.sum_squares(weights - reference)]
+    target_return = float(config.get("m", 1.0)) * max(float(R_base), 0.0)
+    return_scale = max(abs(target_return), float(np.max(np.abs(expected_returns))), 1e-3)
+    if is_relaxed:
+        variance_penalty = float(config.get("rrp_variance_penalty", 0.10))
+        shortfall_penalty = float(config.get("lambda_pen", 1.9))
+        leverage_penalty = float(config.get("rrp_leverage_penalty", 0.02))
+        if min(variance_penalty, shortfall_penalty, leverage_penalty) < 0.0:
+            raise ValueError("convex RRP penalty coefficients must be nonnegative")
+        objective_terms.extend(
+            [
+                variance_penalty * cp.quad_form(exposure, cp.psd_wrap(sigma)) / reference_variance,
+                shortfall_penalty
+                * cp.square(cp.pos((target_return - expected_returns @ exposure) / return_scale)),
+                leverage_penalty * cp.sum_squares(exposure - weights),
+            ]
+        )
+    else:
+        target_return = float("nan")
+        objective_terms.append(cp.sum_squares(exposure - weights))
 
-    def ineq_constraints(v):
-        x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-        psi, gamma = v[2 * n_assets], v[2 * n_assets + 1]
-        return np.concatenate([x * zeta - gamma**2, [n_assets * psi**2 - x @ Sigma @ x]])
-
-    bounds = (
-        [config["asset_weight_bounds"]] * n_assets
-        + [(0, None)] * n_assets
-        + [(0, 10), (0, 10)]
+    problem = cp.Problem(cp.Minimize(sum(objective_terms)), constraints)
+    solver_name, status = _solve(problem, (weights, exposure))
+    base = np.asarray(weights.value, dtype=float).reshape(-1)
+    active = np.asarray(exposure.value, dtype=float).reshape(-1)
+    base[np.abs(base) < 1e-10] = 0.0
+    active[np.abs(active) < 1e-10] = 0.0
+    base = np.clip(base, lower, upper)
+    base /= base.sum()
+    active = np.maximum(active, 0.0)
+    leverage = np.ones(n_assets)
+    for i in bond_set:
+        leverage[i] = active[i] / base[i] if base[i] > 1e-10 else 1.0
+    reconstructed = base * leverage
+    constraint_violation = max(
+        abs(float(base.sum()) - 1.0),
+        max(float(lower - base.min()), 0.0),
+        max(float(base.max() - upper), 0.0),
+        float(np.max(np.abs(reconstructed - active))),
     )
-
-    try:
-        res = minimize(
-            objective,
-            v0,
-            method="SLSQP",
-            constraints=[
-                {"type": "eq", "fun": eq_constraints},
-                {"type": "ineq", "fun": ineq_constraints},
-            ],
-            bounds=bounds,
-            options={"ftol": config["optim_tol"], "maxiter": config["optim_maxiter"]},
-        )
-    except (ValueError, np.linalg.LinAlgError, RuntimeError) as exc:
-        _record_failure(
-            diagnostics,
-            function="solve_standard_rp",
-            fallback_method="equal_weight",
-            exception=exc,
-        )
-        return np.ones(n_assets) / n_assets
-
-    if res.success:
-        _record_success(
-            diagnostics,
-            solver_status=int(res.status),
-            solver_message=str(res.message),
-            objective_value=float(res.fun),
-        )
-        return res.x[:n_assets]
-
-    _record_failure(
-        diagnostics,
-        function="solve_standard_rp",
-        fallback_method="equal_weight",
-        solver_status=int(res.status),
-        solver_message=str(res.message),
-        objective_value=float(res.fun),
-    )
-    return np.ones(n_assets) / n_assets
+    predicted_return = float(expected_returns @ active)
+    payload = {
+        "solver_name": solver_name,
+        "solver_success": True,
+        "solver_status": status,
+        "solver_message": "optimal DCP-compliant convex RRP solution",
+        "objective_value": float(problem.value),
+        "problem_is_dcp": True,
+        "fallback_used": False,
+        "fallback_method": "",
+        "exception_type": "",
+        "exception_message": "",
+        "covariance_psd_adjustment": psd_adjustment,
+        "reference_max_risk_budget_error": _risk_budget_error(reference, sigma),
+        "final_max_risk_budget_error": _risk_budget_error(base, sigma),
+        "predicted_annual_return": predicted_return,
+        "target_annual_return": target_return,
+        "return_shortfall": max(target_return - predicted_return, 0.0) if is_relaxed else 0.0,
+        "predicted_annual_volatility": float(np.sqrt(max(active @ sigma @ active, 0.0))),
+        "gross_exposure": float(active.sum()),
+        "max_constraint_violation": constraint_violation,
+        **reference_diag,
+    }
+    _record(diagnostics, payload)
+    if constraint_violation > 1e-6:
+        raise RuntimeError(f"convex RRP solution violates constraints by {constraint_violation:.3e}")
+    return base, leverage
 
 
 def solve_relaxed_rp(
@@ -200,287 +269,40 @@ def solve_relaxed_rp(
     config: dict,
     diagnostics: dict | None = None,
 ) -> np.ndarray:
-    """Solve the Global Relaxed Risk Parity program (Section 3.3 of thesis).
+    """Solve the unlevered convex Global RRP program.
 
-    Implements the quadratic-penalty form:
-
-        min_w  Σ_i (RC_i/σ_p − b_i)²  +  λ_reg · ‖w − w_0‖²
-
-    where RC_i = w_i·(Σw)_i/σ_p is asset i's risk contribution, b_i = 1/n
-    is the equal risk budget, w_0 is the standard-RP anchor, and
-    λ_reg = config["lambda_pen"].
-
-    Constraints: Σwᵢ = 1, wᵢ ≥ 0, wᵢ ≤ max_weight.
-
-    Parameters mu, Theta, R_base are unused; retained for API compatibility
-    with callers in backtest.py and dynamic_selection.py.
-
-    On SLSQP failure the fallback is the standard RP solution.
+    ``Theta`` is retained for API compatibility. The convex formulation uses
+    the full covariance matrix directly and returns the active exposure.
     """
-    if diagnostics is not None:
-        _record(diagnostics, _new_diag())
-
-    rp_diag = _new_diag()
-    x_rp = solve_standard_rp(Sigma, n_assets, config, diagnostics=rp_diag)
-    x0 = x_rp.copy()
-    b = np.ones(n_assets) / n_assets
-    lambda_reg = float(config.get("lambda_pen", 1.9))
-    w0 = x_rp.copy()
-
-    def objective(x: np.ndarray) -> float:
-        sigma_p = np.sqrt(x @ Sigma @ x)
-        if sigma_p < 1e-12:
-            return 1e10
-        # Fractional risk contributions: RC_i / σ_p = w_i·(Σw)_i / σ_p²
-        rc_frac = x * (Sigma @ x) / (sigma_p * sigma_p)
-        budget_dev = float(np.sum((rc_frac - b) ** 2))
-        reg = lambda_reg * float(np.sum((x - w0) ** 2))
-        return budget_dev + reg
-
-    constraints = [{"type": "eq", "fun": lambda x: np.sum(x) - 1.0}]
-    bounds = [config["asset_weight_bounds"]] * n_assets
-
-    try:
-        res = minimize(
-            objective,
-            x0,
-            method="SLSQP",
-            constraints=constraints,
-            bounds=bounds,
-            options={"ftol": config["optim_tol"], "maxiter": config["optim_maxiter"]},
-        )
-    except (ValueError, np.linalg.LinAlgError, RuntimeError) as exc:
-        _record_failure(
-            diagnostics,
-            function="solve_relaxed_rp",
-            fallback_method="standard_rp_solution",
-            exception=exc,
-        )
-        return x_rp
-
-    if res.success:
-        _record_success(
-            diagnostics,
-            solver_status=int(res.status),
-            solver_message=str(res.message),
-            objective_value=float(res.fun),
-        )
-        return res.x
-
-    _record_failure(
-        diagnostics,
-        function="solve_relaxed_rp",
-        fallback_method="standard_rp_solution",
-        solver_status=int(res.status),
-        solver_message=str(res.message),
-        objective_value=float(res.fun),
+    del Theta
+    weights, leverage = _solve_relaxed_exposure(
+        Sigma, mu, n_assets, [], R_base, True, config, diagnostics
     )
-    return x_rp
-
-
-def _tikhonov_jitter(Sigma: np.ndarray, strength: float) -> np.ndarray:
-    """Return ``Sigma + strength · trace(Sigma)/n · I``.
-
-    Scale by trace/n so the regularization magnitude follows the covariance
-    scale rather than fixed in absolute units. ``strength`` of 0 is the
-    identity; small positive values reduce conditioning of the SLSQP KKT
-    system around active sets and have been observed to clear the
-    "Positive directional derivative for linesearch" failure mode on
-    leverage-augmented programs without materially shifting the optimum.
-    """
-    n = Sigma.shape[0]
-    tr = float(np.trace(Sigma))
-    scale = (tr / max(n, 1)) if n > 0 else 1.0
-    return Sigma + strength * max(scale, 1e-12) * np.eye(n)
+    return weights * leverage
 
 
 def optimize_with_leverage(
     Sigma: np.ndarray,
     n_assets: int,
     bond_indices: list,
-    mu: np.ndarray = None,
-    Theta: np.ndarray = None,
+    mu: np.ndarray | None = None,
+    Theta: np.ndarray | None = None,
     R_base: float = 0,
     is_relaxed: bool = False,
-    config: dict = None,
+    config: dict | None = None,
     diagnostics: dict | None = None,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """SLSQP optimizer with bond leverage variables.
-
-    On a failed SLSQP run the program retries with successively stronger
-    Tikhonov regularization of ``Sigma`` (``strength`` in 0, 1e-6, 1e-4
-    relative to ``trace(Sigma)/n``). The retry is a bug-fix for the
-    ``Positive directional derivative for linesearch`` failure mode and not
-    a parameter change to the program. Only if every retry fails does the
-    function fall back to ``(equal_weights, unit_leverage)``.
-
-    Retry diagnostics (``retry_count``, ``retry_jitter_strength``) are added
-    to ``diagnostics`` if provided.
-    """
-    if diagnostics is not None:
-        _record(diagnostics, _new_diag())
-        diagnostics.setdefault("retry_count", 0)
-        diagnostics.setdefault("retry_jitter_strength", 0.0)
-
-    l_max = config["bond_leverage_upper"]
-    n_bonds = len(bond_indices)
-    uniform_x0 = np.ones(n_assets) / n_assets
-    # Retry layer is opt-in. When ``optim_leverage_retry_enabled`` is False
-    # (the default) the function preserves the legacy behaviour: a single
-    # SLSQP attempt from a uniform starting point with the original Sigma,
-    # falling back to equal weights + unit leverage on failure. This keeps
-    # the published Global RRP / Defensive Dynamic RRP headline numbers
-    # exactly stable. Researchers can opt-in by passing
-    # ``optim_leverage_retry_enabled=True`` to recover a few of the SLSQP
-    # ``Positive directional derivative for linesearch`` cases via warm
-    # start (standard RP solution) and small Tikhonov diagonal jitter.
-    retry_enabled = bool(config.get("optim_leverage_retry_enabled", False))
-    if retry_enabled:
-        warm_x0 = solve_standard_rp(Sigma, n_assets, config, diagnostics=None)
-        if not (np.isfinite(warm_x0).all() and np.isclose(warm_x0.sum(), 1.0)):
-            warm_x0 = uniform_x0
-    else:
-        warm_x0 = uniform_x0
-    lev_init = np.ones(n_assets)
-    bond_lev0 = lev_init[bond_indices]
-
-    def objective(v):
-        return v[2 * n_assets] - v[2 * n_assets + 1]
-
-    def get_leverage(v):
-        lev = np.ones(n_assets)
-        idx = 2 * n_assets + (3 if is_relaxed else 2)
-        lev[bond_indices] = v[idx:]
-        return lev
-
-    def _build_problem(Sigma_local: np.ndarray, x0: np.ndarray):
-        lx0 = x0 * lev_init
-        zeta0 = Sigma_local @ lx0
-        psi0 = np.sqrt(lx0 @ Sigma_local @ lx0) / np.sqrt(n_assets)
-        gamma0 = np.min(x0 * zeta0)
-        rho0 = [0.1] if is_relaxed else []
-        v0 = np.concatenate((x0, zeta0, [psi0, gamma0], rho0, bond_lev0))
-
-        def eq_constraints(v):
-            x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-            lev = get_leverage(v)
-            return np.concatenate([zeta - Sigma_local @ (x * lev), [np.sum(x) - 1]])
-
-        def ineq_constraints(v):
-            x, zeta = v[:n_assets], v[n_assets : 2 * n_assets]
-            psi, gamma = v[2 * n_assets], v[2 * n_assets + 1]
-            lev = get_leverage(v)
-            lx = x * lev
-            con1 = x * zeta - gamma**2
-            con2 = n_assets * psi**2 - lx @ Sigma_local @ lx
-            idx_lev = 2 * n_assets + (3 if is_relaxed else 2)
-            bond_lev = v[idx_lev:]
-            cons = [con1, [con2], bond_lev - 1.0, l_max - bond_lev]
-            if is_relaxed:
-                rho = v[2 * n_assets + 2]
-                R_target = config["m"] * max(R_base, 0)
-                con_rho = rho**2 - config["lambda_pen"] * (x @ Theta @ x)
-                cons[1] = [
-                    con_rho,
-                    n_assets * (psi**2 - rho**2) - lx @ Sigma_local @ lx,
-                    mu @ lx - R_target,
-                ]
-            return np.concatenate(cons)
-
-        bounds = (
-            [config["asset_weight_bounds"]] * n_assets
-            + [(0, None)] * n_assets
-            + [(0, 10)] * (3 if is_relaxed else 2)
-            + [(1.0, l_max)] * n_bonds
-        )
-        return v0, eq_constraints, ineq_constraints, bounds
-
-    # Retry plan. When the retry layer is disabled (default) the plan is a
-    # single attempt that exactly reproduces the legacy behaviour. When
-    # enabled the plan is a ladder of Tikhonov-jitter + warm-start
-    # combinations. Each tuple is ``(strength, x0_source)``.
-    if retry_enabled:
-        retry_plan = (
-            (0.0, "warm"),
-            (1e-6, "warm"),
-            (1e-4, "warm"),
-            (0.0, "uniform"),
-            (1e-4, "uniform"),
-        )
-    else:
-        retry_plan = ((0.0, "uniform"),)
-    last_exc: BaseException | None = None
-    last_res = None
-    for attempt_idx, (strength, x0_source) in enumerate(retry_plan):
-        Sigma_attempt = _tikhonov_jitter(Sigma, strength) if strength > 0.0 else Sigma
-        x0_attempt = warm_x0 if x0_source == "warm" else uniform_x0
-        v0, eq_constraints, ineq_constraints, bounds = _build_problem(
-            Sigma_attempt, x0_attempt
-        )
-        try:
-            res = minimize(
-                objective,
-                v0,
-                method="SLSQP",
-                constraints=[
-                    {"type": "eq", "fun": eq_constraints},
-                    {"type": "ineq", "fun": ineq_constraints},
-                ],
-                bounds=bounds,
-                options={"ftol": config["optim_tol"], "maxiter": config["optim_maxiter"]},
-            )
-        except (ValueError, np.linalg.LinAlgError, RuntimeError) as exc:
-            last_exc = exc
-            last_res = None
-            continue
-
-        if res.success:
-            x_opt = res.x[:n_assets]
-            lev_opt = np.ones(n_assets)
-            idx = 2 * n_assets + (3 if is_relaxed else 2)
-            lev_opt[bond_indices] = res.x[idx:]
-            _record_success(
-                diagnostics,
-                solver_status=int(res.status),
-                solver_message=str(res.message),
-                objective_value=float(res.fun),
-            )
-            if diagnostics is not None:
-                diagnostics["retry_count"] = attempt_idx
-                diagnostics["retry_jitter_strength"] = float(strength)
-                diagnostics["retry_x0_source"] = x0_source
-            if attempt_idx > 0:
-                logger.info(
-                    "optimize_with_leverage: recovered via retry "
-                    "(strength=%.1e, x0=%s, attempt=%d)",
-                    strength,
-                    x0_source,
-                    attempt_idx,
-                )
-            return x_opt, lev_opt
-
-        last_res = res
-        last_exc = None
-
-    # Every attempt has failed; record the last failure and fall back.
-    if diagnostics is not None:
-        diagnostics["retry_count"] = len(retry_plan) - 1
-        diagnostics["retry_jitter_strength"] = float(retry_plan[-1][0])
-        diagnostics["retry_x0_source"] = retry_plan[-1][1]
-    if last_exc is not None:
-        _record_failure(
-            diagnostics,
-            function="optimize_with_leverage",
-            fallback_method="equal_weight_unit_leverage",
-            exception=last_exc,
-        )
-    elif last_res is not None:
-        _record_failure(
-            diagnostics,
-            function="optimize_with_leverage",
-            fallback_method="equal_weight_unit_leverage",
-            solver_status=int(last_res.status),
-            solver_message=str(last_res.message),
-            objective_value=float(last_res.fun),
-        )
-    return np.ones(n_assets) / n_assets, np.ones(n_assets)
+    """Solve the convex exposure formulation and recover bond leverage ratios."""
+    del Theta
+    cfg = config or {}
+    expected_returns = np.zeros(n_assets) if mu is None else np.asarray(mu, dtype=float)
+    return _solve_relaxed_exposure(
+        Sigma,
+        expected_returns,
+        n_assets,
+        list(bond_indices),
+        R_base,
+        is_relaxed,
+        cfg,
+        diagnostics,
+    )

@@ -253,9 +253,9 @@ def test_public_selector_initializes_with_conservative_candidate_within_sharpe_c
     assert selected["initialization_confidence_set_size"].item() == 3
 
 
-def test_public_candidate_family_keeps_grid_size_and_applies_cash_concentration_cap() -> None:
+def test_public_candidate_family_keeps_grid_size_and_applies_group_caps() -> None:
     from scripts.run_convex_adaptive_rrp import (
-        PUBLIC_CASH_CONCENTRATION_CAP,
+        PUBLIC_GROUP_BOUNDS,
         PUBLIC_LOW_TURNOVER_CANDIDATE_IDS,
         candidate_configurations,
     )
@@ -264,9 +264,9 @@ def test_public_candidate_family_keeps_grid_size_and_applies_cash_concentration_
 
     assert len(configurations) == 36
     for candidate_id in PUBLIC_LOW_TURNOVER_CANDIDATE_IDS:
-        assert configurations[candidate_id].group_bounds == {
-            "cash": (0.0, PUBLIC_CASH_CONCENTRATION_CAP)
-        }
+        assert configurations[candidate_id].group_bounds == PUBLIC_GROUP_BOUNDS
+        assert configurations[candidate_id].cvar_limit_multiplier is None
+        assert configurations[candidate_id].portfolio_vol_cap_enabled is False
 
 
 def test_cached_oos_scores_fail_closed_when_candidate_parameters_change() -> None:
@@ -321,7 +321,18 @@ def test_scheduled_backtest_keeps_positions_and_charges_switch_turnover(monkeypa
         "candidate_b": ConvexRRPConfig(lookback_days=60, return_reward=2.0),
     }
 
-    def fake_solver(window, previous_weights=None, config=None, budget_target=None, graph_features=None, regime_label=None):
+    for config in configs.values():
+        config.max_weight = 0.60
+
+    def fake_solver(
+        window,
+        previous_weights=None,
+        config=None,
+        budget_target=None,
+        graph_features=None,
+        regime_label=None,
+        forced_turnover=0.0,
+    ):
         weights = np.array([1.0, 0.0]) if config.return_reward == 1.0 else np.array([0.0, 1.0])
         return weights, {"fallback_used": False, "inaccurate_solution": False, "solver_name": "fake"}
 

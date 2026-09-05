@@ -107,6 +107,8 @@ def _write_candidate_grid(config: dict) -> None:
                 "turnover_penalty": cfg.turnover_penalty,
                 "budget_penalty": cfg.budget_penalty,
                 "cvar_penalty": cfg.cvar_penalty,
+                "cvar_limit": cfg.cvar_limit,
+                "cvar_limit_multiplier": cfg.cvar_limit_multiplier,
                 "cvar_beta": cfg.cvar_beta,
                 "return_reward": cfg.return_reward,
                 "vol_target_enabled": cfg.vol_target_enabled,

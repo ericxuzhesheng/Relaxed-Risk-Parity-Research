@@ -3,6 +3,8 @@ import pandas as pd
 from scipy.cluster.hierarchy import linkage, leaves_list
 from scipy.spatial.distance import squareform
 
+from src.covariance_estimators import estimate_covariance
+
 
 def _clean_weights(weights: np.ndarray) -> np.ndarray:
     weights = np.asarray(weights, dtype=float)
@@ -15,17 +17,7 @@ def _clean_weights(weights: np.ndarray) -> np.ndarray:
 
 
 def estimate_cov_corr(returns: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    clean = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
-    clean = clean.dropna(how="any")
-    if clean.empty:
-        clean = returns.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
-    cov = clean.cov()
-    diag = np.diag(cov.values).copy()
-    positive = diag[diag > 0]
-    floor = positive.min() * 1e-6 if len(positive) else 1e-12
-    cov_values = cov.values.copy()
-    np.fill_diagonal(cov_values, np.maximum(diag, floor))
-    cov = pd.DataFrame(cov_values, index=returns.columns, columns=returns.columns)
+    cov = estimate_covariance(returns, method="sample")
     corr = cov_to_corr(cov)
     return cov, corr
 

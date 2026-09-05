@@ -3,7 +3,7 @@
 This script runs the static backtest with the diagnostics channel enabled and
 writes three artifacts under ``results/tables/``:
 
-* ``static_backtest_solver_diagnostics.csv`` — per rebalance SLSQP solver
+* ``static_backtest_solver_diagnostics.csv`` — per rebalance convex solver
   status / message / fallback flag for the Global RRP path.
 * ``static_backtest_covariance_diagnostics.csv`` — per rebalance n_obs,
   n_assets, condition number, PSD repair flags, and low-sample/ill-conditioned
@@ -85,7 +85,7 @@ def _aggregate_summary(diagnostics: dict) -> pd.DataFrame:
             {
                 "metric": "solver_success_count",
                 "value": success,
-                "note": "Rebalance dates where SLSQP converged with success=True.",
+                "note": "Rebalance dates where the DCP-compliant solver returned success=True.",
             },
             {
                 "metric": "solver_fallback_count",

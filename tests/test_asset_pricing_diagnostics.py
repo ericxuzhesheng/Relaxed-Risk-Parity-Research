@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.asset_pricing_diagnostics import build_factor_proxies, run_diagnostics
+from src.asset_pricing_diagnostics import _ols, build_factor_proxies, run_diagnostics
 
 
 def sample_returns(n=80):
@@ -44,6 +44,15 @@ def test_factor_regression_handles_missing_factor_groups():
     outputs = run_diagnostics({"Global Relaxed Risk Parity": sample_model(returns)}, returns)
     assert not outputs.factor_exposure_summary.empty
     assert "available_factors" in outputs.factor_exposure_summary.columns
+
+
+def test_ols_collinear_design_has_finite_standard_error_diagnostics():
+    index = pd.bdate_range("2022-01-03", periods=80)
+    factor = pd.Series(np.linspace(-0.01, 0.01, len(index)), index=index)
+    x = pd.DataFrame({"factor_a": factor, "factor_b": factor}, index=index)
+    y = 0.0002 + 0.6 * factor
+    result = _ols(y, x)
+    assert all(np.isfinite(value) for value in result["tstats"].values())
 
 
 def test_module_output_does_not_export_generated_weight_recommendations():

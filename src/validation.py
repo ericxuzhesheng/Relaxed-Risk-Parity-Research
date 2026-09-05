@@ -259,9 +259,14 @@ def config_fields(candidate_id: str, cfg) -> dict:
         "turnover_cap",
         "turnover_penalty",
         "cvar_penalty",
+        "cvar_limit",
+        "cvar_limit_multiplier",
         "budget_penalty",
         "cvar_beta",
         "return_reward",
+        "portfolio_vol_cap_enabled",
+        "portfolio_vol_cap",
+        "use_transaction_cost_objective",
         "transaction_cost_bps",
     ]:
         fields[key] = params.get(key)

@@ -2,28 +2,36 @@
 
 ## Public model
 
-The public Improved Convex Adaptive Global RRP is the stitched rolling OOS path beginning on 2018-01-02. It is not a full-sample best candidate. At each quarterly selection date, only completed prior observations are eligible. A 95% confidence set retains candidates statistically indistinguishable from the best historical Sharpe, after which the pre-declared low-turnover order is used. A challenger replaces the incumbent only when the past-only evidence is statistically decisive.
+Improved Convex Adaptive Global RRP is one stitched rolling out-of-sample path beginning on 2018-01-02. Each quarterly decision uses completed prior observations, followed by a one-trading-day embargo. A 95% confidence set retains candidates that cannot be distinguished from the best historical Sharpe estimate. Statistical ties follow the declared low-turnover order. A challenger replaces the incumbent only when past-only evidence clears the switching threshold.
 
-The public candidate family preserves the original low-turnover design, uses portfolio-volatility caps of 2.5%, 3.0%, and 3.5%, and imposes a structural 30% cash-group ceiling. The realized public release gate requires average monthly turnover no greater than 2%. Transaction costs remain 3 bps one way.
+The governed public family contains `candidate_03`, `candidate_04`, and `candidate_05`. All three use a 252-day EWMA window, a 40% asset cap, an 80% one-period turnover cap, a 0.02 turnover penalty, a 0.25 risk-budget reference penalty, a 30% cash-group cap, and the same remaining group limits. Their soft CVaR penalties are 0.00, 0.02, and 0.05. They do not use an absolute volatility cap.
 
-Common candidate fields are `lookback_days=252`, `covariance_method=ewma`, `max_weight=0.40`, `turnover_cap=0.60`, `turnover_penalty=0.02`, `cvar_penalty=0.15`, `budget_penalty=0.25`, `cvar_beta=0.95`, and `return_reward=0.06`. The three public candidates differ only in their predeclared portfolio-volatility caps; changing these definitions invalidates cached selection scores.
+The validation-window turnover gate is 4% per month. The stitched public path must remain at or below 2% average monthly turnover. Transaction costs are 3 bps one way.
+
+The current historical path selects `candidate_03` throughout. Its CVaR penalty is zero. Reported drawdown and tail-loss outcomes therefore cannot be attributed to a CVaR penalty. Positive-CVaR candidates and the separate CVaR sensitivity grid remain diagnostic evidence.
+
+## Convex formulation
+
+The optimizer first computes a risk-budget reference with the convex log-barrier formulation. The implementation stage is a disciplined convex program that tracks this reference while applying long-only, full-investment, asset, group, and turnover limits. Optional variance and CVaR terms enter only in convex form.
+
+Leverage-sensitive legacy paths use an exposure variable so the optimization does not contain a bilinear product between weights and leverage. Expected return enters through a convex shortfall penalty when enabled. The solver accepts only an `optimal` status and records feasibility diagnostics after every rebalance.
+
+Covariance estimation uses one common complete sample for the active universe. The estimate is symmetrized, projected onto the positive-semidefinite cone, and given a scale-relative eigenvalue floor. Materially invalid inputs fail closed. The code never relies on an explicit covariance inverse for portfolio optimization.
 
 ## Research grid
 
-The 36-configuration grid is exploratory. It supports sensitivity, CSCV/PBO, and robustness analysis but cannot overwrite the public OOS path. Cached scores are reusable only when their serialized parameter signatures match the current candidate definitions.
+The 36-configuration grid is exploratory. It supports sensitivity analysis and CSCV/PBO diagnostics, but it cannot overwrite the public rolling path. Cached scores are reusable only when their serialized parameter signatures match the current candidate definitions.
 
 ## Data and timing
 
-- Evaluation window: 2018-01-02 to 2026-08-28.
-- ETF request window: 2000-01-01 to 2026-08-28; each ETF keeps its longest available history.
-- Active universe: 30 ETFs; candidate universe: 6 ETFs; no overlap.
-- Point-in-time entry: at least 60 valid observations.
-- Risk-free rate: monthly one-year ChinaBond government yield, lagged one month and converted with 243 trading days.
+- The evaluation window runs from 2018-01-02 through 2026-08-31.
+- The ETF request window runs from 2000-01-01 through 2026-08-31, while each ETF retains its longest valid history.
+- The active universe contains 30 ETFs and the isolated candidate universe contains 6 ETFs.
+- An ETF enters the point-in-time universe after 60 valid observations.
+- Sharpe and Sortino use the final valid monthly one-year ChinaBond government yield, lagged one month and compounded over 243 trading days.
 
 ## Release checks
 
-Publication fails if the universe overlaps, a required risk-free month is missing, future data enters a decision, the candidate cache signature is stale, realized turnover exceeds the release gate, or generated CSV, README, thesis, and presentation numbers disagree.
+Publication stops when the active and candidate universes overlap, a required risk-free month is missing, future data enters a decision, a cache signature is stale, the public turnover gate fails, a solver returns anything other than `optimal`, or generated CSV and public documents disagree.
 
-## Change-Log
-
-The authoritative selection history is `results/tables/afml_oos_selection.csv`. Governance changes must update the implementation, tests, generated outputs, and this document in the same release; narrative-only edits do not alter historical selections.
+The authoritative selection history is `results/tables/afml_oos_selection.csv`. A governance change must update implementation, tests, generated outputs, and this document in the same release.

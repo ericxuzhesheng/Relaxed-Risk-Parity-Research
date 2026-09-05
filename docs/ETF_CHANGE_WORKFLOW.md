@@ -194,7 +194,7 @@ python scripts/run_hrp_comparison.py
 
 - 耗时：5-15分钟
 - 输出：`results/tables/hrp_comparison.csv`
-- 包含：Global RRP、Defensive RRP、HRP、HERC、Equal Weight全部对比结果
+- 包含 Global RRP、两类凸优化模型、HRP、HERC 和 Equal Weight 的对比结果
 
 ### 3.3 ETF描述性统计
 
@@ -355,14 +355,14 @@ df = pd.read_csv("results/tables/convex_adaptive_performance_summary.csv")
 print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_monthly_turnover"]])
 ```
 
-### 当前结果参考（2018-01-02 至 2026-08-28）
+### 当前结果参考（2018-01-02 至 2026-08-31）
 
 | 模型 | 当前 Sharpe | 当前月换手率 |
 |------|-------------|---------------|
-| Improved Convex Adaptive Global RRP | 1.272 | 1.95% |
-| Convex Adaptive Global RRP | 0.481 | 0.00% |
-| Global RRP | 0.629 | 24.08% |
-| Equal Weight | 0.610 | 0.95% |
+| Improved Convex Adaptive Global RRP | 0.716 | 1.06% |
+| Convex Adaptive Global RRP | 0.690 | 2.22% |
+| Global RRP | 0.864 | 11.81% |
+| Equal Weight | 0.619 | 4.41% |
 
 这些数字只用于发现流水线异常，不是未来运行必须落入的“合理区间”。ETF 资产池或数据更新后，应重新读取权威 CSV，而不是以本表反向调参。
 
@@ -372,13 +372,13 @@ print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_mon
 
 2. **相关性过高**：新ETF与同板块ETF相关性 > 0.90，几乎不提供额外分散化，优化器无法利用。
 
-3. **极端波动率**：新ETF波动率 > 35% 年化，CVaR约束会将其权重压制到接近零，等于没引入新资产。
+3. **极端波动率**：新 ETF 波动率较高时，风险预算参考、协方差二次项和资产上限可能共同压低其权重。只有启用正的 CVaR 惩罚或 CVaR 上限时，才能把额外压制归因于 CVaR。
 
 4. **数据质量问题**：Tushare返回的数据有缺口，`missing_ratio` 过高（> 0.70）的ETF实际上只有少量有效数据。
 
 ---
 
-## 附：当前资产池（2026-08-28）
+## 附：当前资产池（2026-08-31）
 
 资产池的唯一权威来源是 `src/asset_universe.py`。当前主池为 30 支 ETF、8 类风险来源，候选池为 6 支 ETF；两者无重叠。主池新增中证2000ETF（563300.SH）、能源化工期货ETF（159981.SZ）和10年国债ETF（511260.SH），机器人ETF（562500.SH）、中韩半导体ETF（513310.SH）和证券公司先锋策略ETF（516980.SH）转入候选池。沙特ETF、巴西ETF和30年国债ETF也仅在候选池中。
 
@@ -392,4 +392,4 @@ print(df[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "avg_mon
 
 ---
 
-*最后更新：2026-08-30*
+*最后更新：2026-09-05*

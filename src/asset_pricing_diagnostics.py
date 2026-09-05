@@ -97,7 +97,14 @@ def _ols(y: pd.Series, x: pd.DataFrame) -> dict:
         try:
             sigma2 = float((resid @ resid) / dof)
             cov = sigma2 * np.linalg.pinv(design.T @ design)
-            stderr = np.sqrt(np.diag(cov))
+            cov = 0.5 * (cov + cov.T)
+            eigenvalues, eigenvectors = np.linalg.eigh(cov)
+            scale = max(float(np.max(np.abs(eigenvalues))), np.finfo(float).eps)
+            tolerance = 1e-10 * scale
+            if float(eigenvalues.min()) < -tolerance:
+                raise ValueError("OLS coefficient covariance is materially non-PSD.")
+            cov_psd = (eigenvectors * np.maximum(eigenvalues, 0.0)) @ eigenvectors.T
+            stderr = np.sqrt(np.maximum(np.diag(cov_psd), 0.0))
             with np.errstate(divide="ignore", invalid="ignore"):
                 tvals = coef / stderr
             tstats = dict(zip(["alpha", *x.columns], [float(v) for v in tvals]))

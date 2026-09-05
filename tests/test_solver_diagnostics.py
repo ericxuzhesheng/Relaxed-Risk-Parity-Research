@@ -1,15 +1,14 @@
-"""Reliability tests for the SLSQP and convex solvers.
+"""Reliability tests for the DCP-compliant convex solvers.
 
 These tests focus on the diagnostics channel introduced for solver
 fallbacks, covariance health, and investable-universe freezing. They are
 deliberately lightweight: small synthetic returns, no large CSV fixtures,
 deterministic seeds. They cover:
 
-* ``src.risk_parity`` records solver status + fallback flag in the
+* ``src.risk_parity`` records solver status + DCP and fallback flags in the
   ``diagnostics`` dict.
 * ``src.risk_parity`` weights satisfy the simplex constraint.
-* ``src.risk_parity`` falls back gracefully on a malformed (NaN) covariance
-  and records the exception type.
+* ``src.risk_parity`` fails closed on a malformed covariance.
 * ``src.convex_adaptive_rrp`` weights satisfy the simplex + max-weight
   constraints and emit covariance diagnostics + solver name.
 * ``src.backtest.run_static_backtest`` populates the diagnostics_out channel
@@ -60,39 +59,28 @@ def test_solve_standard_rp_returns_simplex_and_records_success():
     assert weights.shape == (4,)
     assert np.all(weights >= -1e-9)
     assert weights.sum() == pytest.approx(1.0, abs=1e-6)
-    assert diag["solver_name"] == "scipy_slsqp"
-    assert "solver_success" in diag
-    assert isinstance(diag["solver_success"], bool)
-    # Either SLSQP converged, or the fallback flag is on. Both branches must
-    # populate the diagnostic so silent failures are impossible.
-    assert diag["solver_success"] is True or diag["fallback_used"] is True
+    assert diag["solver_name"] in {"CLARABEL", "ECOS", "SCS"}
+    assert diag["solver_success"] is True
+    assert diag["problem_is_dcp"] is True
+    assert diag["fallback_used"] is False
 
 
-def test_solve_standard_rp_falls_back_on_nan_covariance():
+def test_solve_standard_rp_fails_closed_on_nan_covariance():
     cov = np.full((4, 4), np.nan)
     diag: dict = {}
-    weights = solve_standard_rp(cov, 4, get_config(), diagnostics=diag)
-    assert weights.shape == (4,)
-    assert weights.sum() == pytest.approx(1.0, abs=1e-9)
-    assert diag["solver_success"] is False
-    assert diag["fallback_used"] is True
-    assert diag["fallback_method"] == "equal_weight"
-    # Either SciPy raised inside SLSQP (exception_type populated) or it
-    # returned an unsuccessful status — both are acceptable failure modes
-    # for an entirely-NaN covariance, but the diagnostic must reflect one.
-    assert diag["exception_type"] or diag["solver_message"]
+    with pytest.raises(ValueError, match="non-finite"):
+        solve_standard_rp(cov, 4, get_config(), diagnostics=diag)
+    assert diag == {}
 
 
-def test_solve_relaxed_rp_falls_back_to_standard_rp():
+def test_solve_relaxed_rp_fails_closed_on_nan_covariance():
     cov = np.full((4, 4), np.nan)
     mu = np.zeros(4)
     theta = np.eye(4)
     diag: dict = {}
-    weights = solve_relaxed_rp(cov, mu, theta, 4, 0.0, get_config(), diagnostics=diag)
-    assert weights.shape == (4,)
-    assert weights.sum() == pytest.approx(1.0, abs=1e-9)
-    if diag["fallback_used"]:
-        assert diag["fallback_method"] == "standard_rp_solution"
+    with pytest.raises(ValueError, match="non-finite"):
+        solve_relaxed_rp(cov, mu, theta, 4, 0.0, get_config(), diagnostics=diag)
+    assert diag == {}
 
 
 def test_optimize_with_leverage_returns_two_arrays_and_records_diag():
@@ -107,35 +95,39 @@ def test_optimize_with_leverage_returns_two_arrays_and_records_diag():
     assert leverage[0] >= 1.0 - 1e-9
     assert leverage[1] == pytest.approx(1.0, abs=1e-9)
     assert "solver_name" in diag
-    assert diag["solver_name"] == "scipy_slsqp"
+    assert diag["solver_name"] in {"CLARABEL", "ECOS", "SCS"}
+    assert diag["problem_is_dcp"] is True
+    assert diag["fallback_used"] is False
 
 
-def test_optimize_with_leverage_retry_disabled_by_default():
-    """Default config must yield a single attempt with uniform x0.
-
-    This guards the published Global RRP / Defensive Dynamic RRP headline
-    numbers against accidental drift if the retry layer is enabled by
-    accident in a future change.
-    """
+def test_optimize_with_leverage_has_no_hidden_retry_or_fallback():
     cov = _wellposed_cov(4)
     diag: dict = {}
     optimize_with_leverage(
         cov, 4, bond_indices=[0], config=get_config(), diagnostics=diag
     )
-    assert diag.get("retry_count", 0) == 0
-    assert diag.get("retry_jitter_strength", 0.0) == 0.0
+    assert "retry_count" not in diag
+    assert diag["fallback_used"] is False
 
 
-def test_optimize_with_leverage_retry_enabled_records_flag():
-    """When the retry flag is set the diagnostics surface the x0 source."""
+def test_relaxed_leverage_formulation_is_dcp_and_feasible():
     cov = _wellposed_cov(4)
-    cfg = get_config({"optim_leverage_retry_enabled": True})
+    cfg = get_config()
     diag: dict = {}
-    optimize_with_leverage(
-        cov, 4, bond_indices=[0], config=cfg, diagnostics=diag
+    weights, leverage = optimize_with_leverage(
+        cov,
+        4,
+        bond_indices=[0],
+        mu=np.array([0.03, 0.08, 0.07, 0.06]),
+        R_base=0.06,
+        is_relaxed=True,
+        config=cfg,
+        diagnostics=diag,
     )
-    # First attempt with retry layer on uses the warm start.
-    assert diag.get("retry_x0_source") == "warm"
+    assert diag["problem_is_dcp"] is True
+    assert diag["max_constraint_violation"] <= 1e-6
+    assert weights.sum() == pytest.approx(1.0, abs=1e-6)
+    assert 1.0 - 1e-6 <= leverage[0] <= cfg["bond_leverage_upper"] + 1e-6
 
 
 # --- src.convex_adaptive_rrp -----------------------------------------------

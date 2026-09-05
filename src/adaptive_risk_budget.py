@@ -9,6 +9,43 @@ from src.asset_graph_features import rolling_correlation_graph_features
 REGIME_LABELS = ("low_risk", "medium_risk", "high_risk")
 
 
+def economic_risk_group(asset_name: str) -> str:
+    """Map an ETF to one of the eight economic risk-budget groups."""
+    from src.asset_universe import CANDIDATE_UNIVERSE, ETF_UNIVERSE
+
+    declared = {}
+    for asset in (*ETF_UNIVERSE, *CANDIDATE_UNIVERSE):
+        declared[asset.new_name] = asset.asset_class
+        declared[asset.old_name] = asset.asset_class
+    name = str(asset_name)
+    category = declared.get(name, "")
+    if "bond" in category or category == "money market":
+        return "bonds"
+    if category in {"china equity", "china equity dividend"}:
+        return "china_broad_equity"
+    if category in {"china tech equity", "china new energy"}:
+        return "china_technology"
+    if category in {"china finance", "china defense", "china consumer"}:
+        return "china_sector_consumption"
+    if category == "hong kong equity":
+        return "hong_kong_equity"
+    if category == "global equity":
+        return "global_equity"
+    if category == "commodity" and name in {"黄金ETF", "白银LOF"}:
+        return "precious_metals"
+    if category == "commodity":
+        return "commodities"
+    return "other"
+
+
+def group_neutral_risk_budgets(columns: pd.Index) -> np.ndarray:
+    """Allocate equally across active economic groups and then within group."""
+    groups = [economic_risk_group(str(column)) for column in columns]
+    counts = {group: groups.count(group) for group in set(groups)}
+    group_budget = 1.0 / len(counts)
+    return np.asarray([group_budget / counts[group] for group in groups], dtype=float)
+
+
 def _normalize(values: np.ndarray) -> np.ndarray:
     values = np.asarray(values, dtype=float)
     values = np.nan_to_num(values, nan=0.0, posinf=0.0, neginf=0.0)
@@ -25,22 +62,32 @@ def adaptive_budget_target(
     regime_label: str = "medium_risk",
     min_budget: float = 0.01,
 ) -> pd.Series:
-    """Return a bounded risk-budget target derived from point-in-time inputs."""
+    """Return positive risk-budget shares derived from point-in-time inputs.
+
+    The returned values are *risk budgets*, not portfolio weights.  With graph
+    and regime features disabled, active economic groups receive equal budgets
+    and ETFs split their group's budget equally.  Under measured stress the
+    target tilts gradually toward lower-volatility assets; the convex
+    risk-budgeting stage converts the shares into portfolio weights.
+    """
     data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
     data = data.dropna(how="any")
     if data.empty:
         data = returns_window.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan).fillna(0.0)
     vol = data.std().replace(0.0, np.nan)
     inv_vol = (1.0 / vol).replace([np.inf, -np.inf], np.nan).fillna(0.0).values
-    base = _normalize(inv_vol)
+    defensive_budget = _normalize(inv_vol)
 
     stress = float((graph_features or {}).get("correlation_stress_score", 0.0))
     stress = float(np.clip(stress, 0.0, 1.0))
     regime_multiplier = {"low_risk": 0.75, "medium_risk": 1.0, "high_risk": 1.35}.get(regime_label, 1.0)
 
-    equal = np.ones_like(base) / len(base)
-    blend_to_equal = np.clip(stress * regime_multiplier, 0.0, 0.85)
-    target = (1.0 - blend_to_equal) * base + blend_to_equal * equal
+    group_neutral = group_neutral_risk_budgets(returns_window.columns)
+    defensive_tilt = np.clip(stress * regime_multiplier, 0.0, 0.85)
+    target = (
+        (1.0 - defensive_tilt) * group_neutral
+        + defensive_tilt * defensive_budget
+    )
     target = np.maximum(target, min_budget)
     target = _normalize(target)
     return pd.Series(target, index=returns_window.columns)
