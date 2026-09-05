@@ -12,6 +12,7 @@
 
 \usepackage{xcolor}
 \usepackage{flafter}
+\usepackage{placeins}
 \definecolor{holdingRed}{HTML}{B53B4A}
 \definecolor{holdingBlue}{HTML}{194F7D}
 \graphicspath{{../../results/figures/}}
@@ -24,6 +25,38 @@
 
 \setlength{\emergencystretch}{2em}
 \renewcommand{\arraystretch}{1.18}
+\linespread{1.35}
+
+% 阅读版式：章首页、标题层级与正文保持统一，不设置页数上限。
+\pretocmd{\section}{\clearpage}{}{}
+\titleformat{\section}{\hwzhongsong\centering\bfseries\zihao{-2}}{\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{0pt}{24pt}
+\titlespacing*{\subsection}{0pt}{18pt plus 3pt minus 2pt}{9pt plus 2pt minus 1pt}
+\titlespacing*{\subsubsection}{0pt}{12pt plus 2pt minus 1pt}{6pt plus 1pt minus 1pt}
+\raggedbottom
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+\renewcommand{\abstracttextfont}{\normalsize}
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
+\setlength{\absparindent}{2em}
+\AtBeginEnvironment{longtable}{\small\linespread{1.15}\selectfont}
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+\renewcommand{\thefigure}{\thesection-\arabic{figure}}
+\renewcommand{\thetable}{\thesection-\arabic{table}}
+
+% 允许图表与解释文字同页，避免中等大小的浮动体独占居中页面。
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{2}
+\setcounter{totalnumber}{3}
+\makeatletter
+\setlength{\@fptop}{0pt}
+\makeatother
 
 % 论文中的核心数值通过宏统一引用，以保持全文口径一致。
 % generated_numbers.tex defines what the pipeline produced; fallback fills any remaining gaps.
@@ -55,10 +88,11 @@
 }
 
 \newcommand{\figwide}[3]{
+  \newgeometry{left=1.5cm,right=1.5cm,top=2.5cm,bottom=2.5cm,nohead}
   \IfFileExists{../../results/figures/#1}{
     \begin{figure}[htbp]
       \centering
-      \includegraphics[width=0.93\textwidth]{#1}
+      \includegraphics[width=\linewidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
@@ -70,6 +104,7 @@
       \label{#3}
     \end{figure}
   }
+  \restoregeometry
 }
 
 \newcommand{\fignarrow}[3]{
@@ -118,6 +153,7 @@
 \begin{document}
 \makecover
 \clearpage
+\pagenumbering{Roman}
 \section*{学术声明}
 本人郑重声明，所呈交的毕业论文是在指导教师指导下独立完成的研究成果。引用他人的成果均已注明来源。历史回测结果仅用于研究，不构成未来收益承诺。
 \clearpage
@@ -140,7 +176,7 @@ Global RRP uses a convex risk-budget reference followed by a convex objective fo
 The primary model records \globalNetReturn{} net annual return, \globalVolatility{} annual volatility, \globalSharpe{} Sharpe and \globalMaxDD{} maximum drawdown. A total of \primaryAssetsUsed{} ETFs receive material allocations during eligible periods. All annual candidates fall within one Sharpe standard error, so the data do not identify unique penalties. Historical design choices prevent an untouched model-selection claim.
 \end{abstract}
 \clearpage
-\setcounter{tocdepth}{1}
+\setcounter{tocdepth}{2}
 \tableofcontents
 \clearpage
 \pagenumbering{arabic}
@@ -201,10 +237,13 @@ $RC_i$ & 相对于估计协方差的资产波动风险贡献\\
 所有逐周具体持仓仅保存在仓库 CSV 中。核对时先用权重和源收益重建毛收益，再按权重变化计算费用，最后检查净收益及跨期复利。风险预算误差应区分参考解与最终解，数值容差不应被解释为最低持仓要求。图中的权重分档只影响颜色，不影响结果。
 
 \clearpage
+\phantomsection
+\addcontentsline{toc}{section}{参考文献}
 \bibliographystyle{gbt7714-numeric}
 \bibliography{references}
 \clearpage
 \section*{致谢}
+\addcontentsline{toc}{section}{致谢}
 
 本文得以完成，首先要感谢指导老师王磊教授。从选题方向的确定、研究框架的搭建，到实证方法的细化与论文的反复修改，王老师在每一个关键节点都给予了耐心细致的指导与建设性意见，使我对量化资产配置领域的认识不断深化。王老师严谨的学术态度和对学生的真诚关怀，是我在整个研究过程中最重要的精神支撑。
 
