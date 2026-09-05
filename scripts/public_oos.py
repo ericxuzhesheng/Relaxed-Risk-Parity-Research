@@ -1,4 +1,4 @@
-"""Shared loaders and variants for the published AFML rolling OOS path."""
+"""Shared frozen research schedule and weekly primary-model variants."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ from src.convex_adaptive_rrp import (
     run_convex_adaptive_schedule_backtest,
 )
 from src.utils import get_config, resolve_path
+from dataclasses import replace
 
 
 SELECTION_PATH = Path(resolve_path("results/tables/afml_oos_selection.csv"))
@@ -47,22 +48,40 @@ def public_candidate_configs(transaction_cost_bps: float) -> dict[str, ConvexRRP
     return dict(candidate_configurations(transaction_cost_bps))
 
 
+def primary_model_config(config: ConvexRRPConfig) -> ConvexRRPConfig:
+    """Weekly primary specification selected after the constraint research.
+
+    Keep non-cash group bounds, turnover controls and the reference objective.
+    A unit asset bound is redundant under the long-only fully invested budget.
+    """
+    bounds = {key: value for key, value in config.group_bounds.items() if key != "cash"}
+    return replace(config, rebalance_frequency="W", max_weight=1.0, group_bounds=bounds)
+
+
 def run_public_oos_variant(
     returns: pd.DataFrame,
     *,
     transaction_cost_bps: float = 3.0,
     transform: Callable[[ConvexRRPConfig], ConvexRRPConfig] | None = None,
     selection: pd.DataFrame | None = None,
+    collect_constraint_diagnostics: bool = False,
+    relative_cvar_to_baseline: bool = False,
+    primary_model: bool = True,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Re-run the audited warm-up and public OOS schedule after a uniform perturbation."""
+    """Replay the frozen research schedule, using the primary specification by default."""
     planned = load_public_oos_selection() if selection is None else selection.copy()
     configs = public_candidate_configs(transaction_cost_bps)
+    if primary_model:
+        configs = {candidate_id: primary_model_config(cfg) for candidate_id, cfg in configs.items()}
     if transform is not None:
         configs = {candidate_id: transform(cfg) for candidate_id, cfg in configs.items()}
     scheduled_result, scheduled_solver, _, _ = run_convex_adaptive_schedule_backtest(
         returns,
         planned[["test_start", "test_end", "selected_candidate_id"]],
         configs,
+        **({"collect_constraint_diagnostics": collect_constraint_diagnostics,
+            "relative_cvar_to_baseline": relative_cvar_to_baseline}
+           if collect_constraint_diagnostics or relative_cvar_to_baseline else {}),
     )
     evaluation_start = get_config()["evaluation_start_date"]
     result = slice_and_rebase_result(scheduled_result, evaluation_start)
@@ -93,4 +112,4 @@ def modal_selected_config(transaction_cost_bps: float = 3.0) -> tuple[str, Conve
         selection = selection[selection["phase"].eq("public_oos")]
     counts = selection["selected_candidate_id"].value_counts()
     candidate_id = sorted(counts[counts.eq(counts.max())].index)[0]
-    return candidate_id, public_candidate_configs(transaction_cost_bps)[candidate_id]
+    return candidate_id, primary_model_config(public_candidate_configs(transaction_cost_bps)[candidate_id])

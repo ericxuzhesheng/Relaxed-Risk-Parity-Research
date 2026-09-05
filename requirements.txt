@@ -2,6 +2,7 @@ pandas==2.3.3
 numpy==2.2.6
 matplotlib==3.10.6
 scipy==1.16.3
+scikit-learn==1.9.0
 openpyxl==3.1.5
 akshare==1.18.46
 cvxpy==1.8.2

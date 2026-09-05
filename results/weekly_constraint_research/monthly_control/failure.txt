@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\scripts\run_weekly_constraint_research.py", line 205, in run
+    check_result(result, solver, evaluation, monthly=variant == "monthly_control")
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\scripts\run_weekly_constraint_research.py", line 77, in check_result
+    raise ValueError("material exposure has missing execution-day returns")
+ValueError: material exposure has missing execution-day returns

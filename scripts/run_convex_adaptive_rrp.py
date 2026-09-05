@@ -584,34 +584,7 @@ def replace_latest_results_table(text: str, heading: str, rows: list[str], note:
     return text[:start] + new_block + text[end:]
 
 
-def write_readme(summary: pd.DataFrame, baseline_metrics: dict, improved_metrics: dict) -> None:
-    public_models = [
-        "Global Relaxed Risk Parity",
-        BASE_CONVEX_MODEL_NAME,
-        IMPROVED_MODEL_NAME,
-        "HRP Benchmark",
-        "HERC Benchmark",
-        "Equal Weight Benchmark",
-        "60/40 Benchmark",
-    ]
-    public_summary = apply_public_model_labels(summary.set_index("model").loc[public_models].reset_index())
-    rows = [readme_row(row) for _, row in public_summary.iterrows()]
-    note_en = (
-        f"{IMPROVED_MODEL_NAME} is one continuous AFML-inspired rolling OOS path from 2018-01-02. "
-        "Each quarterly candidate is selected from the completed six-month validation window after a one-trading-day embargo."
-    )
-    note_zh = (
-        f"{IMPROVED_MODEL_NAME} 是自 2018-01-02 起连续拼接的 AFML 风格滚动样本外路径。"
-        "每季度候选仅依据已完成的六个月验证窗选择，并设置一个交易日的隔离期。"
-    )
-    readme_path = Path(resolve_path("README.md"))
-    text = readme_path.read_text(encoding="utf-8")
-    text = replace_latest_results_table(text, "### 最新绩效", rows, note_zh)
-    text = replace_latest_results_table(text, "### Latest Performance", rows, note_en)
-    readme_path.write_text(text, encoding="utf-8")
-
-
-def main(*, reuse_candidate_scores: bool = False) -> None:
+def main() -> None:
     ensure_output_dirs()
     config = get_config({"transaction_cost_bps": 3.0, "turnover_cap": 0.25, "target_vol": 0.060})
     eval_start_date = config["evaluation_start_date"]
@@ -655,21 +628,22 @@ def main(*, reuse_candidate_scores: bool = False) -> None:
     base_result.to_csv(resolve_path("results/tables/convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
     base_solver.insert(0, "model", BASE_CONVEX_MODEL_NAME)
     baseline_summary = summarize_result(BASE_CONVEX_MODEL_NAME, base_result, eval_start_date, config)
-    if reuse_candidate_scores:
-        print("Reusing the complete current candidate score cache...")
-        candidates = pd.read_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"))
-        oos_scores = pd.read_csv(resolve_path("results/tables/afml_oos_candidate_scores.csv"))
-        candidates, improved_result, improved_solver, oos_selection, oos_scores = build_public_oos_from_scores(
-            returns, eval_start_date, config, candidates, oos_scores
-        )
-    else:
-        candidates, improved_result, improved_solver, oos_selection, oos_scores = run_improvement_search(
-            returns, eval_start_date, config
-        )
+    from scripts.public_oos import run_public_oos_variant, load_public_oos_selection, primary_model_config, public_candidate_configs
+    from dataclasses import asdict
+    import json
+    print("Running weekly primary model with frozen research schedule...")
+    improved_result, improved_solver = run_public_oos_variant(returns, collect_constraint_diagnostics=True)
     improved_result.to_csv(resolve_path("results/tables/improved_convex_adaptive_global_relaxed_risk_parity_returns.csv"), index=False)
-    candidates.to_csv(resolve_path("results/tables/convex_adaptive_improvement_candidates.csv"), index=False)
-    oos_selection.to_csv(resolve_path("results/tables/afml_oos_selection.csv"), index=False)
-    oos_scores.to_csv(resolve_path("results/tables/afml_oos_candidate_scores.csv"), index=False)
+    improved_solver.insert(0, "model", IMPROVED_MODEL_NAME)
+    oos_selection = load_public_oos_selection()
+    manifest = {
+        "model": public_model_label(IMPROVED_MODEL_NAME),
+        "role": "primary", "risk_free_rate": 0.0,
+        "selection_status": "Chosen after historical constraint research; not an untouched out-of-sample model selection test.",
+        "schedule": "Frozen afml_oos_selection.csv; candidate_03 throughout the public period.",
+        "configurations": {cid: asdict(primary_model_config(cfg)) for cid, cfg in public_candidate_configs(3.0).items() if cid in oos_selection.selected_candidate_id.unique()},
+    }
+    Path(resolve_path("results/tables/primary_model_configuration.json")).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
     models: dict[str, pd.DataFrame] = {
         "Global Relaxed Risk Parity": global_rrp,
@@ -680,22 +654,31 @@ def main(*, reuse_candidate_scores: bool = False) -> None:
         "Equal Weight Benchmark": equal_weight_result,
         "60/40 Benchmark": sixty_forty_result,
     }
-    public_order = list(models)
+    public_order = [IMPROVED_MODEL_NAME, *[name for name in models if name != IMPROVED_MODEL_NAME]]
+    for name, result in models.items():
+        label = public_model_label(name).lower().replace("/", "_").replace(" ", "_")
+        net = result["net_return"] if "net_return" in result else result["portfolio_return"]
+        gross = result["gross_return"] if "gross_return" in result else net + result["turnover"].fillna(0.0) * config["transaction_cost_bps"] / 10000.0
+        slice_and_rebase_result(result.assign(gross_return=gross, net_return=net), eval_start_date).to_csv(resolve_path(f"results/tables/comparison_{label}_returns.csv"), index=False)
     summary = pd.DataFrame([summarize_result(name, result, eval_start_date, config) for name, result in models.items()])
     summary = summary.set_index("model").loc[public_order].reset_index()
     summary_public = apply_public_model_labels(summary)
+    summary_public["role"] = np.where(summary_public.model.eq(public_model_label(IMPROVED_MODEL_NAME)), "primary", "comparison")
+    summary_public["risk_free_rate"] = 0.0
+    summary_public["rebalance_frequency"] = np.where(summary_public.role.eq("primary"), "W", "M")
     summary_public.to_csv(resolve_path("results/tables/convex_adaptive_performance_summary.csv"), index=False)
+    summary_public.to_csv(resolve_path("results/tables/hrp_comparison.csv"), index=False)
 
     ablation = summary_public[summary_public["model"].isin([public_model_label(BASE_CONVEX_MODEL_NAME), public_model_label(IMPROVED_MODEL_NAME)])].copy()
     ablation["selected_candidate"] = ablation["model"].eq(public_model_label(IMPROVED_MODEL_NAME))
     ablation["selected_candidate_name"] = np.where(
         ablation["selected_candidate"],
-        "AFML rolling OOS selection",
+        "Weekly primary specification",
         "",
     )
     ablation["selected_parameters"] = np.where(
         ablation["selected_candidate"],
-        "quarterly selection; 24m train; 6m validation; 1 trading-day embargo; see afml_oos_selection.csv",
+        "weekly; no cash or asset concentration caps; frozen research schedule; rf=0; see primary_model_configuration.json",
         "baseline",
     )
     ablation.to_csv(resolve_path("results/tables/convex_adaptive_ablation.csv"), index=False)
@@ -729,21 +712,16 @@ def main(*, reuse_candidate_scores: bool = False) -> None:
 
     baseline_metrics = summary.set_index("model").loc[BASE_CONVEX_MODEL_NAME].to_dict()
     improved_metrics = summary.set_index("model").loc[IMPROVED_MODEL_NAME].to_dict()
-    write_readme(summary, baseline_metrics, improved_metrics)
+    # Narrative publication is synchronized after all diagnostic artifacts complete.
 
     print("\nConvex Adaptive Summary:")
     print(summary[["model", "net_annual_return", "sharpe_ratio", "max_drawdown", "calmar_ratio", "cvar_95_daily_loss", "turnover_adjusted_sharpe"]])
-    print("\nAFML rolling OOS candidate selection counts:")
+    print("\nFrozen research schedule candidate counts:")
     print(oos_selection["selected_candidate_id"].value_counts())
     print("Pipeline completed successfully.")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run the convex adaptive RRP research pipeline")
-    parser.add_argument(
-        "--reuse-candidate-scores",
-        action="store_true",
-        help="Reuse a complete, date-matched candidate score cache and rebuild only the public schedule",
-    )
-    args = parser.parse_args()
-    main(reuse_candidate_scores=args.reuse_candidate_scores)
+    parser.parse_args()
+    main()

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
+import json
 import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import numpy as np
 import pandas as pd
@@ -114,6 +115,23 @@ def _portfolio_cvar(losses: np.ndarray, beta: float) -> float:
     return float(tail.mean()) if tail.size else quantile
 
 
+def scenario_cvar(losses: np.ndarray, beta: float = 0.95) -> float:
+    """Empirical expected shortfall, including fractional mass at the VaR atom.
+
+    This equals the minimum of the Rockafellar-Uryasev scenario epigraph,
+    unlike averaging every observation greater than an interpolated quantile.
+    """
+    values = np.asarray(losses, dtype=float)
+    if values.ndim != 1 or not values.size or not np.isfinite(values).all():
+        raise ValueError("scenario CVaR requires finite, nonempty one-dimensional losses")
+    if not 0 < beta < 1:
+        raise ValueError("CVaR beta must lie strictly between zero and one")
+    ordered = np.sort(values)[::-1]
+    mass = (1 - beta) * len(values)
+    count = min(int(np.floor(mass)), len(values) - 1)
+    return float((ordered[:count].sum() + (mass - count) * ordered[count]) / mass)
+
+
 def solve_risk_budget_reference(
     covariance: np.ndarray,
     risk_budgets: np.ndarray,
@@ -201,6 +219,8 @@ def solve_convex_rrp(
     graph_features: dict | None = None,
     regime_label: str = "medium_risk",
     forced_turnover: float = 0.0,
+    collect_constraint_diagnostics: bool = False,
+    relative_cvar_to_baseline: bool = False,
 ) -> tuple[np.ndarray, dict]:
     """Solve the implementable second stage of the risk-budgeting model.
 
@@ -213,6 +233,22 @@ def solve_convex_rrp(
     """
     _require_cvxpy()
     cfg = config or ConvexRRPConfig()
+    baseline_weights = None
+    baseline_cvar = None
+    if relative_cvar_to_baseline:
+        if cfg.cvar_limit is not None or cfg.cvar_limit_multiplier is not None:
+            raise ValueError("relative CVaR cannot be combined with another hard CVaR limit")
+        scenarios = returns_window.replace([np.inf, -np.inf], np.nan).dropna(how="any")
+        if len(scenarios) < cfg.min_cvar_observations:
+            raise ValueError("insufficient complete observations for relative CVaR constraint")
+        baseline_weights, _ = solve_convex_rrp(
+            returns_window, previous_weights, cfg, budget_target, graph_features,
+            regime_label, forced_turnover=forced_turnover,
+        )
+        baseline_cvar = scenario_cvar(-scenarios.values @ baseline_weights, cfg.cvar_beta)
+        if baseline_cvar < 0:
+            raise ValueError("negative baseline loss CVaR is unsupported by the hard-limit API")
+        cfg = replace(cfg, cvar_limit=baseline_cvar)
     n_assets = len(returns_window.columns)
     if n_assets == 0:
         raise ValueError("returns_window must contain at least one asset")
@@ -364,13 +400,20 @@ def solve_convex_rrp(
         objective -= cfg.return_reward * (mu @ w) / return_scale
 
     constraints = [w >= 0.0, cp.sum(w) == 1.0, w <= per_asset_max]
+    constraint_names = ["asset_lower", "budget", "asset_upper"]
     if has_previous and cfg.turnover_cap is not None:
         constraints.append(traded_amount <= cfg.turnover_cap)
-    for idxs, (lower, upper) in group_constraints:
+        constraint_names.append("turnover_upper")
+    for group, (lower, upper) in effective_group_bounds.items():
+        idxs = [i for i, col in enumerate(returns_window.columns) if infer_asset_class(str(col)) == group]
+        if not idxs:
+            continue
         exposure = cp.sum(w[idxs])
         constraints.extend([exposure >= lower, exposure <= upper])
+        constraint_names.extend([f"group_{group}_lower", f"group_{group}_upper"])
     if cfg.portfolio_vol_cap_enabled and cfg.portfolio_vol_cap > 0.0:
         constraints.append(cp.quad_form(w, sigma) <= cfg.portfolio_vol_cap**2)
+        constraint_names.append("variance_upper")
 
     clean_scenarios = (
         returns_window.apply(pd.to_numeric, errors="coerce")
@@ -409,6 +452,7 @@ def solve_convex_rrp(
         excess_loss = cp.Variable(len(clean_scenarios), nonneg=True)
         scenario_losses = -clean_scenarios.values @ w
         constraints.append(excess_loss >= scenario_losses - eta)
+        constraint_names.append("scenario_excess_loss")
         cvar = eta + cp.sum(excess_loss) / (
             (1.0 - cfg.cvar_beta) * len(clean_scenarios)
         )
@@ -431,6 +475,7 @@ def solve_convex_rrp(
             if effective_limit < 0.0:
                 raise ValueError("cvar_limit must be nonnegative")
             constraints.append(cvar <= float(effective_limit))
+            constraint_names.append("cvar_upper")
             diagnostics["cvar_limit_effective"] = float(effective_limit)
 
     problem = cp.Problem(cp.Minimize(objective), constraints)
@@ -502,7 +547,7 @@ def solve_convex_rrp(
                 violations.append(max(0.0, predicted_vol - float(cfg.portfolio_vol_cap)))
             final_cvar = np.nan
             if needs_cvar:
-                final_cvar = _portfolio_cvar(
+                final_cvar = (scenario_cvar if relative_cvar_to_baseline else _portfolio_cvar)(
                     -clean_scenarios.values @ weights, cfg.cvar_beta
                 )
                 if effective_limit is not None:
@@ -530,6 +575,31 @@ def solve_convex_rrp(
                     f"{solver_name}: post-solve constraint violation {max_violation:.3e}"
                 )
                 continue
+            if collect_constraint_diagnostics:
+                records = []
+                for name, constraint in zip(constraint_names, constraints):
+                    lhs = np.asarray(constraint.args[0].value, dtype=float)
+                    rhs = np.asarray(constraint.args[1].value, dtype=float)
+                    slack = rhs - lhs
+                    dual = np.asarray(constraint.dual_value, dtype=float)
+                    size = np.broadcast(lhs, rhs, dual).size
+                    for i, (left, right, margin, price) in enumerate(zip(
+                        np.broadcast_to(lhs, slack.shape).ravel(),
+                        np.broadcast_to(rhs, slack.shape).ravel(), slack.ravel(),
+                        np.broadcast_to(dual, slack.shape).ravel(),
+                    )):
+                        records.append({
+                            "constraint": name,
+                            "component": str(returns_window.columns[i]) if name.startswith("asset_") else str(i) if size > 1 else "",
+                            "lhs": float(left), "rhs": float(right), "slack": float(margin),
+                            "dual": float(price), "binding": bool(abs(margin) <= 5e-5),
+                        })
+                diagnostics["constraints_json"] = json.dumps(records, ensure_ascii=False)
+                diagnostics["scenario_cvar"] = scenario_cvar(
+                    -clean_scenarios.values @ weights, cfg.cvar_beta
+                ) if len(clean_scenarios) else np.nan
+                diagnostics["relative_cvar_baseline"] = baseline_cvar
+                diagnostics["relative_cvar_weight_difference"] = float(np.max(np.abs(weights - baseline_weights))) if baseline_weights is not None else np.nan
             return weights, diagnostics
         errors.append(f"{solver_name}: status={problem.status}")
 
@@ -710,6 +780,9 @@ def run_convex_adaptive_schedule_backtest(
     returns: pd.DataFrame,
     schedule: pd.DataFrame,
     candidate_configs: dict[str, ConvexRRPConfig],
+    *,
+    collect_constraint_diagnostics: bool = False,
+    relative_cvar_to_baseline: bool = False,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Run one continuous OOS path while candidate parameters change over time.
 
@@ -770,6 +843,7 @@ def run_convex_adaptive_schedule_backtest(
     for date in output_index:
         candidate_id = str(assignment.loc[date])
         cfg = candidate_configs[candidate_id]
+        previous_day_weights = weights.copy()
         is_rebalance = date in forced_rebalances or date in rebalance_by_frequency[cfg.rebalance_frequency]
         turnover = 0.0
         if is_rebalance:
@@ -798,6 +872,12 @@ def run_convex_adaptive_schedule_backtest(
                         "smoothed_stress_score": 0.0,
                     }
                 budget = adaptive_budget_target(window, graph, regime_state["regime_label"])
+                research_options = {}
+                if collect_constraint_diagnostics or relative_cvar_to_baseline:
+                    research_options = {
+                        "collect_constraint_diagnostics": collect_constraint_diagnostics,
+                        "relative_cvar_to_baseline": relative_cvar_to_baseline,
+                    }
                 active_weights, diag = solve_convex_rrp(
                     window,
                     previous_active if has_previous else None,
@@ -806,6 +886,7 @@ def run_convex_adaptive_schedule_backtest(
                     graph,
                     regime_state["regime_label"],
                     forced_turnover=forced_turnover,
+                    **research_options,
                 )
                 weights = expand_weights(active_weights, active_cols, data.columns)
                 if cfg.vol_target_enabled:
@@ -821,6 +902,9 @@ def run_convex_adaptive_schedule_backtest(
                     )
                     weights = weights * scalar
                 turnover = float(np.abs(weights - previous).sum())
+                if collect_constraint_diagnostics:
+                    diag["information_cutoff"] = window.index.max()
+                    diag["active_assets_json"] = json.dumps(list(active_cols), ensure_ascii=False)
                 solver_rows.append({"date": date, "selected_candidate_id": candidate_id, **diag})
                 regime_rows.append({"date": date, "selected_candidate_id": candidate_id, **regime_state})
 
@@ -848,6 +932,8 @@ def run_convex_adaptive_schedule_backtest(
         }
         for position, asset in enumerate(data.columns):
             result_row[f"weight_{asset}"] = weights[position]
+            if collect_constraint_diagnostics:
+                result_row[f"previous_weight_{asset}"] = previous_day_weights[position]
         rows.append(result_row)
         weights = drift_weights(weights, data.loc[date])
 

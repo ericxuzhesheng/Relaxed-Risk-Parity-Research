@@ -137,3 +137,15 @@ backtest/V3/*
 !backtest/V1/.gitkeep
 !backtest/V2/.gitkeep
 !backtest/V3/.gitkeep
+
+# Current primary publication artifacts and frozen schedule
+!results/tables/afml_oos_selection.csv
+!results/tables/primary_*.csv
+!results/tables/primary_*.json
+!results/tables/comparison_*_returns.csv
+!results/figures/primary_weights.png
+*.nav
+*.snm
+tmp/
+report/reference/*.pdf
+report/reference/*.epub

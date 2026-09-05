@@ -1,0 +1,67 @@
+{
+  "model": "Improved Convex Adaptive Global RRP",
+  "role": "primary",
+  "risk_free_rate": 0.0,
+  "selection_status": "Chosen after historical constraint research; not an untouched out-of-sample model selection test.",
+  "schedule": "Frozen afml_oos_selection.csv; candidate_03 throughout the public period.",
+  "configurations": {
+    "candidate_03": {
+      "trading_days_per_year": 243,
+      "lookback_days": 252,
+      "rebalance_frequency": "W",
+      "covariance_method": "ewma",
+      "covariance_allow_fallback": true,
+      "ewma_halflife": 60.0,
+      "max_weight": 1.0,
+      "turnover_cap": 0.8,
+      "turnover_penalty": 0.02,
+      "transaction_cost_bps": 3.0,
+      "transaction_cost_penalty": 1.0,
+      "variance_penalty": 0.0,
+      "budget_penalty": 0.25,
+      "return_reward": 0.0,
+      "cvar_penalty": 0.0,
+      "cvar_beta": 0.95,
+      "cvar_limit": null,
+      "cvar_limit_multiplier": null,
+      "min_cvar_observations": 60,
+      "regime_stress_quantile": 0.67,
+      "regime_crisis_prior": 0.4,
+      "regime_prior_weight": 0.5,
+      "use_graph_features": false,
+      "use_transaction_cost_objective": true,
+      "use_online_regime": false,
+      "group_bounds": {
+        "bond": [
+          0.0,
+          0.7
+        ],
+        "defensive": [
+          0.0,
+          0.25
+        ],
+        "commodity_gold": [
+          0.0,
+          0.4
+        ],
+        "equity": [
+          0.0,
+          0.7
+        ]
+      },
+      "portfolio_vol_cap": 0.0,
+      "portfolio_vol_cap_enabled": false,
+      "solver": null,
+      "vol_target_enabled": false,
+      "vol_target": 0.04,
+      "ema_deviation_enabled": false,
+      "ema_deviation_span": 20,
+      "ema_strong_threshold": 0.05,
+      "ema_overextended_threshold": 0.15,
+      "ema_overextended_max_weight": 0.2,
+      "ema_stop_threshold": -0.05,
+      "ema_stop_max_weight": 0.05,
+      "ema_equity_only": true
+    }
+  }
+}

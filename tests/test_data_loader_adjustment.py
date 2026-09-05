@@ -1,6 +1,29 @@
 from __future__ import annotations
 
 import pandas as pd
+import numpy as np
+
+
+def test_price_to_returns_preserves_extreme_realized_returns() -> None:
+    from src.data_loader import price_to_returns
+
+    changes = np.r_[np.repeat(.001, 90), -.30, .40, np.repeat(.001, 8)]
+    dates = pd.bdate_range("2020-01-01", periods=len(changes))
+    prices = pd.DataFrame({"asset": 100 * np.cumprod(1 + changes)}, index=dates)
+    returns = price_to_returns(prices)
+    assert dates[90] in returns.index and dates[91] in returns.index
+    np.testing.assert_allclose(returns.loc[dates[90:92], "asset"], [-.30, .40])
+
+
+def test_future_prices_cannot_change_historical_returns() -> None:
+    from src.data_loader import price_to_returns
+
+    changes = np.r_[np.repeat(.001, 90), .15, np.repeat(.001, 9), .8]
+    dates = pd.bdate_range("2020-01-01", periods=len(changes))
+    prices = pd.DataFrame({"asset": 100 * np.cumprod(1 + changes)}, index=dates)
+    before = price_to_returns(prices.iloc[:-1])
+    after = price_to_returns(prices).loc[:dates[-2]]
+    pd.testing.assert_frame_equal(before, after)
 
 
 def test_adjustment_factor_extends_back_to_daily_history_start() -> None:

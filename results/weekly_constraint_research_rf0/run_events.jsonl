@@ -1,0 +1,12 @@
+{"time_utc": "2026-09-05T06:55:24.020836+00:00", "event": "refresh_started", "command": ["D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe", "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"]}
+{"time_utc": "2026-09-05T06:55:24.983506+00:00", "event": "refresh_passed", "command": ["D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe", "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"]}
+{"time_utc": "2026-09-05T06:55:24.984203+00:00", "event": "refresh_started", "command": ["D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe", "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260831"]}
+{"time_utc": "2026-09-05T06:55:33.589589+00:00", "event": "refresh_passed", "command": ["D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe", "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260831"]}
+{"time_utc": "2026-09-05T06:55:33.895335+00:00", "event": "legacy_reproduction_started"}
+{"time_utc": "2026-09-05T06:56:41.072653+00:00", "event": "legacy_reproduction_passed", "net_annual_return": 6.938893903907228e-17, "annualized_volatility": 7.632783294297951e-17, "sharpe_ratio": 0.0, "sortino_ratio": 1.1102230246251565e-16, "max_drawdown": -4.85722573273506e-17, "avg_monthly_turnover": 2.7755575615628914e-17}
+{"time_utc": "2026-09-05T06:56:41.073501+00:00", "event": "variant_started", "variant": "monthly_control"}
+{"time_utc": "2026-09-05T06:57:01.987453+00:00", "event": "variant_passed", "variant": "monthly_control", "sharpe": 0.8835225139008338, "elapsed_seconds": 20.906000000002678}
+{"time_utc": "2026-09-05T06:57:01.989471+00:00", "event": "variant_started", "variant": "weekly_baseline"}
+{"time_utc": "2026-09-05T06:58:09.411598+00:00", "event": "variant_passed", "variant": "weekly_baseline", "sharpe": 0.8903993769119181, "elapsed_seconds": 67.42199999999139}
+{"time_utc": "2026-09-05T06:58:09.413598+00:00", "event": "variant_started", "variant": "no_concentration_caps"}
+{"time_utc": "2026-09-05T06:59:15.219325+00:00", "event": "variant_passed", "variant": "no_concentration_caps", "sharpe": 1.8588056556783625, "elapsed_seconds": 65.81200000000536}

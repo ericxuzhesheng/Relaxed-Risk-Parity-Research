@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "daily_observations": 2102,
+  "rebalance_count": 444,
+  "max_constraint_violation": 3.3306690738754696e-16,
+  "future_information_count": 0,
+  "research_reproduction_atol": 5e-05,
+  "risk_free_rate": 0.0,
+  "selection_is_exploratory": true
+}

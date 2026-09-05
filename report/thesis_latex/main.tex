@@ -25,6 +25,7 @@
 % generated_numbers.tex defines what the pipeline produced; fallback fills any remaining gaps.
 \IfFileExists{generated_numbers.tex}{\input{generated_numbers.tex}}{}
 \IfFileExists{generated_fallback.tex}{\input{generated_fallback.tex}}{}
+\input{generated_primary_numbers.tex}
 
 \setlength{\textfloatsep}{14pt plus 2pt minus 3pt}
 \setlength{\floatsep}{12pt plus 2pt minus 2pt}
@@ -122,11 +123,11 @@
 \setcounter{page}{1}
 \renewcommand{\abstractname}{摘要}
 \begin{abstract}
-长期资产配置需要在市场不确定时维持有效的风险分散。风险平价减少了模型对收益预测的依赖，但在全球多资产 ETF 资产池中落地时，仍需处理相关结构时变、等风险贡献条件非凸以及月频调仓成本累积等问题。
+长期资产配置需要在市场不确定时维持有效的风险分散。风险平价减少了模型对收益预测的依赖，但在全球多资产 ETF 资产池中落地时，仍需处理相关结构时变、等风险贡献条件非凸以及调仓成本累积等问题。
 
-本文以 \etfCount 支可交易全球多资产 ETF 构建统一回测框架，资产池覆盖八大类风险来源：债券、A 股宽基、中国科技（半导体、人工智能、新能源与科创主题）、中国行业与消费、港股、全球股票、贵金属和大宗商品。评价区间 \evalStartDate{} 至 \evalEndDate（共 \evalMonths 个月度观察点），月度调仓，单边交易成本 \txCostBps{} bps，全程无前视。在统一框架下对比 Global RRP、Convex Adaptive Global RRP、Improved Convex Adaptive Global RRP 和层次化基准 HERC。
+本文以 \etfCount 支中国市场可交易的全球多资产 ETF 构建统一回测框架，覆盖八类资产。评价区间为 \evalStartDate{} 至 \evalEndDate{}，无风险利率按研究约定设为零，按 243 个交易日年化，单边交易成本为 \txCostBps{} bps。主模型 Improved Convex Adaptive Global RRP 每周最后一个实际交易日调仓，取消现金组与单资产集中度上限；其余模型作为月频对照，频率差异另行检验。
 
-Global RRP 的净年化收益为 \globalNetReturn，Sharpe 为 \globalSharpe，最大回撤为 \globalMaxDD，月均换手率 \globalMonthlyTurnover 造成了可见的成本拖累。Improved Convex Adaptive Global RRP 采用滚动样本外选择，并以换手惩罚和资产组上限约束权重路径。公开路径选择的候选将 CVaR 惩罚系数设为零，因此 CVaR 只作为事后尾部风险指标，不参与该路径的权重生成。主模型的月均换手率为 \improvedMonthlyTurnover，净年化收益为 \improvedNetReturn，Sharpe 为 \improvedSharpe，Sortino 为 \improvedSortino，最大回撤为 \improvedMaxDD。HERC 的 Sharpe 为 \hercSharpe，收益为 \hercNetReturn，其表现主要来自债券集中形成的极低波动。主模型在收益、风险和换手之间取得了可实施的历史折中，但 Sharpe 差异检验没有给出统计显著的相对优势。
+主模型净年化收益为 \improvedNetReturn，年化波动率为 \improvedVolatility，夏普比率为 \improvedSharpe，Sortino 比率为 \improvedSortino，最大回撤为 \improvedMaxDD，月均换手率为 \improvedMonthlyTurnover。平均现金类 ETF 权重为 \primaryCashMean，最高为 \primaryCashMax；若使用滞后一月的中债国债收益率作为机会成本，同一组合夏普为 \primaryChinaBondSharpe。主模型未启用 CVaR 惩罚。其规格是在历史约束实验后选定的，因此结果属于探索性历史证据，不等同于未参与模型选择的独立样本外检验。
 
 以上结论基于特定历史区间和约束设定，不构成对未来收益的预测。
 
@@ -138,9 +139,9 @@ Global RRP 的净年化收益为 \globalNetReturn，Sharpe 为 \globalSharpe，�
 \begin{abstract}
 Risk parity replaces expected-return estimation with risk budgeting, which makes it theoretically more robust. In practice, applying it to a global multi-asset ETF universe introduces three problems that don't go away: time-varying correlations, the non-convexity of exact equal-risk-contribution constraints, and transaction costs that add up meaningfully at monthly rebalancing frequency.
 
-This thesis tests a Relaxed Risk Parity framework on \etfCount{} tradable ETFs spanning eight asset groups---bonds, China broad equity, China technology, China sector/consumption, Hong Kong equity, global equity, precious metals, and commodities. The evaluation window is \evalStartDate{} to \evalEndDate{} (\evalMonths{} monthly observations), with \txCostBps-bp one-way transaction costs and no lookahead. Four models are compared: Global RRP, Convex Adaptive Global RRP, Improved Convex Adaptive Global RRP, and HERC. HRP remains a benchmark; its money-market concentration produces low volatility and limited return opportunity.
+This thesis studies \etfCount{} tradable ETFs across eight asset categories over \evalStartDate{} to \evalEndDate{}. The designated primary model, Improved Convex Adaptive Global RRP, rebalances weekly, removes cash-group and individual-asset concentration caps, and retains the other group and turnover controls. All headline metrics use zero risk-free return, 243 trading days per year and \txCostBps{} bps one-way transaction costs. Other core models are monthly comparisons, with separate frequency-only tests.
 
-Global RRP earns \globalNetReturn{} net annual return at a Sharpe of \globalSharpe{}, while its \globalMonthlyTurnover{} average monthly turnover creates a material cost drag. Improved Convex Adaptive Global RRP uses rolling out-of-sample selection, a turnover penalty, and group weight bounds to stabilize its allocation path. The selected public-path candidate sets the CVaR penalty to zero, so CVaR is reported as an ex-post tail-risk measure and does not determine these weights. The main model records \improvedNetReturn{} net annual return, a Sharpe of \improvedSharpe{}, a Sortino ratio of \improvedSortino{}, a maximum drawdown of \improvedMaxDD{}, and \improvedMonthlyTurnover{} average monthly turnover. HERC Benchmark's Sharpe of \hercSharpe{} is associated with extremely low volatility and heavy bond concentration. The main model offers an implementable historical trade-off across return, risk, and turnover, although pairwise Sharpe tests do not establish a statistically significant advantage.
+The primary model records \improvedNetReturn{} net annual return, \improvedVolatility{} annual volatility, \improvedSharpe{} Sharpe, \improvedSortino{} Sortino, \improvedMaxDD{} maximum drawdown and \improvedMonthlyTurnover{} average monthly turnover. Its average money-market ETF allocation is \primaryCashMean{}, reaching \primaryCashMax{}. Using lagged ChinaBond yields as opportunity cost yields a Sharpe of \primaryChinaBondSharpe{} for the same return path. The active CVaR penalty is zero. Specification selection followed historical constraint experiments, so prior-only rebalance inputs do not establish untouched out-of-sample model-selection evidence.
 
 All results are conditional on this evaluation period and constraint settings. They do not predict future performance.
 
@@ -168,10 +169,10 @@ All results are conditional on this evaluation period and constraint settings. T
 本文先梳理均值-方差、风险预算、CVaR 和层次化配置方法的理论联系，再建立可交易 ETF 资产池和统一回测标准，然后在相同研究设计下比较各模型，最后用多维度稳健性检验和过拟合诊断约束结论的适用范围。
 
 \subsection{研究内容与章节安排}
-论文分七章。第二章综述均值-方差、风险预算、CVaR 和层次化配置文献，说明本文的切入点。第三章给出模型符号和定位汇总。第四章说明 ETF 资产池、数据处理和回测规则。第五章比较各模型的绩效、净值路径和权重结构。第六章从子区间、参数扰动、协方差估计和过拟合诊断多个角度检验结论稳健性。第七章总结结论并指出研究局限。
+论文分七章。第二章综述投资组合与风险预算文献。第三章给出凸优化目标和约束。第四章说明资产池、收益记账和信息时序。第五章比较主模型与对照的绩效和权重。第六章报告约束消融、自然年分解和频率实验，并区分参数选择与逐期信息使用。第七章总结结论与研究边界。
 
 \subsection{可能的边际贡献}
-本文的边际贡献体现在三个方面。数据层面采用可交易 ETF，使成本和权重路径更接近真实执行。方法层面以凸对数障碍问题生成风险预算参考权重，再用第二阶段 DCP 模型处理方差、跟踪误差、换手与资产组边界，并保留可选的 CVaR 控制。验证层面采用滚动样本外选择、参数敏感性、协方差估计比较和 CSCV/PBO 诊断，将结论限定在当前样本与预设候选范围内。
+本文采用可交易 ETF 和逐期可投池构建实验环境，以凸风险预算参考和凸跟踪问题生成权重。约束消融同时报告实际权重、交易成本、约束松弛量与对偶变量，使绩效差异能够对应到约束是否生效。对历史选定规格与未参与选择的样本外证据作明确区分，避免将高夏普比率直接解释为普遍优势。
 
 \section{文献综述与理论基础}
 
@@ -229,7 +230,7 @@ $\alpha$ & CVaR 置信水平 \\
 \bottomrule
 \end{longtable}
 
-除特别说明外，本文所有模型均在长仓、权重归一、滚动估计、月度调仓和交易成本扣减框架下比较。最终权重由透明优化流程给出，不依赖机器学习或状态识别模块直接生成交易信号。
+所有核心模型使用相同评价日期、资产池和成本口径。主模型采用周频，其余核心模型保留月频；频率实验在主模型参数下仅改变调仓日历。最终权重由透明优化生成。
 
 \subsection{标准风险平价}
 设组合权重为 $w$，协方差矩阵为 $\Sigma$，组合波动率为：
@@ -284,17 +285,17 @@ J(w)=\lambda_{budget}||w-w_t^{RB}||_2^2+\lambda_{var}\frac{w^T\Sigma_t w}{v_t}
 \[
 \sum_i w_i=1,\quad 0\leq w_i\leq u_i,\quad L_g\leq \sum_{i\in g}w_i\leq U_g,
 \]
-并可选用 $w^T\Sigma_tw\leq\bar\sigma^2$、$CVaR_\alpha(w)\leq\bar c$ 等凸约束。$v_t$、$s_{cvar}$ 和 $s_\mu$ 分别归一化方差、尾部损失和收益尺度。公开候选族统一采用 $\lambda_{turnover}=0.02$、$\lambda_{budget}=0.25$、单边交易成本 $c=0.0003$、单资产上限 40\%、单期换手上限 80\%，并将现金组限制在 30\% 以内。三个公开候选只在软 CVaR 惩罚上取 0、0.02 和 0.05，不使用绝对波动率上限。
+方差上限与 CVaR 上限均可作为凸约束扩展。主模型设 $\lambda_{budget}=0.25$、$\lambda_{turnover}=0.02$、$c=0.0003$，保留 $\|w-w_{t-1}^{+}\|_1\leq0.80$。单资产只受多头单位预算约束，现金组无额外上限；债券、防御、商品与黄金、权益组上限依次为 70\%、25\%、40\% 与 70\%。这些是继承的实验参数，不宣称为实测最优值。方差惩罚、收益奖励与 CVaR 惩罚为零。
 
-公开主结果不是固定候选的全样本回测，而是自2018-01-02起连续拼接的滚动样本外路径。每个季度仅使用此前完成的训练窗和验证窗，先构造最高历史夏普附近的95\%置信候选集，再按预先声明的低换手顺序解决统计并列；只有挑战者的历史夏普改善超过单侧95\%阈值时才切换。完整36组参数网格仅用于探索与过拟合诊断，不直接覆盖公开路径。
+主模型冻结既有候选日历，统一施加周频和取消两项集中度上限的变换。当前公开评价期的基础候选始终为 \texttt{candidate\_03}。该变换是在检查历史实验后确定的，属于事后规格选择，不能因每期风险输入使用过去数据而将整个研究过程称为独立样本外验证。
 
-公开候选族令 $\lambda_{return}=0$。这避免历史均值估计误差进入公开权重，也使模型定位与风险预算研究保持一致。完整 36 组探索网格仍保留收益倾斜变体，但这些结果只用于敏感性分析。
+主模型不使用历史预期收益作为目标奖励，避免对均值估计作额外依赖。继承的跟踪、换手与组别参数保留在配置记录中，完整候选网格仅用于追溯原研究日历。
 
 若历史情景损失为 $L_s=-r_s^T w$，CVaR 可用辅助变量写成\cite{rockafellar2000optimization,boyd2004convex}
 \[
 CVaR_\alpha(L)=\min_\eta\left[\eta+\frac{1}{(1-\alpha)T}\sum_{s=1}^{T}\max(L_s-\eta,0)\right]
 \]
-公开滚动路径在全部选择期都保留 \texttt{candidate\_03}，其 $\lambda_{cvar}=0$。因此，当前路径的回撤不能归因于 CVaR 惩罚。正 CVaR 候选和单独的 CVaR 敏感性检验只说明加入该项后结果怎样变化，不构成公开路径已经启用 CVaR 的证据。Improved Convex Adaptive Global RRP 的实际改进来自风险预算参考跟踪、$L_1$ 换手惩罚、资产组边界和滚动样本外选择。其平均月度换手率为 \improvedMonthlyTurnover{}，低于 Global RRP 的 \globalMonthlyTurnover{}。
+主模型的 $\lambda_{cvar}=0$，且未施加相对 CVaR 上限。其风险表现应从风险预算参考、换手控制和实际现金集中度解释。正 CVaR 与收缩协方差配置属于对照，不决定主模型权重。
 
 \subsection{协方差估计方法}
 协方差矩阵的质量直接影响风险预算分配和权重求解。本文在不同模型和稳健性检验中使用三类估计器。
@@ -323,7 +324,7 @@ Ledoit-Wolf 收缩估计\cite{ledoit2004well}将样本协方差矩阵向结构�
 \]
 该方法借鉴状态平价与时变协方差研究\cite{fleming2001volatility,ielpo2024regime,bouye2025regime}，但在协方差层完成合成，以便继续使用同一套 CVaR、换手和资产组约束。它仅作为稳健性诊断，不替代主模型。
 
-主模型默认使用 EWMA 估计，第六章协方差稳健性检验比较样本协方差、Ledoit-Wolf、EWMA 及状态条件估计器对主要绩效指标的影响。所有估计器都使用同一组完整观测，随后对称化并投影到半正定锥。特征值下限按协方差尺度设为 $10^{-6}$，从而缓解近奇异矩阵的数值问题。若负特征值超过容差，程序停止求解；优化主路径不显式计算 $\Sigma^{-1}$。
+主模型使用 252 个历史观察的 EWMA 协方差，半衰期为 60。协方差先对称化并进行尺度相关的半正定修正，优化过程不显式计算矩阵逆。Ledoit--Wolf 消融保持窗口不变，收缩强度由当期历史数据估计。
 
 \subsection{HERC 基准模型}
 \label{sec:herc_baseline}
@@ -352,10 +353,10 @@ HERC 基准模型在层次聚类结构中加入风险贡献思想，使簇内和
   \end{figure}
 }{}
 
-图 \ref{fig:asset_graph} 显示，压力期债券、权益与商品之间的相关性普遍上升，分散效果随之减弱；黄金与权益的相关性相对稳定。模型因此按滚动窗口更新协方差矩阵，并用资产组边界和 $L_1$ 换手惩罚限制权重跳变。该机制的配置结果在图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 中进一步验证。
+相关结构图只作为历史描述，不直接生成主模型权重。主模型按调仓日前窗口估计风险，并通过凸目标和剩余约束生成组合。
 
 \subsection{样本构造与预处理}
-本文使用经复权处理后的可比价格序列，并据此计算相邻交易日收益率，同时对不同 ETF 的交易日进行对齐。上市前缺失价格不作填补；若某 ETF 在再平衡日前的可用历史记录不足 60 个交易日，则不参与当期优化，满足门槛后方可进入可投资宇宙。价格数据通过 Tushare 接口获取，当前缓存中最早有效价格观测为 \dataFirstDate，最新缓存日期为 \dataLastDate；受限于各 ETF 上市时间，部分晚上市品种的有效样本更短。本文绩效评价区间自 \evalStartDate{} 起，至 \evalEndDate{} 止，将评价起点设定为该日期而非上市首日，是为保证多数资产在进入评价期前已积累足够的协方差估计历史窗口，避免初期样本不足带来的估计偏误。逐点时间宇宙过滤在每个再平衡日排除历史数据不足的 ETF，以避免前视信息泄露。部分资产如中证1000 ETF 上市时间较晚，因此其历史统计特征和模型参与频率与早上市 ETF 不完全一致，这一点在描述性统计与回测设计中已有体现。
+本文使用经复权处理后的可比价格序列，并据此计算相邻交易日收益率，同时对不同 ETF 的交易日进行对齐。保留真实极端收益，不使用全样本均值或标准差剔除异常收益。上市前缺失价格不作填补；若某 ETF 在再平衡日前的可用历史记录不足 60 个交易日，则不参与当期优化，满足门槛后方可进入可投资宇宙。价格数据通过 Tushare 接口获取，当前缓存中最早有效价格观测为 \dataFirstDate，最新缓存日期为 \dataLastDate；受限于各 ETF 上市时间，部分晚上市品种的有效样本更短。本文绩效评价区间自 \evalStartDate{} 起，至 \evalEndDate{} 止，将评价起点设定为该日期而非上市首日，是为保证多数资产在进入评价期前已积累足够的协方差估计历史窗口，避免初期样本不足带来的估计偏误。逐点时间宇宙过滤在每个再平衡日排除历史数据不足的 ETF，以避免前视信息泄露。部分资产如中证1000 ETF 上市时间较晚，因此其历史统计特征和模型参与频率与早上市 ETF 不完全一致，这一点在描述性统计与回测设计中已有体现。
 
 \subsection{收益率、权重、交易成本与换手率定义}
 设第 $i$ 个 ETF 在第 $t$ 日价格为 $P_{i,t}$，日收益率为：
@@ -373,359 +374,116 @@ TO_t=\sum_i |w_{i,t}-w_{i,t-1}^{+}|
 若单位交易成本率为 $c$，则交易成本为 $TC_t=c\cdot TO_t$，组合净收益为 $r_{p,t}^{net}=r_{p,t}^{gross}-TC_t$。本文默认交易成本为 3 bps，在结果中区分毛收益和净收益。该处理未覆盖冲击成本、买卖价差和申赎费用。
 
 \subsection{组合约束与调仓规则}
-本文模型在长仓约束下比较，权重和为 1，不允许卖空。模型包含单资产权重上限、资产组边界和月度调仓规则。月度调仓意味着模型在每个月末附近的再平衡点使用当时可获得的历史窗口估计风险输入，适合长期配置研究，也能避免过高交易频率导致的执行成本问题。
+主模型为多头且权重和为 1，不加杠杆。每周最后一个实际交易日调仓，节假日导致的缺失星期五由该周最后实际交易日替代。现金组与单资产集中度上限取消，其他组别边界和换手约束保留。期末不完整周沿用现有交易日历分组规则。
 
 \subsection{评价指标体系}
-累计净值定义为 $NAV_t=\prod_{s\leq t}(1+r_{p,s}^{net})$。净年化收益衡量整个评价期内净值增长速度，受样本起止点影响。年化波动率衡量收益波动程度。令 $y_{m-1}$ 为上一月最后有效的 1 年期中债国债到期收益率，日度无风险收益为 $r_{f,d}=(1+y_{m-1})^{1/243}-1$。夏普比率和 Sortino 比率均以日期对齐的日度超额收益 $r_{p,d}^{net}-r_{f,d}$ 计算；前者使用组合日收益标准差，后者使用超额收益下行均方根\cite{chinabond2026}。若任一评价月份缺少对应利率，流水线失败退出，不以 Shibor、LPR 或固定常数替代。最大回撤定义为：
+累计净值为 $NAV_t=\prod_{s\leq t}(1+r_{p,s}^{net})$。主口径令 $r_{f,d}=0$，夏普与 Sortino 分别使用净收益标准差和下行均方根，按 243 日年化。机会成本诊断另令 $r_{f,d}=(1+y_{m-1})^{1/243}-1$，其中 $y_{m-1}$ 为上月最后有效的 1 年期中债国债收益率\cite{chinabond2026}。改变无风险利率只改变比率分子，不改变权重、收益或回撤。最大回撤定义为：
 \[
 MDD=\min_t\left(\frac{NAV_t}{\max_{s\leq t}NAV_s}-1\right)
 \]
 Calmar 比率为净年化收益除以最大回撤绝对值。平均月度换手率衡量组合执行稳定性。95\% 日度 CVaR 衡量历史日度损失超过 95\% 分位后的平均损失，是尾部风险诊断指标，不是未来极端损失预测。
 
 \subsection{回测流程与无前视设计}
-本文回测流程如下：第一，在每个调仓日确定历史窗口；第二，使用调仓日前数据估计协方差、预算或状态；第三，求解目标权重；第四，计算调仓换手和交易成本；第五，使用调仓后的未来收益计算组合净值；第六，进入下一个月度调仓点。压力期识别只用于事后评价，不作为交易信号。稳健性检验不参与主模型重新选择，其作用是约束结论强度。评价区间 \evalStartDate{} 至 \evalEndDate{} 共约 \evalMonths{} 个月，月末再平衡日共 \rebalancingPoints{} 个。评价起点之前的实际可得行情仅用于滚动窗口预热；每支 ETF 仍须累计达到 60 个有效观察后才可进入组合。
+每次调仓先确定严格早于调仓日的历史窗口，再估计风险输入并求解目标权重。沿用项目记账规则，目标权重乘以当日收益并扣除换手成本，随后更新漂移权重；这属于日频回测执行约定，不是逐笔成交模拟。每次求解记录信息截止日，检查其早于交易日。评价期共 \primaryObservations{} 个日收益观察与 \primaryRebalances{} 个周频调仓点。逐期数据可得性检查不能消除规格事后选择带来的偏差。
 
 无前视设计的时序实现可从代码层面加以说明。设第 $T$ 个月末为调仓日，协方差矩阵与风险预算估计所使用的收益率序列严格截止于 $T-1$ 日，即 $T$ 日当日价格（当日收益率 $r_T$）不进入本期估计窗口。$T$ 日优化求解完成后所得权重 $w_T$ 从 $T+1$ 日起生效，组合净值依据 $T+1$ 日及之后实现的收益率 $r_{T+1}, r_{T+2}, \ldots$ 进行计算。对于上市时间较短的主池 ETF（如中证2000、能源化工期货 ETF），可投资宇宙的纳入判断仅依赖截至 $T-1$ 日已观测到的历史记录：若有效观察不足 60 日，则在 $T$ 日调仓中排除。六支候选 ETF 则在整个回测中固定隔离。上述时序规则在回测引擎的数据切片逻辑中逐日强制执行，是保证无前视设计在实现层面不发生信息泄露的关键环节。
 
 \subsection{可靠性与诊断层}
-独立诊断层记录求解器状态、协方差条件数、半正定修复和逐期可投资宇宙。它不参与模型选择。Global RRP 的 174 个再平衡点、基础凸模型的 169 个再平衡点以及公开改进路径的 104 个再平衡点均返回 `optimal`，没有回退或不精确解。低共同样本数窗口仍单独记录，因为求解成功不能消除协方差估计误差。参数选择、数据快照和夏普差异检验也与权重生成相互独立，只用于限定结论强度。
+诊断层记录求解器状态、协方差条件数、半正定修复和逐期可投资宇宙。主模型评价期的 \primaryRebalances{} 个再平衡点均核查信息截止时间、权重预算、有效上限与交易成本。求解成功只说明数值问题得到可接受解，不能消除估计误差或事后规格选择偏差。具体最大违反量和复现容差见主模型审计文件。
 
 \section{实证结果分析}
-
-\subsection{主模型绩效比较}
-表 \ref{tab:core_perf} 在统一口径下比较主要模型与基准。Improved Convex Adaptive Global RRP 的净年化收益为 \improvedNetReturn，年化波动率 \improvedVolatility，Sharpe \improvedSharpe，最大回撤 \improvedMaxDD，月均换手率 \improvedMonthlyTurnover。相对基础凸模型，它提高了净收益并降低换手，波动和最大回撤则略有上升。Global RRP 风险较低，但净年化收益也较低，且月均换手率达到 \globalMonthlyTurnover。
-
-\begin{table}[H]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{3.2pt}
-\renewcommand{\arraystretch}{1.16}
-\caption{全模型绩效比较（\evalStartDate{} 至 \evalEndDate）}
-\label{tab:core_perf}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{@{}lrrrrrrr@{}}
-\toprule
-模型 & 净年化 & 年化波动 & Sharpe & Sortino & 最大回撤 & 月均换手 & 95\% CVaR \\
-\midrule
-Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalSortino & \globalMaxDD & \globalMonthlyTurnover & \globalCvar \\
-Convex Adaptive Global RRP & \convexNetReturn & \convexVolatility & \convexSharpe & \convexSortino & \convexMaxDD & \convexMonthlyTurnover & \convexCvar \\
-\textbf{Improved Convex Adaptive Global RRP} & \textbf{\improvedNetReturn} & \textbf{\improvedVolatility} & \textbf{\improvedSharpe} & \textbf{\improvedSortino} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} & \textbf{\improvedCvar} \\
-\midrule
-HRP Benchmark & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpSortino & \hrpMaxDD & \hrpMonthlyTurnover & \hrpCvar \\
-HERC Benchmark & \hercNetReturn & \hercVolatility & \hercSharpe & \hercSortino & \hercMaxDD & \hercMonthlyTurnover & \hercCvar \\
-Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightSortino & \equalWeightMaxDD & \equalWeightMonthlyTurnover & \equalWeightCvar \\
-60/40 Benchmark & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover & \sixtyFortyCvar \\
-\bottomrule
-\end{tabular}
-}
-\vspace{0.25em}
-
-\parbox{\textwidth}{\footnotesize 注：CVaR 为 95\% 日度历史损失均值。全部模型按相同 3 bps 单边成本计算。}
-\end{table}
-
-Improved Convex Adaptive Global RRP 的绝对收益低于等权和 60/40，风险则明显低于这两个基准。它没有同时优于所有低风险模型。HERC 的 \hercSharpe{} Sharpe 主要来自 \hercVolatility{} 的极低波动和债券集中配置，HRP 也接近准现金结构。夏普差异的分块自助检验见第 \ref{sec:sharpe_diff_test} 节。
-
-% BEGIN MONTHLY_HS300_COMPARISON
-\subsection{与沪深300ETF的月度收益对比}
-\IfFileExists{generated_hs300_monthly_comparison.tex}{\input{generated_hs300_monthly_comparison.tex}}{\textbf{[HS300 monthly comparison not found --- run scripts/run_monthly_hs300_comparison.py]}}
-% END MONTHLY_HS300_COMPARISON
-
-\subsection{净值路径与回撤分析}
-\figpair{convex_adaptive_nav_comparison.png}{convex_adaptive_drawdown_comparison.png}{核心模型累计净值路径比较}{核心模型回撤路径比较}{fig:nav}{fig:drawdown}
-图 \ref{fig:nav} 展示主要模型在评价区间内的累计净值路径。两个凸模型的累计收益高于 Global RRP，HERC Benchmark 的曲线接近缓斜直线，与其债券集中结构一致。图 \ref{fig:drawdown} 中，Improved Convex Adaptive Global RRP 最大回撤为 \improvedMaxDD，深于 Global RRP 的 \globalMaxDD，但浅于等权和 60/40。不同模型风险尺度差异较大，不能只按单一比率排序。
-
-\subsection{换手率与权重结构分析}
-\figmaybe{convex_adaptive_turnover_comparison.png}{核心模型平均月度换手率比较}{fig:turnover}
-换手率直接影响交易费用总额，也关系到组合日常管理的复杂程度。Global RRP 的平均月度换手率达到 \globalMonthlyTurnover，说明基础风险预算模型会对协方差变化作出较大调整。Improved Convex Adaptive Global RRP 在引入 $L_1$ 惩罚后，换手率降至 \improvedMonthlyTurnover，也低于 HERC 的 \hercMonthlyTurnover。较低换手会减慢组合对风险结构变化的响应，因此仍需结合压力期路径判断。
-
-\figwide{weight_path_asset_group_comparison.png}{Improved Convex Adaptive Global RRP、Global RRP 与 HERC 基准模型的资产组权重路径}{fig:weight_path}
-
-\figwide{improved_weights_timeline.png}{Improved Convex Adaptive Global RRP 的单 ETF 权重路径}{fig:weights_timeline}
-图 \ref{fig:weights_timeline} 中，日利 ETF 受现金组 30\% 上限约束，黄金保持有限配置，权益与科技权重随滚动风险估计调整。色带变化较平滑，说明换手惩罚限制了短期协方差变化引发的权重跳动。
-
+\subsection{主模型与核心对照}
+表 \ref{tab:core_perf} 使用相同评价日期、零无风险利率与成本口径。主模型采用周频，其余模型为月频。主模型身份是研究定位，不表示其夏普或绝对收益在所有对照中最高。
 \begin{table}[htbp]
-\centering
-\small
-\caption{主要模型阶段性资产组平均权重（2021--2022 与 2023--2025）}
-\label{tab:weight_path_stage}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{llrrrrr}
-\toprule
-Model & Stage & Bonds & China Eq. & HK Eq. & Global Eq. & Commodities \\
-\midrule
-Improved Convex Adaptive Global RRP & 2021--2022 & 71.71\% & 8.19\% & 0.62\% & 5.72\% & 13.75\% \\
-Improved Convex Adaptive Global RRP & 2023--2025 & 70.31\% & 6.91\% & 0.28\% & 6.96\% & 15.54\% \\
-Global RRP & 2021--2022 & 67.38\% & 15.73\% & 1.20\% & 5.89\% & 9.80\% \\
-Global RRP & 2023--2025 & 92.93\% & 3.23\% & 0.75\% & 2.29\% & 4.79\% \\
-HERC & 2021--2022 & 95.24\% & 1.67\% & 0.16\% & 0.98\% & 1.96\% \\
-HERC & 2023--2025 & 94.11\% & 2.12\% & 0.19\% & 1.03\% & 2.55\% \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-图 \ref{fig:weight_path} 和表 \ref{tab:weight_path_stage} 解释了绩效差异。Improved Convex Adaptive Global RRP 的债券权重约为 70\%--72\%，商品约为 14\%--16\%，两个阶段变化有限。Global RRP 的债券权重由 67.38\% 升至 92.93\%，说明缺少换手约束时模型会更快转向低波动资产。HERC 的债券权重约为 94\%--95\%，跨类别分散较弱。日利 ETF 始终触及 30\% 现金组上限，是主模型的最大单一持仓。
-
-\subsection{下一月持仓}
-\IfFileExists{generated_next_month_holdings.tex}{\input{generated_next_month_holdings.tex}}{\textbf{[Next-month holdings not found --- run scripts/export_next_month_holdings.py]}}
-该持仓由样本截止日可得信息生成，作为下一自然月的透明模型输出；完整权重合计为 100\%，不构成未来收益保证。
-
-\subsection{CVaR 尾部风险分析}
-\figmaybe{convex_adaptive_cvar_comparison.png}{核心模型95\%日度CVaR比较}{fig:cvar}
-图 \ref{fig:cvar} 与表 \ref{tab:core_perf} 共同显示，Improved Convex Adaptive Global RRP 的 95\% 日度 CVaR 为 \improvedCvar，高于 Global RRP 的 \globalCvar，并低于等权的 \equalWeightCvar。公开路径没有启用正 CVaR 惩罚，因此本图只作尾部风险比较。CVaR 衡量历史尾部日损失，最大回撤衡量净值路径的峰谷跌幅，二者都不能覆盖样本外尚未出现的极端情景。
-
-\subsection{因子暴露与收益归因}\label{sec:factor_attr}
-为进一步理解各模型收益的来源结构，本文使用五个代理因子（权益、债券、大宗商品/黄金、防御性资产、全球风险）对主模型的日收益率进行时间序列回归，并分解各因子对总收益和总方差的贡献。
-
-\figwide{asset_pricing_factor_exposure.png}{核心模型因子暴露汇总（全样本回归）}{fig:factor_exposure}
-
-图 \ref{fig:factor_exposure} 和表 \ref{tab:factor_exposure} 展示资产类别平均资金暴露与五因子代理回归诊断。Global RRP 的权益、债券与商品/黄金平均资金暴露分别为 $\factorGlobalEquityExposure$、$\factorGlobalBondExposure$ 与 $\factorGlobalCommodityExposure$，回归 $R^2=\factorGlobalRSquared$，年化 $\alpha=\factorGlobalAlpha$（$t=\factorGlobalAlphaTstat$）。Improved Convex Adaptive Global RRP 的对应暴露分别为 $\factorImprovedEquityExposure$、$\factorImprovedBondExposure$ 与 $\factorImprovedCommodityExposure$，回归 $R^2=\factorImprovedRSquared$，年化 $\alpha=\factorImprovedAlpha$（$t=\factorImprovedAlphaTstat$）。因子由同一 ETF 资产池构造，代理因子之间存在共线性，回归系数本身不宜作结构性解释，因此表中采用更直观的资金暴露并同时披露回归拟合与 alpha 诊断。
-
-\begin{table}[H]
-\centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\caption{核心模型资产类别平均资金暴露与五因子回归诊断}
-\label{tab:factor_exposure}
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{lrrrrrrr}
-\toprule
-Model & Equity & Bond & Commodity & Defensive & Max Class & $R^2$ & $\alpha$ (Annualized) \\
-\midrule
-Global RRP & \factorGlobalEquityExposure & \factorGlobalBondExposure & \factorGlobalCommodityExposure & \factorGlobalDefensiveExposure & \factorGlobalMaxExposure & \factorGlobalRSquared & \factorGlobalAlpha \\
-Improved Convex Adaptive Global RRP & \factorImprovedEquityExposure & \factorImprovedBondExposure & \factorImprovedCommodityExposure & \factorImprovedDefensiveExposure & \factorImprovedMaxExposure & \factorImprovedRSquared & \factorImprovedAlpha \\
-\bottomrule
-\multicolumn{8}{l}{\footnotesize 因子均为代理因子，不对应特定标准化指数。} \\
-\end{tabular}
-}
-\end{table}
-
-\figwide{asset_pricing_rolling_betas.png}{Improved Convex Adaptive Global RRP 滚动因子暴露（252日窗口）}{fig:rolling_betas}
-
-图 \ref{fig:rolling_betas} 展示两模型在 252 日滚动窗口下的代理因子回归系数。滚动系数的幅度和符号均明显时变，且在代理因子共线时会被放大，因此这里只将其作为历史诊断，不把单个 beta 解释为稳定的未来暴露，也不将其输入组合权重生成过程。
-
-\figpair{asset_pricing_return_attribution.png}{asset_pricing_risk_attribution.png}{Improved Convex Adaptive Global RRP 收益来源分解}{Improved Convex Adaptive Global RRP 风险来源分解}{fig:return_attr}{fig:risk_attr}
-
-表 \ref{tab:return_risk_attr} 汇总了归因结果。收益方面，权益与商品/黄金贡献接近，分别为 \attrEquityReturnShare{} 和 \attrCommodityReturnShare{}，债券贡献 \attrBondReturnShare。风险方面，权益资产类别方差份额最高（\attrEquityRiskShare），商品/黄金为 \attrCommodityRiskShare，债券为 \attrBondRiskShare。这说明主模型并非没有权益风险，而是通过债券、商品和防御性资产降低了单一风险来源的集中度。
-
-\begin{table}[H]
-\centering
-\small
-\caption{Improved Convex Adaptive Global RRP 收益与方差归因（五因子分解）}
-\label{tab:return_risk_attr}
-\begin{tabular}{lrr}
-\toprule
-Factor & Return Share & Variance Share \\
-\midrule
-权益 & \attrEquityReturnShare & \attrEquityRiskShare \\
-债券 & \attrBondReturnShare & \attrBondRiskShare \\
-商品/黄金 & \attrCommodityReturnShare & \attrCommodityRiskShare \\
-防御性 & \attrDefensiveReturnShare & \attrDefensiveRiskShare \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-归因结果说明 Improved Convex Adaptive Global RRP 的历史收益并非由单一资产类别主导，权益、商品/黄金与债券三类的已归因收益份额较为接近；未归因残差约占 \attrResidualReturnShare。债券风险份额仅 \attrBondRiskShare，体现了低波动资产在风险预算框架中的缓冲作用。HERC Benchmark 债券集中度高，收益与风险来源均较单一。
-
-\subsection{小结}
-各模型的绩效差异来自不同的配置逻辑。Improved Convex Adaptive Global RRP 在当前样本期内取得 \improvedNetReturn{} 的净年化收益、\improvedVolatility{} 的年化波动和 \improvedMaxDD{} 的最大回撤，收益低于等权基准，风险与换手也更低。HERC 的指标与主模型差异较大，其债券集中度使单一 Sharpe 排名难以概括两者的经济含义。模型比较因此同时使用绩效指标与权重路径。
-
-\section{稳健性检验与过拟合诊断}
-
-\subsection{子区间与压力期检验}
-\figpair{robustness_subperiod_sharpe.png}{robustness_subperiod_drawdown.png}{子区间夏普比率稳健性}{子区间最大回撤稳健性}{fig:sub_sharpe}{fig:sub_drawdown}
-图 \ref{fig:sub_sharpe}--\ref{fig:sub_drawdown} 展示各子区间的夏普比率和最大回撤。子区间指标通常比全样本波动更大，这里的用途是观察结论在哪些阶段有所减弱，而非寻找”最优子区间”。
-
-跨 5 个固定子区间的分散度检验表明，Improved Convex Adaptive Global RRP 的子区间夏普比率范围为 [\subperiodImprovedSharpeMin, \subperiodImprovedSharpeMax]，均值 \subperiodImprovedSharpeMean，无一子区间出现负值。其最弱子区间为 \subperiodImprovedWeakestWindow，Sharpe 为 \subperiodImprovedWeakestSharpe。2021 年后的收紧期（post\_2021）中，Global RRP 的 Sharpe 为 \subperiodGlobalPostSharpe，而 Improved Convex Adaptive Global RRP 为 \subperiodImprovedPostSharpe，显示主模型在全球权益与债券同步承压阶段仍保持较强的历史下行防护能力。
-
-\figmaybe{robustness_stress_period_performance.png}{压力期表现检验}{fig:stress}
-压力期检验用于观察极端阶段组合反应。压力期标签是事后贴上去的，只用于观察组合在特定阶段的行为，不作为调参依据。
-
-\subsection{交易成本与参数敏感性}
-\figmaybe{robustness_transaction_cost_sensitivity.png}{交易成本敏感性检验}{fig:tcost}
-图 \ref{fig:tcost} 比较不同交易成本假设下的模型表现。Global RRP 随费率上升净收益下降更快，Improved Convex Adaptive Global RRP 的换手低于 Global RRP，对成本假设相对不敏感。在已测试的 $[0, 50]$ bps 月单边费率范围内，Improved Convex Adaptive Global RRP 相对 Global RRP 的净年化收益差保持为正，两者持平的盈亏平衡点估计高于 \costBreakevenImprovedVsGlobal。本文采用的 3 bps 费率低于该阈值。固定费率尚未覆盖冲击成本与买卖价差，成本稳健性结论应限于已测试范围。
-
-\textbf{调仓频率敏感性。}
-除交易成本费率外，调仓频率本身也会影响收益、风险和可实施性。本文保持已发布的滚动样本外选择日历不变，仅改变调仓日历，比较周度、双周、月度和季度四种频率。表~\ref{tab:rebalance_frequency_sensitivity} 与图~\ref{fig:rebalance_frequency_sensitivity} 显示，周度与双周调仓的净年化收益分别为 \freqWeeklyNetReturn{} 和 \freqBiweeklyNetReturn，Sharpe 分别为 \freqWeeklySharpe{} 和 \freqBiweeklySharpe，月均换手率分别为 \freqWeeklyMonthlyTurnover{} 和 \freqBiweeklyMonthlyTurnover；月度调仓的净年化收益为 \freqMonthlyNetReturn，Sharpe 为 \freqMonthlySharpe，月均换手率为 \freqMonthlyMonthlyTurnover。季度调仓换手率进一步降至 \freqQuarterlyMonthlyTurnover，净年化收益和 Sharpe 分别为 \freqQuarterlyNetReturn{} 和 \freqQuarterlySharpe。月度调仓取得最高净收益，双周调仓的 Sharpe 略高。研究设计仍把月度规则视为兼顾响应速度、交易成本和权重稳定性的实施选择，不根据本次事后排名改选频率。
-
-\IfFileExists{generated_rebalance_frequency_table.tex}{\input{generated_rebalance_frequency_table.tex}}{\textbf{[Rebalance-frequency sensitivity table not found --- run scripts/generate_thesis_numbers.py]}}
-
-\figwide{rebalance_frequency_sensitivity.png}{调仓频率敏感性检验}{fig:rebalance_frequency_sensitivity}
-
-CVaR 敏感性分析在 $\beta \in \{0.90, 0.95, 0.975, 0.99\}$ 和窗口 $\in \{126, 252, 504\}$ 上测试 12 个变体，结果见表~\ref{tab:cvar_sensitivity}。公开路径的 CVaR 惩罚为零，因此改变 $\beta$ 不会改变权重。这组结果只能识别回望窗口，不能识别 CVaR 置信水平。
-
-\begin{table}[H]
-\centering
-\small
-\setlength{\tabcolsep}{4pt}
-\caption{CVaR 参数敏感性分析（12 变体，基于 Improved Convex Adaptive Global RRP）}
-\label{tab:cvar_sensitivity}
-\begin{tabular}{llrrrr}
-\toprule
-Dimension & Value & Sharpe Mean & Net Return & Max DD Mean & Monthly TO Mean \\
-\midrule
-\multirow{4}{*}{置信水平 $\beta$}
- & 0.90  & 0.714 & 5.85\% & $-$6.19\% & 1.12\% \\
- & 0.95  & 0.714 & 5.85\% & $-$6.19\% & 1.12\% \\
- & 0.975 & 0.714 & 5.85\% & $-$6.19\% & 1.12\% \\
- & 0.99  & 0.714 & 5.85\% & $-$6.19\% & 1.12\% \\
-\midrule
-\multirow{3}{*}{回望窗口（交易日）}
- & 126   & 0.707 & 5.80\% & $-$6.13\% & 1.25\% \\
- & 252   & 0.716 & 5.85\% & $-$6.22\% & 1.06\% \\
- & 504   & 0.719 & 5.89\% & $-$6.22\% & 1.06\% \\
-\midrule
-全部 12 变体均值 & --- & 0.714 & 5.85\% & $-$6.19\% & 1.12\% \\
-\bottomrule
-\multicolumn{6}{l}{\footnotesize 各行为对应参数水平下的多个变体均值，评价起点与主模型一致，样本截至 \evalEndDate。} \\
-\end{tabular}
-\end{table}
-
-三个回望窗口的 Sharpe 为 0.707--0.719，净年化收益为 5.80\%--5.89\%。四个 $\beta$ 水平均产生相同均值，这正是惩罚系数为零时应有的结果。若要检验 CVaR 置信水平，必须先验固定一个正惩罚系数或硬上限，再在独立样本中运行。
-
-\figwide{robustness_parameter_sensitivity.png}{参数扰动敏感性检验}{fig:param}
-参数扰动采用单因素变化方式，用于观察模型是否对某一参数表现出过度敏感。在已测试的扰动范围内，主模型表现总体稳定；至于该范围之外的参数区域，本文不作外推判断。
-
-\subsection{协方差估计与过拟合诊断}
-\figpair{covariance_robustness_sharpe.png}{covariance_robustness_drawdown.png}{不同协方差估计下的夏普比率}{不同协方差估计下的回撤表现}{fig:cov_sharpe}{fig:cov_drawdown}
-\figmaybe{covariance_robustness_turnover.png}{不同协方差估计下的换手表现}{fig:cov_turnover}
-本文比较了 sample covariance、Ledoit-Wolf 收缩以及不同半衰期 EWMA（halflife 20/60/120）。图 \ref{fig:cov_sharpe}--\ref{fig:cov_turnover} 显示主要结论不依赖单一协方差估计器，但选择不同估计器会影响权重细节和换手水平。
-
-状态条件先验只在 2018--2023 年设计窗内选定，再固定到 2024 年和 2025 年起始的留出窗。2024 年留出窗中，状态条件估计器的 Sharpe 由 \RegimeBaselineSharpe{} 升至 \RegimeSelectedSharpe，95\% 日度 CVaR 由 \RegimeBaselineCvar{} 降至 \RegimeSelectedCvar，最大回撤也略有收窄。2025 年起始窗的 Sharpe 略低于 EWMA，证据并不一致，因此不替换公开主路径。
-
-\figwide{robustness_overfitting_diagnostic.png}{过拟合诊断}{fig:overfit}
-本文以 CSCV/PBO 诊断参数选择偏差\cite{white2000reality,harvey2015backtesting,bailey2014probability,bailey2017pbo}。36 个候选在 8 个时间区块、35 个分割下得到 PBO 0.000，平均样本外相对秩 0.126；10 个时间区块、12 个增强分割同样得到 PBO 0.000，平均相对秩 0.132。这说明当前网格的样本内胜出者在这些切分中没有落入样本外后半区。切分数量有限，候选网格又由研究者设定，结果不能视为不存在过拟合，更不能视为未来表现保证。
-
-公开模型采用连续滚动样本外路径：2015年至2017年的窗口只用于执行预热，2018-01-02起重新初始化公开选择状态，此后每个季度仅依据已完成的历史验证窗决定下一测试窗。完整选择记录、置信集规模、换手门槛和切换原因保存在滚动样本外选择权威表中。传统 Walk-Forward 表仅作为额外切片诊断，不参与公开主路径选择。
-
-\subsection{统计显著性检验}
-本节用两个互补的检验方法评估绩效指标的抽样稳定性。第一个是移动分块自助法（Moving Block Bootstrap）：对历史收益率进行有放回随机分块重抽样（200 个样本，块长 21 日，仅在验证区间内进行），检验绩效指标的抽样分布。
-
-\figpair{robustness_bootstrap_sharpe_distribution.png}{robustness_bootstrap_drawdown_distribution.png}{分块自助法夏普比率分布（200 个自助样本）}{分块自助法最大回撤分布（200 个自助样本）}{fig:boot_sharpe}{fig:boot_drawdown}
-
-表 \ref{tab:bootstrap_summary} 汇报各主要模型的分布统计量。
-
-\begin{table}[H]
-\centering
-\small
-\setlength{\tabcolsep}{4pt}
-\caption{分块自助法绩效分布（200 次重抽样，块长 21 日）}
-\label{tab:bootstrap_summary}
+\centering\small
+\caption{主模型与核心对照}\label{tab:core_perf}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
-Model & Sharpe Mean & Sharpe P5 & Sharpe P50 & Sharpe P95 & MDD Mean & MDD P5 \\
+模型 & 净年化收益 & 年化波动 & 夏普 & Sortino & 最大回撤 & 月均换手\\
 \midrule
-Global RRP & \BootstrapGlobalSharpeMean & \BootstrapGlobalSharpePFive & \BootstrapGlobalSharpePFifty & \BootstrapGlobalSharpePNinetyFive & \BootstrapGlobalMDDMean & \BootstrapGlobalMDDPFive \\
-Convex Adaptive Global RRP & \BootstrapConvexSharpeMean & \BootstrapConvexSharpePFive & \BootstrapConvexSharpePFifty & \BootstrapConvexSharpePNinetyFive & \BootstrapConvexMDDMean & \BootstrapConvexMDDPFive \\
-Improved Convex Adaptive Global RRP & \BootstrapImprovedSharpeMean & \BootstrapImprovedSharpePFive & \BootstrapImprovedSharpePFifty & \BootstrapImprovedSharpePNinetyFive & \BootstrapImprovedMDDMean & \BootstrapImprovedMDDPFive \\
+Improved Convex Adaptive Global RRP & \improvedNetReturn & \improvedVolatility & \improvedSharpe & \improvedSortino & \improvedMaxDD & \improvedMonthlyTurnover\\
+Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalSortino & \globalMaxDD & \globalMonthlyTurnover\\
+Convex Adaptive Global RRP & \convexNetReturn & \convexVolatility & \convexSharpe & \convexSortino & \convexMaxDD & \convexMonthlyTurnover\\
+HRP & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpSortino & \hrpMaxDD & \hrpMonthlyTurnover\\
+HERC & \hercNetReturn & \hercVolatility & \hercSharpe & \hercSortino & \hercMaxDD & \hercMonthlyTurnover\\
+Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightSortino & \equalWeightMaxDD & \equalWeightMonthlyTurnover\\
+60/40 & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortySortino & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover\\
 \bottomrule
-\multicolumn{7}{l}{\footnotesize P5/P50/P95 为对应分位数，MDD P5 为最大回撤的第 5 百分位（最差情形）。} \\
-\end{tabular}
-}
+\end{tabular}}
 \end{table}
 
-Improved Convex Adaptive Global RRP 的 Sharpe P5 为 \BootstrapImprovedSharpePFive，高于 Global RRP 的 \BootstrapGlobalSharpePFive；P50 为 \BootstrapImprovedSharpePFifty，低于全样本点估计。分块自助法仅刻画历史路径扰动，不能替代真实样本外检验。
+主模型净年化收益为 \improvedNetReturn，年化波动为 \improvedVolatility，夏普为 \improvedSharpe，最大回撤为 \improvedMaxDD。零利率下，近现金模型可能具有较高比率，因此需要同时观察绝对收益、波动与资金集中度。所有结果均条件于当前样本与固定成本约定。
 
-第二个是成对夏普差异检验。\label{sec:sharpe_diff_test}对每一配对在共同评价日上抽取 21 日块，重抽 2000 次（Politis \& Romano 1994），估计 95\% 置信区间与双侧 $p$ 值。原假设为两模型真实夏普差为 0；区间不跨 0 时拒绝。
+\subsection{净值、回撤与换手}
+\figmaybe{convex_adaptive_nav_comparison.png}{主模型与对照累计净值}{fig:nav}
+\figmaybe{convex_adaptive_drawdown_comparison.png}{主模型与对照回撤}{fig:drawdown}
+主模型的较低波动伴随较高现金类 ETF 配置。最大回撤是实际历史路径的统计值，不由未启用的 CVaR 惩罚解释。频率与约束都会改变权重路径，主表跨模型比较不能隔离某一个因素的因果效应。
+\figmaybe{convex_adaptive_turnover_comparison.png}{按自然月汇总的平均换手}{fig:turnover}
+主模型的平均月度换手率为 \improvedMonthlyTurnover，调仓日历仍为周频。换手按交易前漂移权重与目标权重的 $L_1$ 距离计算，成本等于该距离乘以 3 bps。固定费率不包含实测价差、市场冲击与容量影响。
 
-表 \ref{tab:sharpe_diff} 直接报告主要配对的观察差、置信区间和 $p$ 值。
+\subsection{现金集中度与尾部风险}
+\figwide{primary_weights.png}{主模型权重路径}{fig:weight_path}
+平均现金类 ETF 权重为 \primaryCashMean，最大值为 \primaryCashMax。取消现金上限并不等价于增加杠杆，也不保证风险来源充分分散。集中配置于低波动基金，是低组合波动和零利率夏普的重要解释。
+\figmaybe{convex_adaptive_cvar_comparison.png}{核心模型历史尾部损失}{fig:cvar}
+主表沿用历史尾均值统计以保证核心模型之间一致；约束实验采用分位点质量可拆分的精确经验 CVaR，与凸辅助变量形式一致。两者均以 95\% 为研究口径，未搜索置信水平。
 
-\begin{table}[H]
-\centering
-\footnotesize
-\caption{成对夏普差异分块自助法检验（2000 次重抽，块长 21 日，95\% 置信水平）}
-\label{tab:sharpe_diff}
-\setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}Xrrrr@{}}
-\toprule
-Model A & Model B & Observed Diff. & CI Low & CI High & $p$ Value \\
-\midrule
-Improved Convex Adaptive Global RRP & Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalCILow & \improvedVsGlobalCIHigh & \improvedVsGlobalPValue \\
-Improved Convex Adaptive Global RRP & Equal Weight & \improvedVsEqualDiff & \improvedVsEqualCILow & \improvedVsEqualCIHigh & \improvedVsEqualPValue \\
-Global RRP & Equal Weight & \globalVsEqualDiff & \globalVsEqualCILow & \globalVsEqualCIHigh & \globalVsEqualPValue \\
-\bottomrule
-\multicolumn{6}{@{}>{\raggedright\arraybackslash}p{\textwidth}@{}}{\footnotesize 注：$p$ Value 为双侧检验结果；区间不跨过 0 视为在 95\% 水平显著。} \\
-\end{tabularx}
+\subsection{期末权重快照}
+\input{generated_next_month_holdings.tex}
+期末持仓展示模型实际暴露。它不表示下一自然月保持不变，周频模型将在后续再平衡点使用新历史窗口求解。
+
+\section{约束诊断与研究边界}
+\subsection{集中度和风险控制消融}
+约束实验使用共同日期和未剔除极端值的收益。月度与周频集中度约束对照保留现金 30\%、单资产 40\% 上限。仅取消现金上限时仍受单资产上限限制；只有同时取消两项上限，现金权重才能进一步上升。
+\begin{table}[htbp]
+\centering\scriptsize
+\caption{固定约束实验与利率口径对照}
+\resizebox{\textwidth}{!}{\input{generated_primary_constraints.tex}}
 \end{table}
+无风险利率设为零时，主模型夏普达到 \improvedSharpe；同一组合以中债利率为机会成本时夏普为 \primaryChinaBondSharpe。这是统计口径差异，不是额外投资收益。取消单资产上限但保留现金组上限时，该约束组合仍限制现金集中，不能将其解释为完全放开现金配置。
 
-三组置信区间都跨过 0，双侧 $p$ 值也都高于 0.05。Improved Convex Adaptive Global RRP 相对 Global RRP 的观察差为负，相对等权的观察差为正，但二者都不显著。点估计可以描述历史样本，不能据此声称稳定的 Sharpe 优势。该检验与过拟合诊断回答不同问题，前者检验评价区间内的抽样变异，后者估计参数选择偏差。
+相对 CVaR 实验先求基准可行组合，再使用该组合场景 CVaR 作为候选上限。由于基准本来就是原目标的最优解，新约束在精确求解下不要求改变权重。微小权重或夏普差异可能来自数值容差，不能作为独立改善证据。Ledoit--Wolf 实验由历史数据估计收缩强度，不继承消融的全样本赢家。
 
-\subsection{小结}
-以上检验把结论限定在具体条件下——特定评价区间、成本假设和参数选择。没有哪项检验能消除过拟合的可能性，目前的证据在已测试的多个维度上是自洽的。
+\subsection{自然年结果}
+\begin{table}[htbp]
+\centering\small
+\caption{主模型分自然年绩效}
+\input{generated_primary_annual.tex}
+\end{table}
+每个自然年单独计算净值、波动与回撤；年度最大回撤不等于跨年连续路径回撤。2026 年仅覆盖至 \evalEndDate，年化指标不代表完整年度已实现收益。年度之间的差异说明全期高比率不保证每个阶段达到同一目标。
+
+\subsection{频率敏感性}
+频率实验保留主模型参数及冻结候选日历，只改变周、双周、月、季度再平衡规则。它与保留集中度约束的周频基准不是同一实验。
+\input{generated_rebalance_frequency_table.tex}
+\figmaybe{rebalance_frequency_sensitivity.png}{主模型参数下的调仓频率比较}{fig:rebalance_frequency_sensitivity}
+周频为当前指定主模型配置，表中事后排名仅作描述，不据此继续扩大频率搜索。
+
+\subsection{可重复性与统计解释}
+主模型在 \primaryObservations{} 个共同交易日上复现了获批研究路径。逐期检查包括权重归一、成本一致性、交易前漂移权重、信息截止时间、实际组上限、求解状态与最大约束违反量。诊断结果保存在主模型发布审计文件中。
+
+这些检查验证实现与记账，不检验模型选择的统计显著性。主模型规格经历史实验后确定，不能将冻结日历视为对最终规格的独立样本外验证。历史 CSCV、PBO、参数扰动与自助检验属于其各自记录的模型版本，未作为当前规格的有效性证明。未来验证应预先冻结规格并使用新增数据，不反复追求全样本阈值。
 
 \section{结论与展望}
-
 \subsection{主要结论}
-在 30 支可交易 ETF 上，采用风险预算参考、换手惩罚和资产组边界的 Improved Convex Adaptive Global RRP 于 \evalStartDate{} 至 \evalEndDate{} 取得 \improvedNetReturn{} 净年化收益、\improvedSharpe{} Sharpe、\improvedMaxDD{} 最大回撤和 \improvedMonthlyTurnover{} 月均换手。相对基础凸模型，它降低了换手并提高净收益，但波动与最大回撤略有上升。公开路径没有启用正 CVaR 惩罚，因此 CVaR 只作为候选和敏感性诊断保留。
+主模型以风险预算参考和凸跟踪目标生成多头周频组合，取消现金与单资产集中度上限，保留换手和非现金组别约束。其净年化收益为 \improvedNetReturn，波动为 \improvedVolatility，零利率夏普为 \improvedSharpe，最大回撤为 \improvedMaxDD。平均现金类 ETF 权重为 \primaryCashMean，是解释结果不可省略的配置特征。
 
-HERC 的 \hercSharpe{} Sharpe 主要来自债券集中和极低波动；PBO、参数扰动与协方差检验未改变主结论。结果条件于纯多头、无杠杆、3 bps 单边成本和当前样本，具体机构仍需结合负债、资本与流动性约束评估适用性。
+Global RRP、基础凸模型、层次化模型与静态基准用于对照。主模型不是所有指标的最优者，零利率比率也不等同于相对国债的超额收益效率。约束诊断将结构变化与口径变化分开，能够解释哪些配置实际上改变权重。
 
-\subsection{研究边界与后续方向}
-\begin{table}[H]
-\centering
-\small
-\caption{研究边界与可验证的扩展方向}
-\label{tab:limitations}
-\begin{tabularx}{\textwidth}{@{}p{3.0cm}XX@{}}
-\toprule
-维度 & 当前边界 & 后续方向 \\
-\midrule
-执行成本 & 固定 3 bps，未计价差、容量与冲击成本 & 引入成交量、价差和非线性冲击函数 \\
-机构约束 & 仅从资产端配置，未建模负债与资本占用 & 加入现金流、久期缺口和偿付能力约束 \\
-样本与模型 & 部分 ETF 历史较短，结论依赖当前市场结构 & 延长可交易历史，并检验因子层风险预算\cite{htsc2025factor} \\
-资产覆盖 & 当前主池尚未纳入公募 REITs ETF & 待流动性和可用历史充分后纳入下一轮资产池评审 \\
-近期路径 & 4--6 月权益上涨时滞后，7 月下跌时更具防御性 & 以长期稳健配置评估，不追求逐月跑赢权益指数 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+\subsection{研究边界}
+研究采用固定 3 bps 成本，不包含容量、价差与冲击估计。主模型未显式建模负债、久期缺口与资本占用，不能直接据此认定适用于保险资产负债管理。部分 ETF 上市较晚，前向价格填充也不能完全表达停牌期间的实际可交易性。执行时序为日频研究约定，实际成交需要独立验证。
 
-以上均为历史研究边界，不构成未来收益保证。
-
-
+规格选择使用了历史实验结果。下一步应冻结参数、资产池和评价口径，以新增数据验证稳定性；不得将这组事后结果表述为未来收益承诺。
 
 \clearpage
 \appendix
-\section{CSCV 候选参数网格}
-\label{app:candidate_grid}
+\section{主模型配置与复现}
+主模型配置来源于 \texttt{primary\_model\_configuration.json}，代码入口为 \texttt{scripts/run\_primary\_publication\_pipeline.py}。每次完整运行先刷新行情与利率，再重算核心模型和频率对照、生成论文数字、编译论文及答辩材料并清理临时文件。
 
-本文 CSCV/PBO 过拟合诊断使用 36 个候选参数配置。\texttt{candidate\_03}、\texttt{candidate\_04} 与 \texttt{candidate\_05} 构成预先声明的低换手公开候选族，三者只在 CVaR 惩罚系数上有所区别。公开路径的每次选择只使用当时可得数据，完整样本得分不回填历史选择。
+单资产上限 1 是多头预算的冗余边界。现金没有组上限，其余组别上限保留。CVaR 扩展使用 95\% 场景损失，主模型相应系数为零。所有继承参数均应视为可复现研究约定，不宣称通过市场数据唯一识别。
 
-\IfFileExists{generated_candidate_grid_table.tex}{\input{generated_candidate_grid_table.tex}}{\textbf{[Candidate grid table not found --- run scripts/generate_thesis_numbers.py]}}
+\section{历史候选记录}
+既有 36 组候选和季度日历仅供原研究追溯。当前主模型是冻结日历上的统一结构变换，不重新通过全样本候选分数选择参数。历史文件不作为当前主模型过拟合概率或统计显著性的估计。
 
-\clearpage
-\section{自适应风险预算超参数}
-\label{app:adaptive_budget_params}
-
-自适应风险预算模块通过合成压力评分动态调整各模型期间的风险预算目标。表 \ref{tab:adaptive_params} 列出全部超参数的取值与含义。这些参数在开发阶段通过先验判断设定，不依赖回测窗口内的收益数据调优。
-
-\begin{table}[H]
-\centering
-\small
-\caption{自适应风险预算超参数汇总}
-\label{tab:adaptive_params}
-\begin{tabular}{llp{7cm}}
-\toprule
-参数 & 取值 & 含义 \\
-\midrule
-波动率压力权重 & 0.45 & 合成压力评分中，年化波动率分项的权重 \\
-损失压力权重   & 0.30 & 合成压力评分中，21 日累积损失分项的权重 \\
-图压力权重     & 0.25 & 合成压力评分中，相关性集中度（图统计量）分项的权重 \\
-状态平滑系数   & 0.80 & 上期压力状态在合成评分中的惯性权重，用于抑制状态频繁切换 \\
-波动率压力阈值 & 18\%  & 对应最大压力（评分 = 1.0）的年化波动率上界 \\
-损失压力阈值   & 8\%   & 对应最大压力（评分 = 1.0）的 21 日累积损失上界 \\
-低风险状态乘数 & 0.75 & 低压力状态下各资产风险预算目标的缩放系数 \\
-中风险状态乘数 & 1.00 & 基准状态（无调整），风险预算维持等风险 \\
-高风险状态乘数 & 1.35 & 高压力状态下，对低波动资产（债券/货币市场）的预算偏移系数 \\
-图压力合成方式 & $0.65\times\rho_{\text{avg}} + 0.35\times\text{HHI}$ & 图统计量由资产平均相关系数和赫芬达尔集中度指数线性合成 \\
-\bottomrule
-\multicolumn{3}{l}{\footnotesize 所有参数在回测启动前固定，评价区间内不更新。} \\
-\end{tabular}
-\end{table}
-
-\clearpage
-\phantomsection
-\addcontentsline{toc}{section}{参考文献}
 \bibliographystyle{gbt7714-numeric}
 \bibliography{references}
 

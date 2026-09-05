@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\src\covariance_estimators.py", line 244, in estimate_covariance
+    from sklearn.covariance import LedoitWolf
+ModuleNotFoundError: No module named 'sklearn'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\scripts\run_weekly_constraint_research.py", line 250, in run
+    result, solver = run_public_oos_variant(
+                     ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\scripts\public_oos.py", line 64, in run_public_oos_variant
+    scheduled_result, scheduled_solver, _, _ = run_convex_adaptive_schedule_backtest(
+                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\src\convex_adaptive_rrp.py", line 881, in run_convex_adaptive_schedule_backtest
+    active_weights, diag = solve_convex_rrp(
+                           ^^^^^^^^^^^^^^^^^
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\src\convex_adaptive_rrp.py", line 270, in solve_convex_rrp
+    cov_result = estimate_covariance(
+                 ^^^^^^^^^^^^^^^^^^^^
+  File "D:\Github Repository\Relaxed-Risk-Parity-Research\src\covariance_estimators.py", line 250, in estimate_covariance
+    raise RuntimeError("Ledoit-Wolf covariance estimation failed and fallback is disabled") from exc
+RuntimeError: Ledoit-Wolf covariance estimation failed and fallback is disabled

@@ -91,7 +91,7 @@ def plot_frequency_sensitivity(table: pd.DataFrame, output_path: Path) -> None:
         ("max_drawdown", "Maximum drawdown", "{:.1%}"),
         ("avg_monthly_turnover", "Average monthly turnover", "{:.1%}"),
     ]
-    colors = ["#4267B2" if code == "M" else "#7A869A" for code in ordered["frequency_code"]]
+    colors = ["#4267B2" if code == "W" else "#7A869A" for code in ordered["frequency_code"]]
     for ax, (col, title, fmt) in zip(axes.ravel(), metrics):
         bars = ax.bar(ordered["frequency_label"], ordered[col], color=colors)
         ax.set_title(title, pad=10)

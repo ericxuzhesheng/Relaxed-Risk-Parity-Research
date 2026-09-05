@@ -1,0 +1,10 @@
+{
+  "legacy_full_sample_mask_count": 795,
+  "max_published_monthly_weight_on_masked_return": 0.43616054482469846,
+  "legacy_reproduction_is_valid_oos_evidence": false,
+  "research_uses_unfiltered_returns": true,
+  "published_schedule_is_fixed_not_reestimated": true,
+  "selected_ids": [
+    "candidate_03"
+  ]
+}

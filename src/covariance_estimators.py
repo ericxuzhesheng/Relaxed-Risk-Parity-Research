@@ -243,7 +243,8 @@ def estimate_covariance(
         try:
             from sklearn.covariance import LedoitWolf
 
-            cov_values = LedoitWolf().fit(data.values).covariance_
+            shrinkage_estimator = LedoitWolf().fit(data.values)
+            cov_values = shrinkage_estimator.covariance_
             cov = pd.DataFrame(cov_values, index=data.columns, columns=data.columns)
         except Exception as exc:
             if not allow_fallback:
@@ -278,6 +279,8 @@ def estimate_covariance(
         point_in_time=point_in_time,
     )
     diagnostics.update(psd_diag)
+    if normalized == "ledoit_wolf" and not fallback_used:
+        diagnostics["covariance_shrinkage"] = float(shrinkage_estimator.shrinkage_)
     if regime_diag:
         diagnostics.update(regime_diag)
     diagnostics["covariance_observations"] = int(len(data))

@@ -716,13 +716,6 @@ def main() -> None:
         )
     freq_df = pd.read_csv(freq_path)
 
-    candidate_grid_path = resolve_path("results/tables/cscv_candidate_grid.csv")
-    if not Path(candidate_grid_path).exists():
-        raise FileNotFoundError(
-            f"candidate grid not found at {candidate_grid_path}; run scripts/run_cscv_pbo.py first"
-        )
-    candidate_grid_df = pd.read_csv(candidate_grid_path)
-
     first_date, last_date = _manifest_dates()
     out_dir = Path(resolve_path("report/thesis_latex"))
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -731,7 +724,6 @@ def main() -> None:
     _etf_pool_table(out_dir)
     _asset_stats_table(stats_df, out_dir)
     _rebalance_frequency_table(freq_df, out_dir)
-    _candidate_grid_table(candidate_grid_df, out_dir)
     _write_fallback(out_dir)
 
     header = [
@@ -762,7 +754,7 @@ def main() -> None:
     ]
     if effective.empty:
         raise ValueError("No monthly risk-free rates cover the evaluation period.")
-    header.append(f"\\newcommand{{\\riskFreeRate}}{{{_pct(float(effective['annual_yield'].mean()))}}}")
+    header.append(f"\\newcommand{{\\riskFreeRate}}{{{_pct(float(_CONFIG['risk_free_rate'])) if _CONFIG['risk_free_rate'] is not None else _pct(float(effective['annual_yield'].mean()))}}}")
     header.append(f"\\newcommand{{\\riskFreeRateMin}}{{{_pct(float(effective['annual_yield'].min()))}}}")
     header.append(f"\\newcommand{{\\riskFreeRateMax}}{{{_pct(float(effective['annual_yield'].max()))}}}")
     header.append("")
@@ -773,11 +765,7 @@ def main() -> None:
         + _percent_summary_rows(summary)
         + _rebalance_frequency_rows(freq_df)
         + _asset_stat_macros(stats_df)
-        + _walkforward_rows()
-        + _breakeven_rows()
-        + _vol_aligned_rows()
-        + _sharpe_diff_rows()
-        + _latest_diagnostic_rows()
+        # Historical diagnostics are not current-primary publication evidence.
     )
     out_path = out_dir / "generated_numbers.tex"
     out_path.write_text("\n".join(content) + "\n", encoding="utf-8")

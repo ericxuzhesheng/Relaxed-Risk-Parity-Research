@@ -26,6 +26,7 @@
 
 % ── 数值宏：与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
+\input{../thesis_latex/generated_primary_numbers.tex}
 
 % ── 辅助命令：图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -38,710 +39,159 @@
   \end{frame}%
 }
 
+
 \begin{document}
-
-% ════════════════════════════════════════════════════════════════════════════
 \begin{frame}[plain]\titlepage\end{frame}
-
-\begin{frame}{目录}\tableofcontents\end{frame}
-
-% ════════════════════════════════════════════════════════════════════════════
-\section{研究背景与意义}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{长期配置的核心挑战}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \textbf{为什么不能直接用均值—方差？}
-      \begin{itemize}
-        \item Michaud（1989）：收益率估计误差远高于协方差估计误差
-        \item 微小预测扰动可能导致权重剧烈漂移
-        \item DeMiguel 等（2009）：多类优化策略未稳定击败 1/N
-        \item 机构配置更需要\textbf{风险可归因}的框架
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.46\textwidth}
-      \textbf{全球 ETF 落地的三重难题}
-      \begin{itemize}
-        \item 相关结构\textbf{时变}：固定窗口协方差估计滞后
-        \item 严格 ERC 与实施约束叠加后通常形成\textbf{非凸}问题
-        \item 月频调仓叠加 \txCostBps{} bps 成本：净收益被持续侵蚀
-      \end{itemize}
-    \end{column}
-  \end{columns}
-  \vspace{0.6em}
-  \begin{block}{本页要点}
-    \centering
-    长期资产配置的难点不是单期收益排序，而是如何在不确定环境下保持风险来源清晰、约束可执行、换手可控制。
-  \end{block}
+\section{研究问题}
+\begin{frame}{风险预算与实施约束}
+\begin{itemize}
+\item 30 只中国市场可交易 ETF，覆盖 8 类全球资产风险
+\item 先求凸风险预算参考，再用凸跟踪与换手目标生成权重
+\item 研究集中度约束是否实际改变配置和历史绩效
+\item 主模型为 Improved Convex Adaptive Global RRP，其余模型为对照
+\end{itemize}
 \end{frame}
-
-\begin{frame}{风险平价的核心逻辑与本文解法}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \begin{block}{风险平价的核心逻辑}
-        \centering\large
-        $RC_i = w_i \cdot \dfrac{(\Sigma w)_i}{\sigma_p}$\\[0.5em]
-        \normalsize 目标：$RC_i = b_i \cdot \sigma_p$\\[0.3em]
-        \small 以\textbf{风险贡献}替代资金金额分配\\
-        对收益预测依赖低，逻辑清晰
-      \end{block}
-      \vspace{0.4em}
-      \begin{alertblock}{本文的解法}
-        凸风险预算参考 + 二阶段 DCP +\\
-        $\ell_1$ 换手惩罚 →\\
-        \textbf{可检查、可稳定求解的优化框架}
-      \end{alertblock}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \textbf{方法含义}
-      \begin{itemize}
-        \item 用对数障碍凸问题生成风险预算参考
-        \item 用凸二次跟踪项替代非凸风险贡献误差
-        \item 用 $\ell_1$ 换手惩罚提高可实施性
-        \item 候选族允许加入 CVaR，公开路径未启用该项
-        \item 透明优化问题直接生成最终权重
-      \end{itemize}
-      \vspace{0.2em}
-      \small 本文研究长期配置，不将模型解释为短期择时策略。
-    \end{column}
-  \end{columns}
+\begin{frame}{数据与评价口径}
+\begin{itemize}
+\item 评价区间：\evalStartDate{} 至 \evalEndDate{}
+\item \primaryObservations{} 个日收益观察，243 日年化，无风险利率为零
+\item 主模型每周最后一个实际交易日调仓，共 \primaryRebalances{} 次
+\item 单边成本 \txCostBps{} bps，为固定研究约定
+\item 保留极端收益，上市前不回填，至少 60 个历史观察才可投资
+\end{itemize}
 \end{frame}
-
-\begin{frame}{研究问题与贡献}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \textbf{研究问题}
-      \begin{enumerate}
-        \item 30 支全球 ETF 能否形成可解释的风险预算组合？
-        \item 风险预算跟踪、换手和组别约束怎样改变收益与风险？
-        \item 含 CVaR 的候选能否获得滚动样本外选择？
-        \item 结论是否依赖样本、参数或协方差估计？
-      \end{enumerate}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \textbf{本文贡献}
-      \begin{itemize}
-        \item 使用可交易 ETF 和统一成本口径
-        \item 以两阶段凸问题处理风险预算参考、换手和组别边界
-        \item 用滚动样本外路径与多类诊断约束结论
-      \end{itemize}
-      \vspace{0.5em}
-      \begin{block}{评价窗口}
-        \centering\small
-        \evalStartDate{} — \evalEndDate{}\\
-        \evalMonths{} 个月度观察点\\
-        单边成本 \txCostBps{} bps，全程无前视
-      \end{block}
-    \end{column}
-  \end{columns}
+\section{主模型方法}
+\begin{frame}{凸优化主模型}
+风险预算参考 $b_t$ 来自凸对数障碍问题。实施阶段求解
+\[
+\min_w\;0.25\|w-b_t\|_2^2+(0.02+0.0003)\|w-w_t^-\|_1
+\]
+\[
+\mathbf{1}^{T}w=1,\quad w\geq0,\quad\|w-w_t^-\|_1\leq0.80.
+\]
+\begin{itemize}
+\item 取消现金组与单资产集中度上限，不增加杠杆
+\item 保留债券、防御、商品与黄金、权益组边界
+\item 当前收益奖励、方差惩罚和 CVaR 惩罚均为零
+\end{itemize}
 \end{frame}
+\begin{frame}{约束与参数来源}
+\begin{tabular}{lr}
+\toprule
+参数 & 主模型设置\\\midrule
+历史窗口 / EWMA 半衰期 & 252 / 60 个观察\\
+债券组上限 & 70\%\\
+防御组上限 & 25\%\\
+商品与黄金组上限 & 40\%\\
+权益组上限 & 70\%\\
+单期换手上限 & 80\%\\\bottomrule
+\end{tabular}
+\medskip
 
-% ════════════════════════════════════════════════════════════════════════════
-\section{文献综述与理论基础}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{文献脉络与本文切入点}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \textbf{从均值—方差到风险预算}
-      \begin{itemize}
-        \item Markowitz（1959）建立收益—风险优化框架
-        \item Michaud（1989）指出收益估计误差会放大权重波动
-        \item Qian（2005）与 Maillard 等（2010）改用风险贡献组织组合
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.48\textwidth}
-      \textbf{约束优化与层次化基准}
-      \begin{itemize}
-        \item Gambeta 与 Kwon（2020）用惩罚项放松严格风险贡献等式
-        \item HRP/HERC 回避矩阵求逆，但难直接加入 CVaR 与换手约束
-        \item 本文保留透明的凸优化权重生成过程
-      \end{itemize}
-    \end{column}
-  \end{columns}
-  \vspace{0.6em}
-  \begin{alertblock}{切入点}
-    风险预算提供可解释参考，DCP 模型同时容纳换手、资产组边界与可选的 CVaR 控制。
-  \end{alertblock}
+这些参数继承自研究配置，未宣称为实测最优值。现金无额外上限，但受多头单位预算约束。
 \end{frame}
-
-\begin{frame}[shrink=2]{可选 CVaR 控制与交易成本}
-  \begin{columns}[T]
-    \begin{column}{0.52\textwidth}
-      \textbf{CVaR 的凸性与线性重表述}\\[0.3em]
-      Rockafellar \& Uryasev（2000；2002）：
-      \begin{center}
-      \resizebox{0.98\linewidth}{!}{$
-      \begin{aligned}
-        \mathrm{CVaR}_\alpha(w)
-        &= \min_\eta \Bigl[
-        \eta + \tfrac{1}{(1-\alpha)T}
-        \sum_t \max(-r_t^\top w-\eta,0)
-        \Bigr]
-      \end{aligned}
-      $}
-      \end{center}
-      \begin{itemize}
-        \item 次可加性 + 凸性：\textbf{天然适合约束优化}
-        \item 引入辅助变量 $\eta$ 后等价为\textbf{线性不等式组}
-        \item 与 $\ell_1$ 换手惩罚可统一在同一 QP/SOCP 框架
-        \item 公开路径的 $\lambda_{cvar}=0$，本页给出候选扩展形式
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \textbf{交易成本建模}\\[0.3em]
-      Almgren \& Chriss（2001）：换手速率与市场冲击的根本张力
-      \vspace{0.4em}
-      \begin{block}{本文：线性成本近似}
-        \centering
-        $\mathrm{TC}_t = c \cdot \|w_t - w_{t-1}^+\|_1$\\[0.3em]
-        \small $c = \txCostBps$ bps 单边\\回测按固定费率逐期扣减
-      \end{block}
-      \vspace{0.4em}
-      \small \textbf{国内研究（华泰 2020—2024）指出}：低利率环境下换手成本是风险平价落地的核心约束，月频再平衡的成本积累不可忽视
-    \end{column}
-  \end{columns}
+\begin{frame}{时序与选择边界}
+\begin{itemize}
+\item 每期优化只使用严格早于调仓日的数据
+\item 沿用当日目标权重乘当日收益并扣成本的日频记账约定
+\item 冻结既有候选日历，基础候选为 \texttt{candidate\_03}
+\item 周频与取消上限规格是在历史实验后选定的
+\item 因此属于探索性历史证据，不是独立样本外模型选择验证
+\end{itemize}
 \end{frame}
+\section{实证结果}
+\begin{frame}{主模型绩效}
+\begin{tabular}{lr}
+\toprule
+指标 & 结果\\\midrule
+净年化收益 & \improvedNetReturn\\
+年化波动 & \improvedVolatility\\
+夏普（无风险利率为零） & \improvedSharpe\\
+Sortino & \improvedSortino\\
+最大回撤 & \improvedMaxDD\\
+平均月度换手 & \improvedMonthlyTurnover\\\bottomrule
+\end{tabular}
+\medskip
 
-% ════════════════════════════════════════════════════════════════════════════
-\section{理论框架与模型方法}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}[shrink=3]{从严格 ERC 到宽松风险平价}
-  \begin{columns}[T]
-    \begin{column}{0.46\textwidth}
-      \textbf{标准风险平价（ERC）}\\[0.2em]
-      风险贡献：$RC_i = w_i \cdot \dfrac{(\Sigma w)_i}{\sigma_p}$\\[0.4em]
-      严格等式约束：$RC_i = b_i \sigma_p$\\[0.4em]
-      \alert{困难}：同时加权重上下限、资产组约束后，等式约束使问题\textbf{非凸}，标准求解器无法直接处理
-
-      \vspace{0.6em}
-      \textbf{凸风险预算参考}
-      \[
-      \begin{aligned}
-        \min_{x>0}\quad &\tfrac12 x^\top\Sigma x
-        -\kappa\sum_i b_i\log x_i,\\
-        &w^{RB}=x/(\mathbf{1}^\top x)
-      \end{aligned}
-      \]
-      半正定 $\Sigma$ 下目标为凸函数
-    \end{column}
-    \begin{column}{0.51\textwidth}
-      \textbf{Convex Adaptive Global RRP}\\[0.3em]
-      第二阶段跟踪参考权重并加入实施约束：
-      \scriptsize
-      \begin{align*}
-        \min_w\; J(w)
-          &= \underbrace{\lambda_v w^\top\Sigma_t w}_{\text{波动率项}}
-           + \underbrace{\lambda_b\|w - w_t^{RB}\|_2^2}_{\text{参考权重跟踪}} \\[2pt]
-          &\;+ \underbrace{\lambda_{to}\|w - w_{t-1}^+\|_1}_{\text{换手惩罚}}
-           + \underbrace{\lambda_c\,\mathrm{CVaR}_\alpha(w)}_{\text{可选尾部惩罚}}
-           - \underbrace{\lambda_r\,\mu_t^\top w}_{\text{收益奖励}}
-      \end{align*}
-      \small
-      \vspace{0.1em}
-      约束集
-      \[
-      \begin{gathered}
-      \sum_i w_i=1,\qquad 0\le w_i\le u_i,\\
-      L_g\le\sum_{i\in g}w_i\le U_g
-      \end{gathered}
-      \]
-    \end{column}
-  \end{columns}
+月均换手按自然月汇总，实际调仓频率为周频。
 \end{frame}
+\begin{frame}{核心模型对照}
+\scriptsize
+\resizebox{\textwidth}{!}{\begin{tabular}{lrrrr}
+\toprule
+模型 & 净年化收益 & 年化波动 & 夏普 & 最大回撤\\\midrule
+Improved Convex Adaptive Global RRP & \improvedNetReturn & \improvedVolatility & \improvedSharpe & \improvedMaxDD\\
+Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalMaxDD\\
+Convex Adaptive Global RRP & \convexNetReturn & \convexVolatility & \convexSharpe & \convexMaxDD\\
+HRP & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD\\
+HERC & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD\\
+Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightMaxDD\\
+60/40 & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD\\\bottomrule
+\end{tabular}}
+\medskip
 
-\begin{frame}{模型定位与滚动选择策略}
-  \scriptsize\renewcommand{\arraystretch}{1.05}
-  \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{6.0cm}>{\raggedright\arraybackslash}p{2.7cm}@{}}
-    \toprule
-    模型 & 核心特征 & 角色 \\
-    \midrule
-    Global RRP       & 基准宽松风险预算，无换手约束         & 出发点 \\
-    \shortstack[l]{Convex Adaptive\\Global RRP}  & $\ell_1$ 换手惩罚 + 资产组上限       & 降换手 \\
-    \textbf{\shortstack[l]{Improved Convex Adaptive\\Global RRP}} & \textbf{滚动样本外选择 + 换手惩罚 + 资产组边界} & \textbf{主模型} \\
-    HERC             & 层次聚类递归分配，无凸优化            & 层次化基准 \\
-    \bottomrule
-  \end{tabular}
-  \vspace{0.05em}
-  \begin{columns}[T]
-    \begin{column}{0.52\textwidth}
-      \textbf{滚动选择与验证角色}
-      \begin{enumerate}
-        \item 2018 年起连续拼接滚动样本外路径
-        \item 36 组网格只作诊断，测试窗不参与选择
-        \item 2015--2017 年预热，2018 年重置选择状态
-      \end{enumerate}
-    \end{column}
-    \begin{column}{0.44\textwidth}
-      \begin{tabular}{@{}ll@{}}
-        协方差估计 & EWMA \\
-        单资产最大权重 & 40\% \\
-        换手上限 & 80\% \\
-        公开 CVaR 惩罚 & 0 \\
-      \end{tabular}
-    \end{column}
-  \end{columns}
+主模型为周频，其余核心对照为月频。主模型身份不表示每项指标排名第一。
 \end{frame}
-
-% ════════════════════════════════════════════════════════════════════════════
-\section{数据与回测设计}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{\etfCount{} 支全球 ETF 与 8 类风险来源}
-  \scriptsize\renewcommand{\arraystretch}{1.06}\setlength{\tabcolsep}{3pt}
-  \begin{center}
-    \begin{tabular}{@{}>{\bfseries}l>{\raggedright\arraybackslash}p{3.65cm}>{\bfseries}l>{\raggedright\arraybackslash}p{2.85cm}@{}}
-      \toprule
-      类别 & 代表品种 & 类别 & 代表品种 \\
-      \midrule
-      债券与现金（5） & 可转债、5年国债、10年国债、信用债、日利 & 行业与消费（3） & 证券、军工、消费 \\
-      A股宽基（6）  & 沪深300/500/1000/2000、创业板、红利 & 港股（1） & 恒生ETF \\
-      中国科技与成长（4） & 半导体、AI、新能源、科创50 & 全球股票（4） & 纳指、标普500、日经、欧洲 \\
-      贵金属（2） & 黄金、白银 & 大宗商品与资源（5） & 有色期货、能源化工期货、豆粕、煤炭、原油 \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-  \scriptsize\centering
-  最长行情始于 \dataFirstDate{}。主池累计 60 个有效观察后进入，6 支候选固定隔离。\\
-  评价区间 \evalStartDate{} 至 \evalEndDate{}，共 \evalMonths{} 个月度观察点，单边成本 \txCostBps{} bps。
+\figframe{累计净值}{convex_adaptive_nav_comparison.png}{0.88}{相同日期与成本口径，结合风险尺度理解绝对收益差异}
+\figframe{历史回撤}{convex_adaptive_drawdown_comparison.png}{0.88}{主模型最大回撤为 \improvedMaxDD，未启用 CVaR 惩罚}
+\figframe{换手与实施成本}{convex_adaptive_turnover_comparison.png}{0.88}{换手影响成本。固定 3 bps 未计入实测价差、容量与市场冲击}
+\figframe{现金集中度}{primary_weights.png}{0.92}{平均现金类 ETF 权重 \primaryCashMean，最高 \primaryCashMax}
+\begin{frame}{无风险利率与夏普解释}
+同一组合、同一权重、同一净收益路径：
+\begin{center}
+\begin{tabular}{lr}
+\toprule
+无风险利率口径 & 夏普\\\midrule
+固定为零 & \improvedSharpe\\
+滞后一月的中债 1 年期国债收益率 & \primaryChinaBondSharpe\\\bottomrule
+\end{tabular}
+\end{center}
+较高现金权重与极低波动会显著影响零利率比率。口径变化不创造额外收益，近现金对照也可能得到更高夏普。
 \end{frame}
+\section{诊断与局限}
+\begin{frame}{约束消融}
+\scriptsize
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_primary_constraints.tex}}
+\medskip
 
-\begin{frame}{静态权重演进：从国内到全球多资产}
-  \begin{columns}[T,onlytextwidth]
-    \begin{column}{0.30\textwidth}
-      \centering
-      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v1_standard_weights.png}\\[0.3em]
-      \footnotesize \textbf{标准风险平价}\\债券主导，高集中度
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \centering
-      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v2_relaxed_weights.png}\\[0.3em]
-      \footnotesize \textbf{宽松 RRP}\\偏离惩罚引入，权重更分散
-    \end{column}
-    \begin{column}{0.30\textwidth}
-      \centering
-      \includegraphics[width=0.96\textwidth,height=0.58\textheight,keepaspectratio]{static_v3_global_weights.png}\\[0.3em]
-      \footnotesize \textbf{Global RRP（30 支）}\\跨 8 大类，结构更均衡
-    \end{column}
-  \end{columns}
+仅取消现金组上限仍保留单资产上限。相对 CVaR 保留原最优基准的可行性，微小数值差异不构成独立改善证据。
 \end{frame}
+\begin{frame}{分自然年结果}
+\scriptsize
+\centering
+\input{../thesis_latex/generated_primary_annual.tex}
+\medskip
 
-% ════════════════════════════════════════════════════════════════════════════
-\section{实证结果与分析}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{全模型绩效汇总}
-  \scriptsize
-  \renewcommand{\arraystretch}{1.16}
-  \begin{center}
-    \begin{tabular}{@{}lccccc@{}}
-      \toprule
-      模型 & 净年化 & 年化波动 & Sharpe & 最大回撤 & 月均换手 \\
-      \midrule
-      Global RRP      & \globalNetReturn  & \globalVolatility  & \globalSharpe  & \globalMaxDD  & \globalMonthlyTurnover \\
-      \shortstack[l]{Convex Adaptive\\Global RRP} & \convexNetReturn  & \convexVolatility  & \convexSharpe  & \convexMaxDD  & \convexMonthlyTurnover \\
-      \rowcolor{swufeLight}
-      \textbf{\shortstack[l]{Improved Convex Adaptive\\Global RRP}} & \textbf{\improvedNetReturn} & \textbf{\improvedVolatility} & \textbf{\improvedSharpe} & \textbf{\improvedMaxDD} & \textbf{\improvedMonthlyTurnover} \\
-      \midrule
-      HRP Benchmark   & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD & \hrpMonthlyTurnover \\
-      HERC Benchmark  & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD & \hercMonthlyTurnover \\
-      等权基准        & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightMaxDD & \equalWeightMonthlyTurnover \\
-      60/40 基准      & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD & \sixtyFortyMonthlyTurnover \\
-      \bottomrule
-    \end{tabular}
-  \end{center}
-  \vspace{0.15em}
-  \scriptsize\centering \evalStartDate{}—\evalEndDate{}；月度调仓；净收益扣除 \txCostBps{} bps 单边成本
+2026 年仅截至 \evalEndDate。年度年化指标不是完整年度已实现收益。
 \end{frame}
+\figframe{主模型参数下的频率对照}{rebalance_frequency_sensitivity.png}{0.86}{仅改变周、双周、月、季度日历。周频为指定配置，排名属于描述性结果}
+\begin{frame}{期末持仓快照}
+\centering
+\input{generated_next_month_holdings_slide.tex}
+\medskip
 
-\begin{frame}{2026 年 9 月模型持仓}
-  \begin{columns}[T]
-    \begin{column}{0.56\textwidth}
-      \centering
-      \IfFileExists{generated_next_month_holdings_slide.tex}{\input{generated_next_month_holdings_slide.tex}}{\textbf{[Run scripts/export_next_month_holdings.py]}}
-    \end{column}
-    \begin{column}{0.40\textwidth}
-      \small
-      \begin{itemize}
-        \item 使用截至 2026-08-31 的可得数据
-        \item 日利、信用债及 5/10 年国债构成稳定底仓
-        \item 黄金、红利、商品与全球股票提供风险分散
-        \item 完整 26 项实质非零权重合计 100\%
-      \end{itemize}
-      \vspace{0.4em}
-      \scriptsize 历史模型输出，不构成未来收益保证。
-    \end{column}
-  \end{columns}
+\footnotesize 展示期末最大持仓，不是下月整月固定指令。周频模型会在下一再平衡点重新求解。
 \end{frame}
-
-\begin{frame}{净值与回撤路径}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{convex_adaptive_nav_comparison.png}\\
-      \footnotesize 等权收益更高，主模型路径更平稳
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{convex_adaptive_drawdown_comparison.png}\\
-      \footnotesize 主模型最大回撤为 \improvedMaxDD
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \scriptsize\centering Improved Convex Adaptive Global RRP 以较低收益弹性换取更低波动；HERC Benchmark 的平缓路径来自债券集中
+\begin{frame}{验证与研究边界}
+\begin{itemize}
+\item 核查共同日期、权重归一、漂移权重、成本、约束及信息截止日
+\item 主模型路径复现获批研究结果，保留求解与约束审计
+\item 高现金集中度限制了风险分散的解释
+\item 事后规格选择尚需新增样本验证，历史 PBO 不自动适用于当前规格
+\item 未建模负债、资本占用、容量与实际成交，不能直接推出机构适用性
+\end{itemize}
 \end{frame}
+\section{结论}
+\begin{frame}{研究结论}
+\begin{itemize}
+\item 周频凸优化主模型在零利率口径下达到 \improvedSharpe{} 夏普
+\item 净收益为 \improvedNetReturn，平均现金类 ETF 权重为 \primaryCashMean
+\item 约束消融区分结构变化与统计口径变化
+\item 其余模型提供对照，未来验证应冻结规格并使用新增数据
+\end{itemize}
+\medskip
 
-\begin{frame}{换手约束与交易成本}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{convex_adaptive_turnover_comparison.png}\\
-      \footnotesize 月均换手由 \globalMonthlyTurnover{} 降至 \textbf{\improvedMonthlyTurnover}
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{convex_adaptive_transaction_cost_comparison.png}\\
-      \footnotesize 低换手同步压低年化成本拖累
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \scriptsize\centering 结果使用 \txCostBps{} bps 单边成本；实际摩擦越高，高换手模型越不利
+历史结果不保证未来收益或夏普达到同一水平。
 \end{frame}
-
-\begin{frame}{CVaR 尾部风险对比}
-  \begin{center}
-    \includegraphics[width=0.88\textwidth,height=0.64\textheight,keepaspectratio]{convex_adaptive_cvar_comparison.png}
-  \end{center}
-  \vspace{-0.2em}
-  \footnotesize\centering
-  95\% 日度 CVaR 是事后风险指标。公开路径的 CVaR 惩罚为零，图中差异不能归因于 CVaR 约束
-\end{frame}
-
-\begin{frame}{资产组权重路径：各类别占比演变}
-  \begin{center}
-    \includegraphics[width=0.88\textwidth,height=0.64\textheight,keepaspectratio]{weight_path_asset_group_comparison.png}
-  \end{center}
-  \vspace{-0.2em}
-  \footnotesize\centering
-  Improved Convex Adaptive Global RRP 的债券权重约 70\%，商品约 14\%--16\%；组别边界与换手惩罚共同限制集中度和权重跳变
-\end{frame}
-
-\begin{frame}{HERC 权重路径：为何 Sharpe 的经济含义有限}
-  \begin{center}
-    \includegraphics[width=0.88\textwidth,height=0.60\textheight,keepaspectratio]{hrp_weights_timeline.png}
-  \end{center}
-  \vspace{-0.2em}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \footnotesize
-      \begin{itemize}
-        \item HERC 递归二分将几乎全部权重集中于\textbf{日利/5年国债 ETF}（极低波动）
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \footnotesize
-      \begin{itemize}
-        \item 年化波动率仅 \hercVolatility{}，Sharpe = \hercSharpe{} 主要来自低波动债券底仓，经济含义不同于多资产分散模型
-      \end{itemize}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{与外部基准对比：净值与回撤}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{benchmark_nav_comparison.png}\\
-      \footnotesize\centering 净值路径：主模型收益较稳，等权收益更高但波动更大
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{benchmark_drawdown_comparison.png}\\
-      \footnotesize\centering 回撤路径：主模型最大回撤小于等权和 60/40
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \footnotesize\centering
-  Improved Convex Adaptive Global RRP 净收益 \improvedNetReturn{}，回撤 \improvedMaxDD{}；等权收益更高（\equalWeightNetReturn{}）但回撤 \equalWeightMaxDD{} 为代价；60/40 Benchmark 回撤最深（\sixtyFortyMaxDD{}）
-\end{frame}
-
-\begin{frame}{与沪深 300 月度收益散点对比}
-  \begin{center}
-    \includegraphics[width=0.88\textwidth,height=0.66\textheight,keepaspectratio]{improved_rrp_vs_hs300_monthly_comparison.png}
-  \end{center}
-  \vspace{-0.2em}
-  \footnotesize\centering
-  Improved Convex Adaptive Global RRP 对 A 股下行的防御性：沪深 300 大跌月份，组合回撤幅度明显收窄，体现跨资产分散的实际效果
-\end{frame}
-
-\begin{frame}{风险归因与收益归因}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_pricing_risk_attribution.png}\\
-      \footnotesize\centering 风险归因：识别哪些资产贡献了主要组合波动
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_pricing_return_attribution.png}\\
-      \footnotesize\centering 收益归因：识别哪些资产贡献了主要累计收益
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \footnotesize\centering
-  权益和商品/黄金分别贡献约 30\% 的已归因收益；权益方差份额最高，债券以较高资金占比提供低波动缓冲
-\end{frame}
-
-\begin{frame}{Sharpe 差异统计检验}
-  \begin{columns}[T]
-    \begin{column}{0.60\textwidth}
-      \footnotesize\renewcommand{\arraystretch}{1.35}
-      \begin{tabular}{@{}lccc@{}}
-        \toprule
-        比较对 & $\Delta$Sharpe & $p$ 值 & 结论 \\
-        \midrule
-        Improved vs.\ Global RRP & \improvedVsGlobalDiff & \improvedVsGlobalPValue & \textbf{\improvedVsGlobalSignificant} \\
-        Improved vs.\ 等权       & \improvedVsEqualDiff & \improvedVsEqualPValue & \textbf{\improvedVsEqualSignificant} \\
-        Global vs.\ 等权         & \globalVsEqualDiff & \globalVsEqualPValue & \globalVsEqualSignificant \\
-        \bottomrule
-      \end{tabular}
-      \vspace{0.3em}
-      \scriptsize 21 日移动分块 Bootstrap，2000 次重抽样，95\% 置信区间
-    \end{column}
-    \begin{column}{0.37\textwidth}
-      \begin{block}{核心含义}
-        \footnotesize
-        \begin{itemize}
-          \item 三组 95\% 置信区间均跨过零
-          \item 主模型相对 Global RRP 的观察差为负
-          \item 点估计不能证明稳定的 Sharpe 优势
-        \end{itemize}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-% ════════════════════════════════════════════════════════════════════════════
-\section{稳健性检验}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{稳健性检验体系：六个维度}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \begin{enumerate}
-        \item \textbf{Walk-forward 子区间}：滚动训练-测试窗口，检验跨期稳定性
-        \item \textbf{参数扰动}：对 5 个超参数各自 ±20\% 扰动，观察 Sharpe 和换手的分布范围
-        \item \textbf{交易成本敏感性}：从 0 到 50+ bps 扫描，确定盈亏平衡阈值
-      \end{enumerate}
-    \end{column}
-    \begin{column}{0.47\textwidth}
-      \begin{enumerate}\setcounter{enumi}{3}
-        \item \textbf{调仓频率敏感性}：周度、双周、月度、季度仅改变调仓日历
-        \item \textbf{Bootstrap 分布}：对月度收益序列重抽样，获取 Sharpe 和最大回撤的经验分布
-        \item \textbf{协方差估计器}：比较样本协方差、EWMA（基准）、收缩估计三种方案
-      \end{enumerate}
-      \vspace{0.4em}
-      \begin{alertblock}{目标}
-        \small 将结论\textbf{明确限定}在特定样本区间和参数设定，避免过度外推
-      \end{alertblock}
-    \end{column}
-  \end{columns}
-\end{frame}
-
-\begin{frame}{跨期稳定性与参数扰动}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{robustness_subperiod_sharpe.png}\\
-      \footnotesize 5 个固定子区间 Sharpe 均为正
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{robustness_parameter_sensitivity.png}\\
-      \footnotesize 局部参数扰动未出现断崖式失效
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \scriptsize\centering 固定公开选择日历，仅改变评价切片或单一参数；结果不用于重新选模
-\end{frame}
-
-\begin{frame}{成本与调仓频率敏感性}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.61\textheight,keepaspectratio]{robustness_transaction_cost_sensitivity.png}\\
-      \footnotesize 盈亏平衡成本高于 50 bps
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.61\textheight,keepaspectratio]{rebalance_frequency_sensitivity.png}\\
-      \footnotesize 月度净收益居首，双周 Sharpe 更高
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \scriptsize\centering 月度调仓为预设实施规则；频率检验保持公开滚动选择日历不变
-\end{frame}
-
-\begin{frame}{抽样稳定性与过拟合诊断}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{robustness_bootstrap_sharpe_distribution.png}\\
-      \footnotesize 主模型 Sharpe P5 为 \BootstrapImprovedSharpePFive
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.62\textheight,keepaspectratio]{pbo_heatmap.png}\\
-      \footnotesize 增强版 CSCV/PBO 为 0.000
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \scriptsize\centering Bootstrap 使用 200 次、21 日分块重抽样；CSCV 使用 36 个探索候选、10 个时间区块和 12 个组合分割
-\end{frame}
-
-\begin{frame}{协方差估计器对比：Sharpe 与换手}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{covariance_robustness_sharpe.png}\\
-      \footnotesize\centering Sharpe 对比：检验不同协方差估计器下的收益稳健性
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.64\textheight,keepaspectratio]{covariance_robustness_turnover.png}\\
-      \footnotesize\centering 换手率对比：检验估计器变化是否破坏低换手特征
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \footnotesize\centering
-  样本协方差、EWMA（基准）、收缩估计三种方案下，低换手和浅回撤方向一致；Ledoit--Wolf 的 Sharpe 略高，但月换手也更高
-\end{frame}
-
-\begin{frame}{状态条件协方差的样本外检验}
-  \begin{columns}[T]
-    \begin{column}{0.43\textwidth}
-      \textbf{设计}
-      \begin{itemize}
-        \item 按平静与压力状态分别估计协方差
-        \item 在 2018--2023 设计窗选择先验
-        \item 固定参数后评价 2024--2026 留出窗
-      \end{itemize}
-      \vspace{0.3em}
-      \begin{block}{设计窗选择}
-        \centering $\pi=0.60$，先验权重 $0.75$
-      \end{block}
-    \end{column}
-    \begin{column}{0.54\textwidth}
-      \footnotesize\renewcommand{\arraystretch}{1.2}
-      \textbf{留出窗 2024-01-02 至 \evalEndDate{}}
-      \begin{center}
-      \begin{tabular}{@{}lccc@{}}
-        \toprule
-        配置 & Sharpe & 最大回撤 & 净年化 \\
-        \midrule
-        EWMA 基准      & \RegimeBaselineSharpe & \RegimeBaselineMaxDD & \RegimeBaselineNetReturn \\
-        \rowcolor{swufeLight}
-        \textbf{状态条件} & \textbf{\RegimeSelectedSharpe} & \textbf{\RegimeSelectedMaxDD} & \textbf{\RegimeSelectedNetReturn} \\
-        \bottomrule
-      \end{tabular}
-      \end{center}
-    \end{column}
-  \end{columns}
-  \vspace{0.3em}
-  \begin{alertblock}{诚实边界}
-    \small 状态条件版本未提高留出窗 Sharpe，只保留为稳健性补充。
-  \end{alertblock}
-\end{frame}
-
-\begin{frame}{压力期表现：市场动荡时的防御性}
-  \begin{columns}[T]
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{robustness_stress_period_performance.png}\\
-      \footnotesize\centering 压力期绩效：比较模型在市场冲击阶段的收益和回撤
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \centering
-      \includegraphics[width=\textwidth,height=0.65\textheight,keepaspectratio]{asset_graph_stress_timeline.png}\\
-      \footnotesize\centering 压力时序：展示不同资产风险状态随时间变化
-    \end{column}
-  \end{columns}
-  \vspace{0.2em}
-  \footnotesize\centering
-  历史压力期中，Improved Convex Adaptive Global RRP 的完整约束组合对应 \improvedMaxDD{} 的最大回撤
-\end{frame}
-
-% ════════════════════════════════════════════════════════════════════════════
-\begin{frame}{近期表现与适用边界}
-  \centering
-  \includegraphics[width=0.88\textwidth,height=0.67\textheight,keepaspectratio]{improved_rrp_vs_hs300_monthly_comparison.png}
-  \vspace{-0.2em}
-  \begin{alertblock}{适用边界}
-    \centering\footnotesize
-    4--6 月权益上涨时明显滞后，7 月权益下跌时更具防御性；模型不以逐月跑赢权益指数为目标。
-  \end{alertblock}
-\end{frame}
-
-\section{主要结论}
-% ════════════════════════════════════════════════════════════════════════════
-
-\begin{frame}{三条核心结论}
-  \begin{swufekeypoints}
-    \swufepoint{可实施性}{01}{Improved Convex Adaptive Global RRP 的 Sharpe 为 \improvedSharpe{}，最大回撤 \improvedMaxDD{}，月均换手 \improvedMonthlyTurnover{}。相对基础凸模型，净收益与换手改善，波动和回撤略有上升。}
-    \swufepoint{基准解释}{02}{HERC 的 \hercSharpe{} Sharpe 来自债券集中和 \hercVolatility{} 的极低波动。权重结构比单一排名更能说明模型差异。}
-    \swufepoint{适用边界}{03}{结论条件于 \evalStartDate{}—\evalEndDate{} 的历史样本、无杠杆约束和 3 bps 成本。权益强势期可能明显滞后。}
-  \end{swufekeypoints}
-\end{frame}
-
-\begin{frame}{研究边界与后续方向}
-  \centering
-  \small
-  \renewcommand{\arraystretch}{1.45}
-  \begin{tabular}{p{0.16\textwidth}p{0.35\textwidth}p{0.35\textwidth}}
-    \toprule
-    \textbf{维度} & \textbf{当前边界} & \textbf{下一步} \\
-    \midrule
-    执行成本 & 固定 3 bps，未计容量与冲击 & 引入价差、成交量和非线性冲击 \\
-    机构约束 & 未建模负债与资本占用 & 加入现金流、久期缺口和监管约束 \\
-    样本结构 & 部分 ETF 历史短，相关性会变化 & 延长样本并检验因子层风险预算 \\
-    资产覆盖 & 尚未纳入公募 REITs ETF & 流动性和历史充分后纳入资产池评审 \\
-    \bottomrule
-  \end{tabular}
-  \vspace{1em}
-  \begin{alertblock}{结论边界}
-    \centering 历史证据支持可实施性，不构成未来收益保证。
-  \end{alertblock}
-\end{frame}
-
-% ════════════════════════════════════════════════════════════════════════════
-% 致谢与问答
-% ════════════════════════════════════════════════════════════════════════════
-\begin{frame}[plain]
-  \begin{tikzpicture}[remember picture, overlay]
-    \fill[swufeDark] (current page.south west) rectangle (current page.north east);
-    \foreach \r in {2.5, 3.8, 5.1}{%
-      \draw[swufeGold, opacity=0.15, line width=0.8pt]
-        (current page.north east) circle(\r cm);}
-    \fill[swufeGold]
-      (current page.south west) rectangle ([yshift=6pt]current page.south east);
-    \node[text=white, font=\Large\bfseries]
-      at ([yshift=0.5cm]current page.center){感谢各位老师的聆听与指导};
-    \node[text=swufeGold, font=\normalsize]
-      at ([yshift=-0.3cm]current page.center){敬请批评指正};
-    \node[text=white!70, font=\scriptsize, anchor=south east]
-      at ([xshift=-1.5cm, yshift=1.5cm]current page.south east){
-      \begin{tabular}{rl}
-        净年化收益 & \improvedNetReturn \\
-        Sharpe    & \improvedSharpe    \\
-        最大回撤  & \improvedMaxDD     \\
-        月均换手  & \improvedMonthlyTurnover \\
-      \end{tabular}};
-    \node[anchor=north east, inner sep=0pt]
-      at ([xshift=-0.58cm,yshift=-0.42cm]current page.north east)
-      {\includegraphics[width=1.55cm]{logo}};
-  \end{tikzpicture}
-\end{frame}
-
+\begin{frame}[plain]\centering\Huge 谢谢各位老师\end{frame}
 \end{document}

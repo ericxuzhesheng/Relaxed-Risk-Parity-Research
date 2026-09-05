@@ -1,0 +1,39 @@
+{"time_utc": "2026-09-05T05:30:45.741154+00:00", "event": "legacy_reproduction_started"}
+{"time_utc": "2026-09-05T05:33:00.341119+00:00", "event": "legacy_reproduction_started"}
+{"time_utc": "2026-09-05T05:33:00.438862+00:00", "event": "legacy_reproduction_passed", "net_annual_return": -5.967448757360216e-16, "annualized_volatility": -5.342948306008566e-16, "sharpe_ratio": -9.2148511043888e-15, "sortino_ratio": -1.3100631690576847e-14, "max_drawdown": 5.065392549852277e-16, "avg_monthly_turnover": -1.7694179454963432e-16}
+{"time_utc": "2026-09-05T05:33:00.438862+00:00", "event": "variant_started", "variant": "monthly_control"}
+{"time_utc": "2026-09-05T05:33:21.258537+00:00", "event": "variant_passed", "variant": "monthly_control", "sharpe": 0.5705418882406086, "elapsed_seconds": 20.812000000005355}
+{"time_utc": "2026-09-05T05:33:21.261541+00:00", "event": "variant_started", "variant": "weekly_baseline"}
+{"time_utc": "2026-09-05T05:34:34.914969+00:00", "event": "variant_passed", "variant": "weekly_baseline", "sharpe": 0.5736701289551508, "elapsed_seconds": 73.64099999998871}
+{"time_utc": "2026-09-05T05:34:34.916977+00:00", "event": "variant_started", "variant": "no_cash_cap"}
+{"time_utc": "2026-09-05T05:35:53.253428+00:00", "event": "variant_passed", "variant": "no_cash_cap", "sharpe": 0.5890019730410445, "elapsed_seconds": 78.32800000000861}
+{"time_utc": "2026-09-05T05:35:53.256436+00:00", "event": "variant_started", "variant": "no_asset_cap"}
+{"time_utc": "2026-09-05T05:37:11.553548+00:00", "event": "variant_passed", "variant": "no_asset_cap", "sharpe": 0.5734679545485134, "elapsed_seconds": 78.29699999999139}
+{"time_utc": "2026-09-05T05:37:11.554544+00:00", "event": "variant_started", "variant": "no_concentration_caps"}
+{"time_utc": "2026-09-05T05:38:13.243028+00:00", "event": "variant_passed", "variant": "no_concentration_caps", "sharpe": 0.5291226999377485, "elapsed_seconds": 61.6880000000092}
+{"time_utc": "2026-09-05T05:38:13.246040+00:00", "event": "variant_started", "variant": "no_turnover_cap"}
+{"time_utc": "2026-09-05T05:39:00.810777+00:00", "event": "variant_passed", "variant": "no_turnover_cap", "sharpe": 0.5736835529067442, "elapsed_seconds": 47.562999999994645}
+{"time_utc": "2026-09-05T05:39:00.813740+00:00", "event": "variant_started", "variant": "ledoit_wolf"}
+{"time_utc": "2026-09-05T05:39:00.837126+00:00", "event": "variant_failed", "variant": "ledoit_wolf", "error": "Ledoit-Wolf covariance estimation failed and fallback is disabled"}
+{"time_utc": "2026-09-05T05:39:00.839121+00:00", "event": "variant_started", "variant": "relative_cvar"}
+{"time_utc": "2026-09-05T05:40:57.082115+00:00", "event": "variant_passed", "variant": "relative_cvar", "sharpe": 0.5738961743368519, "elapsed_seconds": 116.23500000000058}
+{"time_utc": "2026-09-05T05:40:57.084976+00:00", "event": "variant_started", "variant": "ledoit_wolf_relative_cvar"}
+{"time_utc": "2026-09-05T05:43:42.630101+00:00", "event": "variant_passed", "variant": "ledoit_wolf_relative_cvar", "sharpe": 0.6646059128581294, "elapsed_seconds": 165.5460000000021}
+{"time_utc": "2026-09-05T05:43:55.481400+00:00", "event": "variant_started", "variant": "monthly_control"}
+{"time_utc": "2026-09-05T05:43:55.745620+00:00", "event": "variant_passed", "variant": "monthly_control", "sharpe": 0.570541888240608, "elapsed_seconds": 0.2649999999994179}
+{"time_utc": "2026-09-05T05:43:55.747294+00:00", "event": "variant_started", "variant": "weekly_baseline"}
+{"time_utc": "2026-09-05T05:43:56.035640+00:00", "event": "variant_passed", "variant": "weekly_baseline", "sharpe": 0.5736701289551377, "elapsed_seconds": 0.28199999999196734}
+{"time_utc": "2026-09-05T05:43:56.037642+00:00", "event": "variant_started", "variant": "no_cash_cap"}
+{"time_utc": "2026-09-05T05:43:56.298267+00:00", "event": "variant_passed", "variant": "no_cash_cap", "sharpe": 0.5890019730410334, "elapsed_seconds": 0.2649999999994179}
+{"time_utc": "2026-09-05T05:43:56.300267+00:00", "event": "variant_started", "variant": "no_asset_cap"}
+{"time_utc": "2026-09-05T05:43:56.523768+00:00", "event": "variant_passed", "variant": "no_asset_cap", "sharpe": 0.5734679545485082, "elapsed_seconds": 0.21900000001187436}
+{"time_utc": "2026-09-05T05:43:56.525769+00:00", "event": "variant_started", "variant": "no_concentration_caps"}
+{"time_utc": "2026-09-05T05:43:56.801418+00:00", "event": "variant_passed", "variant": "no_concentration_caps", "sharpe": 0.529122699937677, "elapsed_seconds": 0.2649999999994179}
+{"time_utc": "2026-09-05T05:43:56.803417+00:00", "event": "variant_started", "variant": "no_turnover_cap"}
+{"time_utc": "2026-09-05T05:43:57.117538+00:00", "event": "variant_passed", "variant": "no_turnover_cap", "sharpe": 0.5736835529067381, "elapsed_seconds": 0.3130000000091968}
+{"time_utc": "2026-09-05T05:43:57.119541+00:00", "event": "variant_started", "variant": "ledoit_wolf"}
+{"time_utc": "2026-09-05T05:45:13.852117+00:00", "event": "variant_passed", "variant": "ledoit_wolf", "sharpe": 0.6644174421236786, "elapsed_seconds": 76.71899999999732}
+{"time_utc": "2026-09-05T05:45:13.857115+00:00", "event": "variant_started", "variant": "relative_cvar"}
+{"time_utc": "2026-09-05T05:45:14.127506+00:00", "event": "variant_passed", "variant": "relative_cvar", "sharpe": 0.5738961743368333, "elapsed_seconds": 0.2649999999994179}
+{"time_utc": "2026-09-05T05:45:14.129200+00:00", "event": "variant_started", "variant": "ledoit_wolf_relative_cvar"}
+{"time_utc": "2026-09-05T05:45:14.400427+00:00", "event": "variant_passed", "variant": "ledoit_wolf_relative_cvar", "sharpe": 0.664605912858128, "elapsed_seconds": 0.28199999999196734}

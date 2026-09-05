@@ -4,8 +4,8 @@ import numpy as np
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Sharpe、Sortino及统计检验统一从月度中债1年期国债收益率构造日度
-# 无风险收益序列；月末观察滞后一个月生效，缺月时正式流水线失败退出。
+# Headline research uses the user-specified zero risk-free convention.
+# Pass None explicitly for the lagged ChinaBond opportunity-cost diagnostic.
 DEFAULT_CONFIG = {
     "lookback_weeks": 48,
     "trading_days_per_year": 243,
@@ -22,7 +22,7 @@ DEFAULT_CONFIG = {
     "bond_keywords": ["国债", "信用票", "美债", "债"],
     "bond_leverage_upper": 1.4,
     "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
-    "risk_free_rate": None,
+    "risk_free_rate": 0.0,
     "target_vol": 0.060,
     "gross_exposure_cap": 1.50,
     "turnover_cap": 0.25,

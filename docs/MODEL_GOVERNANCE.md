@@ -1,37 +1,25 @@
 # Model Governance
 
-## Public model
+## Primary model
 
-Improved Convex Adaptive Global RRP is one stitched rolling out-of-sample path beginning on 2018-01-02. Each quarterly decision uses completed prior observations, followed by a one-trading-day embargo. A 95% confidence set retains candidates that cannot be distinguished from the best historical Sharpe estimate. Statistical ties follow the declared low-turnover order. A challenger replaces the incumbent only when past-only evidence clears the switching threshold.
+Improved Convex Adaptive Global RRP is the weekly primary specification. It applies the approved no-concentration-caps transform to the frozen research schedule. Global RRP and all other model families are comparisons. The public label remains stable; `results/tables/primary_model_configuration.json` is the actual configuration record.
 
-The governed public family contains `candidate_03`, `candidate_04`, and `candidate_05`. All three use a 252-day EWMA window, a 40% asset cap, an 80% one-period turnover cap, a 0.02 turnover penalty, a 0.25 risk-budget reference penalty, a 30% cash-group cap, and the same remaining group limits. Their soft CVaR penalties are 0.00, 0.02, and 0.05. They do not use an absolute volatility cap.
+The primary path uses candidate_03: 252-observation EWMA window, half-life 60, risk-budget tracking coefficient 0.25, turnover penalty 0.02, 80% one-period turnover limit, one-way cost 3 bps and no leverage. Cash has no group cap and each asset is constrained only by the long-only unit budget. Bond, defensive, commodity/gold and equity upper bounds remain 70%, 25%, 40% and 70%. CVaR, expected-return reward and variance penalties are zero. These inherited numerical settings are research conventions, not empirically calibrated optimal constants.
 
-The validation-window turnover gate is 4% per month. The stitched public path must remain at or below 2% average monthly turnover. Transaction costs are 3 bps one way.
+## Evidence boundaries
 
-The current historical path selects `candidate_03` throughout. Its CVaR penalty is zero. Reported drawdown and tail-loss outcomes therefore cannot be attributed to a CVaR penalty. Positive-CVaR candidates and the separate CVaR sensitivity grid remain diagnostic evidence.
+The specification was chosen after reviewing historical weekly constraint experiments. Its retrospective selection prevents interpretation as untouched OOS model-selection evidence. The frozen quarterly schedule is retained for reproduction and chooses candidate_03 throughout the public period. The earlier candidate-family confidence and turnover selection gates govern that archived schedule, not promotion of the current primary specification.
 
-## Convex formulation
+Headline Sharpe and Sortino use rf=0. The same return path is also evaluated using lagged one-year ChinaBond yields. Zero risk-free is a reporting convention, not a return improvement. Money-market concentration, actual return, volatility, drawdown, turnover and costs must accompany the primary Sharpe. Primary designation does not imply superiority over every comparison.
 
-The optimizer first computes a risk-budget reference with the convex log-barrier formulation. The implementation stage is a disciplined convex program that tracks this reference while applying long-only, full-investment, asset, group, and turnover limits. Optional variance and CVaR terms enter only in convex form.
+## Data and execution
 
-Leverage-sensitive legacy paths use an exposure variable so the optimization does not contain a bilinear product between weights and leverage. Expected return enters through a convex shortfall penalty when enabled. The solver accepts only an `optimal` status and records feasibility diagnostics after every rebalance.
+Evaluation is 2018-01-02 through 2026-08-31. The 30 active ETFs and 6 excluded candidates are defined by src/asset_universe.py. An asset requires 60 prior valid observations. Extreme realized returns are retained. Pre-listing prices are not backfilled. Weekly rebalancing uses the last observed trading day in each week, and optimization inputs strictly precede that day. Existing same-day return accounting is retained as a backtest convention, not an intraday execution simulation.
 
-Covariance estimation uses one common complete sample for the active universe. The estimate is symmetrized, projected onto the positive-semidefinite cone, and given a scale-relative eigenvalue floor. Materially invalid inputs fail closed. The code never relies on an explicit covariance inverse for portfolio optimization.
+The optimizer computes a convex log-barrier risk-budget reference, followed by a DCP tracking and turnover problem. Non-cash group bounds are subject to the existing point-in-time feasibility policy. Diagnostic outputs expose any relaxation, constraint slack, dual values, solver status and violations. CVaR epigraph tests use the exact empirical fractional-tail definition at 95%.
 
-## Research grid
+## Reproduction and release
 
-The 36-configuration grid is exploratory. It supports sensitivity analysis and CSCV/PBO diagnostics, but it cannot overwrite the public rolling path. Cached scores are reusable only when their serialized parameter signatures match the current candidate definitions.
+Run scripts/run_primary_publication_pipeline.py with TUSHARE_TOKEN set. It refreshes ETF and risk-free data, reruns all core paths and the primary frequency experiment, verifies the approved path, generates numbers and figures, compiles both PDFs with three XeLaTeX passes, and cleans temporary artifacts. Failures stop publication. The primary audit requires common dates, finite values, valid accounting, prior-only inputs and reproduction within the existing solver tolerance.
 
-## Data and timing
-
-- The evaluation window runs from 2018-01-02 through 2026-08-31.
-- The ETF request window runs from 2000-01-01 through 2026-08-31, while each ETF retains its longest valid history.
-- The active universe contains 30 ETFs and the isolated candidate universe contains 6 ETFs.
-- An ETF enters the point-in-time universe after 60 valid observations.
-- Sharpe and Sortino use the final valid monthly one-year ChinaBond government yield, lagged one month and compounded over 243 trading days.
-
-## Release checks
-
-Publication stops when the active and candidate universes overlap, a required risk-free month is missing, future data enters a decision, a cache signature is stale, the public turnover gate fails, a solver returns anything other than `optimal`, or generated CSV and public documents disagree.
-
-The authoritative selection history is `results/tables/afml_oos_selection.csv`. A governance change must update implementation, tests, generated outputs, and this document in the same release.
+Historical diagnostics outside this entrypoint are archival. Their metrics, PBO scores and significance claims must not be reused as validation of the current primary model. The primary-model data tables, README, AGENTS, thesis and slides must agree before a release. Reference textbooks remain local and are excluded from the release commit.

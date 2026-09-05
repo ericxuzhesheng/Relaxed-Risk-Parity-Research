@@ -289,6 +289,7 @@ def default_tushare_cache() -> Path:
 
 
 def price_to_returns(prices: pd.DataFrame) -> pd.DataFrame:
+    """Compute realized returns without masking tail events or using future statistics."""
     prices = prices.apply(pd.to_numeric, errors="coerce").replace([np.inf, -np.inf], np.nan)
     prices = prices.sort_index().ffill()
     returns = prices.pct_change(fill_method=None).replace([np.inf, -np.inf], np.nan)
@@ -297,16 +298,7 @@ def price_to_returns(prices: pd.DataFrame) -> pd.DataFrame:
         if first_date is not None:
             returns.loc[returns.index <= first_date, col] = np.nan
 
-    def remove_outliers(series: pd.Series) -> pd.Series:
-        clean = series.dropna()
-        if clean.empty:
-            return series
-        m, s = clean.mean(), clean.std()
-        if not np.isfinite(s) or s <= 0:
-            return series
-        return series.mask((series - m).abs() > 3 * s)
-
-    return returns.apply(remove_outliers).dropna(how="all")
+    return returns.dropna(how="all")
 
 
 def load_price_data(source: str = "tushare", force_update: bool = False) -> pd.DataFrame:

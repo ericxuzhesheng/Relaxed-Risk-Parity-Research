@@ -1,0 +1,23 @@
+{
+  "commands": [
+    [
+      "D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe",
+      "scripts/update_etf_data.py",
+      "--provider",
+      "tushare",
+      "--start-date",
+      "20000101",
+      "--end-date",
+      "20260831"
+    ],
+    [
+      "D:\\Github Repository\\Relaxed-Risk-Parity-Research\\.venv\\Scripts\\python.exe",
+      "scripts/update_risk_free_rate.py",
+      "--start-date",
+      "20000101",
+      "--end-date",
+      "20260831"
+    ]
+  ],
+  "completed_utc": "2026-09-05T05:25:08.079822+00:00"
+}
