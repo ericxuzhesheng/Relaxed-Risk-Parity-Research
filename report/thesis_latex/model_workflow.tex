@@ -1,0 +1,24 @@
+% Annual calibration and weekly decisions use strictly prior information.
+\begin{tikzpicture}[
+  box/.style={draw=holdingBlue,fill=holdingBlue!5,rounded corners=2pt,
+    text width=3.7cm,minimum height=1.65cm,align=center,font=\small,
+    inner sep=6pt},
+  flow/.style={-{Stealth[length=2mm]},thick,draw=holdingBlue}]
+\node[box] (scale) {较早历史区间\\252 个交易日\\确定惩罚候选尺度};
+\node[box,right=6mm of scale] (validate) {随后历史区间\\252 个交易日\\扣费验证与候选筛选};
+\node[box,right=6mm of validate,draw=holdingRed,fill=holdingRed!5] (freeze)
+  {年度生效日\\选定两项惩罚系数\\冻结至下一年度};
+\draw[flow] (scale) -- (validate);
+\draw[flow] (validate) -- (freeze);
+\node[box,below=14mm of scale] (inputs)
+  {调仓日前历史窗口\\资产准入、EWMA 均值\\Ledoit--Wolf 协方差};
+\node[box,right=6mm of inputs] (reference)
+  {第一阶段\\凸对数风险预算\\得到 $q_t$ 与 $R_t=\mu_t^{\mathsf T}q_t$};
+\node[box,right=6mm of reference,draw=holdingRed,fill=holdingRed!5] (weights)
+  {第二阶段\\跟踪、方差与收益短缺\\求解最终权重 $w_t$};
+\draw[flow] (inputs) -- (reference);
+\draw[flow] (reference) -- (weights);
+\draw[flow,draw=holdingRed] (freeze) -- node[right,font=\small]{年度参数} (weights);
+\node[below=5mm of reference,font=\small,align=center]
+  {下方流程按周执行；目标权重进入日度收益、漂移权重与成本记账。};
+\end{tikzpicture}

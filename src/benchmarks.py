@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import cvxpy as cp
 
-from src.convex_adaptive_rrp import drift_weights
+from src.convex_adaptive_rrp import drift_weights, rebalance_dates_for_frequency
 from src.covariance_estimators import estimate_covariance
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
@@ -101,6 +101,7 @@ def run_benchmark_backtest(
     name: str,
     lookback_days: int = 240,
     transaction_cost_bps: float = 3.0,
+    rebalance_frequency: str = "M",
 ) -> pd.DataFrame:
     if name not in BENCHMARK_BUILDERS:
         raise ValueError(f"Unknown benchmark: {name}")
@@ -108,6 +109,7 @@ def run_benchmark_backtest(
     returns = returns.copy()
     returns.index = pd.to_datetime(returns.index)
     dates = returns.index
+    rebalance_dates = rebalance_dates_for_frequency(returns, rebalance_frequency)
     n_assets = len(returns.columns)
     weights = np.zeros(n_assets)
     rows = []
@@ -116,7 +118,7 @@ def run_benchmark_backtest(
     skip_reason = ""
     for date in dates:
         turnover = 0.0
-        if date in monthly_rebalance_dates(returns):
+        if date in rebalance_dates:
             window_full = returns[returns.index < date].iloc[-lookback_days:]
             active_cols = investable_columns(window_full, min_observations=min(60, lookback_days))
             window = window_full[active_cols]
@@ -134,6 +136,7 @@ def run_benchmark_backtest(
         net = gross - cost_rate * turnover
         row = {
             "date": date,
+            "is_rebalance_day": date in rebalance_dates,
             "portfolio_return": net,
             "gross_return": gross,
             "net_return": net,

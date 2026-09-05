@@ -71,11 +71,11 @@ def main():
     models = {"Global RRP": primary}
     for name, key in [("HRP Benchmark", "hrp"), ("HERC Benchmark", "herc")]:
         print("Running", name, flush=True)
-        models[name] = run_hrp_like(returns, key, 3.0)
+        models[name] = run_hrp_like(returns, key, 3.0, rebalance_frequency="W")
     for name in ["Equal Weight", "60/40 Benchmark"]:
         benchmark_name = "Equal Weight Benchmark" if name == "Equal Weight" else name
         models[name] = run_benchmark_backtest(
-            returns, benchmark_name, transaction_cost_bps=3.0
+            returns, benchmark_name, transaction_cost_bps=3.0, rebalance_frequency="W"
         )
 
     summaries = []
@@ -95,6 +95,15 @@ def main():
         pd.testing.assert_series_equal(result.date, primary.date, check_names=False)
         if not np.isfinite(result.net_return).all():
             raise ValueError(f"Nonfinite returns in {name}")
+        pd.testing.assert_series_equal(
+            result.is_rebalance_day, primary.is_rebalance_day, check_names=False
+        )
+        if (result.loc[~result.is_rebalance_day, "turnover"].abs() > 1e-12).any():
+            raise ValueError(f"Off-calendar trading in {name}")
+        np.testing.assert_allclose(
+            result.gross_return - result.net_return,
+            result.turnover.fillna(0.0) * 0.0003, atol=1e-12, rtol=0.0,
+        )
         daily[name] = result
         summaries.append(summarize_result(name, result, cfg["evaluation_start_date"], cfg))
 
@@ -102,7 +111,7 @@ def main():
     validate_publication_models(summary.model)
     summary["role"] = np.where(summary.model.eq("Global RRP"), "primary", "comparison")
     summary["risk_free_rate"] = 0.0
-    summary["rebalance_frequency"] = np.where(summary.role.eq("primary"), "W", "M")
+    summary["rebalance_frequency"] = "W"
     row = summary.iloc[0]
     for field in [
         "net_annual_return", "annualized_volatility", "sharpe_ratio", "max_drawdown"
@@ -167,6 +176,8 @@ def main():
         ),
         "daily_observations": int(len(primary)),
         "rebalance_count": int(primary.is_rebalance_day.sum()),
+        "publication_rebalance_frequency": "W",
+        "common_rebalance_calendar": True,
         "risk_free_rate": 0.0,
         "annualization_days": 252,
         "estimation_window_days": 252,

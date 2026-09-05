@@ -74,16 +74,6 @@ def scalars(summary):
         ax.xaxis.set_major_formatter(PercentFormatter(1));ax.set_xlim(0,max(vals)*1.22)
         ax.grid(axis="x");ax.spines['left'].set_visible(False);ax.tick_params(axis="y",length=0)
         fig.subplots_adjust(left=.22,right=.96,bottom=.16,top=.96)
-        if col=='avg_monthly_turnover':
-            inset=ax.inset_axes([.47,.08,.44,.58])
-            small=vals[1:]
-            inset.barh(np.arange(4),small,color=COLORS[1:],height=.52)
-            inset.set_yticks(range(4),['HRP','HERC','Equal Weight','60/40'],fontsize=9)
-            inset.invert_yaxis();inset.set_xlim(0,max(small)*1.42)
-            inset.xaxis.set_major_formatter(PercentFormatter(1,decimals=0))
-            inset.set_title('Comparisons · enlarged linear scale',fontsize=9,loc='left')
-            inset.grid(axis='x',alpha=.45);inset.set_axisbelow(True)
-            for j,v in enumerate(small):inset.text(v+.002,j,f'{v:.2%}',va='center',fontsize=9)
         save(fig,name)
 
 

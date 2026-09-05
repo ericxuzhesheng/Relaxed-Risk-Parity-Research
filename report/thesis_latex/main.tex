@@ -1,7 +1,7 @@
 \documentclass{thesisSWUFE}
 
 % 封面信息。
-\covertitle{\shortstack[c]{宽松风险平价在全球 ETF\\资产配置中的改进与实证研究}}
+\covertitle{\shortstack[c]{\zihao{4}基于宽松风险平价的\\\zihao{4}多资产 ETF 配置研究\\[2pt]\zihao{5}——凸优化建模与年度滚动校准}}
 \covercollege{特拉华数据科学学院}
 \covermajor{金融数学（金融服务与量化分析方向）}
 \coverauthor{许哲圣}
@@ -13,12 +13,14 @@
 \usepackage{xcolor}
 \usepackage{flafter}
 \usepackage{placeins}
+\usepackage{needspace}
+\usetikzlibrary{arrows.meta,positioning}
 \definecolor{holdingRed}{HTML}{B53B4A}
 \definecolor{holdingBlue}{HTML}{194F7D}
 \graphicspath{{../../results/figures/}}
 
 \hypersetup{
-  pdftitle={宽松风险平价在全球 ETF 资产配置中的改进与实证研究},
+  pdftitle={基于宽松风险平价的多资产 ETF 配置研究——凸优化建模与年度滚动校准},
   pdfauthor={许哲圣},
   pdfkeywords={宽松风险平价, 全球多资产配置, CVaR, ETF}
 }
@@ -42,6 +44,7 @@
 \setlength{\absrightindent}{0pt}
 \setlength{\absparindent}{2em}
 \AtBeginEnvironment{longtable}{\small\linespread{1.15}\selectfont}
+\AtBeginEnvironment{table}{\linespread{1.15}\selectfont}
 \counterwithin{figure}{section}
 \counterwithin{table}{section}
 \renewcommand{\thefigure}{\thesection-\arabic{figure}}
@@ -158,7 +161,7 @@
 本人郑重声明，所呈交的毕业论文是在指导教师指导下独立完成的研究成果。引用他人的成果均已注明来源。历史回测结果仅用于研究，不构成未来收益承诺。
 \clearpage
 \begin{abstract}
-本文研究全球 ETF 配置中的风险预算、收益目标和风险惩罚尺度。Global RRP 为主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为对照。资产池包含 \etfCount{} 只 ETF，评价区间为 \evalStartDate{} 至 \evalEndDate{}，按 \annualizationDays{} 个交易日年化，无风险利率为零，单边约定成本为 \txCostBps{} bps。
+本文研究全球 ETF 配置中的风险预算、收益目标和风险惩罚尺度。Global RRP 为主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为对照。资产池包含 \etfCount{} 只 ETF，评价区间为 \evalStartDate{} 至 \evalEndDate{}，按 \annualizationDays{} 个交易日年化，单边约定成本为 \txCostBps{} bps。
 
 主模型通过凸对数风险预算问题构造参考权重，再求解包含参考跟踪、组合方差和预测收益短缺的凸问题。收益目标取当期可行参考组合的预测收益。模型采用 \lookbackDays{} 日窗口、Ledoit--Wolf 收缩协方差和半衰期为 20 个交易日的指数加权收益估计。方差及收益短缺惩罚每年根据生效日前两个连续历史区间更新，随后冻结一年。组合为周频、多头、无杠杆，并允许全部满足历史数据条件的资产参与优化。
 
@@ -169,7 +172,7 @@
 \clearpage
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-This thesis evaluates Global RRP against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark in a common universe of \etfCount{} ETFs. The evaluation spans \evalStartDate{} to \evalEndDate{}, uses \annualizationDays-day annualization and a zero risk-free rate, and deducts an assumed \txCostBps{}-bp one-way transaction cost.
+This thesis evaluates Global RRP against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark in a common universe of \etfCount{} ETFs. The evaluation spans \evalStartDate{} to \evalEndDate{}, uses \annualizationDays-day annualization, and deducts an assumed \txCostBps{}-bp one-way transaction cost.
 
 Global RRP uses a convex risk-budget reference followed by a convex objective for reference tracking, portfolio variance and expected-return shortfall. The feasible return target equals the predicted return of the contemporaneous reference portfolio. The model uses a \lookbackDays-day window, Ledoit--Wolf covariance shrinkage and exponentially weighted return estimates with a 20-trading-day half-life. Penalties update annually from two strictly earlier historical blocks and remain fixed during the following year. The primary portfolio is weekly, long-only and unlevered.
 
@@ -194,8 +197,6 @@ The primary model records \globalNetReturn{} net annual return, \globalVolatilit
 \appendix
 \section{ETF 资产池}
 \input{generated_etf_pool_table.tex}
-\section{复现文件}
-主入口为 \texttt{scripts/run\_primary\_publication\_pipeline.py}。指定配置、求解诊断、五模型绩效和逐周持仓均保存在仓库。主指标使用零无风险利率，数据刷新与研究日志分别记录。历史归档不作为当前模型的统计验证。
 \section{符号与指标口径}
 \begin{longtable}{p{2.4cm}p{9.2cm}}
 \toprule 符号 & 含义\\\midrule
@@ -220,22 +221,6 @@ $D_t$ & 净值相对历史高点的下跌比例\\
 $RC_i$ & 相对于估计协方差的资产波动风险贡献\\
 \bottomrule
 \end{longtable}
-\section{复现与核对说明}
-发布入口调用指定 Global RRP 配置并重建四个对照。研究日收益保留完整列映射，论文数值由汇总 CSV 生成。宏文件负责同一数值在摘要、正文与答辩中的一致性，正文图由保存结果生成，不在绘图过程中重新估计权重。
-
-\begin{longtable}{p{3cm}p{8.6cm}}
-\toprule 记录类型 & 核对内容\\\midrule
-主模型配置 & 协方差方法、收益半衰期、窗口、年度参数、费率与评价日期\\
-求解诊断 & 估计截止日期、DCP 状态、求解状态、约束残差和预测风险\\
-日收益表 & 目标与漂移权重、换手、毛收益、成本及净收益\\
-周度摘要 & 自然周与持有期的日期、收益及样本边界标记\\
-资产参与表 & 合格周数、实际持有周数及峰值权重\\
-发布绩效表 & 五个模型在共同日期上的统一指标\\
-\bottomrule
-\end{longtable}
-
-所有逐周具体持仓仅保存在仓库 CSV 中。核对时先用权重和源收益重建毛收益，再按权重变化计算费用，最后检查净收益及跨期复利。风险预算误差应区分参考解与最终解，数值容差不应被解释为最低持仓要求。图中的权重分档只影响颜色，不影响结果。
-
 \clearpage
 \phantomsection
 \addcontentsline{toc}{section}{参考文献}

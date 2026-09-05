@@ -48,7 +48,7 @@ def main():
 
 ### 模型与方法
 
-**Global RRP** 是周频主模型。HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 是月频对照。正式结果只包含这五个模型。
+**Global RRP** 是周频主模型。HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 是周频对照。正式结果只包含这五个模型。
 
 主模型先求凸风险预算参考 $q_t$，再平衡参考跟踪、归一化方差和预测收益短缺。收益软目标取当期参考组合的预测收益。
 
@@ -76,7 +76,7 @@ Global RRP 的净年化收益为 **{primary.net_annual_return:.2%}**，夏普为
 
 ![累计净值](results/figures/global_rrp_nav_comparison.png)
 
-五个模型使用相同评价日期。主模型按周调仓，对照按月调仓。
+五个模型使用相同评价日期与周度调仓日历。
 
 ![历史回撤](results/figures/global_rrp_drawdown_comparison.png)
 
@@ -115,7 +115,7 @@ Global RRP 的净年化收益为 **{primary.net_annual_return:.2%}**，夏普为
 
 ### Models and method
 
-**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. These are the five models in the publication results.
+**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are weekly comparisons. These are the five models in the publication results.
 
 The primary model first solves for a convex risk-budget reference. A second convex problem balances reference tracking, normalized variance and expected-return shortfall. Its feasible return target equals the predicted return of the contemporaneous reference portfolio.
 
@@ -148,7 +148,7 @@ Run `python scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` se
     start = text.index("Main research line")
     end = text.index("## ETF Asset Pool")
     model_rows = "\n".join(
-        f"| {name} | {'Primary weekly model' if index == 0 else 'Monthly comparison'} |"
+        f"| {name} | {'Primary weekly model' if index == 0 else 'Weekly comparison'} |"
         for index, name in enumerate(data.model)
     )
     text = text[:start] + f'''Main research line follows convex risk-budget references, a feasible expected-return target and annual prior-only penalty calibration for a 30-ETF universe.
@@ -176,7 +176,7 @@ Use exactly these five model names in current publication prose, tables and figu
 
 Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. Global RRP is weekly; comparisons are monthly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 {en_table}
 
@@ -192,7 +192,7 @@ Primary average money-market weight is {cash_mean:.2%}, with a maximum of {cash_
 
 ## Published models
 
-Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. Parameter and frequency variants remain research experiments.
+Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are weekly comparisons. Parameter and frequency variants remain research experiments.
 
 ## Primary specification
 

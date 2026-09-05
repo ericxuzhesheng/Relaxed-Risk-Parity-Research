@@ -20,6 +20,8 @@
   "all_eligible_assets_ever_used": true,
   "daily_observations": 2102,
   "rebalance_count": 444,
+  "publication_rebalance_frequency": "W",
+  "common_rebalance_calendar": true,
   "risk_free_rate": 0.0,
   "annualization_days": 252,
   "estimation_window_days": 252,

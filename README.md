@@ -6,7 +6,7 @@
 
 ### 模型与方法
 
-**Global RRP** 是周频主模型。HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 是月频对照。正式结果只包含这五个模型。
+**Global RRP** 是周频主模型。HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 是周频对照。正式结果只包含这五个模型。
 
 主模型先求凸风险预算参考 $q_t$，再平衡参考跟踪、归一化方差和预测收益短缺。收益软目标取当期参考组合的预测收益。
 
@@ -25,10 +25,10 @@ $$
 | 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|
 | Global RRP | 6.13% | 3.59% | 1.674 | 2.392 | -6.80% | 17.53% |
-| HRP Benchmark | 2.11% | 0.27% | 7.815 | 17.382 | -0.19% | 1.95% |
-| HERC Benchmark | 2.53% | 0.83% | 3.013 | 4.514 | -1.53% | 7.17% |
-| Equal Weight | 9.56% | 13.16% | 0.761 | 1.076 | -18.25% | 4.73% |
-| 60/40 Benchmark | 7.25% | 12.06% | 0.641 | 0.921 | -20.04% | 4.21% |
+| HRP Benchmark | 2.10% | 0.27% | 7.832 | 17.381 | -0.19% | 3.53% |
+| HERC Benchmark | 2.55% | 0.81% | 3.099 | 4.668 | -1.57% | 16.03% |
+| Equal Weight | 9.46% | 13.14% | 0.754 | 1.067 | -18.23% | 8.84% |
+| 60/40 Benchmark | 7.18% | 12.08% | 0.635 | 0.911 | -20.46% | 7.70% |
 
 Global RRP 的净年化收益为 **6.13%**，夏普为 **1.674**，最大回撤为 **-6.80%**。主模型定位来自当前研究选择，不代表各项指标均优于对照。
 
@@ -40,7 +40,7 @@ Global RRP 的净年化收益为 **6.13%**，夏普为 **1.674**，最大回撤�
 
 ![累计净值](results/figures/global_rrp_nav_comparison.png)
 
-五个模型使用相同评价日期。主模型按周调仓，对照按月调仓。
+五个模型使用相同评价日期与周度调仓日历。
 
 ![历史回撤](results/figures/global_rrp_drawdown_comparison.png)
 
@@ -79,7 +79,7 @@ Global RRP 的净年化收益为 **6.13%**，夏普为 **1.674**，最大回撤�
 
 ### Models and method
 
-**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. These are the five models in the publication results.
+**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are weekly comparisons. These are the five models in the publication results.
 
 The primary model first solves for a convex risk-budget reference. A second convex problem balances reference tracking, normalized variance and expected-return shortfall. Its feasible return target equals the predicted return of the contemporaneous reference portfolio.
 
@@ -98,10 +98,10 @@ The common period is **2018-01-02 to 2026-08-31**. Results retain extreme return
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
 | Global RRP | 6.13% | 3.59% | 1.674 | 2.392 | -6.80% | 17.53% |
-| HRP Benchmark | 2.11% | 0.27% | 7.815 | 17.382 | -0.19% | 1.95% |
-| HERC Benchmark | 2.53% | 0.83% | 3.013 | 4.514 | -1.53% | 7.17% |
-| Equal Weight | 9.56% | 13.16% | 0.761 | 1.076 | -18.25% | 4.73% |
-| 60/40 Benchmark | 7.25% | 12.06% | 0.641 | 0.921 | -20.04% | 4.21% |
+| HRP Benchmark | 2.10% | 0.27% | 7.832 | 17.381 | -0.19% | 3.53% |
+| HERC Benchmark | 2.55% | 0.81% | 3.099 | 4.668 | -1.57% | 16.03% |
+| Equal Weight | 9.46% | 13.14% | 0.754 | 1.067 | -18.23% | 8.84% |
+| 60/40 Benchmark | 7.18% | 12.08% | 0.635 | 0.911 | -20.46% | 7.70% |
 
 Global RRP records **6.13%** net annual return, a **1.674** Sharpe ratio and **-6.80%** maximum drawdown. Primary status records the designated research specification and does not imply metric dominance.
 

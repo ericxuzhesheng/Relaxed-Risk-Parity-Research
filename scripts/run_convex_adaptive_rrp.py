@@ -24,6 +24,7 @@ from src.benchmarks import run_benchmark_backtest
 from src.convex_adaptive_rrp import (
     ConvexRRPConfig,
     drift_weights,
+    rebalance_dates_for_frequency,
     run_convex_adaptive_backtest,
     run_convex_adaptive_schedule_backtest,
 )
@@ -132,11 +133,12 @@ def summarize_result(name: str, result: pd.DataFrame, eval_start_date: str, conf
     }
 
 
-def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: float) -> pd.DataFrame:
+def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: float,
+                 rebalance_frequency: str = "M") -> pd.DataFrame:
     from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 
     dates = returns.index
-    rebalance_dates = monthly_rebalance_dates(returns)
+    rebalance_dates = rebalance_dates_for_frequency(returns, rebalance_frequency)
     weights = np.zeros(len(returns.columns))
     rows = []
     cost_rate = transaction_cost_bps / 10000.0
@@ -153,7 +155,7 @@ def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: f
                 turnover = float(np.abs(weights - previous).sum())
         gross = portfolio_return_for_available(returns.loc[date], weights)
         cost = cost_rate * turnover
-        row = {"date": date, "gross_return": gross, "net_return": gross - cost, "portfolio_return": gross - cost, "turnover": turnover}
+        row = {"date": date, "is_rebalance_day": date in rebalance_dates, "gross_return": gross, "net_return": gross - cost, "portfolio_return": gross - cost, "turnover": turnover}
         for i, asset in enumerate(returns.columns):
             row[f"weight_{asset}"] = weights[i]
         rows.append(row)

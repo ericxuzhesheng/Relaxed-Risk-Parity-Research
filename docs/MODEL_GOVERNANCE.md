@@ -2,7 +2,7 @@
 
 ## Published models
 
-Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. Parameter and frequency variants remain research experiments.
+Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are weekly comparisons. Parameter and frequency variants remain research experiments.
 
 ## Primary specification
 

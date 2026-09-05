@@ -5,6 +5,14 @@
 
 这些符号具有明确的时间含义。$q_t$ 和 $w_t$ 都是利用同一信息集合求得的目标，$w_t^-$ 则是实际交易前漂移权重。将 $w_t^-$ 与上一期目标直接混同，会忽略价格变化造成的自然权重漂移，并改变交易成本。收益预测 $\mu_t$ 也不等于调仓日实现收益，二者在程序中处于不同阶段。
 
+图\ref{fig:model_workflow}区分年度参数更新与周度权重求解：年度验证的两个区间均早于生效日，冻结后的系数进入每周第二阶段优化。
+\begin{figure}[htbp]
+\centering
+\input{model_workflow.tex}
+\caption{Global RRP 的年度校准与周度决策流程}
+\label{fig:model_workflow}
+\end{figure}
+
 \subsection{风险贡献分解}
 对正波动组合，定义
 \[
@@ -97,7 +105,16 @@ s_t=\max(|R_t|,\max_i|\mu_{i,t}|,\varepsilon_m).
 
 参考组合 $q_t$ 可以达到 $R_t$，所以收益基准在当期估计下可行。最终问题仍使用软惩罚，使权重能够在方差下降和预测收益短缺之间取舍。若最优权重的预测收益低于 $R_t$，差额会进入目标值，预算约束及非负约束不会因此放宽。
 
+图\ref{fig:rrp_convex_structure}概括了可行权重与三项目标之间的关系\cite{boyd2004convex,roncalli2013introduction}。
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\textwidth]{rrp_convex_structure.pdf}
+\caption{Global RRP 的可行域与凸目标结构示意}
+\label{fig:rrp_convex_structure}
+\end{figure}
+
 \subsection{零权重的最优性解释}
+
 令 $\nu$ 为预算等式乘子，$\gamma_i\geq0$ 为非负约束乘子。最优性条件包括
 \[
 \nabla J_t(w)+\nu\mathbf1-\gamma=0,\qquad

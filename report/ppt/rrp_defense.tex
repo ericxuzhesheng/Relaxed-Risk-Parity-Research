@@ -17,8 +17,9 @@
 \graphicspath{{../../results/figures/}{assets/logos/}}
 
 % ── 封面信息 ─────────────────────────────────────────────────────────────────
-\title{宽松风险平价在全球 ETF\\资产配置中的改进与实证研究}
-\subtitle{本科毕业论文答辩}
+\title{基于宽松风险平价的\\多资产 ETF 配置研究}
+\subtitle{——凸优化建模与年度滚动校准}
+\hypersetup{pdftitle={基于宽松风险平价的多资产 ETF 配置研究——凸优化建模与年度滚动校准}}
 \author{许哲圣}
 \studentid{42353012}
 \school{特拉华数据科学学院}
@@ -63,7 +64,7 @@
 对照 & 60/40 Benchmark\\\bottomrule
 \end{tabular}
 \par\medskip
-主模型为周频，对照保留月频；比较体现完整实施规则的差异。
+五个模型均按周调仓，比较体现各自配置规则的差异。
 \end{frame}
 \begin{frame}{数据与评价口径}
 \begin{itemize}
@@ -159,11 +160,11 @@
 \begin{frame}{五模型比较}
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_global_performance.tex}}
 \par\medskip
-主模型周频、对照月频；所有模型使用相同评价日期和成本费率。
+五个模型使用相同周度调仓日历、评价日期和成本费率。
 \end{frame}
 \figframe{累计净值}{global_rrp_nav_comparison.pdf}{0.95}{五模型共同评价区间的净收益路径}
 \figframe{历史回撤}{global_rrp_drawdown_comparison.pdf}{0.95}{主模型最大回撤 \globalMaxDD，历史结果不构成未来风险上界}
-\figframe{换手与交易成本}{global_rrp_turnover_comparison.pdf}{0.95}{按自然月汇总换手，主模型实际采用周频调仓}
+\figframe{换手与交易成本}{global_rrp_turnover_comparison.pdf}{0.95}{五模型均按周调仓，换手按自然月汇总}
 \begin{frame}{主模型持仓结构}
 \begin{columns}
 \begin{column}{0.58\textwidth}

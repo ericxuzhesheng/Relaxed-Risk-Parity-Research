@@ -4,7 +4,7 @@
 
 \begin{table}[htbp]\centering
 \caption{五模型净绩效}\label{tab:main_performance}
-\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}
+{\setlength{\tabcolsep}{9pt}\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}}
 \end{table}
 
 指定模型的净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，最大回撤为 \globalMaxDD。将该配置确定为主模型，表示后续分析围绕同一条可复现路径展开，不表示其在每项指标上均优于对照。
@@ -26,13 +26,17 @@ Equal Weight 和 60/40 Benchmark 的净年化收益高于 Global RRP，同时承
 对机构而言，相同的回撤幅度在不同负债条件下意义不同。短期需要现金支付的账户可能不得不在回撤时卖出资产，而具有稳定长期资金的账户可能拥有更长恢复期限。本文没有负债现金流输入，因而将回撤作为资产端风险统计，而不直接作资本充足性判断。
 
 \subsection{换手和成本代价}
-Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}用实心条形展示各模型，并设置明确标注的对照放大区。主图保留零起点和真实尺度，放大区仅帮助阅读低换手对照之间的差异，不改变其数值关系。
+Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}以零起点、统一线性尺度展示五模型的月均换手，并直接标注数值。五个模型均按周调仓，月均换手反映同一日历下各配置规则产生的交易量。
 
 \figmaybe{global_rrp_turnover_comparison.pdf}{五模型月均买卖合计换手}{fig:turnover}
 
 周频决策使组合持续调整，年度参数选择规则则在合格候选中优先考虑较低换手。最终权重问题没有直接加入换手惩罚或硬上限，因此年度筛选只能影响参数，不能逐期限制交易量。成本在路径计算中进入净值，实际市场冲击仍未建模。
 
 同一主模型毛年化收益为 \globalGrossReturn，净年化收益为 \globalNetReturn，约定成本对应年化收益差为 \globalCostDrag。该差值来自毛、净路径各自复利后的比较。若实际费率和市场冲击高于约定，净收益会进一步下降。本文没有用未经回测的成本数字替代当前结果。
+
+图\ref{fig:cost_drag}进一步比较约定费用对五模型年化收益的影响。图中数值为毛、净年化收益之差，百分数刻度应按收益率差理解，不是相对于毛收益的损失比例。
+\figmaybe{global_rrp_transaction_cost_comparison.pdf}{五模型约定交易成本的年化收益拖累}{fig:cost_drag}
+\FloatBarrier
 
 \subsection{尾部损失的补充信息}
 图\ref{fig:cvar}展示五模型历史 95\% 日度尾部损失。该图使用统一线性尺度和实心条形，较小数值另以直接标签呈现。尾部统计反映损失较大的一组交易日，能够补充标准差对正负波动对称处理的不足。
@@ -56,6 +60,7 @@ Global RRP 的日度 CVaR 为 \globalCVaR。该指标对尾部日损失取平均
 2026 年截至样本终点的年化收益约为 9.88\%，对应累计收益约为 6.17\%。部分年度年化值与实际全年兑现并非同一概念，样本区间也不随最近表现重新定义。年度分析只用于解释指定路径的时间分布。
 
 \FloatBarrier
+\Needspace{14\baselineskip}
 \subsection{结果的证据等级}
 五模型比较、年度分解和尾部统计都来自历史路径，属于描述性证据。它们可以回答样本中发生的损失和收益，不能独立证明统计显著性，也不能消除规格选择偏差。凸性、逐期时序和结果重算属于实现证据，说明同一输入与规则可以获得一致输出。
 
