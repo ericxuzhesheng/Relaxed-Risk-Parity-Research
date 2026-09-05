@@ -76,9 +76,8 @@ def build_weekly_tables(daily, solver):
 
 def main():
     tables = ROOT / "results/tables"
-    daily = pd.read_csv(tables / "improved_convex_adaptive_global_relaxed_risk_parity_returns.csv", parse_dates=["date"])
-    solver = pd.read_csv(tables / "convex_adaptive_solver_diagnostics.csv")
-    solver = solver[solver.model.eq("Improved Convex Adaptive Global RRP")]
+    daily = pd.read_csv(tables / "comparison_global_rrp_returns.csv", parse_dates=["date"])
+    solver = pd.read_csv(tables / "global_rrp_solver_diagnostics.csv")
     weekly, holdings = build_weekly_tables(daily, solver)
     wide = holdings.pivot(index="rebalance_date", columns="asset", values="target_weight")
     wide = wide[[a.new_name for a in ETF_UNIVERSE]]

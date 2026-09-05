@@ -1,0 +1,20 @@
+{
+  "model": "Global RRP",
+  "gross_annual_return": 0.08020287073233523,
+  "net_annual_return": 0.0766689264661613,
+  "transaction_cost_drag": 0.0035339442661739273,
+  "annualized_volatility": 0.06277483255182695,
+  "sharpe_ratio": 1.2087700789908695,
+  "turnover_adjusted_sharpe": 1.2213322337875354,
+  "sortino_ratio": 1.9546910763779808,
+  "max_drawdown": -0.06400402457405596,
+  "calmar_ratio": 1.1978766487949737,
+  "total_return": 0.8945996418557427,
+  "avg_monthly_turnover": 0.908839865253095,
+  "annualized_turnover": 10.914698426020887,
+  "cvar_95_daily_loss": 0.009011675264129625,
+  "variant": "ewma_cov_mean20",
+  "status": "passed",
+  "assets_ever_used": 30,
+  "target_met": false
+}

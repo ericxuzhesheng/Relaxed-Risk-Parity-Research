@@ -191,8 +191,19 @@ def _solve_relaxed_exposure(
             constraints.append(exposure[i] == weights[i])
 
     reference_variance = max(float(reference @ sigma @ reference), 1e-12)
+    variance_reference = config.get("rrp_variance_reference", "risk_budget")
+    if variance_reference not in {"risk_budget", "equal_weight"}:
+        raise ValueError("rrp_variance_reference must be risk_budget or equal_weight")
+    variance_scale = reference_variance
+    if variance_reference == "equal_weight":
+        equal_weight = np.ones(n_assets) / n_assets
+        variance_scale = max(float(equal_weight @ sigma @ equal_weight), 1e-12)
     objective_terms = [cp.sum_squares(weights - reference)]
     target_return = float(config.get("m", 1.0)) * max(float(R_base), 0.0)
+    if config.get("rrp_target_annual_return") is not None:
+        target_return = float(config["rrp_target_annual_return"])
+        if not np.isfinite(target_return) or target_return < 0:
+            raise ValueError("rrp_target_annual_return must be finite and nonnegative")
     return_scale = max(abs(target_return), float(np.max(np.abs(expected_returns))), 1e-3)
     if is_relaxed:
         variance_penalty = float(config.get("rrp_variance_penalty", 0.10))
@@ -202,7 +213,7 @@ def _solve_relaxed_exposure(
             raise ValueError("convex RRP penalty coefficients must be nonnegative")
         objective_terms.extend(
             [
-                variance_penalty * cp.quad_form(exposure, cp.psd_wrap(sigma)) / reference_variance,
+                variance_penalty * cp.quad_form(exposure, cp.psd_wrap(sigma)) / variance_scale,
                 shortfall_penalty
                 * cp.square(cp.pos((target_return - expected_returns @ exposure) / return_scale)),
                 leverage_penalty * cp.sum_squares(exposure - weights),
@@ -248,6 +259,8 @@ def _solve_relaxed_exposure(
         "final_max_risk_budget_error": _risk_budget_error(base, sigma),
         "predicted_annual_return": predicted_return,
         "target_annual_return": target_return,
+        "variance_reference": variance_reference,
+        "variance_scale": variance_scale,
         "return_shortfall": max(target_return - predicted_return, 0.0) if is_relaxed else 0.0,
         "predicted_annual_volatility": float(np.sqrt(max(active @ sigma @ active, 0.0))),
         "gross_exposure": float(active.sum()),

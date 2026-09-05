@@ -1,0 +1,22 @@
+{
+  "variant": "ewma_cov_mean20",
+  "configuration": {
+    "rebalance_frequency": "W",
+    "bond_leverage_upper": 1.0,
+    "gross_exposure_cap": 1.0,
+    "risk_free_rate": 0.0,
+    "transaction_cost_bps": 3.0,
+    "risk_overlay_enabled": false,
+    "trend_filter_mode": "off",
+    "rrp_variance_reference": "equal_weight",
+    "mean_estimator": "ewma",
+    "mean_ewma_halflife": 20.0,
+    "covariance_method": "ewma",
+    "ewma_halflife": 60.0
+  },
+  "target_net_annual_return": 0.1,
+  "target_max_drawdown": -0.08,
+  "hypothesis": "Faster historical mean and covariance updates reduce persistence of stale exposures. Half-lives 20/60 reuse existing project horizons.",
+  "selection": "Exploratory research; no public promotion",
+  "risk_free_rate": 0.0
+}

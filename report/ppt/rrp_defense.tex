@@ -28,7 +28,7 @@
 
 % ── 数值宏。与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
-\input{../thesis_latex/generated_primary_numbers.tex}
+
 
 % ── 辅助命令。图片帧（单图 + 可选注释）────────────────────────────────────────
 % \figframe{帧标题}{文件名}{宽度比}{说明文字（空=不显示）}
@@ -45,173 +45,163 @@
 \begin{document}
 \begin{frame}[plain]\titlepage\end{frame}
 \section{研究问题}
-\begin{frame}{风险预算与实施约束}
+\begin{frame}{收益目标与资产覆盖}
 \begin{itemize}
-\item 30 只中国市场可交易 ETF，覆盖 8 类全球资产风险
-\item 先求凸风险预算参考，再用凸跟踪与换手目标生成权重
-\item 研究集中度约束是否实际改变配置和历史绩效
-\item 主模型为 Improved Convex Adaptive Global RRP，其余模型为对照
+\item 主模型为 Global RRP，历史目标为净年化约 10\%、最大回撤不超过 8\%
+\item 30 只 ETF 均可在满足历史数据条件后进入优化
+\item 允许当期零权重，同时核查每只资产是否曾实际参与
+\item 结合收益、波动、回撤与成本判断结果，不只看夏普
 \end{itemize}
+\end{frame}
+\begin{frame}{五个模型}
+\begin{tabular}{ll}\toprule
+定位 & 模型\\\midrule
+主模型 & Global RRP\\
+对照 & HRP Benchmark\\
+对照 & HERC Benchmark\\
+对照 & Equal Weight\\
+对照 & 60/40 Benchmark\\\bottomrule
+\end{tabular}
+\par\medskip
+主模型为周频，对照保留月频；频率影响另作固定参数比较。
 \end{frame}
 \begin{frame}{数据与评价口径}
 \begin{itemize}
-\item 评价区间为 \evalStartDate{} 至 \evalEndDate{}
-\item \primaryObservations{} 个日收益观察，243 日年化，无风险利率为零
-\item 主模型每周最后一个实际交易日调仓，共 \primaryRebalances{} 次
-\item 单边成本 \txCostBps{} bps，为固定研究约定
-\item 保留极端收益，上市前不回填，至少 60 个历史观察才可投资
+\item \evalStartDate{} 至 \evalEndDate{}，共 \primaryObservations{} 个交易日
+\item 243 日年化，无风险利率固定为零
+\item 单边成本 \txCostBps{} bps，按实际买卖权重变化计费
+\item 收益保留极端观察，上市前不回填
+\item 至少 60 个有效历史观察及正方差，才能进入优化
 \end{itemize}
 \end{frame}
-\section{主模型方法}
-\begin{frame}{凸优化主模型}
-风险预算参考 $b_t$ 来自凸对数障碍问题。实施阶段求解
+\section{凸优化方法}
+\begin{frame}{风险预算参考}
 \[
-\min_w\;0.25\|w-b_t\|_2^2+(0.02+0.0003)\|w-w_t^-\|_1
-\]
-\[
-\mathbf{1}^{T}w=1,\quad w\geq0,\quad\|w-w_t^-\|_1\leq0.80.
+\min_{x>0}\;\frac12x^\mathsf{T}\Sigma_t x-\sum_i b_i\log x_i,
+\qquad q_t=\frac{x_t}{\mathbf1^\mathsf{T}x_t}.
 \]
 \begin{itemize}
-\item 取消现金组与单资产集中度上限，不增加杠杆
-\item 保留债券、防御、商品与黄金、权益组边界
-\item 当前收益奖励、方差惩罚和 CVaR 惩罚均为零
+\item 对全部当期合格资产设等风险预算
+\item 240 个历史观察，采用 Ledoit--Wolf 收缩协方差
+\item 收益估计采用 20 个交易日半衰期
+\item 所有估计只使用调仓日前历史数据
+\item 正半定二次项与负对数项构成凸目标
 \end{itemize}
 \end{frame}
-\begin{frame}{约束与参数来源}
-\begin{tabular}{lr}
-\toprule
-参数 & 主模型设置\\\midrule
-历史窗口 / EWMA 半衰期 & 252 / 60 个观察\\
-债券组上限 & 70\%\\
-防御组上限 & 25\%\\
-商品与黄金组上限 & 40\%\\
-权益组上限 & 70\%\\
-单期换手上限 & 80\%\\\bottomrule
-\end{tabular}
-\medskip
-
-参数沿用研究配置。现金权重受多头单位预算约束。
-\end{frame}
-\begin{frame}{时序与选择边界}
+\begin{frame}{Global RRP 的凸松弛}
+\[
+\min_w\;\|w-q_t\|_2^2+0.10\frac{w^\mathsf{T}\Sigma_t w}{v_t}
++1.9\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2
+\]
+\[
+\mathbf1^\mathsf{T}w=1,\quad w\geq0,\quad v_t=e_t^\mathsf{T}\Sigma_t e_t.
+\]
 \begin{itemize}
-\item 每期优化只使用严格早于调仓日的数据
-\item 沿用当日目标权重乘当日收益并扣成本的日频记账约定
-\item 固定参数日历，统一采用周频和当前约束
-\item 周频与取消上限规格是在历史实验后选定的
-\item 结果属于探索性历史证据，需用新增样本验证
+\item $e_t$ 为当期合格资产的等权组合
+\item $R_t=1.9\max(\overline{\mu}_t,0)$，沿用历史预测收益规则
+\item 多头、无杠杆；不再叠加求解后的风险缩放
 \end{itemize}
+\end{frame}
+\begin{frame}{为什么调整方差尺度}
+\begin{columns}[T]
+\begin{column}{0.47\textwidth}
+\textcolor{holdingBlue}{\textbf{风险预算参考方差}}
+\par\medskip
+参考组合偏向低波动资产时，分母可能很小，使方差惩罚过重，配置进一步向现金集中。
+\end{column}
+\begin{column}{0.47\textwidth}
+\textcolor{holdingRed}{\textbf{当期等权组合方差}}
+\par\medskip
+仍惩罚组合风险，尺度由同一历史协方差与合格资产确定；没有新增集中度百分比，也未增加杠杆。
+\end{column}
+\end{columns}
+\end{frame}
+\begin{frame}{收益与协方差估计实验}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_primary_constraints.tex}}
+\par\medskip
+\small 第一轮比较四项配置，第二轮检验收缩协方差与 20 日收益半衰期组合。规格选择利用历史结果。
 \end{frame}
 \section{实证结果}
-\begin{frame}{主模型绩效}
-\begin{tabular}{lr}
-\toprule
+\begin{frame}{Global RRP 主模型结果}
+\begin{columns}[T]
+\begin{column}{0.46\textwidth}
+\begin{tabular}{lr}\toprule
 指标 & 结果\\\midrule
-净年化收益 & \improvedNetReturn\\
-年化波动 & \improvedVolatility\\
-夏普（无风险利率为零） & \improvedSharpe\\
-Sortino & \improvedSortino\\
-最大回撤 & \improvedMaxDD\\
-平均月度换手 & \improvedMonthlyTurnover\\\bottomrule
+净年化收益 & \globalNetReturn\\
+年化波动 & \globalVolatility\\
+夏普 & \globalSharpe\\
+最大回撤 & \globalMaxDD\\
+月均换手 & \globalMonthlyTurnover\\\bottomrule
 \end{tabular}
-\medskip
-
-月均换手按自然月汇总，实际调仓频率为周频。
-\end{frame}
-\begin{frame}{核心模型对照}
-\scriptsize
-\resizebox{\textwidth}{!}{\begin{tabular}{lrrrr}
-\toprule
-模型 & 净年化收益 & 年化波动 & 夏普 & 最大回撤\\\midrule
-Improved Convex Adaptive Global RRP & \improvedNetReturn & \improvedVolatility & \improvedSharpe & \improvedMaxDD\\
-Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalMaxDD\\
-Convex Adaptive Global RRP & \convexNetReturn & \convexVolatility & \convexSharpe & \convexMaxDD\\
-HRP Benchmark & \hrpNetReturn & \hrpVolatility & \hrpSharpe & \hrpMaxDD\\
-HERC Benchmark & \hercNetReturn & \hercVolatility & \hercSharpe & \hercMaxDD\\
-Equal Weight & \equalWeightNetReturn & \equalWeightVolatility & \equalWeightSharpe & \equalWeightMaxDD\\
-60/40 Benchmark & \sixtyFortyNetReturn & \sixtyFortyVolatility & \sixtyFortySharpe & \sixtyFortyMaxDD\\\bottomrule
-\end{tabular}}
-\medskip
-
-主模型为周频，其余核心对照为月频。比较时同时考虑收益、风险与换手。
-\end{frame}
-\figframe{累计净值}{convex_adaptive_nav_comparison.pdf}{0.88}{相同日期与成本口径，结合风险尺度理解绝对收益差异}
-\figframe{历史回撤}{convex_adaptive_drawdown_comparison.pdf}{0.88}{主模型最大回撤为 \improvedMaxDD，未启用 CVaR 惩罚}
-\figframe{换手与实施成本}{convex_adaptive_turnover_comparison.pdf}{0.88}{换手影响成本。固定 3 bps 未计入实测价差、容量与市场冲击}
-\begin{frame}{逐周持仓结构}
-\begin{columns}
-\begin{column}{0.58\textwidth}
-\includegraphics[width=\linewidth,height=0.76\textheight,keepaspectratio]{primary_weights.pdf}
 \end{column}
-\begin{column}{0.40\textwidth}
-\small
+\begin{column}{0.49\textwidth}
 \begin{itemize}
-\item 全部 30 只 ETF，逐周展示
-\item 现金单列，其余资产使用共同线性色阶
-\item 平均现金权重 \primaryCashMean
-\item 最高现金权重 \primaryCashMax
-\item 仓库权重矩阵保留每次调仓记录
+\item \primaryTargetStatus{}约 10\% 收益与 8\% 回撤目标
+\item \primaryAssetsUsed{} 只 ETF 曾在合格期间形成实质持仓
+\item 净收益已扣除约定交易成本
+\item 历史表现不构成未来保证
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
-\begin{frame}{无风险利率与夏普解释}
-同一收益路径按两种利率计算夏普。
-\begin{center}
-\begin{tabular}{lr}
-\toprule
-无风险利率口径 & 夏普\\\midrule
-固定为零 & \improvedSharpe\\
-滞后一月的中债 1 年期国债收益率 & \primaryChinaBondSharpe\\\bottomrule
-\end{tabular}
-\end{center}
-现金占比较高，夏普对利率口径较敏感。近现金对照也可能得到更高比率。
+\begin{frame}{五模型比较}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_global_performance.tex}}
+\par\medskip
+主模型周频、对照月频；所有模型使用相同评价日期和成本费率。
 \end{frame}
-\section{诊断与局限}
-\begin{frame}{约束消融}
-\scriptsize
-\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_primary_constraints.tex}}
-\medskip
-
-仅取消现金组上限仍保留单资产上限。相对 CVaR 保留原最优基准的可行性，微小数值差异不构成独立改善证据。
-\end{frame}
-\begin{frame}{分自然年结果}
-\scriptsize
-\centering
-\input{../thesis_latex/generated_primary_annual.tex}
-\medskip
-
-2026 年仅截至 \evalEndDate。表中列示年化指标。
-\end{frame}
-\figframe{主模型参数下的频率对照}{rebalance_frequency_sensitivity.pdf}{0.86}{仅改变周、双周、月、季度日历。周频为指定配置，排名属于描述性结果}
-\begin{frame}{周度持仓的阅读口径}
+\figframe{累计净值}{convex_adaptive_nav_comparison.pdf}{0.95}{五模型共同评价区间的净收益路径}
+\figframe{历史回撤}{convex_adaptive_drawdown_comparison.pdf}{0.95}{主模型最大回撤 \globalMaxDD，收益目标需要结合风险承受能力理解}
+\figframe{换手与交易成本}{convex_adaptive_turnover_comparison.pdf}{0.95}{按自然月汇总换手，主模型实际采用周频调仓}
+\begin{frame}{主模型持仓结构}
+\begin{columns}
+\begin{column}{0.58\textwidth}
+\includegraphics[width=\linewidth,height=0.76\textheight,keepaspectratio]{primary_weights.pdf}
+\end{column}
+\begin{column}{0.4\textwidth}
 \begin{itemize}
-\item 完整周度持仓保存在仓库 CSV 中，可逐期核查
-\item 记录包含目标权重、漂移权重、周收益、换手与成本
-\item 11 只 ETF 的权重始终接近零，资产池数量不等于实际分散程度
-\item 自然周收益覆盖该周实际交易日，不能归因于周末新持仓
-\item 末周为样本边界截断观察
+\item 平均现金权重 \primaryCashMean
+\item 最高现金权重 \primaryCashMax
+\item 所有合格资产进入优化
+\item 零权重允许存在，不人为凑持仓
+\item 完整逐周记录保存在仓库 CSV
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+\section{验证与边界}
+\begin{frame}{分自然年结果}
+\centering\input{../thesis_latex/generated_primary_annual.tex}
+\par\medskip
+\small 最后一年仅截至 \evalEndDate，表中为年化指标。
+\end{frame}
+\figframe{固定参数的频率比较}{rebalance_frequency_sensitivity.pdf}{0.90}{只改变调仓日历，排名属于样本内描述}
+\begin{frame}{实现检查与资产参与}
+\begin{itemize}
+\item 每期检查 DCP 凸性、求解状态、预算及非负约束
+\item 信息截止时间严格早于调仓日
+\item 使用交易前漂移权重计算换手与成本
+\item 检查每只 ETF 的合格期数、持有期数与最大持仓
+\item $5\times10^{-5}$ 为数值检查阈值，不是最低持仓约束
 \end{itemize}
 \end{frame}
-\begin{frame}{验证与研究边界}
+\begin{frame}{研究边界}
 \begin{itemize}
-\item 核查共同日期、权重归一、漂移权重、成本、约束及信息截止日
-\item 主模型路径复现获批研究结果，保留求解与约束审计
-\item 高现金集中度限制了风险分散的解释
-\item 事后规格选择尚需新增样本验证，历史 PBO 不自动适用于当前规格
-\item 未建模负债、资本占用、容量与实际成交，不能直接推出机构适用性
+\item 规格选择利用历史结果，尚需新增数据检验
+\item 均值和协方差估计存在误差
+\item 固定成本未证明实际成交、容量与市场冲击
+\item 未处理负债、资本占用及久期缺口
+\item 资产曾被使用，不等于风险贡献充分分散
 \end{itemize}
 \end{frame}
 \section{结论}
 \begin{frame}{研究结论}
 \begin{itemize}
-\item 周频凸优化主模型在零利率口径下达到 \improvedSharpe{} 夏普
-\item 净收益为 \improvedNetReturn，平均现金类 ETF 权重为 \primaryCashMean
-\item 约束消融解释实际权重变化
-\item 其余模型提供对照，未来验证应冻结规格并使用新增数据
+\item Global RRP 采用凸优化生成周频、多头、无杠杆组合
+\item 净年化收益 \globalNetReturn，夏普 \globalSharpe
+\item 收缩协方差与较快收益估计共同参与配置
+\item \primaryAssetsUsed{} 只 ETF 曾形成超过数值容差的持仓
+\item 后续冻结规格，用新增数据检验稳定性
 \end{itemize}
-\medskip
-
-后续用新增数据检验稳定性。
 \end{frame}
 \begin{frame}[plain]\centering\Huge 谢谢各位老师\end{frame}
 \end{document}

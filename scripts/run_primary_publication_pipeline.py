@@ -15,15 +15,15 @@ def main():
     python = sys.executable
     commands = [
         [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"],
-        [python, "scripts/update_risk_free_rate.py", "--start-date", "20000101", "--end-date", "20260831"],
-        [python, "scripts/run_convex_adaptive_rrp.py"],
-        [python, "scripts/run_rebalance_frequency_sensitivity.py"],
+        *[[python, "scripts/run_global_rrp_frontier.py", "--variant", variant, "--round", "round_01"] for variant in ["sample_mean_ewma60", "ewma_cov_mean60", "lw_cov_mean60", "ewma_cov_mean20"]],
+        [python, "scripts/run_global_rrp_frontier.py", "--variant", "lw_cov_mean20", "--round", "round_02"],
+        [python, "scripts/run_global_rrp_frontier.py", "--variant", "lw_cov_mean20", "--round", "round_02", "--full-history"],
+        [python, "scripts/verify_global_rrp_frontier.py"],
         [python, "scripts/run_asset_descriptive_statistics.py"],
-        [python, "scripts/export_next_month_holdings.py"],
-        [python, "scripts/generate_thesis_numbers.py"],
-        [python, "scripts/generate_primary_publication.py"],
+        [python, "scripts/publish_global_rrp.py"],
         [python, "scripts/export_primary_weekly_holdings.py"],
         [python, "scripts/render_publication_figures.py"],
+        [python, "scripts/sync_global_rrp_docs.py"],
     ]
     try:
         for command in commands:

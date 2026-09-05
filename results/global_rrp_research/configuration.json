@@ -1,0 +1,48 @@
+{
+  "variants": {
+    "weekly_overlay": {
+      "rebalance_frequency": "W",
+      "bond_leverage_upper": 1.0,
+      "gross_exposure_cap": 1.0,
+      "risk_free_rate": 0.0,
+      "transaction_cost_bps": 3.0
+    },
+    "without_overlay": {
+      "rebalance_frequency": "W",
+      "bond_leverage_upper": 1.0,
+      "gross_exposure_cap": 1.0,
+      "risk_free_rate": 0.0,
+      "transaction_cost_bps": 3.0,
+      "risk_overlay_enabled": false,
+      "trend_filter_mode": "off"
+    },
+    "equal_weight_scale": {
+      "rebalance_frequency": "W",
+      "bond_leverage_upper": 1.0,
+      "gross_exposure_cap": 1.0,
+      "risk_free_rate": 0.0,
+      "transaction_cost_bps": 3.0,
+      "risk_overlay_enabled": false,
+      "trend_filter_mode": "off",
+      "rrp_variance_reference": "equal_weight"
+    },
+    "return_target": {
+      "rebalance_frequency": "W",
+      "bond_leverage_upper": 1.0,
+      "gross_exposure_cap": 1.0,
+      "risk_free_rate": 0.0,
+      "transaction_cost_bps": 3.0,
+      "risk_overlay_enabled": false,
+      "trend_filter_mode": "off",
+      "rrp_variance_reference": "equal_weight",
+      "rrp_target_annual_return": 0.05
+    }
+  },
+  "primary_variant": "return_target",
+  "net_return_target": 0.05,
+  "selection": "Structural specification declared before execution; do not replace with highest-return experiment.",
+  "risk_free_rate": 0.0,
+  "risk_free_refresh": "Not required under explicit user instruction; ChinaBond diagnostic retired.",
+  "participation_tolerance": 5e-05,
+  "leverage": false
+}

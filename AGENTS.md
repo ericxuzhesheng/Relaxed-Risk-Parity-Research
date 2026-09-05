@@ -4,75 +4,43 @@
 
 This repository is a thesis-oriented quantitative asset allocation research project.
 
-Main research line:
-
-```
-Relaxed Risk Parity
--> Global Multi-Asset Extension (30-ETF universe, 8 asset categories)
--> Convex Adaptive Global RRP
--> CVaR / Turnover / Group Constraints
--> Robustness Validation
--> Long-Term Institutional / Insurance Allocation Interpretation
-```
-
-This is a portfolio optimization and risk-budgeting research project, not a short-term trading strategy repository.
-
----
+Main research line follows convex risk-budget references, Global RRP return/risk relaxation, and historical estimation experiments for a 30-ETF universe.
 
 ## Core Models and Public Labels
 
-Use exactly these seven model names in publication prose, tables and figures. Parameter and frequency variants are experiments, not additional models.
+Use exactly these five model names in current publication prose, tables and figures. Parameter and frequency variants are experiments.
 
 | Public label | Role |
 |---|---|
-| Improved Convex Adaptive Global RRP | Primary weekly model |
-| Global RRP | Comparison |
-| Convex Adaptive Global RRP | Comparison |
-| HRP Benchmark | Comparison |
-| HERC Benchmark | Comparison |
-| Equal Weight | Comparison |
-| 60/40 Benchmark | Comparison |
-
----
+| Global RRP | Primary weekly model |
+| HRP Benchmark | Monthly comparison |
+| HERC Benchmark | Monthly comparison |
+| Equal Weight | Monthly comparison |
+| 60/40 Benchmark | Monthly comparison |
 
 ## Main Positioning
 
-Current model positioning:
-
-- **Improved Convex Adaptive Global RRP** is the primary model: weekly, no cash-group or individual-asset concentration caps, long-only and unlevered. Non-cash group bounds and turnover controls remain.
-- **Global RRP**, Convex Adaptive Global RRP, HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are comparisons.
-- Headline Sharpe and Sortino use rf=0. Report the lagged ChinaBond opportunity-cost Sharpe separately.
-- Selection of the weekly unconcentrated specification followed historical research. Do not claim untouched OOS model-selection evidence or future guarantees.
-- The frozen schedule uses candidate_03, whose CVaR penalty is zero. Do not attribute performance to an active CVaR constraint.
-- Low volatility must be interpreted with actual money-market ETF concentration. Primary status does not imply the highest Sharpe among comparisons.
-
----
+- Global RRP is weekly, long-only and unlevered. It uses 240 historical observations, Ledoit–Wolf covariance shrinkage, 20-day half-life EWMA means and equal-weight variance normalization.
+- The convex objective combines reference tracking, variance and return shortfall. Inherited coefficients are research conventions. There is no active CVaR or turnover constraint; costs are deducted from returns.
+- All eligible ETFs may participate, including zero weights on a date. Audit actual participation without artificial minimum allocations.
+- rf=0 is the only current rate convention. ChinaBond refresh is not required.
+- Configuration selection followed historical structural research and two estimation rounds. Do not claim untouched OOS selection evidence or future guarantees.
 
 ## Latest Core Results
 
-**Always read from CSV before writing any numbers.** Authoritative source files:
+Always read CSV before writing numbers. Authoritative metrics are `results/tables/convex_adaptive_performance_summary.csv` and `hrp_comparison.csv`; asset statistics are in `asset_descriptive_statistics.csv`, and frequency results in `rebalance_frequency_sensitivity.csv` under the same directory.
 
-| Purpose | File |
-|---|---|
-| Primary model metrics | `results/tables/convex_adaptive_performance_summary.csv` |
-| Full model comparison | `results/tables/hrp_comparison.csv` |
-| Per-ETF statistics | `results/tables/asset_descriptive_statistics.csv` |
-| Overfitting diagnostic | `results/tables/cscv_pbo_summary.csv` |
-| Rebalance-frequency sensitivity | `results/tables/rebalance_frequency_sensitivity.csv` |
+Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 243-day annualization and 3-bp one-way cost. Global RRP is weekly; comparisons are monthly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
-Current results: 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 243-day annualization, 3-bp one-way cost. Primary model weekly; core comparisons monthly. Cache 2007-01-18 to 2026-08-31; 60-observation point-in-time filter.
+| Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
+|---|---:|---:|---:|---:|---:|---:|
+| Global RRP | 10.59% | 7.62% | 1.361 | 2.102 | -7.16% | 96.76% |
+| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
+| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
+| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
+| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
 
-| Model | Net annual return | Annual vol | Sharpe | Sortino | Max drawdown | Calmar | Avg monthly turnover |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Improved Convex Adaptive Global RRP | 2.92% | 1.56% | 1.859 | 2.648 | -2.63% | 1.110 | 4.36% |
-| Global RRP | 2.40% | 0.58% | 4.103 | 6.496 | -1.01% | 2.384 | 12.89% |
-| Convex Adaptive Global RRP | 5.87% | 6.02% | 0.979 | 1.382 | -8.18% | 0.718 | 2.59% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 10.758 | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 1.597 | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 0.505 | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 0.348 | 4.21% |
-
-Primary average money-market ETF weight is 70.23%, maximum 86.61%. The same primary path has ChinaBond opportunity-cost Sharpe 0.529. Configuration and validation: `primary_model_configuration.json` and `primary_publication_audit.json` under `results/tables/`. Historical tables outside the primary publication pipeline are archival, not current-model validation.
+Primary average money-market weight is 15.94%, maximum 26.03%. All 30 ETFs were materially held. Full-history verification, parameters and diagnostics are saved with the publication audit. Historical archived tables are not current-model validation.
 
 ---
 
@@ -138,7 +106,6 @@ The publication pipeline stores complete weekly holdings in repository CSV files
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
 python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20260831
-python scripts/update_risk_free_rate.py --start-date 20000101 --end-date 20260831
 ```
 
 ### After running — refresh artifacts in this order before any commit:

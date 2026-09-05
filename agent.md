@@ -1,6 +1,6 @@
 # Documentation Policy
 
-Write the current project state in clear, concise language. Retain the seven model names listed in AGENTS.md. Treat parameter and frequency variations as experiments, without adding model names.
+Write the current project state in clear, concise language. Retain the five model names listed in AGENTS.md. Treat parameter and frequency variations as experiments, without adding model names.
 
 Read performance numbers from `results/tables/convex_adaptive_performance_summary.csv`, asset statistics from `results/tables/asset_descriptive_statistics.csv`, and asset definitions from `src/asset_universe.py`. State the evaluation window, frequency, costs and risk-free convention with the results.
 

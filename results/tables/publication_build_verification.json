@@ -1,0 +1,12 @@
+[
+  {
+    "artifact": "report\\thesis_latex\\main.pdf",
+    "status": "compiled",
+    "passes": 3
+  },
+  {
+    "artifact": "report\\ppt\\rrp_defense.pdf",
+    "status": "compiled",
+    "passes": 3
+  }
+]

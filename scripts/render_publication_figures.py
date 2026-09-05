@@ -1,6 +1,6 @@
 """Render publication figures from saved results; never rerun or alter backtests.
 
-Chart contract: seven-model daily paths (2102 observations), scalar comparisons,
+Chart contract: five-model daily paths, scalar comparisons,
 four frequency settings, and all weekly ETF targets. Use a fixed colorblind-safe
 model palette with line-style redundancy, honest linear scales, and vector PDF
 plus 300-dpi PNG. Full-resolution weekly tables accompany dense heatmaps.
@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from src.public_labels import PUBLICATION_MODELS, validate_publication_models
 
-COLORS = ["#B53B4A", "#194F7D", "#528BB5", "#7C2036", "#DB8790", "#687887", "#92B6D0"]
+COLORS = ["#B53B4A", "#194F7D", "#528BB5", "#7C2036", "#92B6D0"]
 STYLES = ["-", "--", "-.", ":", (0,(5,2,1,2)), (0,(3,1)), (0,(1,1))]
 OUT = ROOT / "results/figures"
 
@@ -68,7 +68,7 @@ def scalars(summary):
         fig,ax=plt.subplots(figsize=(10.8,4.2))
         y=np.arange(len(data)); vals=data[col].to_numpy()
         ax.hlines(y,0,vals,color="#DCE1E6",linewidth=2,zorder=1)
-        ax.scatter(vals,y,c=COLORS,s=[65]+[42]*6,zorder=3,edgecolor="white",linewidth=.5)
+        ax.scatter(vals,y,c=COLORS,s=[65]+[42]*(len(data)-1),zorder=3,edgecolor="white",linewidth=.5)
         for i,v in enumerate(vals): ax.annotate(f"{v:.2%}",(v,i),xytext=(7,0),textcoords="offset points",va="center",fontsize=9)
         ax.set_yticks(y,list(data.index));ax.invert_yaxis();ax.set_xlabel(label)
         ax.xaxis.set_major_formatter(PercentFormatter(1));ax.set_xlim(0,max(vals)*1.22)
@@ -81,7 +81,7 @@ def frequency():
     d=pd.read_csv(ROOT/'results/tables/rebalance_frequency_sensitivity.csv').set_index('frequency_code').loc[['W','2W','M','Q']]
     fig,axes=plt.subplots(2,2,figsize=(10.8,6.1))
     for j,(ax,col,title) in enumerate(zip(axes.flat,['net_annual_return','sharpe_ratio','max_drawdown','avg_monthly_turnover'],['Net annual return','Sharpe (zero risk-free)','Maximum drawdown','Monthly turnover'])):
-        vals=d[col].to_numpy();ax.bar(np.arange(4),vals,width=.54,color=[COLORS[0],COLORS[1],COLORS[2],COLORS[6]],zorder=3)
+        vals=d[col].to_numpy();ax.bar(np.arange(4),vals,width=.54,color=[COLORS[0],COLORS[1],COLORS[2],COLORS[4]],zorder=3)
         ax.set_xticks(range(4),['Weekly','Biweekly','Monthly','Quarterly']);ax.set_title(f"({chr(97+j)})  {title}",loc='left',pad=12)
         ax.axhline(0,color='#A0A7AF',lw=.6);ax.grid(axis='y')
         lo=min(0,vals.min());hi=max(0,vals.max());span=hi-lo

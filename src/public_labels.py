@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 PUBLICATION_MODELS = (
-    "Improved Convex Adaptive Global RRP",
     "Global RRP",
-    "Convex Adaptive Global RRP",
     "HRP Benchmark",
     "HERC Benchmark",
     "Equal Weight",
@@ -12,10 +10,10 @@ PUBLICATION_MODELS = (
 
 
 def validate_publication_models(names) -> None:
-    """Require the seven distinct published models without relabeling history."""
+    """Require the five distinct published models without relabeling history."""
     names = list(names)
     if len(names) != len(PUBLICATION_MODELS) or set(names) != set(PUBLICATION_MODELS):
-        raise ValueError("Publication must contain exactly the seven approved model names")
+        raise ValueError("Publication must contain exactly the five approved model names")
 
 
 PUBLIC_MODEL_LABELS = {

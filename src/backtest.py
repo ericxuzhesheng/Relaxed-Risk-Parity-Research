@@ -194,7 +194,13 @@ def run_static_backtest(
         raise ValueError(f"Unsupported model_type: {model_type}")
 
     keywords = config["bond_keywords"]
-    rebalance_dates = _monthly_rebalance_dates(returns)
+    frequency = config.get("rebalance_frequency", "M")
+    if frequency not in {"W", "M", "Q", "2W"}:
+        raise ValueError("Unsupported rebalance_frequency")
+    if frequency == "2W":
+        rebalance_dates = set(returns.groupby(returns.index.to_period("W")).tail(1).index[::2])
+    else:
+        rebalance_dates = set(returns.groupby(returns.index.to_period(frequency)).tail(1).index)
     overlay_config = RiskOverlayConfig.from_config(config)
     cost_rate = transaction_cost_rate(overlay_config)
 
@@ -209,6 +215,7 @@ def run_static_backtest(
     risk_state = {}
 
     for d in dates:
+        pretrade_weights = current_weights.copy()
         current_nav = portfolio_navs[-1]
         high_water_mark = max(high_water_mark, current_nav)
         drawdown = (current_nav / high_water_mark) - 1.0
@@ -251,10 +258,20 @@ def run_static_backtest(
                 elif model_type == "herc":
                     active_weights = solve_herc(df_window).values
                 else:
-                    mu = df_window.mean() * config["trading_days_per_year"]
+                    mean_method = config.get("mean_estimator", "sample")
+                    if mean_method == "sample":
+                        mu = df_window.mean() * config["trading_days_per_year"]
+                    elif mean_method == "ewma":
+                        halflife = float(config.get("mean_ewma_halflife", 60.0))
+                        if not np.isfinite(halflife) or halflife <= 0:
+                            raise ValueError("mean_ewma_halflife must be finite and positive")
+                        mu = df_window.ewm(halflife=halflife, ignore_na=True).mean().iloc[-1] * config["trading_days_per_year"]
+                    else:
+                        raise ValueError("Unsupported mean_estimator")
                     cov_result = estimate_covariance(
                         df_window,
                         method=config.get("covariance_method", "sample"),
+                        ewma_halflife=float(config.get("ewma_halflife", 60.0)),
                         trading_days=config["trading_days_per_year"],
                         annualize=True,
                         allow_fallback=True,
@@ -316,6 +333,8 @@ def run_static_backtest(
                                 config,
                                 diagnostics=solver_diag,
                             )
+                    solver_diag["information_cutoff"] = df_window.index.max()
+                    solver_diag["mean_estimator"] = mean_method
                     _append_solver_row(
                         solver_rows,
                         date=d,
@@ -326,7 +345,7 @@ def run_static_backtest(
 
                 active_weights = apply_asset_class_budget_multipliers(active_weights, active_cols, config)
                 current_weights = expand_weights(active_weights, active_cols, returns.columns)
-                if model_type in {"standard", "relaxed"}:
+                if model_type in {"standard", "relaxed"} and config.get("risk_overlay_enabled", True):
                     current_weights, overlay_state = apply_risk_overlay(
                         current_weights,
                         previous_weights,
@@ -348,7 +367,8 @@ def run_static_backtest(
                     turnover = float(np.abs(current_weights - previous_weights).sum())
                     overlay_state["turnover"] = turnover
 
-        ret = portfolio_return_for_available(returns.loc[d], current_weights)
+        gross_ret = portfolio_return_for_available(returns.loc[d], current_weights)
+        ret = gross_ret
         if turnover > 0.0 and cost_rate > 0.0:
             ret -= cost_rate * turnover
 
@@ -356,6 +376,10 @@ def run_static_backtest(
         res = {
             "date": d,
             "portfolio_return": ret,
+            "net_return": ret,
+            "gross_return": gross_ret,
+            "transaction_cost": cost_rate * turnover,
+            "is_rebalance_day": d in rebalance_dates,
             "turnover": turnover,
             "target_vol_scalar": overlay_state["target_vol_scalar"],
             "drawdown_scalar": overlay_state["drawdown_scalar"],
@@ -379,6 +403,7 @@ def run_static_backtest(
             res[key] = overlay_state.get(key, None)
         for j, asset in enumerate(returns.columns):
             res[f"weight_{asset}"] = current_weights[j]
+            res[f"previous_weight_{asset}"] = pretrade_weights[j]
         results.append(res)
         current_weights = drift_weights(current_weights, returns.loc[d])
 

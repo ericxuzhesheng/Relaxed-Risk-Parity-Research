@@ -1,67 +1,42 @@
 {
-  "model": "Improved Convex Adaptive Global RRP",
-  "role": "primary",
-  "risk_free_rate": 0.0,
-  "selection_status": "Chosen after historical constraint research; not an untouched out-of-sample model selection test.",
-  "schedule": "Frozen afml_oos_selection.csv; candidate_03 throughout the public period.",
-  "configurations": {
-    "candidate_03": {
-      "trading_days_per_year": 243,
-      "lookback_days": 252,
-      "rebalance_frequency": "W",
-      "covariance_method": "ewma",
-      "covariance_allow_fallback": true,
-      "ewma_halflife": 60.0,
-      "max_weight": 1.0,
-      "turnover_cap": 0.8,
-      "turnover_penalty": 0.02,
-      "transaction_cost_bps": 3.0,
-      "transaction_cost_penalty": 1.0,
-      "variance_penalty": 0.0,
-      "budget_penalty": 0.25,
-      "return_reward": 0.0,
-      "cvar_penalty": 0.0,
-      "cvar_beta": 0.95,
-      "cvar_limit": null,
-      "cvar_limit_multiplier": null,
-      "min_cvar_observations": 60,
-      "regime_stress_quantile": 0.67,
-      "regime_crisis_prior": 0.4,
-      "regime_prior_weight": 0.5,
-      "use_graph_features": false,
-      "use_transaction_cost_objective": true,
-      "use_online_regime": false,
-      "group_bounds": {
-        "bond": [
-          0.0,
-          0.7
-        ],
-        "defensive": [
-          0.0,
-          0.25
-        ],
-        "commodity_gold": [
-          0.0,
-          0.4
-        ],
-        "equity": [
-          0.0,
-          0.7
-        ]
-      },
-      "portfolio_vol_cap": 0.0,
-      "portfolio_vol_cap_enabled": false,
-      "solver": null,
-      "vol_target_enabled": false,
-      "vol_target": 0.04,
-      "ema_deviation_enabled": false,
-      "ema_deviation_span": 20,
-      "ema_strong_threshold": 0.05,
-      "ema_overextended_threshold": 0.15,
-      "ema_overextended_max_weight": 0.2,
-      "ema_stop_threshold": -0.05,
-      "ema_stop_max_weight": 0.05,
-      "ema_equity_only": true
-    }
-  }
+  "model": "Global RRP",
+  "configuration": {
+    "lookback_weeks": 48,
+    "trading_days_per_year": 243,
+    "evaluation_start_date": "2018-01-02",
+    "evaluation_end_date": "2026-08-31",
+    "data_start_date": "2000-01-01",
+    "plot_start_date": "2018-01-02",
+    "lambda_pen": 1.9,
+    "m": 1.9,
+    "optim_tol": 1e-06,
+    "optim_maxiter": 2000,
+    "asset_weight_bounds": [
+      0.0,
+      1.0
+    ],
+    "max_single_asset_weight": 1.0,
+    "bond_keywords": [
+      "\u56fd\u503a",
+      "\u4fe1\u7528\u7968",
+      "\u7f8e\u503a",
+      "\u503a"
+    ],
+    "bond_leverage_upper": 1.0,
+    "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
+    "risk_free_rate": 0.0,
+    "target_vol": 0.06,
+    "gross_exposure_cap": 1.0,
+    "turnover_cap": 0.25,
+    "transaction_cost_bps": 3.0,
+    "rebalance_frequency": "W",
+    "risk_overlay_enabled": false,
+    "trend_filter_mode": "off",
+    "rrp_variance_reference": "equal_weight",
+    "mean_estimator": "ewma",
+    "mean_ewma_halflife": 20.0,
+    "covariance_method": "ledoit_wolf"
+  },
+  "selected_variant": "lw_cov_mean20",
+  "selection": "Selected after structural research and two logged estimation rounds. Meets historical return, drawdown and participation targets. Retrospective research, not untouched validation."
 }
