@@ -1,12 +1,19 @@
-[
-  {
-    "artifact": "report\\thesis_latex\\main.pdf",
-    "status": "compiled",
-    "passes": 3
-  },
-  {
-    "artifact": "report\\ppt\\rrp_defense.pdf",
-    "status": "compiled",
-    "passes": 3
-  }
-]
+{
+  "primary_model": "Global RRP",
+  "publication_models": [
+    "Global RRP",
+    "HRP Benchmark",
+    "HERC Benchmark",
+    "Equal Weight",
+    "60/40 Benchmark"
+  ],
+  "model_count": 5,
+  "thesis_pages": 42,
+  "slides_pages": 24,
+  "compile_passes": 3,
+  "overfull_boxes": 0,
+  "annualization_days": 252,
+  "estimation_window_days": 252,
+  "primary_audit_status": "passed",
+  "figures": "high-contrast red-blue PNG and vector PDF"
+}

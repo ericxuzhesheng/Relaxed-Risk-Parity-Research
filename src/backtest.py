@@ -57,6 +57,23 @@ COV_SAMPLE_RATIO_FLOOR = 3.0
 COV_CONDITION_NUMBER_CEILING = 1e8
 
 
+def _rrp_parameter_schedule(config: dict) -> list[tuple[pd.Timestamp, float, float]]:
+    """Validate an optional point-in-time penalty schedule."""
+    rows = []
+    for item in config.get("rrp_parameter_schedule", []):
+        date = pd.Timestamp(item["effective_date"])
+        variance = float(item["rrp_variance_penalty"])
+        shortfall = float(item["lambda_pen"])
+        if pd.isna(date):
+            raise ValueError("scheduled RRP effective dates must be valid")
+        if not np.isfinite([variance, shortfall]).all() or min(variance, shortfall) < 0:
+            raise ValueError("scheduled RRP penalties must be finite and nonnegative")
+        rows.append((date, variance, shortfall))
+    if any(rows[i][0] >= rows[i + 1][0] for i in range(len(rows) - 1)):
+        raise ValueError("rrp_parameter_schedule dates must be strictly increasing")
+    return rows
+
+
 def _monthly_rebalance_dates(returns: pd.DataFrame) -> set[pd.Timestamp]:
     return set(returns.groupby(returns.index.to_period("M")).tail(1).index)
 
@@ -203,6 +220,7 @@ def run_static_backtest(
         rebalance_dates = set(returns.groupby(returns.index.to_period(frequency)).tail(1).index)
     overlay_config = RiskOverlayConfig.from_config(config)
     cost_rate = transaction_cost_rate(overlay_config)
+    rrp_schedule = _rrp_parameter_schedule(config)
 
     solver_rows: list[dict] | None = [] if diagnostics_out is not None else None
     cov_rows: list[dict] | None = [] if diagnostics_out is not None else None
@@ -234,7 +252,9 @@ def run_static_backtest(
         }
 
         if d in rebalance_dates:
-            lookback = config["lookback_weeks"] * 5
+            lookback = int(config.get("lookback_days", config["lookback_weeks"] * 5))
+            if lookback < 2:
+                raise ValueError("lookback_days must be at least two")
             # Strictly point-in-time: only data observed before the rebalance date d
             # enters the investable filter and the covariance estimate.
             df_window_full = returns[returns.index < d].iloc[-lookback:]
@@ -292,13 +312,21 @@ def run_static_backtest(
                     r_base = mu.mean()
 
                     solver_diag: dict = {}
+                    solver_config = config
+                    effective_rows = [row for row in rrp_schedule if row[0] <= d]
+                    if effective_rows:
+                        effective_date, variance_penalty, shortfall_penalty = effective_rows[-1]
+                        solver_config = {**config, "rrp_variance_penalty": variance_penalty,
+                                         "lambda_pen": shortfall_penalty}
+                    else:
+                        effective_date = pd.NaT
                     if model_type == "standard":
                         if active_bond_indices:
                             w, lev = optimize_with_leverage(
                                 sigma.values,
                                 len(active_cols),
                                 active_bond_indices,
-                                config=config,
+                                config=solver_config,
                                 diagnostics=solver_diag,
                             )
                             active_weights = w * lev
@@ -306,7 +334,7 @@ def run_static_backtest(
                             active_weights = solve_standard_rp(
                                 sigma.values,
                                 len(active_cols),
-                                config,
+                                solver_config,
                                 diagnostics=solver_diag,
                             )
                     else:
@@ -319,7 +347,7 @@ def run_static_backtest(
                                 theta,
                                 r_base,
                                 is_relaxed=True,
-                                config=config,
+                                config=solver_config,
                                 diagnostics=solver_diag,
                             )
                             active_weights = w * lev
@@ -330,11 +358,14 @@ def run_static_backtest(
                                 theta,
                                 len(active_cols),
                                 r_base,
-                                config,
+                                solver_config,
                                 diagnostics=solver_diag,
                             )
                     solver_diag["information_cutoff"] = df_window.index.max()
                     solver_diag["mean_estimator"] = mean_method
+                    solver_diag["parameter_effective_date"] = effective_date
+                    solver_diag["selected_variance_penalty"] = float(solver_config.get("rrp_variance_penalty", 0.10))
+                    solver_diag["selected_shortfall_penalty"] = float(solver_config.get("lambda_pen", 1.9))
                     _append_solver_row(
                         solver_rows,
                         date=d,

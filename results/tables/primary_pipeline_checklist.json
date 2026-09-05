@@ -1,62 +1,42 @@
-{
-  "execution_mode": "Sequential component execution with refreshed data; current primary publication",
-  "steps": [
-    {
-      "step": "update_etf_data",
-      "status": "passed"
-    },
-    {
-      "step": "update_risk_free_rate",
-      "status": "passed"
-    },
-    {
-      "step": "run_convex_adaptive_rrp",
-      "status": "passed"
-    },
-    {
-      "step": "run_rebalance_frequency_sensitivity",
-      "status": "passed"
-    },
-    {
-      "step": "run_asset_descriptive_statistics",
-      "status": "passed"
-    },
-    {
-      "step": "export_next_month_holdings",
-      "status": "passed"
-    },
-    {
-      "step": "generate_thesis_numbers",
-      "status": "passed"
-    },
-    {
-      "step": "generate_primary_publication",
-      "status": "passed"
-    },
-    {
-      "step": "seven_model_metric_and_cost_reconciliation",
-      "status": "passed"
-    },
-    {
-      "step": "readme_agents_csv_reconciliation",
-      "status": "passed"
-    },
-    {
-      "step": "thesis_xelatex_three_passes_and_bibtex",
-      "status": "passed"
-    },
-    {
-      "step": "slides_xelatex_three_passes",
-      "status": "passed"
-    },
-    {
-      "step": "pdf_visual_review",
-      "status": "passed"
-    }
-  ],
-  "tests": {
-    "related_suite_passed": 38,
-    "latest_weekly_suite_passed": 16
+[
+  {
+    "step": "scripts/update_etf_data.py",
+    "returncode": 0
   },
-  "risk_free_rate": 0.0
-}
+  {
+    "step": "scripts/run_global_rrp_rolling_calibration.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/verify_global_rrp_rolling_calibration.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/run_asset_descriptive_statistics.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/publish_global_rrp.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/export_primary_weekly_holdings.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/render_publication_figures.py",
+    "returncode": 0
+  },
+  {
+    "step": "scripts/sync_global_rrp_docs.py",
+    "returncode": 0
+  },
+  {
+    "step": "thesis_latex/main.pdf",
+    "returncode": 0
+  },
+  {
+    "step": "ppt/rrp_defense.pdf",
+    "returncode": 0
+  }
+]

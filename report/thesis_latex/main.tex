@@ -11,6 +11,7 @@
 \coverdate{2026年8月}
 
 \usepackage{xcolor}
+\usepackage{flafter}
 \definecolor{holdingRed}{HTML}{B53B4A}
 \definecolor{holdingBlue}{HTML}{194F7D}
 \graphicspath{{../../results/figures/}}
@@ -37,14 +38,14 @@
 
 \newcommand{\figmaybe}[3]{
   \IfFileExists{../../results/figures/#1}{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \includegraphics[width=0.98\textwidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
   }{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \fbox{\parbox{0.84\textwidth}{\centering 图文件未找到。#1}}
       \caption{#2}
@@ -55,14 +56,14 @@
 
 \newcommand{\figwide}[3]{
   \IfFileExists{../../results/figures/#1}{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \includegraphics[width=0.93\textwidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
   }{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \fbox{\parbox{0.93\textwidth}{\centering 图文件未找到。#1}}
       \caption{#2}
@@ -73,14 +74,14 @@
 
 \newcommand{\fignarrow}[3]{
   \IfFileExists{../../results/figures/#1}{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \includegraphics[width=0.76\textwidth]{#1}
       \caption{#2}
       \label{#3}
     \end{figure}
   }{
-    \begin{figure}[tbp]
+    \begin{figure}[htbp]
       \centering
       \fbox{\parbox{0.76\textwidth}{\centering 图文件未找到。#1}}
       \caption{#2}
@@ -91,7 +92,7 @@
 
 % 并排双图宏。#1/#2 文件名，#3/#4 caption，#5/#6 label
 \newcommand{\figpair}[6]{%
-  \begin{figure}[tbp]
+  \begin{figure}[htbp]
     \centering
     \begin{minipage}[t]{0.48\textwidth}
       \IfFileExists{../../results/figures/#1}{%
@@ -121,128 +122,85 @@
 本人郑重声明，所呈交的毕业论文是在指导教师指导下独立完成的研究成果。引用他人的成果均已注明来源。历史回测结果仅用于研究，不构成未来收益承诺。
 \clearpage
 \begin{abstract}
-本文研究全球 ETF 配置中的风险预算、收益目标和风险惩罚尺度。Global RRP 为主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为对照。资产池包含 \etfCount{} 只 ETF，评价区间为 \evalStartDate{} 至 \evalEndDate{}，按 243 个交易日年化，无风险利率为零，单边约定成本为 \txCostBps{} bps。
+本文研究全球 ETF 配置中的风险预算、收益目标和风险惩罚尺度。Global RRP 为主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为对照。资产池包含 \etfCount{} 只 ETF，评价区间为 \evalStartDate{} 至 \evalEndDate{}，按 \annualizationDays{} 个交易日年化，无风险利率为零，单边约定成本为 \txCostBps{} bps。
 
-主模型通过凸对数风险预算问题构造参考权重，再求解包含参考跟踪、组合方差和预测收益短缺的凸问题。最终配置采用 Ledoit--Wolf 收缩协方差、半衰期为 20 个交易日的指数加权收益估计和等权组合方差尺度。组合为周频、多头、无杠杆，并允许全部满足历史数据条件的资产参与优化。
+主模型通过凸对数风险预算问题构造参考权重，再求解包含参考跟踪、组合方差和预测收益短缺的凸问题。收益目标取当期可行参考组合的预测收益。模型采用 \lookbackDays{} 日窗口、Ledoit--Wolf 收缩协方差和半衰期为 20 个交易日的指数加权收益估计。方差及收益短缺惩罚每年根据生效日前两个连续历史区间更新，随后冻结一年。组合为周频、多头、无杠杆，并允许全部满足历史数据条件的资产参与优化。
 
-主模型净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，最大回撤为 \globalMaxDD。结果\primaryTargetStatus{}净年化收益约 10\%、最大回撤不超过 8\% 的研究目标；有 \primaryAssetsUsed{} 只 ETF 在合格期间曾形成超过数值容差的持仓。模型规格选择利用了历史实验，结果属于探索性证据。
+主模型净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，最大回撤为 \globalMaxDD。有 \primaryAssetsUsed{} 只 ETF 在合格期间曾形成超过数值容差的持仓。十个年度的候选均缺乏显著区分，模型结果属于探索性证据。
 
 \noindent\textbf{关键词 } 宽松风险平价；全球资产配置；凸优化；ETF；交易成本
 \end{abstract}
 \clearpage
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-This thesis evaluates Global RRP against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark in a common universe of \etfCount{} ETFs. The evaluation spans \evalStartDate{} to \evalEndDate{}, uses 243-day annualization and a zero risk-free rate, and deducts an assumed \txCostBps{}-bp one-way transaction cost.
+This thesis evaluates Global RRP against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark in a common universe of \etfCount{} ETFs. The evaluation spans \evalStartDate{} to \evalEndDate{}, uses \annualizationDays-day annualization and a zero risk-free rate, and deducts an assumed \txCostBps{}-bp one-way transaction cost.
 
-Global RRP uses a convex risk-budget reference followed by a convex objective for reference tracking, portfolio variance and expected-return shortfall. It uses Ledoit--Wolf covariance shrinkage, exponentially weighted return estimates with a 20-trading-day half-life and equal-weight variance normalization. The primary portfolio is weekly, long-only and unlevered. Every historically eligible ETF can enter the optimizer; positive holdings are not imposed artificially.
+Global RRP uses a convex risk-budget reference followed by a convex objective for reference tracking, portfolio variance and expected-return shortfall. The feasible return target equals the predicted return of the contemporaneous reference portfolio. The model uses a \lookbackDays-day window, Ledoit--Wolf covariance shrinkage and exponentially weighted return estimates with a 20-trading-day half-life. Penalties update annually from two strictly earlier historical blocks and remain fixed during the following year. The primary portfolio is weekly, long-only and unlevered.
 
-The primary model records \globalNetReturn{} net annual return, \globalVolatility{} annual volatility, \globalSharpe{} Sharpe and \globalMaxDD{} maximum drawdown. A total of \primaryAssetsUsed{} ETFs receive material allocations during eligible periods. Specification selection uses historical experiments and does not establish untouched out-of-sample evidence.
+The primary model records \globalNetReturn{} net annual return, \globalVolatility{} annual volatility, \globalSharpe{} Sharpe and \globalMaxDD{} maximum drawdown. A total of \primaryAssetsUsed{} ETFs receive material allocations during eligible periods. All annual candidates fall within one Sharpe standard error, so the data do not identify unique penalties. Historical design choices prevent an untouched model-selection claim.
 \end{abstract}
 \clearpage
+\setcounter{tocdepth}{1}
 \tableofcontents
 \clearpage
 \pagenumbering{arabic}
-\section{绪论}
-\subsection{研究问题}
-长期资产配置需要同时衡量收益水平、风险和可实施性。高夏普可能来自极低波动和大量现金配置，不能替代对实际收益的评价。本文以净年化收益约 10\%、最大回撤不超过 8\% 为历史研究目标，并同时披露波动、成本和资产使用情况。该目标用于验收研究结果，不表示未来收益保证。
-
-风险预算方法减少了对预期收益估计的依赖，但参考组合与最终实施组合之间仍存在差异\cite{qian2005risk,maillard2010properties,roncalli2013introduction}。收益短缺、风险惩罚、交易规则及现金配置均可能改变最终权重。本文关注这些机制的实际作用，不以模型命名代替方法检验。
-\subsection{研究范围}
-正式比较仅包含五个模型。Global RRP 是主模型，其余四个为对照。结构与频率实验属于同一模型的配置比较，不增加公开模型数量。主模型采用周频，对照保留月频，因此绩效比较同时反映方法和调仓频率差异；另以固定主模型参数的频率实验观察日历影响。
-\section{理论基础与凸优化}
-\subsection{风险预算参考}
-设 $\Sigma_t\succeq0$ 为调仓日前历史收益估计的年化协方差矩阵，$b_{i,t}=1/n_t$ 为当期合格资产的等风险预算。参考权重由
-\[
-\min_{x>0}\quad \frac12x^\mathsf{T}\Sigma_t x-\sum_{i=1}^{n_t}b_{i,t}\log x_i
-\]
-求得，再归一化为 $q_t=x_t/(\mathbf1^\mathsf{T}x_t)$。该问题的二次项和负对数项均为凸函数。最优性条件为 $x_i(\Sigma_t x)_i=b_{i,t}$，从而得到相应风险贡献关系。协方差半正定处理和严格正风险预算是实现中的必要条件。
-\subsection{Global RRP 的凸松弛}
-最终权重由以下问题确定：
-\[
-\min_w\quad \|w-q_t\|_2^2
-+\lambda_v\frac{w^\mathsf{T}\Sigma_t w}{v_t}
-+\lambda_r\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2,
-\qquad \mathbf1^\mathsf{T}w=1,\quad w\geq0.
-\]
-其中 $\mu_t$ 为指数加权历史收益的年化估计，$v_t>0$ 为方差尺度。收益项的归一化尺度为
-\[
-s_t=\max(|R_t|,\max_i|\mu_{i,t}|,10^{-3}).
-\]
-最终配置的预测收益目标为\primaryReturnTargetDef。继承的惩罚系数为 $\lambda_v=0.10$、$\lambda_r=1.9$；这些是研究约定，不能表述为市场数据唯一识别的参数。
-
-当协方差半正定、归一化尺度为当期固定正数、惩罚系数非负时，目标函数为凸函数，可行域为单纯形。程序逐期检查 DCP 合规性、求解状态及约束违反量\cite{boyd2004convex}。最终权重不要求维持精确的等风险贡献，故应解释为围绕风险预算参考的凸松弛，而非精确风险平价约束。
-\subsection{方差尺度与现金集中}
-原方差项以风险预算参考组合方差 $q_t^\mathsf{T}\Sigma_tq_t$ 为分母。现金类 ETF 波动较低，参考组合方差可能很小，从而放大其他配置的归一化方差惩罚。本文的尺度实验改为
-\[
- v_t=e_t^\mathsf{T}\Sigma_t e_t,\qquad e_t=\frac1{n_t}\mathbf1.
-\]
-该尺度完全由当期合格资产及其历史协方差确定，不依赖全样本收益排名，也没有引入新的百分比上限。尺度调整保留方差惩罚，但改变其相对于参考跟踪和收益短缺项的强度。
-\subsection{预测目标与实现收益}
-优化器中的 $R_t$ 是随当期历史收益变化的预测目标，并未固定为 10\%。实现净收益还受到预测误差、价格变化及交易成本影响。净年化与最大回撤目标只用于评价历史结果，未作为保证未来表现的可行性约束。
-\section{数据与回测设计}
-\subsection{资产池与准入}
-资产池由中国市场可交易 ETF 构成，覆盖债券、现金、中国权益、海外权益和商品等风险。数据采用复权价格收益，保留极端观察，不按全样本绩效剔除资产。完整资产名单见附录。
-
-每期只使用调仓日前的历史窗口。资产必须具有至少 60 个有效历史收益观察和正的窗口方差，才能进入优化。上市前不回填收益。全部满足条件的资产均参与求解，允许当期零持仓；不对事后长期零持仓资产自动删除，也不通过微小持仓配额制造分散效果。
-\subsection{调仓与记账}
-主模型每周最后一个样本内实际交易日调仓，历史窗口为 48 周对应的 240 个收益观察。协方差采用 Ledoit--Wolf 收缩估计，收缩强度由当期历史数据确定；收益采用半衰期为 20 个交易日的指数加权均值，缺失观察按既有估计规则跳过。信息截止日严格早于调仓日，沿用调仓日目标权重记账约定，不据此声称已经验证实盘成交时点。
-
-最终配置取消求解后的风险缩放和趋势过滤，权重由凸优化直接给出。预算为一，多头且不使用债券杠杆。自然周收益与调仓后持有期收益分开记录，样本末周及最后持有期标明截断。
-\subsection{成本与评价指标}
-交易前权重由前一持仓随收益漂移得到。换手和成本为
-\[
- T_t=\sum_i|w_{i,t}-w^-_{i,t}|,\qquad c_t=0.0003T_t.
-\]
-成本按买卖成交金额分别计入净收益。3 bps 为可比性假设，未通过成交记录校准，不包含经过独立测量的价差或市场冲击。当前求解器没有额外的换手惩罚，成本在收益记账时扣除。
-
-净值由日净收益复利累计。年化收益、波动、夏普和 Sortino 沿用项目统一实现；最大回撤基于净值历史高点。无风险利率固定为零，主文不混入其他利率口径。月均换手按自然月汇总，不能误读为月度调仓。
-\subsection{对照模型}
-HRP Benchmark 和 HERC Benchmark 提供层次风险配置对照\cite{lopezdeprado2016building,raffinot2018hierarchical}。Equal Weight 提供等资本权重参照，60/40 Benchmark 提供固定大类比例参照。对照模型使用共同评价日期、资产准入原则和成本费率。它们的角色是比较，而非由全样本排名选择的正式主模型。
-\section{估计配置实验}
-研究先检查求解后风险缩放与方差归一化，再在等权方差尺度下比较收益和协方差估计。第一轮包含样本协方差、指数加权协方差及收缩协方差，并比较 60 日和 20 日收益半衰期的预设配置。第二轮在观察第一轮结果后检验收缩协方差与 20 日收益半衰期的组合。20 日与 60 日沿用项目研究窗口，属于研究约定；各轮配置及结果均保留，不将第二轮描述为事前独立验证。
-\begin{table}[htbp]\centering
-\caption{Global RRP 的估计配置实验}
-\resizebox{\textwidth}{!}{\input{generated_primary_constraints.tex}}
-\end{table}
-最终规格的选择使用了这些历史结果。主模型选择依据同时包括目标收益、方法复杂度和全部合格资产的实际使用情况。实验结果可以解释实现差异，但不能直接作为统计显著性或未来有效性的证据。
-\section{实证结果}
-\subsection{五模型比较}
-\begin{table}[htbp]\centering
-\caption{共同评价区间的净绩效}
-\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}
-\end{table}
-Global RRP 净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，Sortino 为 \globalSortino，最大回撤为 \globalMaxDD，月均换手为 \globalMonthlyTurnover。结果\primaryTargetStatus{}净年化收益约 10\%、最大回撤不超过 8\% 的目标。主模型身份并不表示其各项指标都优于对照。
-\figmaybe{convex_adaptive_nav_comparison.pdf}{五模型累计净值}{fig:nav}
-\figmaybe{convex_adaptive_drawdown_comparison.pdf}{五模型历史回撤}{fig:drawdown}
-\subsection{持仓与成本}
-\figwide{primary_weights.pdf}{Global RRP 周度持仓结构}{fig:weight_path}
-平均现金类 ETF 权重为 \primaryCashMean，最高为 \primaryCashMax。资产覆盖应结合实际权重判断，不能用资产池数量替代风险分散程度。按数值检查容差 $5\times10^{-5}$ 的权重阈值，\primaryAssetsUsed{} 只 ETF 曾在合格期间形成持仓。该阈值仅用于区分求解残差，不是优化器的最低持仓约束，也不代表已满足实际交易规模。
-
-完整逐周权重、交易前漂移权重、收益、成本和资产准入记录保存在仓库 CSV 中，正文和附录不堆放逐周明细。
-\figmaybe{convex_adaptive_turnover_comparison.pdf}{五模型平均月度换手}{fig:turnover}
-\figmaybe{convex_adaptive_cvar_comparison.pdf}{五模型历史日度尾部损失}{fig:cvar}
-CVaR 在此作为历史损失统计，未作为主模型的有效约束，不把回撤表现归因于未启用的尾部风险控制。
-\subsection{年度与频率}
-\begin{table}[htbp]\centering\caption{Global RRP 自然年结果}
-\input{generated_primary_annual.tex}
-\end{table}
-最后一年仅截至样本终点，表中为年化指标。分年结果用于观察收益和风险的时间差异，不能以单一年份替代完整区间。
-\figmaybe{rebalance_frequency_sensitivity.pdf}{固定主模型参数的调仓频率比较}{fig:frequency}
-周频为研究指定日历。频率实验保持优化参数不变，其排名仅为样本内描述，不用于继续扩大搜索。
-\section{验证与研究边界}
-程序核对信息截止时间、合格资产、预算、非负权重、无杠杆暴露、交易前权重漂移、成本与日收益的一致性，并保存求解失败原因。完整历史复跑与截取预热区间的结果逐日一致，\primaryRebalances{} 次调仓均通过检查，持有资产没有缺失收益。所有正式比较使用共同评价日期。
-
-历史均值具有估计误差，协方差也可能不稳定。样本涉及中国市场上市的海外资产 ETF，基金价格还受交易时间差、汇率、折溢价及停牌影响。固定成本假设没有证明资金容量或成交可行性。
-
-机构应用还需评估负债、资本占用、久期缺口、最小交易单位及赎回压力。达到历史收益目标不等于满足这些约束，也不构成未来保证。后续验证应冻结当前规格并使用新增数据。
-\section{结论}
-Global RRP 以凸风险预算参考和凸收益风险松弛生成周频、多头、无杠杆组合。方差尺度及收益、协方差估计共同影响配置。主模型净年化收益为 \globalNetReturn，最大回撤为 \globalMaxDD，夏普为 \globalSharpe，研究目标的判定为\primaryTargetStatus。全部合格资产允许进入优化，实际参与情况通过逐期记录核验。较高换手使交易成本与执行能力成为后续验证的重点。
+\input{chapters/01_introduction.tex}
+\input{chapters/02_literature.tex}
+\input{chapters/03_optimization.tex}
+\input{chapters/04_data.tex}
+\input{chapters/05_execution.tex}
+\input{chapters/06_comparisons.tex}
+\input{chapters/07_results.tex}
+\input{chapters/08_holdings.tex}
+\input{chapters/09_institution.tex}
+\input{chapters/10_conclusion.tex}
 \clearpage
 \appendix
 \section{ETF 资产池}
 \input{generated_etf_pool_table.tex}
 \section{复现文件}
-主入口为 \texttt{scripts/run\_primary\_publication\_pipeline.py}。固定实验、模型配置、求解诊断、五模型绩效和逐周持仓均保存在仓库。主指标使用零无风险利率，数据刷新与研究日志分别记录。历史归档不作为当前模型的统计验证。
+主入口为 \texttt{scripts/run\_primary\_publication\_pipeline.py}。指定配置、求解诊断、五模型绩效和逐周持仓均保存在仓库。主指标使用零无风险利率，数据刷新与研究日志分别记录。历史归档不作为当前模型的统计验证。
+\section{符号与指标口径}
+\begin{longtable}{p{2.4cm}p{9.2cm}}
+\toprule 符号 & 含义\\\midrule
+\endfirsthead
+\toprule 符号 & 含义\\\midrule\endhead
+$\mathcal A_t$ & 调仓日前满足数据条件的合格资产集合\\
+$n_t$ & 当期合格资产数量\\
+$\mu_t$ & 20 日半衰期指数加权收益的年化估计\\
+$\Sigma_t$ & 当期收缩协方差的年化矩阵，含数值修复\\
+$\delta_t$ & 根据当期共同完整历史估计的收缩强度\\
+$q_t$ & 凸对数风险预算问题的归一化参考权重\\
+$w_t$ & 最终凸问题给出的目标资本权重\\
+$w_t^-$ & 调仓前经收益漂移后的权重\\
+$b_i$ & 当期等风险预算比例 $1/n_t$\\
+$R_t$ & 当期可行风险预算参考组合的预测收益\\
+$v_t$ & 当期等权组合的方差归一化尺度\\
+$s_t$ & 收益短缺的归一化尺度\\
+$T_t$ & 买入与卖出绝对权重变化之和\\
+$c_t$ & 按 $0.0003T_t$ 计算的约定费用\\
+$V_t$ & 日净收益复利累计的净值\\
+$D_t$ & 净值相对历史高点的下跌比例\\
+$RC_i$ & 相对于估计协方差的资产波动风险贡献\\
+\bottomrule
+\end{longtable}
+\section{复现与核对说明}
+发布入口调用指定 Global RRP 配置并重建四个对照。研究日收益保留完整列映射，论文数值由汇总 CSV 生成。宏文件负责同一数值在摘要、正文与答辩中的一致性，正文图由保存结果生成，不在绘图过程中重新估计权重。
+
+\begin{longtable}{p{3cm}p{8.6cm}}
+\toprule 记录类型 & 核对内容\\\midrule
+主模型配置 & 协方差方法、收益半衰期、窗口、年度参数、费率与评价日期\\
+求解诊断 & 估计截止日期、DCP 状态、求解状态、约束残差和预测风险\\
+日收益表 & 目标与漂移权重、换手、毛收益、成本及净收益\\
+周度摘要 & 自然周与持有期的日期、收益及样本边界标记\\
+资产参与表 & 合格周数、实际持有周数及峰值权重\\
+发布绩效表 & 五个模型在共同日期上的统一指标\\
+\bottomrule
+\end{longtable}
+
+所有逐周具体持仓仅保存在仓库 CSV 中。核对时先用权重和源收益重建毛收益，再按权重变化计算费用，最后检查净收益及跨期复利。风险预算误差应区分参考解与最终解，数值容差不应被解释为最低持仓要求。图中的权重分档只影响颜色，不影响结果。
+
+\clearpage
 \bibliographystyle{gbt7714-numeric}
 \bibliography{references}
 \clearpage

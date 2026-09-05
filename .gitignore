@@ -36,11 +36,11 @@ results/quick/
 !results/figures/showcase_parameter_timeline.png
 !results/figures/showcase_pbo_heatmap.png
 !results/figures/asset_graph_stress_timeline.png
-!results/figures/convex_adaptive_drawdown_comparison.png
-!results/figures/convex_adaptive_nav_comparison.png
-!results/figures/convex_adaptive_transaction_cost_comparison.png
-!results/figures/convex_adaptive_turnover_comparison.png
-!results/figures/convex_adaptive_cvar_comparison.png
+!results/figures/global_rrp_drawdown_comparison.png
+!results/figures/global_rrp_nav_comparison.png
+!results/figures/global_rrp_transaction_cost_comparison.png
+!results/figures/global_rrp_turnover_comparison.png
+!results/figures/global_rrp_cvar_comparison.png
 !results/figures/online_regime_timeline.png
 !results/figures/robustness_subperiod_sharpe.png
 !results/figures/robustness_subperiod_drawdown.png
@@ -95,6 +95,7 @@ results/quick/
 !results/tables/showcase_dynamic_candidate_ranking.csv
 !results/tables/asset_graph_diagnostics.csv
 !results/tables/convex_adaptive_performance_summary.csv
+!results/tables/model_performance_summary.csv
 !results/tables/convex_adaptive_solver_diagnostics.csv
 !results/tables/convex_adaptive_transaction_cost_summary.csv
 !results/tables/online_regime_diagnostics.csv
@@ -143,9 +144,10 @@ backtest/V3/*
 !results/tables/primary_*.csv
 !results/tables/primary_*.json
 !results/tables/comparison_*_returns.csv
+!results/tables/global_rrp_covariance_diagnostics.csv
 !results/figures/primary_weights.png
 !results/figures/primary_weights.pdf
-!results/figures/convex_adaptive_*_comparison.pdf
+!results/figures/global_rrp_*_comparison.pdf
 !results/figures/rebalance_frequency_sensitivity.pdf
 !results/figures/asset_graph_stress_timeline.pdf
 results/tables/*.inspect.ndjson

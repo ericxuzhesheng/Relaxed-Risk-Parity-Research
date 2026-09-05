@@ -26,6 +26,17 @@ def test_legacy_scale_remains_default():
     assert d['target_annual_return'] == .07
 
 
+def test_reference_target_is_feasible_and_ignores_legacy_multiplier():
+    _, d, _ = solve(rrp_return_target_mode="reference", m=999.)
+    assert d['target_annual_return'] == pytest.approx(d['reference_predicted_annual_return'])
+    assert d['return_target_mode'] == 'reference'
+
+
+def test_reference_target_rejects_explicit_target():
+    with pytest.raises(ValueError):
+        solve(rrp_return_target_mode="reference", rrp_target_annual_return=.05)
+
+
 @pytest.mark.parametrize('overrides', [{'rrp_variance_reference': 'unknown'}, {'rrp_target_annual_return': -1}, {'rrp_target_annual_return': float('nan')}])
 def test_invalid_parameters_fail_closed(overrides):
     with pytest.raises(ValueError):

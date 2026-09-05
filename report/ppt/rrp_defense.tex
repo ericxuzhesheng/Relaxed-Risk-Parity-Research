@@ -47,10 +47,10 @@
 \section{研究问题}
 \begin{frame}{收益目标与资产覆盖}
 \begin{itemize}
-\item 主模型为 Global RRP，历史目标为净年化约 10\%、最大回撤不超过 8\%
+\item 主模型为 Global RRP，以收益、波动、回撤、换手和成本共同评价
+\item 参数选择只使用生效日前数据，主结果按扣费后的净收益计算
 \item 30 只 ETF 均可在满足历史数据条件后进入优化
 \item 允许当期零权重，同时核查每只资产是否曾实际参与
-\item 结合收益、波动、回撤与成本判断结果，不只看夏普
 \end{itemize}
 \end{frame}
 \begin{frame}{五个模型}
@@ -63,12 +63,12 @@
 对照 & 60/40 Benchmark\\\bottomrule
 \end{tabular}
 \par\medskip
-主模型为周频，对照保留月频；频率影响另作固定参数比较。
+主模型为周频，对照保留月频；比较体现完整实施规则的差异。
 \end{frame}
 \begin{frame}{数据与评价口径}
 \begin{itemize}
 \item \evalStartDate{} 至 \evalEndDate{}，共 \primaryObservations{} 个交易日
-\item 243 日年化，无风险利率固定为零
+\item \annualizationDays{} 日年化，无风险利率固定为零
 \item 单边成本 \txCostBps{} bps，按实际买卖权重变化计费
 \item 收益保留极端观察，上市前不回填
 \item 至少 60 个有效历史观察及正方差，才能进入优化
@@ -82,7 +82,7 @@
 \]
 \begin{itemize}
 \item 对全部当期合格资产设等风险预算
-\item 240 个历史观察，采用 Ledoit--Wolf 收缩协方差
+\item 最多 \lookbackDays{} 个历史观察，采用 Ledoit--Wolf 收缩协方差
 \item 收益估计采用 20 个交易日半衰期
 \item 所有估计只使用调仓日前历史数据
 \item 正半定二次项与负对数项构成凸目标
@@ -90,36 +90,48 @@
 \end{frame}
 \begin{frame}{Global RRP 的凸松弛}
 \[
-\min_w\;\|w-q_t\|_2^2+0.10\frac{w^\mathsf{T}\Sigma_t w}{v_t}
-+1.9\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2
+\min_w\;\|w-q_t\|_2^2+\lambda_{v,t}\frac{w^\mathsf{T}\Sigma_t w}{v_t}
++\lambda_{r,t}\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2
 \]
 \[
 \mathbf1^\mathsf{T}w=1,\quad w\geq0,\quad v_t=e_t^\mathsf{T}\Sigma_t e_t.
 \]
 \begin{itemize}
 \item $e_t$ 为当期合格资产的等权组合
-\item $R_t=1.9\max(\overline{\mu}_t,0)$，沿用历史预测收益规则
+\item $R_t=\mu_t^\mathsf{T}q_t$，取当期可行参考组合的预测收益
+\item $\lambda_{v,t}$ 与 $\lambda_{r,t}$ 按年度更新并在年内冻结
 \item 多头、无杠杆；不再叠加求解后的风险缩放
 \end{itemize}
 \end{frame}
-\begin{frame}{为什么调整方差尺度}
+\begin{frame}{年度参数校准}
 \begin{columns}[T]
 \begin{column}{0.47\textwidth}
-\textcolor{holdingBlue}{\textbf{风险预算参考方差}}
+\textcolor{holdingBlue}{\textbf{候选尺度}}
 \par\medskip
-参考组合偏向低波动资产时，分母可能很小，使方差惩罚过重，配置进一步向现金集中。
+较早 252 日记录目标项量级，按三个分位点分别生成方差及收益短缺惩罚候选。
 \end{column}
 \begin{column}{0.47\textwidth}
-\textcolor{holdingRed}{\textbf{当期等权组合方差}}
+\textcolor{holdingRed}{\textbf{历史验证}}
 \par\medskip
-仍惩罚组合风险，尺度由同一历史协方差与合格资产确定；没有新增集中度百分比，也未增加杠杆。
+随后 252 日比较九组候选的扣费净夏普、相邻稳定性与换手，结果从下一年生效。
 \end{column}
 \end{columns}
-\end{frame}
-\begin{frame}{收益与协方差估计实验}
-\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_primary_constraints.tex}}
 \par\medskip
-\small 第一轮比较四项配置，第二轮检验收缩协方差与 20 日收益半衰期组合。规格选择利用历史结果。
+\small 十个年度中，每年九组候选均进入一倍标准误集合，参数没有得到唯一识别。
+\end{frame}
+\begin{frame}{Global RRP 指定配置}
+\begin{tabular}{ll}\toprule
+项目 & 设置\\\midrule
+协方差 & Ledoit--Wolf 收缩估计\\
+收益估计 & 指数加权，半衰期 20 个交易日\\
+历史窗口 & \lookbackDays{} 个观察\\
+方差尺度 & 当期等权组合方差\\
+收益目标 & 当期风险预算参考的预测收益\\
+参数更新 & 年度滚动，生效日前完成验证\\
+调仓 & 周频，多头，无杠杆\\\bottomrule
+\end{tabular}
+\par\medskip
+\small 年化与估计窗口均采用 252 日。规格仍需新增数据验证。
 \end{frame}
 \section{实证结果}
 \begin{frame}{Global RRP 主模型结果}
@@ -136,10 +148,10 @@
 \end{column}
 \begin{column}{0.49\textwidth}
 \begin{itemize}
-\item \primaryTargetStatus{}约 10\% 收益与 8\% 回撤目标
+\item 净年化收益 \globalNetReturn，年化波动 \globalVolatility，夏普 \globalSharpe
+\item 最大回撤 \globalMaxDD，月均换手 \globalMonthlyTurnover
 \item \primaryAssetsUsed{} 只 ETF 曾在合格期间形成实质持仓
-\item 净收益已扣除约定交易成本
-\item 历史表现不构成未来保证
+\item 净收益已扣除约定交易成本，历史表现不构成未来保证
 \end{itemize}
 \end{column}
 \end{columns}
@@ -149,9 +161,9 @@
 \par\medskip
 主模型周频、对照月频；所有模型使用相同评价日期和成本费率。
 \end{frame}
-\figframe{累计净值}{convex_adaptive_nav_comparison.pdf}{0.95}{五模型共同评价区间的净收益路径}
-\figframe{历史回撤}{convex_adaptive_drawdown_comparison.pdf}{0.95}{主模型最大回撤 \globalMaxDD，收益目标需要结合风险承受能力理解}
-\figframe{换手与交易成本}{convex_adaptive_turnover_comparison.pdf}{0.95}{按自然月汇总换手，主模型实际采用周频调仓}
+\figframe{累计净值}{global_rrp_nav_comparison.pdf}{0.95}{五模型共同评价区间的净收益路径}
+\figframe{历史回撤}{global_rrp_drawdown_comparison.pdf}{0.95}{主模型最大回撤 \globalMaxDD，历史结果不构成未来风险上界}
+\figframe{换手与交易成本}{global_rrp_turnover_comparison.pdf}{0.95}{按自然月汇总换手，主模型实际采用周频调仓}
 \begin{frame}{主模型持仓结构}
 \begin{columns}
 \begin{column}{0.58\textwidth}
@@ -161,27 +173,27 @@
 \begin{itemize}
 \item 平均现金权重 \primaryCashMean
 \item 最高现金权重 \primaryCashMax
+\item 现金及三只债券ETF平均合计权重 \primaryDefensiveMean
 \item 所有合格资产进入优化
 \item 零权重允许存在，不人为凑持仓
-\item 完整逐周记录保存在仓库 CSV
 \end{itemize}
 \end{column}
 \end{columns}
 \end{frame}
 \section{验证与边界}
 \begin{frame}{分自然年结果}
-\centering\input{../thesis_latex/generated_primary_annual.tex}
+\centering
+{\scriptsize\renewcommand{\arraystretch}{0.88}\input{../thesis_latex/generated_primary_annual.tex}}
 \par\medskip
 \small 最后一年仅截至 \evalEndDate，表中为年化指标。
 \end{frame}
-\figframe{固定参数的频率比较}{rebalance_frequency_sensitivity.pdf}{0.90}{只改变调仓日历，排名属于样本内描述}
 \begin{frame}{实现检查与资产参与}
 \begin{itemize}
 \item 每期检查 DCP 凸性、求解状态、预算及非负约束
 \item 信息截止时间严格早于调仓日
+\item 年度验证期末严格早于参数生效日
 \item 使用交易前漂移权重计算换手与成本
-\item 检查每只 ETF 的合格期数、持有期数与最大持仓
-\item $5\times10^{-5}$ 为数值检查阈值，不是最低持仓约束
+\item $5\times10^{-5}$ 只用于识别数值残差，不是最低持仓约束
 \end{itemize}
 \end{frame}
 \begin{frame}{研究边界}
@@ -191,6 +203,7 @@
 \item 固定成本未证明实际成交、容量与市场冲击
 \item 未处理负债、资本占用及久期缺口
 \item 资产曾被使用，不等于风险贡献充分分散
+\item 年度候选缺乏显著区分，参数不能解释为唯一最优值
 \end{itemize}
 \end{frame}
 \section{结论}
@@ -198,9 +211,9 @@
 \begin{itemize}
 \item Global RRP 采用凸优化生成周频、多头、无杠杆组合
 \item 净年化收益 \globalNetReturn，夏普 \globalSharpe
-\item 收缩协方差与较快收益估计共同参与配置
+\item 年化波动 \globalVolatility，最大回撤 \globalMaxDD
+\item 年度参数只使用生效日前数据，但统计识别仍然较弱
 \item \primaryAssetsUsed{} 只 ETF 曾形成超过数值容差的持仓
-\item 后续冻结规格，用新增数据检验稳定性
 \end{itemize}
 \end{frame}
 \begin{frame}[plain]\centering\Huge 谢谢各位老师\end{frame}

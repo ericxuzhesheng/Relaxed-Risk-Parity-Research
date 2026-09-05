@@ -6,90 +6,107 @@
 
 ### 模型与方法
 
-**Global RRP** 为周频主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为月频对照。正式比较仅包含这五个模型。
+**Global RRP** 是周频主模型。HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 是月频对照。正式结果只包含这五个模型。
 
-主模型先求凸风险预算参考，再通过凸优化平衡参考跟踪、组合方差和预测收益短缺。历史窗口为 240 个交易日，使用 Ledoit–Wolf 收缩协方差、20 日半衰期指数加权收益估计，并以当期等权组合方差归一化风险项。组合多头、无杠杆，权重由优化器直接给出。
+主模型先求凸风险预算参考 $q_t$，再平衡参考跟踪、归一化方差和预测收益短缺。收益软目标取当期参考组合的预测收益。
 
-### 绩效与解释
+$$
+R_t = μ_tᵀq_t
+$$
 
-共同评价区间为 **2018-01-02 至 2026-08-31**，保留极端收益，按 **243 日年化、rf=0、单边 3 bps** 的统一口径计算。
+历史窗口和年化口径均为252个交易日。协方差采用 Ledoit-Wolf 收缩估计，收益均值采用20日半衰期指数加权估计。组合保持多头、满仓和无杠杆。
+
+方差及收益短缺惩罚每年更新一次。每次更新先用较早的252日校准目标项尺度，再用随后252日净收益验证候选，所选参数在下一年冻结。全部步骤只读取参数生效日前的数据。
+
+### 历史结果
+
+评价区间为 **2018-01-02 至 2026-08-31**。收益保留极端观察，主指标采用 **rf=0、252日年化和单边3 bps约定成本**。
 
 | 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 10.59% | 7.62% | 1.361 | 2.102 | -7.16% | 96.76% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
+| Global RRP | 6.13% | 3.59% | 1.674 | 2.392 | -6.80% | 17.53% |
+| HRP Benchmark | 2.11% | 0.27% | 7.815 | 17.382 | -0.19% | 1.95% |
+| HERC Benchmark | 2.53% | 0.83% | 3.013 | 4.514 | -1.53% | 7.17% |
+| Equal Weight | 9.56% | 13.16% | 0.761 | 1.076 | -18.25% | 4.73% |
+| 60/40 Benchmark | 7.25% | 12.06% | 0.641 | 0.921 | -20.04% | 4.21% |
 
-数字来自[绩效表](results/tables/convex_adaptive_performance_summary.csv)。Global RRP 达到历史净年化约 10%、最大回撤不超过 8% 的研究目标。平均现金类 ETF 权重为 **15.94%**，最高为 **26.03%**。月均换手按买入与卖出金额之和计算，较高换手使成本与执行能力成为重要限制；约定成本使年化收益减少 **0.39 个百分点**。
+Global RRP 的净年化收益为 **6.13%**，夏普为 **1.674**，最大回撤为 **-6.80%**。主模型定位来自当前研究选择，不代表各项指标均优于对照。
 
-全部 30 只 ETF 都曾在合格期间形成实质持仓，允许当期零权重，不设微小持仓配额。逐期输入只使用调仓日前数据，完整历史复跑逐日一致。配置经过两轮历史估计实验筛选，属于探索性证据，仍需新增数据验证。
+日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。日利ETF、5年国债ETF、10年国债ETF和信用债ETF的平均合计权重为 **66.27%**，这一结构解释了较低波动和有限收益。30只ETF均曾在合格期间形成实质持仓，优化器仍允许单期零权重。
+
+年度验证中，每年9组候选都进入一倍夏普标准误集合，能够区分参数的年度为 **0/10**。滚动规则可以复现，现有样本没有识别出唯一惩罚系数。
 
 ### 图表
 
-![累计净值](results/figures/convex_adaptive_nav_comparison.png)
+![累计净值](results/figures/global_rrp_nav_comparison.png)
 
-五模型累计净值使用同一评价区间。
+五个模型使用相同评价日期。主模型按周调仓，对照按月调仓。
 
-![历史回撤](results/figures/convex_adaptive_drawdown_comparison.png)
+![历史回撤](results/figures/global_rrp_drawdown_comparison.png)
 
-回撤展示净值偏离历史高点的幅度，需与持仓结构共同理解。
+回撤表示净值相对历史高点的跌幅。
 
-![月均换手](results/figures/convex_adaptive_turnover_comparison.png)
+![月均换手](results/figures/global_rrp_turnover_comparison.png)
 
-换手按自然月汇总，主模型实际每周调仓。
+换手按买入和卖出绝对权重变化之和计算，并按自然月汇总。
 
-![历史尾部损失](results/figures/convex_adaptive_cvar_comparison.png)
+![历史尾部损失](results/figures/global_rrp_cvar_comparison.png)
 
-95% CVaR 描述历史日度尾部损失，未作为主模型的优化约束。
-
-![频率比较](results/figures/rebalance_frequency_sensitivity.png)
-
-频率实验保持估计方法及优化参数不变，排名仅为历史描述。
+95% CVaR 是实现收益的事后描述，主模型没有启用 CVaR 约束。
 
 ![周度持仓](results/figures/primary_weights.png)
 
 ### 数据与复现
 
-资产池为 30 只 ETF、8 类资产，另有 6 只候选资产不参与回测。缓存覆盖 2007-01-18 至 2026-08-31。资产须有至少 60 个有效历史观察及正方差，上市前不回填数据。
+资产池包含30只ETF和8类资产，另有6只候选资产不参与本次回测。缓存覆盖2007-01-18至2026-08-31。资产至少需要60个有效历史观察及正方差，上市前价格不回填。
 
-配置 `TUSHARE_TOKEN` 后运行 `python scripts/run_primary_publication_pipeline.py`。入口刷新 ETF 数据，复跑固定配置、对照及频率实验，生成表格、红蓝配色图和两份 PDF，并清理临时文件。无风险利率固定为零，不调用中债利率接口。依赖见 `requirements.txt`，PDF 编译需要 XeLaTeX 和 BibTeX。
+配置 `TUSHARE_TOKEN` 后运行 `python scripts/run_primary_publication_pipeline.py`。入口刷新ETF数据，复跑年度滚动校准及四个对照，随后生成表格、红蓝配色图和两份PDF。无风险利率固定为零，不调用中债利率接口。
 
 | 内容 | 文件 |
 |---|---|
-| 主模型参数 | [配置记录](results/tables/primary_model_configuration.json) |
-| 信息时序与约束检查 | [发布审计](results/tables/primary_publication_audit.json) |
-| 估计配置实验 | [实验结果](results/global_rrp_frontier/summary.csv) |
+| 主模型配置 | [配置记录](results/tables/primary_model_configuration.json) |
+| 发布审计 | [审计记录](results/tables/primary_publication_audit.json) |
+| 年度参数 | [参数表](results/tables/primary_parameter_schedule.csv) |
+| 候选验证 | [验证表](results/tables/primary_calibration_candidates.csv) |
 | 自然年结果 | [年度绩效](results/tables/primary_annual_summary.csv) |
-| 每周持仓与收益 | [持仓 CSV](results/tables/primary_weekly_holdings.csv) · [权重矩阵](results/tables/primary_weekly_weights.csv) · [周收益 CSV](results/tables/primary_weekly_summary.csv) |
+| 每周结果 | [持仓](results/tables/primary_weekly_holdings.csv) · [权重](results/tables/primary_weekly_weights.csv) · [周收益](results/tables/primary_weekly_summary.csv) |
 | 资产池 | [资产定义](src/asset_universe.py) |
-| 研究边界 | [模型说明](docs/MODEL_GOVERNANCE.md) |
+| 研究边界 | [模型治理](docs/MODEL_GOVERNANCE.md) |
 
-逐周明细仅保存在仓库 CSV 中，论文和答辩展示结构图，不附逐周明细表。图表提供矢量 PDF 与 300 dpi PNG。参考教材不随项目发布，旧归档不作为当前配置的验证证据。
+逐周持仓只保存在仓库CSV中，论文和答辩展示持仓结构。图表同时提供矢量PDF和300 dpi PNG。
 
 ## English
 
 ### Models and method
 
-**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. Parameter and frequency variants remain experiments within this five-model study.
+**Global RRP** is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark are monthly comparisons. These are the five models in the publication results.
 
-The primary model uses a convex risk-budget reference and a convex objective for tracking, variance and expected-return shortfall. A 240-observation window feeds Ledoit–Wolf covariance shrinkage and exponentially weighted returns with a 20-trading-day half-life. Variance is normalized by the contemporaneous equal-weight portfolio variance. The portfolio is long-only and unlevered.
+The primary model first solves for a convex risk-budget reference. A second convex problem balances reference tracking, normalized variance and expected-return shortfall. Its feasible return target equals the predicted return of the contemporaneous reference portfolio.
 
-### Performance
+$$
+R_t = μ_tᵀq_t
+$$
 
-The common period is **2018-01-02 to 2026-08-31**, with unfiltered returns, 243-day annualization, zero risk-free return and assumed 3-bp one-way costs.
+The lookback and annualization conventions both use 252 trading days. Covariance uses Ledoit-Wolf shrinkage, while expected returns use a 20-day half-life. The portfolio remains long-only, fully invested and unlevered.
+
+Variance and shortfall penalties update annually. An earlier 252-day block calibrates objective scales, the following 252-day block evaluates candidates after costs, and the selected coefficients remain fixed for the next year. Every update uses information available before its effective date.
+
+### Historical results
+
+The common period is **2018-01-02 to 2026-08-31**. Results retain extreme returns and use a zero risk-free rate, 252-day annualization and assumed 3-bp one-way costs.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 10.59% | 7.62% | 1.361 | 2.102 | -7.16% | 96.76% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
+| Global RRP | 6.13% | 3.59% | 1.674 | 2.392 | -6.80% | 17.53% |
+| HRP Benchmark | 2.11% | 0.27% | 7.815 | 17.382 | -0.19% | 1.95% |
+| HERC Benchmark | 2.53% | 0.83% | 3.013 | 4.514 | -1.53% | 7.17% |
+| Equal Weight | 9.56% | 13.16% | 0.761 | 1.076 | -18.25% | 4.73% |
+| 60/40 Benchmark | 7.25% | 12.06% | 0.641 | 0.921 | -20.04% | 4.21% |
 
-The primary model meets the historical research target of approximately 10% net annual return and no more than 8% maximum drawdown. Its average money-market weight is **15.94%**, reaching **26.03%**. Assumed costs reduce annual return by **0.39 percentage points**. Monthly turnover sums both purchases and sales; execution and capacity remain unverified.
+Global RRP records **6.13%** net annual return, a **1.674** Sharpe ratio and **-6.80%** maximum drawdown. Primary status records the designated research specification and does not imply metric dominance.
 
-All 30 ETFs receive material holdings during eligible periods. Inputs precede each rebalance, and a full-history rerun reproduces every evaluated day. Selection followed two historical estimation rounds, so these results are exploratory rather than untouched model-selection evidence.
+The money-market ETF averages **18.02%** and reaches **26.43%**. The money-market ETF and three bond ETFs together average **66.27%**. All 30 ETFs receive material weight during eligible periods, while zero weight remains allowed on any date.
 
-Run `python scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. The links above provide configurations, audit records and complete weekly CSVs. PDFs contain allocation figures without detailed holdings appendices. Archived diagnostics do not validate the current specification.
+All nine candidates fall within one Sharpe standard error in every annual validation. The procedure is reproducible, but the current sample does not identify unique penalty coefficients.
+
+Run `python scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. The linked files contain the configuration, audit, annual parameter schedule, candidate results and complete weekly holdings. Detailed holdings stay in repository CSV files rather than the thesis or defense appendix.

@@ -1,14 +1,17 @@
 # 模型选择与信息时序
 
-Global RRP 的周频配置是在查看历史结构及估计配置实验后确定的。每次调仓只使用此前数据，但这一检查无法消除事后选择规格带来的偏差。
+Global RRP 与四个对照共同构成五模型发布结果。主模型每年根据生效日前数据更新惩罚系数，年内不再改变。
 
-主模型冻结既有参数日历，取消现金与单资产集中度上限。当前发布使用零无风险利率，另列滞后中债利率的机会成本结果。正式模型共七个，约束和频率变化作为实验设置保留。
+每次年度更新使用两个连续的252日历史区间。较早区间生成候选尺度，随后区间按扣费净夏普验证九组组合。选择先保留一倍标准误范围内的候选，再检查相邻网格点，随后比较换手和季度稳定性。
+
+十个年度中，每年九组候选都进入一倍标准误集合。现有样本无法精确区分参数，年度选择主要由换手和稳定性规则决定。该结果已写入发布审计，论文和答辩不得将系数称作唯一最优值。
 
 ## 可核查证据
 
-- `results/tables/primary_model_configuration.json` 记录实际参数。
-- `results/tables/primary_publication_audit.json` 记录时序、约束与路径复现检查。
-- `results/tables/convex_adaptive_solver_diagnostics.csv` 记录每次求解。
-- `results/tables/afml_oos_selection.csv` 保存冻结参数日历。
+- `results/tables/primary_model_configuration.json` 记录完整配置和校准规则。
+- `results/tables/primary_parameter_schedule.csv` 记录年度参数及信息截止日。
+- `results/tables/primary_calibration_candidates.csv` 记录全部九十次验证结果。
+- `results/tables/primary_publication_audit.json` 记录时序与约束检查。
+- `results/tables/global_rrp_solver_diagnostics.csv` 记录每次求解。
 
-历史候选评分及过拟合诊断仅供追溯，不能直接证明当前主模型有效。后续检验应冻结模型和评价口径，使用新增数据。
+逐期输入早于调仓日，可以排除直接使用未来收益。研究者仍根据历史结果确定了当前方法，因此现有结果属于探索性证据。后续检验应冻结模型和评价口径，等待新增数据。

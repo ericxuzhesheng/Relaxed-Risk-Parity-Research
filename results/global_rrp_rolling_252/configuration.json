@@ -1,0 +1,150 @@
+{
+  "trading_days_per_year": 252,
+  "evaluation_start_date": "2018-01-02",
+  "evaluation_end_date": "2026-08-31",
+  "data_start_date": "2000-01-01",
+  "plot_start_date": "2018-01-02",
+  "lambda_pen": 1.0,
+  "optim_tol": 1e-06,
+  "optim_maxiter": 2000,
+  "asset_weight_bounds": [
+    0.0,
+    1.0
+  ],
+  "max_single_asset_weight": 1.0,
+  "bond_keywords": [
+    "\u56fd\u503a",
+    "\u4fe1\u7528\u7968",
+    "\u7f8e\u503a",
+    "\u503a"
+  ],
+  "bond_leverage_upper": 1.0,
+  "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
+  "risk_free_rate": 0.0,
+  "target_vol": 0.06,
+  "gross_exposure_cap": 1.0,
+  "turnover_cap": 0.25,
+  "transaction_cost_bps": 3.0,
+  "rebalance_frequency": "W",
+  "risk_overlay_enabled": false,
+  "trend_filter_mode": "off",
+  "lookback_days": 252,
+  "rrp_variance_reference": "equal_weight",
+  "rrp_return_target_mode": "reference",
+  "mean_estimator": "ewma",
+  "mean_ewma_halflife": 20.0,
+  "covariance_method": "ledoit_wolf",
+  "rrp_variance_penalty": 1.0,
+  "rrp_parameter_schedule": [
+    {
+      "effective_date": "2017-01-01",
+      "information_end": "2016-12-30",
+      "rrp_variance_penalty": 6.857613821666568e-12,
+      "lambda_pen": 16.54435115714024,
+      "validation_net_sharpe": 1.467300391671037,
+      "validation_annualized_turnover": 1.3296344394555841,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2018-01-01",
+      "information_end": "2017-12-29",
+      "rrp_variance_penalty": 0.14015887701622826,
+      "lambda_pen": 8.826466875257138,
+      "validation_net_sharpe": 1.6298531073147975,
+      "validation_annualized_turnover": 2.465584708960741,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2019-01-01",
+      "information_end": "2018-12-28",
+      "rrp_variance_penalty": 0.08213546706292466,
+      "lambda_pen": 24.72360050161022,
+      "validation_net_sharpe": 0.025963976088099205,
+      "validation_annualized_turnover": 1.3105967453935532,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2020-01-01",
+      "information_end": "2019-12-31",
+      "rrp_variance_penalty": 0.10123874719412941,
+      "lambda_pen": 9.38487777188476,
+      "validation_net_sharpe": 3.4330454471590492,
+      "validation_annualized_turnover": 2.085964255083031,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2021-01-01",
+      "information_end": "2020-12-31",
+      "rrp_variance_penalty": 0.11811036288596366,
+      "lambda_pen": 2.9363103766328016,
+      "validation_net_sharpe": 1.628581181351324,
+      "validation_annualized_turnover": 3.147620494951683,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2022-01-01",
+      "information_end": "2021-12-31",
+      "rrp_variance_penalty": 0.08514634490847987,
+      "lambda_pen": 2.009725534483516,
+      "validation_net_sharpe": 2.051075884551413,
+      "validation_annualized_turnover": 2.357416807156713,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2023-01-01",
+      "information_end": "2022-12-30",
+      "rrp_variance_penalty": 0.13361169914290794,
+      "lambda_pen": 8.519576274913973,
+      "validation_net_sharpe": 0.2800020590781235,
+      "validation_annualized_turnover": 1.3607683839214717,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2024-01-01",
+      "information_end": "2023-12-29",
+      "rrp_variance_penalty": 0.20223786138829122,
+      "lambda_pen": 11.520862443053058,
+      "validation_net_sharpe": 2.79559259690853,
+      "validation_annualized_turnover": 1.7658335039528716,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2025-01-01",
+      "information_end": "2024-12-31",
+      "rrp_variance_penalty": 0.1931315933826733,
+      "lambda_pen": 15.490805340765796,
+      "validation_net_sharpe": 2.547185384706488,
+      "validation_annualized_turnover": 2.609914338160839,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    },
+    {
+      "effective_date": "2026-01-01",
+      "information_end": "2025-12-31",
+      "rrp_variance_penalty": 0.15735437505504088,
+      "lambda_pen": 3.7925857433816303,
+      "validation_net_sharpe": 2.206836835802438,
+      "validation_annualized_turnover": 2.0802860270865784,
+      "candidate_count": 9,
+      "within_one_standard_error_count": 9,
+      "selected_has_eligible_neighbor": true
+    }
+  ]
+}

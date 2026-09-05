@@ -1,0 +1,15 @@
+{
+  "status": "declared_before_execution",
+  "annualization_days": 252,
+  "estimation_window_days": 252,
+  "calibration_days": 252,
+  "validation_days": 252,
+  "parameter_update": "first calendar-year rebalance; frozen within year",
+  "return_target": "predicted return of the contemporaneous feasible risk-budget reference",
+  "candidate_construction": "25th, 50th and 75th percentiles of tracking/variance and tracking/shortfall objective-term ratios from the earlier calibration block under unit penalties",
+  "selection": "one-standard-error net Sharpe set; require an adjacent qualifying grid point when available; then lowest turnover, then higher median quarterly Sharpe",
+  "cost": "3 bps per unit absolute trade weight",
+  "adaptive_grid_expansion": false,
+  "public_evaluation_start": "2018-01-02",
+  "public_evaluation_end": "2026-08-31"
+}

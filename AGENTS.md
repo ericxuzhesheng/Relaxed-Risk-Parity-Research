@@ -4,7 +4,7 @@
 
 This repository is a thesis-oriented quantitative asset allocation research project.
 
-Main research line follows convex risk-budget references, Global RRP return/risk relaxation, and historical estimation experiments for a 30-ETF universe.
+Main research line follows convex risk-budget references, a feasible expected-return target and annual prior-only penalty calibration for a 30-ETF universe.
 
 ## Core Models and Public Labels
 
@@ -20,27 +20,30 @@ Use exactly these five model names in current publication prose, tables and figu
 
 ## Main Positioning
 
-- Global RRP is weekly, long-only and unlevered. It uses 240 historical observations, Ledoit–Wolf covariance shrinkage, 20-day half-life EWMA means and equal-weight variance normalization.
-- The convex objective combines reference tracking, variance and return shortfall. Inherited coefficients are research conventions. There is no active CVaR or turnover constraint; costs are deducted from returns.
-- All eligible ETFs may participate, including zero weights on a date. Audit actual participation without artificial minimum allocations.
-- rf=0 is the only current rate convention. ChinaBond refresh is not required.
-- Configuration selection followed historical structural research and two estimation rounds. Do not claim untouched OOS selection evidence or future guarantees.
+- Global RRP is the weekly primary model. It is long-only, fully invested and unlevered.
+- The lookback and annualization conventions both use 252 trading days. Inputs use Ledoit-Wolf covariance shrinkage and 20-day half-life EWMA means.
+- The return target equals the predicted return of the contemporaneous feasible risk-budget reference. There is no fixed target multiplier.
+- Variance and shortfall penalties update annually from two strictly earlier 252-day blocks. The first block determines candidate scales and the second evaluates candidates after costs. Selected values remain fixed for the following year.
+- Every annual validation admits all nine candidates to the one-standard-error set. Report this weak identification and do not describe the selected coefficients as unique estimates.
+- All eligible ETFs may participate, including zero weights on a date. There is no artificial minimum allocation.
+- rf=0 is the current rate convention. ChinaBond refresh is not required.
+- Primary status records the designated research specification. Historical results do not imply performance dominance or future guarantees.
 
 ## Latest Core Results
 
-Always read CSV before writing numbers. Authoritative metrics are `results/tables/convex_adaptive_performance_summary.csv` and `hrp_comparison.csv`; asset statistics are in `asset_descriptive_statistics.csv`, and frequency results in `rebalance_frequency_sensitivity.csv` under the same directory.
+Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 243-day annualization and 3-bp one-way cost. Global RRP is weekly; comparisons are monthly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. Global RRP is weekly; comparisons are monthly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 10.59% | 7.62% | 1.361 | 2.102 | -7.16% | 96.76% |
-| HRP Benchmark | 2.03% | 0.26% | 7.674 | 17.069 | -0.19% | 1.95% |
-| HERC Benchmark | 2.44% | 0.82% | 2.958 | 4.432 | -1.53% | 7.17% |
-| Equal Weight | 9.21% | 12.92% | 0.747 | 1.057 | -18.25% | 4.73% |
-| 60/40 Benchmark | 6.98% | 11.84% | 0.629 | 0.905 | -20.04% | 4.21% |
+| Global RRP | 6.13% | 3.59% | 1.674 | 2.392 | -6.80% | 17.53% |
+| HRP Benchmark | 2.11% | 0.27% | 7.815 | 17.382 | -0.19% | 1.95% |
+| HERC Benchmark | 2.53% | 0.83% | 3.013 | 4.514 | -1.53% | 7.17% |
+| Equal Weight | 9.56% | 13.16% | 0.761 | 1.076 | -18.25% | 4.73% |
+| 60/40 Benchmark | 7.25% | 12.06% | 0.641 | 0.921 | -20.04% | 4.21% |
 
-Primary average money-market weight is 15.94%, maximum 26.03%. All 30 ETFs were materially held. Full-history verification, parameters and diagnostics are saved with the publication audit. Historical archived tables are not current-model validation.
+Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.27%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
 ---
 
@@ -151,13 +154,12 @@ This removes: `__pycache__` directories, `.pytest_cache`, `.mypy_cache`, `.ruff_
 
 Use these figure embeds when files exist:
 
-- `results/figures/convex_adaptive_nav_comparison.png`
-- `results/figures/convex_adaptive_drawdown_comparison.png`
-- `results/figures/convex_adaptive_turnover_comparison.png`
-- `results/figures/convex_adaptive_cvar_comparison.png`
-- `results/figures/rebalance_frequency_sensitivity.png`
+- `results/figures/global_rrp_nav_comparison.png`
+- `results/figures/global_rrp_drawdown_comparison.png`
+- `results/figures/global_rrp_turnover_comparison.png`
+- `results/figures/global_rrp_cvar_comparison.png`
 
-Figures must use the current primary publication outputs. Explain NAV, drawdown, turnover and CVaR together with the money-market weight. Weekly is the designated main frequency; frequency rankings are descriptive, not proof of optimality. Use `scripts/run_primary_publication_pipeline.py` to reproduce the current publication.
+Figures must use the current primary publication outputs. Explain NAV, drawdown, turnover and CVaR together with the money-market weight. Only the designated weekly specification is published; other experiment results remain archival. Use `scripts/run_primary_publication_pipeline.py` to reproduce the current publication.
 
 ---
 

@@ -1,19 +1,9 @@
-# 收益与风险归因
+# 资产配置解释
 
-## 中文
+Global RRP 的历史净年化收益为 6.13%，年化波动为 3.59%，夏普为 1.674，最大回撤为 -6.80%。低波动结果需要结合资本结构理解。日利ETF与三只债券ETF的平均合计权重约为66.27%，防御性配置限制了组合收益，也降低了回撤。
 
-归因用于解释七个正式模型的收益来源。它读取既有权重和收益，不参与调仓。
+模型每周调仓，使用252日窗口、Ledoit-Wolf收缩协方差和20日半衰期收益估计。收益目标取当期风险预算参考组合的预测收益。方差及收益短缺惩罚每年根据生效日前两个历史区间更新，年内保持不变。
 
-收益归因按资产类别分解实际收益，风险归因使用协方差贡献和压力期损失。因子代理取自同一 ETF 池，缺失类别由 `available_factors` 记录。这些代理无法替代外部因子检验。
+十个年度中，每年九组候选都进入一倍夏普标准误集合。现有结果不能证明某一组惩罚系数具有唯一优势。主模型定位表示论文围绕同一条可复现路径展开，不代表参数已经精确识别。
 
-Improved Convex Adaptive Global RRP 的解释应结合现金集中度、风险预算参考和换手约束。当前 CVaR 惩罚为零，不能将其表现归因于尾部风险惩罚。Global RRP 与 Convex Adaptive Global RRP 提供配置方法上的对照。
-
-归档回归系数未用于当前主模型的结论。重新引用前，应按当前收益路径、样本和口径运行归因，并核对输出。
-
-## English
-
-Attribution explains returns for the seven published models and does not generate weights. Return contributions use realized holdings and asset returns. Risk contributions use covariance and stress-period losses.
-
-Factor proxies come from the same ETF universe. Missing groups are recorded in `available_factors`. Their interpretation depends on the sample and available assets.
-
-The primary model has no active CVaR penalty. Its results should be interpreted through cash concentration, the risk-budget reference and turnover controls. Archived regression coefficients require a rerun on current paths before use.
+全部30只ETF都曾在合格期间形成实质持仓。单期零权重仍然允许存在，资产数量也不能直接替代风险来源分散程度。评价持仓时应同时查看资本权重、共同风险暴露和交易成本。

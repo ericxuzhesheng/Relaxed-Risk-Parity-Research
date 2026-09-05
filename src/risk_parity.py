@@ -200,11 +200,22 @@ def _solve_relaxed_exposure(
         variance_scale = max(float(equal_weight @ sigma @ equal_weight), 1e-12)
     objective_terms = [cp.sum_squares(weights - reference)]
     target_return = float(config.get("m", 1.0)) * max(float(R_base), 0.0)
-    if config.get("rrp_target_annual_return") is not None:
+    target_mode = config.get("rrp_return_target_mode", "legacy")
+    if target_mode not in {"legacy", "reference"}:
+        raise ValueError("rrp_return_target_mode must be legacy or reference")
+    if target_mode == "reference":
+        if config.get("rrp_target_annual_return") is not None:
+            raise ValueError("reference target cannot be combined with an explicit return target")
+        target_return = float(expected_returns @ reference)
+    elif config.get("rrp_target_annual_return") is not None:
         target_return = float(config["rrp_target_annual_return"])
         if not np.isfinite(target_return) or target_return < 0:
             raise ValueError("rrp_target_annual_return must be finite and nonnegative")
-    return_scale = max(abs(target_return), float(np.max(np.abs(expected_returns))), 1e-3)
+    return_scale = max(
+        abs(target_return),
+        float(np.max(np.abs(expected_returns))),
+        float(np.finfo(float).eps),
+    )
     if is_relaxed:
         variance_penalty = float(config.get("rrp_variance_penalty", 0.10))
         shortfall_penalty = float(config.get("lambda_pen", 1.9))
@@ -259,6 +270,12 @@ def _solve_relaxed_exposure(
         "final_max_risk_budget_error": _risk_budget_error(base, sigma),
         "predicted_annual_return": predicted_return,
         "target_annual_return": target_return,
+        "return_target_mode": target_mode,
+        "reference_predicted_annual_return": float(expected_returns @ reference),
+        "return_scale": return_scale,
+        "objective_tracking": float(np.sum((base - reference) ** 2)),
+        "objective_variance_normalized": float(active @ sigma @ active / variance_scale),
+        "objective_shortfall_normalized": float(max(target_return - predicted_return, 0.0) ** 2 / return_scale ** 2) if is_relaxed else 0.0,
         "variance_reference": variance_reference,
         "variance_scale": variance_scale,
         "return_shortfall": max(target_return - predicted_return, 0.0) if is_relaxed else 0.0,
