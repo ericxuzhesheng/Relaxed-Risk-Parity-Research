@@ -97,7 +97,7 @@ $$
 
 ### 历史结果与研究判断
 
-评价区间为 **2018-01-02 至 2026-08-31**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
+评价区间为 **2018-01-02 至 2026-09-11**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
 
 {zh_table}
 
@@ -146,7 +146,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-08-31**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-11**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -227,7 +227,7 @@ Penalty calibration uses two strictly earlier 252-day blocks. The first supplies
 
 ### Historical results and interpretation
 
-The evaluation period is **2018-01-02 to 2026-08-31**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
+The evaluation period is **2018-01-02 to 2026-09-11**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
 
 {en_table}
 
@@ -252,7 +252,7 @@ All 30 ETFs receive material allocations during eligible periods. The [holdings 
 
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-08-31**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-09-11**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 
@@ -314,7 +314,7 @@ Use exactly these five model names in current publication prose, tables and figu
 
 Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-08-31, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-09-11, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 {en_table}
 
@@ -344,7 +344,7 @@ All nine candidates enter the one-standard-error set in every annual validation.
 
 ## Data and evidence
 
-Evaluation spans 2018-01-02 through 2026-08-31 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
+Evaluation spans 2018-01-02 through 2026-09-11 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
 
 The historical path records {primary.net_annual_return:.2%} net annual return, {primary.annualized_volatility:.2%} annual volatility, a {primary.sharpe_ratio:.3f} Sharpe ratio and {primary.max_drawdown:.2%} maximum drawdown. All {int(usage.ever_used.sum())} ETFs receive material allocations during eligible periods.
 

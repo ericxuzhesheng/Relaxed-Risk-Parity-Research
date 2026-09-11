@@ -4,7 +4,7 @@
   "configuration": {
     "trading_days_per_year": 252,
     "evaluation_start_date": "2018-01-02",
-    "evaluation_end_date": "2026-08-31",
+    "evaluation_end_date": "2026-09-11",
     "data_start_date": "2000-01-01",
     "plot_start_date": "2018-01-02",
     "lambda_pen": 1.0,
@@ -164,7 +164,7 @@
     "cost": "3 bps per unit absolute trade weight",
     "adaptive_grid_expansion": false,
     "public_evaluation_start": "2018-01-02",
-    "public_evaluation_end": "2026-08-31"
+    "public_evaluation_end": "2026-09-11"
   },
   "selection": "Annual penalties use strictly earlier calibration and validation blocks. All nine candidates were within one Sharpe standard error in every year, so the data do not identify unique coefficients. Primary status records the designated research specification."
 }

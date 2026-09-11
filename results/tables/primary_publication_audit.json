@@ -18,8 +18,8 @@
   "parameter_selection_informative_years": 0,
   "parameter_selection_years": 10,
   "all_eligible_assets_ever_used": true,
-  "daily_observations": 2102,
-  "rebalance_count": 444,
+  "daily_observations": 2111,
+  "rebalance_count": 445,
   "publication_rebalance_frequency": "W",
   "common_rebalance_calendar": true,
   "risk_free_rate": 0.0,
@@ -51,10 +51,10 @@
       "summary_metrics_recomputed": true
     },
     "evaluation_start": "2018-01-02",
-    "evaluation_end": "2026-08-31",
-    "daily_observations": 2102,
-    "rebalance_count": 444,
-    "solver_count": 444,
+    "evaluation_end": "2026-09-11",
+    "daily_observations": 2111,
+    "rebalance_count": 445,
+    "solver_count": 445,
     "covariance_observations_min": 60,
     "covariance_observations_max": 252,
     "maximum_constraint_violation": 1.6194795504631543e-11,
@@ -62,12 +62,12 @@
     "maximum_weight": 0.2643015993956597,
     "parameter_selection_informative_years": 0,
     "recomputed_metrics": {
-      "net_annual_return": 0.06127952054550323,
-      "gross_annual_return": 0.061975676740957164,
-      "annualized_volatility": 0.03593529145978194,
-      "sharpe_ratio": 1.6740262034554598,
+      "net_annual_return": 0.060854198441065765,
+      "gross_annual_return": 0.06154787118501903,
+      "annualized_volatility": 0.03591277895934505,
+      "sharpe_ratio": 1.663880172921881,
       "max_drawdown": -0.0680145302663665,
-      "total_return": 0.6423026597163572
+      "total_return": 0.6402777256071777
     }
   }
 }

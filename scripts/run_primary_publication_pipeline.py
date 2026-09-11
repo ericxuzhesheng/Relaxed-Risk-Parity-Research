@@ -72,7 +72,7 @@ def main():
     records = []
     python = sys.executable
     commands = [
-        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260831"],
+        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260911"],
         [python, "scripts/run_global_rrp_rolling_calibration.py"],
         [python, "scripts/verify_global_rrp_rolling_calibration.py"],
         [python, "scripts/run_asset_descriptive_statistics.py"],

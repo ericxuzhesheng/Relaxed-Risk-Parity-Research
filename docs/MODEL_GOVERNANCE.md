@@ -16,9 +16,9 @@ All nine candidates enter the one-standard-error set in every annual validation.
 
 ## Data and evidence
 
-Evaluation spans 2018-01-02 through 2026-08-31 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
+Evaluation spans 2018-01-02 through 2026-09-11 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
 
-The historical path records 6.13% net annual return, 3.59% annual volatility, a 1.674 Sharpe ratio and -6.80% maximum drawdown. All 30 ETFs receive material allocations during eligible periods.
+The historical path records 6.09% net annual return, 3.59% annual volatility, a 1.664 Sharpe ratio and -6.80% maximum drawdown. All 30 ETFs receive material allocations during eligible periods.
 
 Rebalance inputs precede the trading date. Saved daily returns reconcile target weights, drifted weights, turnover and costs. The backtest does not establish actual execution prices, market impact or capacity. Historical design choices also prevent an untouched model-selection claim.
 
