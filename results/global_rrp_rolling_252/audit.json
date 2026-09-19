@@ -23,22 +23,22 @@
     "summary_metrics_recomputed": true
   },
   "evaluation_start": "2018-01-02",
-  "evaluation_end": "2026-09-11",
-  "daily_observations": 2111,
-  "rebalance_count": 445,
-  "solver_count": 445,
+  "evaluation_end": "2026-09-18",
+  "daily_observations": 2116,
+  "rebalance_count": 446,
+  "solver_count": 446,
   "covariance_observations_min": 60,
   "covariance_observations_max": 252,
-  "maximum_constraint_violation": 1.6194795504631543e-11,
+  "maximum_constraint_violation": 1.8016491076799926e-13,
   "minimum_weight": 0.0,
-  "maximum_weight": 0.2643015993956597,
+  "maximum_weight": 0.2643007805840538,
   "parameter_selection_informative_years": 0,
   "recomputed_metrics": {
-    "net_annual_return": 0.060854198441065765,
-    "gross_annual_return": 0.06154787118501903,
-    "annualized_volatility": 0.03591277895934505,
-    "sharpe_ratio": 1.663880172921881,
-    "max_drawdown": -0.0680145302663665,
-    "total_return": 0.6402777256071777
+    "net_annual_return": 0.060699864051660946,
+    "gross_annual_return": 0.061392220781169016,
+    "annualized_volatility": 0.03588947768045737,
+    "sharpe_ratio": 1.660878508076565,
+    "max_drawdown": -0.0680142288831731,
+    "total_return": 0.640196439149862
   }
 }
