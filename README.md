@@ -10,7 +10,7 @@
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
-当前样本中，Global RRP 的净年化收益为 **6.07%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
+当前样本中，Global RRP 的净年化收益为 **6.05%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
 
 ### 快速阅读与证据入口
 
@@ -55,19 +55,19 @@ $$
 
 ### 历史结果与研究判断
 
-评价区间为 **2018-01-02 至 2026-09-18**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
+评价区间为 **2018-01-02 至 2026-09-24**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
 
 | 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.07% | 3.59% | 1.661 | 2.373 | -6.80% | 17.40% |
-| HRP Benchmark | 2.10% | 0.27% | 7.828 | 17.376 | -0.19% | 3.52% |
-| HERC Benchmark | 2.53% | 0.81% | 3.092 | 4.657 | -1.57% | 15.92% |
-| Equal Weight | 9.22% | 13.13% | 0.738 | 1.044 | -18.23% | 8.80% |
-| 60/40 Benchmark | 6.98% | 12.06% | 0.620 | 0.891 | -20.46% | 7.66% |
+| Global RRP | 6.05% | 3.59% | 1.656 | 2.366 | -6.80% | 17.41% |
+| HRP Benchmark | 2.10% | 0.26% | 7.835 | 17.392 | -0.19% | 3.52% |
+| HERC Benchmark | 2.53% | 0.81% | 3.091 | 4.655 | -1.57% | 15.92% |
+| Equal Weight | 9.09% | 13.12% | 0.729 | 1.031 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.86% | 12.06% | 0.611 | 0.877 | -20.46% | 7.67% |
 
 Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
-日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.31%**。这一持仓结构为理解较低波动提供了依据，尚不能单独证明优化方法带来了多少风险改善。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
+日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.32%**。这一持仓结构为理解较低波动提供了依据，尚不能单独证明优化方法带来了多少风险改善。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
 
 年度校准中，每年的九组候选均进入一倍标准误集合，有区分力的年度为 **0/10**。因此，当前样本不足以识别唯一惩罚系数，最终选择更多依赖换手和稳定性规则。
 
@@ -89,7 +89,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ![五个周频模型的月均换手](results/figures/global_rrp_turnover_comparison.png)
 
-换手按买卖绝对权重变化之和计算，再按自然月汇总。Global RRP 的月均换手为 **17.40%**，低波动并不意味着低交易需求。回测按单边3 bps扣费，实际冲击成本仍需单独检验。
+换手按买卖绝对权重变化之和计算，再按自然月汇总。Global RRP 的月均换手为 **17.41%**，低波动并不意味着低交易需求。回测按单边3 bps扣费，实际冲击成本仍需单独检验。
 
 #### 历史尾部损失
 
@@ -110,7 +110,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-18**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-24**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -152,7 +152,7 @@ python scripts/run_primary_publication_pipeline.py
 
 Can a risk-budget portfolio balance return and diversification while remaining long-only, fully invested and unlevered? This project studies **30 China-listed ETFs** with domestic and international exposures. It adjusts weights around a risk-budget reference and compares returns, drawdowns and trading costs under a common weekly backtest.
 
-**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **6.07%** net annual return, **3.59%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
+**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **6.05%** net annual return, **3.59%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
 
 ### Reading guide and evidence
 
@@ -191,19 +191,19 @@ Penalty calibration uses two strictly earlier 252-day blocks. The first supplies
 
 ### Historical results and interpretation
 
-The evaluation period is **2018-01-02 to 2026-09-18**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
+The evaluation period is **2018-01-02 to 2026-09-24**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.07% | 3.59% | 1.661 | 2.373 | -6.80% | 17.40% |
-| HRP Benchmark | 2.10% | 0.27% | 7.828 | 17.376 | -0.19% | 3.52% |
-| HERC Benchmark | 2.53% | 0.81% | 3.092 | 4.657 | -1.57% | 15.92% |
-| Equal Weight | 9.22% | 13.13% | 0.738 | 1.044 | -18.23% | 8.80% |
-| 60/40 Benchmark | 6.98% | 12.06% | 0.620 | 0.891 | -20.46% | 7.66% |
+| Global RRP | 6.05% | 3.59% | 1.656 | 2.366 | -6.80% | 17.41% |
+| HRP Benchmark | 2.10% | 0.26% | 7.835 | 17.392 | -0.19% | 3.52% |
+| HERC Benchmark | 2.53% | 0.81% | 3.091 | 4.655 | -1.57% | 15.92% |
+| Equal Weight | 9.09% | 13.12% | 0.729 | 1.031 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.86% | 12.06% | 0.611 | 0.877 | -20.46% | 7.67% |
 
 Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
 
-The money-market ETF averages **18.02%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.31%**. This allocation helps explain the low volatility; isolating the optimizer's contribution requires further comparison. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
+The money-market ETF averages **18.02%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.32%**. This allocation helps explain the low volatility; isolating the optimizer's contribution requires further comparison. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
 
 All nine candidates enter the one-standard-error set in every annual validation. There are **0/10** informative years, so the sample does not identify unique penalty coefficients. Turnover and stability rules play a larger role in the final selection.
 
@@ -222,7 +222,7 @@ All 30 ETFs receive material allocations during eligible periods. The [holdings 
 
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-09-18**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-09-24**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 

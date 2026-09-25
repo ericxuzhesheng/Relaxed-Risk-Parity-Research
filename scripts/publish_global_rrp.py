@@ -232,6 +232,8 @@ def main():
         "primaryAssetsUsed": str(int(usage.ever_used.sum())),
         "primarySelectionInformativeYears": str(audit["parameter_selection_informative_years"]),
         "primaryParameterYears": str(audit["parameter_selection_years"]),
+        "primaryLatestYearReturn": pct(annual.iloc[-1].net_annual_return),
+        "primaryLatestYearCumulativeReturn": pct(annual.iloc[-1].total_return),
         "primaryReturnTargetDef": (
             r"$R_t=\mu_t^\mathsf{T}q_t$，即当期可行风险预算参考的预测收益"
         ),
