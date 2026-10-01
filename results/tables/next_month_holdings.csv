@@ -1,20 +1,31 @@
-holding_month,as_of_date,model,selected_candidate_id,etf,ticker,asset_class,weight,weight_pct
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,日利ETF,511880.SH,money market,0.7994381049,79.9438104883
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,信用债ETF,511030.SH,credit bond,0.0543760688,5.4376068771
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,5年国债ETF,511010.SH,government bond,0.0372423899,3.7242389912
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,10年国债ETF,511260.SH,government bond,0.0256163292,2.5616329171
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,标普500ETF,513500.SH,global equity,0.0075017006,0.7501700616
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,纳指ETF,159941.SZ,global equity,0.0074581217,0.7458121683
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,红利ETF,510880.SH,china equity dividend,0.0070763598,0.7076359837
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,原油ETF,162411.SZ,commodity,0.0066974452,0.6697445230
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,恒生ETF,159920.SZ,hong kong equity,0.0065653343,0.6565334343
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,欧洲ETF,513030.SH,global equity,0.0065282056,0.6528205607
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,沪深300ETF,510300.SH,china equity,0.0059929494,0.5992949372
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,创业板ETF,159915.SZ,china equity,0.0058600794,0.5860079438
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,黄金ETF,518880.SH,commodity,0.0057940929,0.5794092878
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,中证500ETF,510500.SH,china equity,0.0056081226,0.5608122584
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,证券ETF,512880.SH,china finance,0.0055790463,0.5579046263
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,军工ETF,512660.SH,china defense,0.0047291576,0.4729157623
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,消费ETF,159928.SZ,china consumer,0.0037152857,0.3715285731
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,白银LOF,161226.SZ,commodity,0.0027033840,0.2703383967
-2026-09,2026-08-31,Improved Convex Adaptive Global RRP,candidate_03,中证1000ETF,512100.SH,china equity,0.0015178221,0.1517822091
+﻿holding_month,as_of_date,rebalance_date,model,allocation_type,etf,ticker,asset_class,weight,weight_pct
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,日利ETF,511880.SH,money market,0.1868106488,18.6810648800
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,信用债ETF,511030.SH,credit bond,0.1807884549,18.0788454936
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,5年国债ETF,511010.SH,government bond,0.1768780834,17.6878083359
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,10年国债ETF,511260.SH,government bond,0.1767552419,17.6755241904
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,豆粕ETF,159985.SZ,commodity,0.0359310537,3.5931053651
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,能源化工期货ETF,159981.SZ,commodity,0.0302721007,3.0272100711
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,红利ETF,510880.SH,china equity dividend,0.0281371907,2.8137190713
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,消费ETF,159928.SZ,china consumer,0.0276929408,2.7692940845
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,可转债ETF,511380.SH,convertible bond,0.0276851812,2.7685181158
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,标普500ETF,513500.SH,global equity,0.0221946862,2.2194686249
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,欧洲ETF,513030.SH,global equity,0.0203900951,2.0390095131
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,恒生ETF,159920.SZ,hong kong equity,0.0141948232,1.4194823249
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,纳指ETF,159941.SZ,global equity,0.0117858658,1.1785865837
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,沪深300ETF,510300.SH,china equity,0.0116900928,1.1690092752
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,原油ETF,162411.SZ,commodity,0.0112764045,1.1276404496
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,证券ETF,512880.SH,china finance,0.0101072806,1.0107280632
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,有色金属期货ETF,159980.SZ,commodity,0.0078153858,0.7815385762
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,中证2000ETF,563300.SH,china equity,0.0070329243,0.7032924280
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,军工ETF,512660.SH,china defense,0.0048204906,0.4820490601
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,中证1000ETF,512100.SH,china equity,0.0030291551,0.3029155120
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,黄金ETF,518880.SH,commodity,0.0024389187,0.2438918736
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,煤炭ETF,515220.SH,commodity,0.0008166923,0.0816692345
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,半导体ETF,512480.SH,china tech equity,0.0006825581,0.0682558105
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,科创50ETF,588000.SH,china tech equity,0.0004942937,0.0494293721
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,新能源ETF,516160.SH,china new energy,0.0002745305,0.0274530542
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,中证500ETF,510500.SH,china equity,0.0000023723,0.0002372252
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,日经225ETF,513880.SH,global equity,0.0000021640,0.0002163963
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,创业板ETF,159915.SZ,china equity,0.0000002660,0.0000266027
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,人工智能ETF,159819.SZ,china tech equity,0.0000000986,0.0000098551
+2026-10,2026-09-30,2026-10-09,Global RRP,initial_forecast_update_weekly,白银LOF,161226.SZ,commodity,0.0000000056,0.0000005572

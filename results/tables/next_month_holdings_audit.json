@@ -1,0 +1,18 @@
+{
+  "status": "passed",
+  "model": "Global RRP",
+  "holding_month": "2026-10",
+  "information_cutoff": "2026-09-30",
+  "rebalance_date": "2026-10-09",
+  "forecast_only": true,
+  "future_realized_returns_used": false,
+  "refresh_at_next_weekly_rebalance": true,
+  "estimation_observations": 252,
+  "asset_count": 30,
+  "weight_sum": 1.0000000000000013,
+  "selected_variance_penalty": 0.15735255343817647,
+  "selected_shortfall_penalty": 3.7925255596863745,
+  "max_constraint_violation": 4.008893622972591e-14,
+  "solver_success": true,
+  "problem_is_dcp": true
+}

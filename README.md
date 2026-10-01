@@ -10,7 +10,7 @@
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
-当前样本中，Global RRP 的净年化收益为 **6.05%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
+当前样本中，Global RRP 的净年化收益为 **6.03%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
 
 ### 快速阅读与证据入口
 
@@ -55,15 +55,15 @@ $$
 
 ### 历史结果与研究判断
 
-评价区间为 **2018-01-02 至 2026-09-24**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
+评价区间为 **2018-01-02 至 2026-09-30**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
 
 | 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.05% | 3.59% | 1.656 | 2.366 | -6.80% | 17.41% |
-| HRP Benchmark | 2.10% | 0.26% | 7.835 | 17.392 | -0.19% | 3.52% |
-| HERC Benchmark | 2.53% | 0.81% | 3.091 | 4.655 | -1.57% | 15.92% |
-| Equal Weight | 9.09% | 13.12% | 0.729 | 1.031 | -18.23% | 8.82% |
-| 60/40 Benchmark | 6.86% | 12.06% | 0.611 | 0.877 | -20.46% | 7.67% |
+| Global RRP | 6.03% | 3.59% | 1.652 | 2.359 | -6.80% | 17.41% |
+| HRP Benchmark | 2.10% | 0.26% | 7.853 | 17.447 | -0.19% | 3.54% |
+| HERC Benchmark | 2.53% | 0.81% | 3.090 | 4.655 | -1.57% | 15.94% |
+| Equal Weight | 8.91% | 13.12% | 0.716 | 1.012 | -18.23% | 8.84% |
+| 60/40 Benchmark | 6.70% | 12.06% | 0.598 | 0.858 | -20.46% | 7.69% |
 
 Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
@@ -108,9 +108,11 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 图表采用红蓝配色，同时提供同名矢量PDF和300 dpi PNG。
 
+[下月初始持仓](results/tables/next_month_holdings.csv)使用最新收盘信息求解，保留全部30只ETF及零权重。该结果为下一次周度调仓的预估配置，正式决策仍须纳入届时新增行情；信息截止日、年度参数与求解核验见[持仓审计](results/tables/next_month_holdings_audit.json)。
+
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-24**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-30**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -152,7 +154,7 @@ python scripts/run_primary_publication_pipeline.py
 
 Can a risk-budget portfolio balance return and diversification while remaining long-only, fully invested and unlevered? This project studies **30 China-listed ETFs** with domestic and international exposures. It adjusts weights around a risk-budget reference and compares returns, drawdowns and trading costs under a common weekly backtest.
 
-**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **6.05%** net annual return, **3.59%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
+**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **6.03%** net annual return, **3.59%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
 
 ### Reading guide and evidence
 
@@ -191,15 +193,15 @@ Penalty calibration uses two strictly earlier 252-day blocks. The first supplies
 
 ### Historical results and interpretation
 
-The evaluation period is **2018-01-02 to 2026-09-24**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
+The evaluation period is **2018-01-02 to 2026-09-30**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.05% | 3.59% | 1.656 | 2.366 | -6.80% | 17.41% |
-| HRP Benchmark | 2.10% | 0.26% | 7.835 | 17.392 | -0.19% | 3.52% |
-| HERC Benchmark | 2.53% | 0.81% | 3.091 | 4.655 | -1.57% | 15.92% |
-| Equal Weight | 9.09% | 13.12% | 0.729 | 1.031 | -18.23% | 8.82% |
-| 60/40 Benchmark | 6.86% | 12.06% | 0.611 | 0.877 | -20.46% | 7.67% |
+| Global RRP | 6.03% | 3.59% | 1.652 | 2.359 | -6.80% | 17.41% |
+| HRP Benchmark | 2.10% | 0.26% | 7.853 | 17.447 | -0.19% | 3.54% |
+| HERC Benchmark | 2.53% | 0.81% | 3.090 | 4.655 | -1.57% | 15.94% |
+| Equal Weight | 8.91% | 13.12% | 0.716 | 1.012 | -18.23% | 8.84% |
+| 60/40 Benchmark | 6.70% | 12.06% | 0.598 | 0.858 | -20.46% | 7.69% |
 
 Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
 
@@ -220,9 +222,11 @@ The shared [figure section](#图表与持仓解释) presents four complementary 
 
 All 30 ETFs receive material allocations during eligible periods. The [holdings chart](results/figures/primary_weights.png) shows the structure, while [weekly holdings](results/tables/primary_weekly_holdings.csv), [weights](results/tables/primary_weekly_weights.csv) and [weekly summaries](results/tables/primary_weekly_summary.csv) retain the detailed record. Every decision includes all 30 assets and sample-boundary flags. Figures use a red-blue palette with matching vector PDF and 300-dpi PNG files.
 
+The [next month's initial allocation](results/tables/next_month_holdings.csv) uses the latest observed close and includes all 30 ETFs, including zero weights. It is a forecast for the next weekly decision, which must incorporate newly available data before execution. The [holdings audit](results/tables/next_month_holdings_audit.json) records the information cutoff, annual penalties and solver checks.
+
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-09-24**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-09-30**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 
