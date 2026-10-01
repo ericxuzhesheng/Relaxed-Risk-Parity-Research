@@ -144,6 +144,8 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 图表采用红蓝配色，同时提供同名矢量PDF和300 dpi PNG。
 
+[下月初始持仓](results/tables/next_month_holdings.csv)使用最新收盘信息求解，保留全部30只ETF及零权重。该结果为下一次周度调仓的预估配置，正式决策仍须纳入届时新增行情；信息截止日、年度参数与求解核验见[持仓审计](results/tables/next_month_holdings_audit.json)。
+
 ### 数据与复现
 
 资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-09-30**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
@@ -249,6 +251,8 @@ The shared [figure section](#图表与持仓解释) presents four complementary 
 | [95% daily CVaR](results/figures/global_rrp_cvar_comparison.png) | Realized tail-loss description; CVaR is not an active optimization constraint |
 
 All 30 ETFs receive material allocations during eligible periods. The [holdings chart](results/figures/primary_weights.png) shows the structure, while [weekly holdings](results/tables/primary_weekly_holdings.csv), [weights](results/tables/primary_weekly_weights.csv) and [weekly summaries](results/tables/primary_weekly_summary.csv) retain the detailed record. Every decision includes all 30 assets and sample-boundary flags. Figures use a red-blue palette with matching vector PDF and 300-dpi PNG files.
+
+The [next month's initial allocation](results/tables/next_month_holdings.csv) uses the latest observed close and includes all 30 ETFs, including zero weights. It is a forecast for the next weekly decision, which must incorporate newly available data before execution. The [holdings audit](results/tables/next_month_holdings_audit.json) records the information cutoff, annual penalties and solver checks.
 
 ### Data and reproduction
 

@@ -78,6 +78,7 @@ def main():
         [python, "scripts/run_asset_descriptive_statistics.py"],
         [python, "scripts/publish_global_rrp.py"],
         [python, "scripts/export_primary_weekly_holdings.py"],
+        [python, "scripts/export_next_month_holdings.py", "--rebalance-date", "2026-10-09"],
         [python, "scripts/render_publication_figures.py"],
         [python, "scripts/sync_global_rrp_docs.py"],
     ]
