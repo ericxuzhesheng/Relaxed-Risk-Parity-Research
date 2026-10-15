@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from scripts.export_next_month_holdings import build_next_month_holdings
+from scripts.export_next_month_holdings import build_holdings_forecast, build_next_month_holdings
 from scripts.run_global_rrp_rolling_calibration import BASE
 from src.asset_universe import ETF_UNIVERSE
 from src.utils import get_config
@@ -63,3 +63,25 @@ def test_reject_incomplete_estimation_window():
     returns, config = sample()
     with pytest.raises(ValueError, match="Insufficient history"):
         build_next_month_holdings(returns.tail(251), config, "2026-10-09")
+
+
+def test_latest_forecast_accepts_the_next_weekly_decision_in_the_same_month():
+    returns, config = sample()
+    returns.index = pd.bdate_range(end="2026-10-14", periods=len(returns))
+    holdings, audit = build_holdings_forecast(returns, config, "2026-10-16")
+    assert holdings.as_of_date.eq("2026-10-14").all()
+    assert holdings.rebalance_date.eq("2026-10-16").all()
+    assert holdings.holding_month.eq("2026-10").all()
+    assert holdings.allocation_type.eq("weekly_target_forecast").all()
+    assert len(holdings) == 30
+    assert holdings.weight.sum() == pytest.approx(1.0)
+    assert audit["information_cutoff"] == "2026-10-14"
+    assert audit["selected_variance_penalty"] == 0.15
+    assert audit["selected_shortfall_penalty"] == 3.8
+
+
+@pytest.mark.parametrize("decision", ["2026-09-29", "2026-09-30", "NaT"])
+def test_latest_forecast_rejects_nonfuture_decision(decision):
+    returns, config = sample()
+    with pytest.raises(ValueError, match="after the information cutoff"):
+        build_holdings_forecast(returns, config, decision)

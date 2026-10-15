@@ -1,4 +1,4 @@
-"""Forecast the next month's initial Global RRP allocation from observed history."""
+"""Forecast Global RRP target weights from the latest observed history."""
 from __future__ import annotations
 
 import argparse
@@ -18,7 +18,7 @@ from src.backtest import run_static_backtest
 from src.data_loader import load_data
 
 
-def build_next_month_holdings(returns, config, rebalance_date):
+def build_holdings_forecast(returns, config, rebalance_date):
     """Use a zero-return placeholder only to invoke the existing forecast solver.
 
     The placeholder's return never enters estimation. Its simulated P&L is
@@ -26,9 +26,9 @@ def build_next_month_holdings(returns, config, rebalance_date):
     """
     cutoff = pd.Timestamp(returns.index.max())
     decision = pd.Timestamp(rebalance_date)
-    month = (cutoff + pd.offsets.MonthBegin(1)).to_period("M")
-    if decision.to_period("M") != month:
-        raise ValueError("Rebalance date must be in the month after the information cutoff")
+    if pd.isna(decision) or decision <= cutoff:
+        raise ValueError("Rebalance date must be after the information cutoff")
+    month = decision.to_period("M")
     names = [asset.new_name for asset in ETF_UNIVERSE]
     if list(returns.columns) != names:
         raise ValueError("Returns must match the active ETF universe")
@@ -47,16 +47,16 @@ def build_next_month_holdings(returns, config, rebalance_date):
     if (not solver.solver_success or not solver.problem_is_dcp
             or solver.fallback_used or covariance.covariance_fallback_used
             or pd.Timestamp(solver.information_cutoff) != cutoff):
-        raise ValueError("Next-month forecast failed solver or information-timing checks")
+        raise ValueError("Holdings forecast failed solver or information-timing checks")
     latest = result.loc[result.date.eq(decision)].iloc[0]
     weights = np.array([latest["weight_" + name] for name in names], dtype=float)
     if not np.isfinite(weights).all() or weights.min() < -1e-8:
-        raise ValueError("Invalid next-month weights")
+        raise ValueError("Invalid forecast weights")
     np.testing.assert_allclose(weights.sum(), 1.0, atol=1e-8)
     holdings = pd.DataFrame([
         {"holding_month": str(month), "as_of_date": cutoff.date().isoformat(),
          "rebalance_date": decision.date().isoformat(), "model": "Global RRP",
-         "allocation_type": "initial_forecast_update_weekly",
+         "allocation_type": "weekly_target_forecast",
          "etf": asset.new_name, "ticker": asset.ticker,
          "asset_class": asset.asset_class, "weight": weight, "weight_pct": weight * 100}
         for asset, weight in zip(ETF_UNIVERSE, weights)
@@ -78,10 +78,22 @@ def build_next_month_holdings(returns, config, rebalance_date):
     return holdings, audit
 
 
+def build_next_month_holdings(returns, config, rebalance_date):
+    cutoff = pd.Timestamp(returns.index.max())
+    month = (cutoff + pd.offsets.MonthBegin(1)).to_period("M")
+    if pd.Timestamp(rebalance_date).to_period("M") != month:
+        raise ValueError("Rebalance date must be in the month after the information cutoff")
+    holdings, audit = build_holdings_forecast(returns, config, rebalance_date)
+    holdings["allocation_type"] = "initial_forecast_update_weekly"
+    return holdings, audit
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--rebalance-date", required=True,
-                        help="Next month's first weekly trading decision, YYYY-MM-DD")
+                        help="Future weekly trading decision, YYYY-MM-DD")
+    parser.add_argument("--latest", action="store_true",
+                        help="Export the next weekly target, including within the current month")
     args = parser.parse_args()
     logging.getLogger().setLevel(logging.ERROR)
     tables = ROOT / "results/tables"
@@ -90,10 +102,12 @@ def main():
     returns = load_data(source="tushare", force_update=False)
     if pd.Timestamp(returns.index.max()) != pd.Timestamp(config["evaluation_end_date"]):
         raise ValueError("Latest data and published configuration do not agree")
-    holdings, audit = build_next_month_holdings(returns, config, args.rebalance_date)
-    output = tables / "next_month_holdings.csv"
+    builder = build_holdings_forecast if args.latest else build_next_month_holdings
+    holdings, audit = builder(returns, config, args.rebalance_date)
+    stem = "latest_holdings" if args.latest else "next_month_holdings"
+    output = tables / f"{stem}.csv"
     holdings.to_csv(output, index=False, encoding="utf-8-sig", float_format="%.10f")
-    (tables / "next_month_holdings_audit.json").write_text(
+    (tables / f"{stem}_audit.json").write_text(
         json.dumps(audit, indent=2), encoding="utf-8"
     )
     print(f"Wrote {audit['holding_month']} Global RRP forecast: {len(holdings)} ETFs, "

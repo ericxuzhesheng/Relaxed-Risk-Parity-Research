@@ -134,7 +134,7 @@ def adjusted_fund_close(close: pd.Series, adj_factor: pd.Series) -> pd.Series:
 
 def fetch_from_tushare(
     start_date: str = "20000101",
-    end_date: str | None = "20260930",
+    end_date: str | None = "20261014",
     *,
     write_cache: bool = True,
 ) -> pd.DataFrame:

@@ -72,13 +72,13 @@ def main():
     records = []
     python = sys.executable
     commands = [
-        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20260930"],
+        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20261014"],
         [python, "scripts/run_global_rrp_rolling_calibration.py"],
         [python, "scripts/verify_global_rrp_rolling_calibration.py"],
         [python, "scripts/run_asset_descriptive_statistics.py"],
         [python, "scripts/publish_global_rrp.py"],
         [python, "scripts/export_primary_weekly_holdings.py"],
-        [python, "scripts/export_next_month_holdings.py", "--rebalance-date", "2026-10-09"],
+        [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-16"],
         [python, "scripts/render_publication_figures.py"],
         [python, "scripts/sync_global_rrp_docs.py"],
     ]
