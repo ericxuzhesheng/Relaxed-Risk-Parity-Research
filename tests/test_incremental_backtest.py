@@ -115,3 +115,40 @@ def test_future_schedule_extension_keeps_completed_history(history, tmp_path):
     actual = run_incremental_backtest(history, measured, path=path, contract=contract)
     assert checkpoints == [True]
     pd.testing.assert_frame_equal(actual, runner(history, None, {}), check_exact=True)
+
+
+def test_primary_crosses_year_with_new_annual_parameters(tmp_path):
+    dates = pd.bdate_range("2023-09-01", "2024-03-01")
+    data = pd.DataFrame(np.random.default_rng(19).normal(.0001, .006, (len(dates), 3)),
+                        index=dates, columns=["沪深300ETF", "5年国债ETF", "黄金ETF"])
+    old = {**BASE, "rrp_parameter_schedule": [
+        {"effective_date": "2023-01-01", "rrp_variance_penalty": .1, "lambda_pen": 2.}
+    ]}
+    new = {**old, "rrp_parameter_schedule": [*old["rrp_parameter_schedule"],
+        {"effective_date": "2024-01-01", "rrp_variance_penalty": .3, "lambda_pen": 4.}
+    ]}
+    path = tmp_path / "primary.json"
+    run_incremental_backtest(data.loc[:"2023-12-27"], runner_for("Global RRP", old),
+                              path=path, contract={"configuration": old})
+    diagnostics, expected_diagnostics = {}, {}
+    checkpoints = []
+    runner = runner_for("Global RRP", new)
+
+    def measured(frame, resume, output):
+        checkpoints.append(resume is not None)
+        return runner(frame, resume, output)
+
+    actual = run_incremental_backtest(data, measured, path=path, contract={"configuration": new},
+                                      diagnostics_out=diagnostics)
+    expected = runner(data, None, expected_diagnostics)
+    assert checkpoints == [True]
+    pd.testing.assert_frame_equal(actual, expected, check_exact=True)
+    for key in diagnostics:
+        pd.testing.assert_frame_equal(diagnostics[key], expected_diagnostics[key], check_exact=True)
+
+
+def test_credentials_are_not_written_to_checkpoint(history, tmp_path):
+    path = tmp_path / "backtest.json"
+    run_incremental_backtest(history, runner_for("Equal Weight Benchmark"), path=path,
+                              contract={"configuration": {**BASE, "tushare_token": "private-token"}})
+    assert "private-token" not in path.read_text(encoding="utf-8")

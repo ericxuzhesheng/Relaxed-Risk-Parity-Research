@@ -150,7 +150,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-10-16**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。数据覆盖 **2007-01-18 至 2026-10-16**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -264,7 +264,7 @@ The [latest target allocation](results/tables/latest_holdings.csv) uses the late
 
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-10-16**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The price data span **2007-01-18 to 2026-10-16**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 
@@ -332,7 +332,7 @@ Use exactly these five model names in current publication prose, tables and figu
 
 Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Price history starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 {en_table}
 
