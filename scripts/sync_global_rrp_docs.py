@@ -167,6 +167,8 @@ python scripts/run_primary_publication_pipeline.py
 
 入口首先刷新ETF数据，再运行年度校准与四个对照，生成表格和图形，同步文档，最后编译论文及答辩PDF。两个PDF均执行三轮 XeLaTeX 编译，流程退出时自动清理临时文件。当前 rf=0 口径不调用中债利率接口。
 
+年度校准默认复用本地缓存中历史收益、校准配置、计算代码及数值依赖版本均一致的结果；只重算新增或受历史修订影响的年度。首次运行或缓存失效时执行完整校准。在发布命令后加 `--force-recalibrate` 可强制重算全部年度。最终回测、五模型比较和发布核验每次执行。
+
 | 路径 | 内容 |
 |---|---|
 | [src/](src/) | 资产定义、估计方法、优化器与回测实现 |
@@ -270,6 +272,8 @@ python scripts/run_primary_publication_pipeline.py
 
 The entry point refreshes ETF data, runs annual calibration and four comparisons, generates tables and figures, synchronizes documents, and compiles both PDFs with three XeLaTeX passes each. Temporary files are cleaned on exit. The zero risk-free convention does not require ChinaBond data.
 
+Annual calibration reuses a local cache only when prior returns, calibration settings, computation code and numerical dependency versions match. New or revised annual histories are recalibrated; a first run or invalid cache performs full calibration. Add `--force-recalibrate` to the publication command to recompute every year. Final backtests, five-model comparisons and publication checks run each time.
+
 | Path | Contents |
 |---|---|
 | [src/](src/) | Asset definitions, estimators, optimizers and backtests |
@@ -358,7 +362,7 @@ Rebalance inputs precede the trading date. Saved daily returns reconcile target 
 
 ## Reproduction
 
-Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. The pipeline refreshes ETF data, reruns annual calibration and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.
+Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. Annual calibration reuses matching local results and recomputes new or revised histories; `--force-recalibrate` recomputes every year. The pipeline refreshes ETF data, runs final backtests and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.
 
 Configuration and validation live in `results/tables/primary_model_configuration.json` and `primary_publication_audit.json`. The annual schedule and all candidate results are stored beside them. Complete weekly holdings remain in repository CSV files.
 ''',

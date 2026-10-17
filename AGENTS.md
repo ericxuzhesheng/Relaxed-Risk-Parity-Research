@@ -105,6 +105,8 @@ The publication pipeline stores complete weekly holdings in repository CSV files
 
 **Every pipeline run must follow this sequence:**
 
+Annual calibration reuses local results only when prior returns, calibration settings, computation code and numerical dependency versions match. New or revised histories are recalibrated. Use `--force-recalibrate` on the publication command to recompute every annual validation. Final backtests, comparisons and publication checks run each time.
+
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
