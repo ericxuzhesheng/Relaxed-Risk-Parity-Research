@@ -33,23 +33,23 @@ Use exactly these five model names in current publication prose, tables and figu
 
 Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-09-30, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-10-14, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Cache starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.03% | 3.59% | 1.652 | 2.359 | -6.80% | 17.41% |
-| HRP Benchmark | 2.10% | 0.26% | 7.853 | 17.447 | -0.19% | 3.54% |
-| HERC Benchmark | 2.53% | 0.81% | 3.090 | 4.655 | -1.57% | 15.94% |
-| Equal Weight | 8.91% | 13.12% | 0.716 | 1.012 | -18.23% | 8.84% |
-| 60/40 Benchmark | 6.70% | 12.06% | 0.598 | 0.858 | -20.46% | 7.69% |
+| Global RRP | 6.06% | 3.58% | 1.660 | 2.371 | -6.80% | 17.27% |
+| HRP Benchmark | 2.10% | 0.26% | 7.837 | 17.394 | -0.19% | 3.52% |
+| HERC Benchmark | 2.52% | 0.81% | 3.084 | 4.646 | -1.57% | 15.82% |
+| Equal Weight | 8.68% | 13.12% | 0.701 | 0.989 | -18.23% | 8.79% |
+| 60/40 Benchmark | 6.36% | 12.06% | 0.572 | 0.819 | -20.46% | 7.65% |
 
-Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.32%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
+Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.34%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
 ---
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-09-30`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-10-14`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -108,7 +108,7 @@ The publication pipeline stores complete weekly holdings in repository CSV files
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
-python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20260930
+python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20261014
 ```
 
 ### After running — refresh artifacts in this order before any commit:

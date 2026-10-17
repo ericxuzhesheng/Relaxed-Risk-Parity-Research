@@ -24,6 +24,10 @@
     "returncode": 0
   },
   {
+    "step": "scripts/export_next_month_holdings.py",
+    "returncode": 0
+  },
+  {
     "step": "scripts/render_publication_figures.py",
     "returncode": 0
   },
@@ -38,10 +42,5 @@
   {
     "step": "ppt/rrp_defense.pdf",
     "returncode": 0
-  },
-  {
-    "step": "scripts/export_next_month_holdings.py",
-    "returncode": 0,
-    "rebalance_date": "2026-10-09"
   }
 ]
