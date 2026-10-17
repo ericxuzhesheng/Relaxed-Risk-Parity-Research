@@ -71,6 +71,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--force-recalibrate", action="store_true",
                         help="Recompute all annual validations instead of reusing matching results")
+    parser.add_argument("--force-backtest", action="store_true",
+                        help="Recompute all five final backtests from the beginning")
     args = parser.parse_args()
     if not os.environ.get("TUSHARE_TOKEN"):
         raise RuntimeError("Set TUSHARE_TOKEN before running; existing results are untouched.")
@@ -79,10 +81,12 @@ def main():
     commands = [
         [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20261016"],
         [python, "scripts/run_global_rrp_rolling_calibration.py",
-         *(["--force-recalibrate"] if args.force_recalibrate else [])],
+         *(["--force-recalibrate"] if args.force_recalibrate else []),
+         *(["--force-backtest"] if args.force_backtest else [])],
         [python, "scripts/verify_global_rrp_rolling_calibration.py"],
         [python, "scripts/run_asset_descriptive_statistics.py"],
-        [python, "scripts/publish_global_rrp.py"],
+        [python, "scripts/publish_global_rrp.py",
+         *(["--force-backtest"] if args.force_backtest else [])],
         [python, "scripts/export_primary_weekly_holdings.py"],
         [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-23"],
         [python, "scripts/render_publication_figures.py"],

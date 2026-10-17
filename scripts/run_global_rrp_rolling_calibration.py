@@ -28,6 +28,7 @@ from scripts.run_convex_adaptive_rrp import slice_and_rebase_result, summarize_r
 from scripts.run_global_rrp_research import participation
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
+from src.incremental_backtest import run_incremental_backtest
 from src.utils import get_config
 
 
@@ -301,6 +302,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--force-recalibrate", action="store_true",
                         help="Recompute every annual validation instead of using the local cache")
+    parser.add_argument("--force-backtest", action="store_true",
+                        help="Recompute the final backtest from the beginning")
     args = parser.parse_args()
     logging.getLogger().setLevel(logging.ERROR)
     OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -330,7 +333,15 @@ def main():
     final_cfg = {**BASE, "rrp_variance_penalty": 1.0, "lambda_pen": 1.0,
                  "rrp_parameter_schedule": schedules}
     diagnostics = {}
-    result = run_static_backtest(returns, "relaxed", final_cfg, diagnostics)
+    def final_backtest(data, resume, output):
+        return run_static_backtest(data, "relaxed", final_cfg, output, resume=resume)
+
+    result = run_incremental_backtest(
+        returns, final_backtest,
+        path=ROOT / "results/backtest_checkpoints/global_rrp.json",
+        contract={**contract, "configuration": get_config(final_cfg), "model": "Global RRP"},
+        diagnostics_out=diagnostics, force=args.force_backtest,
+    )
     cfg = get_config(final_cfg)
     result = slice_and_rebase_result(result, cfg["evaluation_start_date"])
     result = result[pd.to_datetime(result.date) <= pd.Timestamp(cfg["evaluation_end_date"])].reset_index(drop=True)

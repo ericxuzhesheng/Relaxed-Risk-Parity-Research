@@ -1,5 +1,6 @@
 """Publish the designated rolling-calibration Global RRP and four comparisons."""
 from pathlib import Path
+import argparse
 import json
 import logging
 import sys
@@ -12,8 +13,10 @@ sys.path.insert(0, str(ROOT))
 
 from scripts.generate_thesis_numbers import _asset_stats_table, _etf_pool_table
 from scripts.run_convex_adaptive_rrp import run_hrp_like, slice_and_rebase_result, summarize_result
+from scripts.run_global_rrp_rolling_calibration import _calibration_contract
 from src.benchmarks import run_benchmark_backtest
 from src.data_loader import load_data
+from src.incremental_backtest import run_incremental_backtest
 from src.public_labels import validate_publication_models
 from src.utils import get_config
 
@@ -38,6 +41,10 @@ def pct(value):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force-backtest", action="store_true",
+                        help="Recompute benchmark backtests from the beginning")
+    args = parser.parse_args()
     logging.getLogger().setLevel(logging.ERROR)
     tables = ROOT / "results/tables"
     thesis = ROOT / "report/thesis_latex"
@@ -69,13 +76,30 @@ def main():
 
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
     models = {"Global RRP": primary}
+    contract = _calibration_contract()
     for name, key in [("HRP Benchmark", "hrp"), ("HERC Benchmark", "herc")]:
         print("Running", name, flush=True)
-        models[name] = run_hrp_like(returns, key, 3.0, rebalance_frequency="W")
+        def hierarchical(data, resume, diagnostics):
+            return run_hrp_like(data, key, 3.0, rebalance_frequency="W", resume=resume)
+
+        models[name] = run_incremental_backtest(
+            returns, hierarchical, path=ROOT / f"results/backtest_checkpoints/{key}.json",
+            contract={**contract, "configuration": {"lookback_days": 240,
+                      "transaction_cost_bps": 3.0, "rebalance_frequency": "W"}, "model": name},
+            force=args.force_backtest,
+        )
     for name in ["Equal Weight", "60/40 Benchmark"]:
         benchmark_name = "Equal Weight Benchmark" if name == "Equal Weight" else name
-        models[name] = run_benchmark_backtest(
-            returns, benchmark_name, transaction_cost_bps=3.0, rebalance_frequency="W"
+        def benchmark(data, resume, diagnostics):
+            return run_benchmark_backtest(data, benchmark_name, transaction_cost_bps=3.0,
+                                          rebalance_frequency="W", resume=resume)
+
+        models[name] = run_incremental_backtest(
+            returns, benchmark,
+            path=ROOT / f"results/backtest_checkpoints/{'equal_weight' if name == 'Equal Weight' else '60_40'}.json",
+            contract={**contract, "configuration": {"lookback_days": 240,
+                      "transaction_cost_bps": 3.0, "rebalance_frequency": "W"}, "model": name},
+            force=args.force_backtest,
         )
 
     summaries = []

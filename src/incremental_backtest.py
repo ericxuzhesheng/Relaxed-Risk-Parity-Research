@@ -56,9 +56,12 @@ def run_incremental_backtest(returns, runner, *, path, contract, diagnostics_out
     rebalance may disappear when another observation in that period arrives.
     Historical revisions, changed settings/code, and invalid files use a full run.
     """
-    if not returns.index.is_unique or not returns.index.is_monotonic_increasing:
+    if returns.empty or not returns.index.is_unique or not returns.index.is_monotonic_increasing:
         raise ValueError("Backtest inputs must have unique, increasing dates")
     path = Path(path)
+    contract = {**contract, "configuration": {
+        key: value for key, value in contract["configuration"].items() if key != "tushare_token"
+    }}
     contract = json.loads(json.dumps(contract))
     prefix = pd.DataFrame()
     previous_diagnostics = {}
@@ -70,8 +73,11 @@ def run_incremental_backtest(returns, runner, *, path, contract, diagnostics_out
             old_inputs.index = pd.DatetimeIndex(record["dates"], name=record["index_name"])
             old = _restore_frame(record["result"])
             count = len(old_inputs)
+            numeric = [*[f"weight_{asset}" for asset in returns.columns],
+                       "net_return", "gross_return", "turnover"]
             if (count > 0 and count <= len(returns)
                     and old_inputs.equals(returns.iloc[:count])
+                    and np.isfinite(old[numeric].to_numpy(dtype=float)).all()
                     and pd.DatetimeIndex(old.date).equals(old_inputs.index)):
                 keep = count if count == len(returns) else count - 1
                 if keep > 0:
