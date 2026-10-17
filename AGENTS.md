@@ -105,7 +105,7 @@ The publication pipeline stores complete weekly holdings in repository CSV files
 
 **Every pipeline run must follow this sequence:**
 
-Annual calibration reuses local results only when prior returns, calibration settings, computation code and numerical dependency versions match. New or revised histories are recalibrated. Use `--force-recalibrate` on the publication command to recompute every annual validation. Final backtests, comparisons and publication checks run each time.
+The publication command updates annual calibration and final backtests incrementally. Use `--force-recalibrate --force-backtest` for a complete recomputation. Verify parity with full backtests before changing the incremental path.
 
 ### Before running:
 ```powershell
