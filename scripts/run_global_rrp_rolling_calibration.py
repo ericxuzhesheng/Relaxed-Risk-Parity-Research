@@ -177,8 +177,8 @@ def _read_calibration_cache(output: Path, contract: dict):
             return None
         inputs = pd.read_csv(StringIO(record["inputs"]), index_col=0,
                              parse_dates=True, float_precision="round_trip")
-        schedule = pd.read_csv(StringIO(record["schedule"]), float_precision="round_trip")
-        candidates = pd.read_csv(StringIO(record["candidates"]), float_precision="round_trip")
+        schedule = pd.read_csv(StringIO(record["schedule"]), float_precision="round_trip").astype(record["schedule_dtypes"])
+        candidates = pd.read_csv(StringIO(record["candidates"]), float_precision="round_trip").astype(record["candidate_dtypes"])
         return inputs, schedule, candidates
     except (OSError, ValueError, KeyError, TypeError):
         return None
@@ -186,11 +186,14 @@ def _read_calibration_cache(output: Path, contract: dict):
 
 def _save_calibration_cache(output, returns, schedules, candidates, contract):
     cutoff = max(pd.Timestamp(row["effective_date"]) for row in schedules)
+    schedule = pd.DataFrame(schedules)
     record = {
         "contract": contract,
         "inputs": returns.loc[returns.index < cutoff].to_csv(float_format="%.17g"),
-        "schedule": pd.DataFrame(schedules).to_csv(index=False, float_format="%.17g"),
+        "schedule": schedule.to_csv(index=False, float_format="%.17g"),
         "candidates": candidates.to_csv(index=False, float_format="%.17g"),
+        "schedule_dtypes": schedule.dtypes.astype(str).to_dict(),
+        "candidate_dtypes": candidates.dtypes.astype(str).to_dict(),
     }
     temporary = output / "calibration_cache.json.tmp"
     temporary.write_text(json.dumps(record), encoding="utf-8")
