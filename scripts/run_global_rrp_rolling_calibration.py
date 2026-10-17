@@ -8,6 +8,10 @@ from __future__ import annotations
 
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+import argparse
+import ast
+from importlib.metadata import PackageNotFoundError, version
+from io import StringIO
 import itertools
 import json
 import logging
@@ -134,7 +138,165 @@ def _select_candidate(frame: pd.DataFrame) -> tuple[pd.Series, pd.DataFrame]:
     return stable.iloc[0], eligible
 
 
+def _calibration_contract() -> dict:
+    config = get_config(BASE)
+    for key in ("tushare_token", "evaluation_end_date"):
+        config.pop(key, None)
+    sources = {}
+    paths = [*sorted((ROOT / "src").glob("*.py")), Path(__file__),
+             ROOT / "scripts/run_convex_adaptive_rrp.py",
+             ROOT / "scripts/run_global_rrp_research.py"]
+    for path in paths:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Dict):
+                for i, key in enumerate(node.keys):
+                    if isinstance(key, ast.Constant) and key.value in {
+                        "evaluation_end_date", "public_evaluation_end"
+                    }:
+                        node.values[i] = ast.Constant(value=None)
+            if (path == Path(__file__) and isinstance(node, ast.Assign)
+                    and any(isinstance(t, ast.Name) and t.id == "LAST_SCHEDULE_YEAR"
+                            for t in node.targets)):
+                node.value = ast.Constant(value=None)
+        sources[str(path.relative_to(ROOT))] = ast.dump(tree, include_attributes=False)
+    packages = {}
+    for package in ("numpy", "pandas", "scipy", "scikit-learn", "cvxpy", "clarabel", "scs", "osqp"):
+        try:
+            packages[package] = version(package)
+        except PackageNotFoundError:
+            packages[package] = None
+    return {"configuration": config, "sources": sources,
+            "python": sys.version, "packages": packages}
+
+
+def _read_calibration_cache(output: Path, contract: dict):
+    try:
+        record = json.loads((output / "calibration_cache.json").read_text(encoding="utf-8"))
+        if record["contract"] != contract:
+            return None
+        inputs = pd.read_csv(StringIO(record["inputs"]), index_col=0,
+                             parse_dates=True, float_precision="round_trip")
+        schedule = pd.read_csv(StringIO(record["schedule"]), float_precision="round_trip")
+        candidates = pd.read_csv(StringIO(record["candidates"]), float_precision="round_trip")
+        return inputs, schedule, candidates
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
+def _save_calibration_cache(output, returns, schedules, candidates, contract):
+    cutoff = max(pd.Timestamp(row["effective_date"]) for row in schedules)
+    record = {
+        "contract": contract,
+        "inputs": returns.loc[returns.index < cutoff].to_csv(float_format="%.17g"),
+        "schedule": pd.DataFrame(schedules).to_csv(index=False, float_format="%.17g"),
+        "candidates": candidates.to_csv(index=False, float_format="%.17g"),
+    }
+    temporary = output / "calibration_cache.json.tmp"
+    temporary.write_text(json.dumps(record), encoding="utf-8")
+    temporary.replace(output / "calibration_cache.json")
+
+
+def _cached_year(cache, returns, year):
+    if cache is None:
+        return None
+    try:
+        inputs, schedule, candidates = cache
+        effective = pd.Timestamp(f"{year}-01-01")
+        if not inputs.loc[inputs.index < effective].equals(returns.loc[returns.index < effective]):
+            return None
+        selected = schedule[pd.to_datetime(schedule.effective_date).eq(effective)]
+        frame = candidates[candidates.schedule_year.eq(year)].copy()
+        if len(selected) != 1 or len(frame) != int(selected.candidate_count.iloc[0]):
+            return None
+        chosen = frame[frame.selected]
+        if len(chosen) != 1 or not bool(chosen.within_one_standard_error.iloc[0]):
+            return None
+        row = selected.to_dict("records")[0]
+        if (pd.Timestamp(row["information_end"]) >= effective
+                or not (pd.to_datetime(frame.validation_end) < effective).all()
+                or not frame.future_information_count.eq(0).all()
+                or chosen.variance_penalty.iloc[0] != row["rrp_variance_penalty"]
+                or chosen.shortfall_penalty.iloc[0] != row["lambda_pen"]):
+            return None
+        return row, frame
+    except (ValueError, KeyError, TypeError, AttributeError, IndexError):
+        return None
+
+
+def _calibrate_year(returns, year, neutral_solver):
+    effective = pd.Timestamp(f"{year}-01-01")
+    prior = returns.index[returns.index < effective]
+    calibration_dates = prior[-(CALIBRATION_DAYS + VALIDATION_DAYS):-VALIDATION_DAYS]
+    validation_dates = prior[-VALIDATION_DAYS:]
+    calibration = neutral_solver[
+        neutral_solver.date.between(calibration_dates[0], calibration_dates[-1])
+    ]
+    variance_candidates, shortfall_candidates = _term_scale_candidates(calibration)
+    jobs = [(returns, validation_dates[0], validation_dates[-1], v, r)
+            for v, r in itertools.product(variance_candidates, shortfall_candidates)]
+    with ProcessPoolExecutor(max_workers=min(4, os.cpu_count() or 1)) as executor:
+        rows = list(executor.map(_candidate_job, jobs))
+    frame = pd.DataFrame(rows)
+    v_order = {v: i for i, v in enumerate(variance_candidates)}
+    r_order = {r: i for i, r in enumerate(shortfall_candidates)}
+    frame["variance_rank"] = frame.variance_penalty.map(v_order)
+    frame["shortfall_rank"] = frame.shortfall_penalty.map(r_order)
+    selected, eligible = _select_candidate(frame)
+    frame["within_one_standard_error"] = frame.index.isin(eligible.index)
+    frame["selected"] = frame.index == selected.name
+    frame.insert(0, "schedule_year", year)
+    frame.insert(1, "calibration_start", calibration_dates[0])
+    frame.insert(2, "calibration_end", calibration_dates[-1])
+    frame.insert(3, "validation_start", validation_dates[0])
+    frame.insert(4, "validation_end", validation_dates[-1])
+    row = {
+        "effective_date": str(effective.date()),
+        "information_end": str(validation_dates[-1].date()),
+        "rrp_variance_penalty": float(selected.variance_penalty),
+        "lambda_pen": float(selected.shortfall_penalty),
+        "validation_net_sharpe": float(selected.sharpe_ratio),
+        "validation_annualized_turnover": float(selected.annualized_turnover),
+        "candidate_count": int(len(frame)),
+        "within_one_standard_error_count": int(len(eligible)),
+        "selected_has_eligible_neighbor": bool(selected.has_eligible_neighbor),
+    }
+    return row, frame
+
+
+def calibrate_parameters(returns, *, force=False, output=OUTPUT):
+    output.mkdir(parents=True, exist_ok=True)
+    contract = _calibration_contract()
+    cache = None if force else _read_calibration_cache(output, contract)
+    neutral_solver = None
+    schedules, validation_rows = [], []
+    for year in range(FIRST_SCHEDULE_YEAR, LAST_SCHEDULE_YEAR + 1):
+        if (returns.index < pd.Timestamp(f"{year}-01-01")).sum() < CALIBRATION_DAYS + VALIDATION_DAYS:
+            raise RuntimeError(f"insufficient pre-{year} history")
+        cached = _cached_year(cache, returns, year)
+        if cached is not None:
+            row, frame = cached
+            print(f"{year}: reused validated annual calibration", flush=True)
+        else:
+            if neutral_solver is None:
+                neutral_diag = {}
+                neutral_cfg = {**BASE, "rrp_variance_penalty": 1.0, "lambda_pen": 1.0}
+                run_static_backtest(returns, "relaxed", neutral_cfg, neutral_diag)
+                neutral_solver = neutral_diag["solver"].copy()
+                neutral_solver["date"] = pd.to_datetime(neutral_solver.date)
+                neutral_solver.to_csv(output / "unit_penalty_diagnostics.csv", index=False)
+            row, frame = _calibrate_year(returns, year, neutral_solver)
+            print(year, row, flush=True)
+        schedules.append(row)
+        validation_rows.append(frame)
+    return schedules, pd.concat(validation_rows, ignore_index=True), contract
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force-recalibrate", action="store_true",
+                        help="Recompute every annual validation instead of using the local cache")
+    args = parser.parse_args()
     logging.getLogger().setLevel(logging.ERROR)
     OUTPUT.mkdir(parents=True, exist_ok=True)
     protocol = {
@@ -155,59 +317,7 @@ def main():
     (OUTPUT / "protocol.json").write_text(json.dumps(protocol, indent=2), encoding="utf-8")
 
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
-    neutral_diag = {}
-    neutral_cfg = {**BASE, "rrp_variance_penalty": 1.0, "lambda_pen": 1.0}
-    run_static_backtest(returns, "relaxed", neutral_cfg, neutral_diag)
-    neutral_solver = neutral_diag["solver"].copy()
-    neutral_solver["date"] = pd.to_datetime(neutral_solver.date)
-    neutral_solver.to_csv(OUTPUT / "unit_penalty_diagnostics.csv", index=False)
-
-    schedules, validation_rows = [], []
-    for year in range(FIRST_SCHEDULE_YEAR, LAST_SCHEDULE_YEAR + 1):
-        effective = pd.Timestamp(f"{year}-01-01")
-        prior = returns.index[returns.index < effective]
-        if len(prior) < CALIBRATION_DAYS + VALIDATION_DAYS:
-            raise RuntimeError(f"insufficient pre-{year} history")
-        calibration_dates = prior[-(CALIBRATION_DAYS + VALIDATION_DAYS):-VALIDATION_DAYS]
-        validation_dates = prior[-VALIDATION_DAYS:]
-        calibration = neutral_solver[
-            neutral_solver.date.between(calibration_dates[0], calibration_dates[-1])
-        ]
-        variance_candidates, shortfall_candidates = _term_scale_candidates(calibration)
-        jobs = [
-            (returns, validation_dates[0], validation_dates[-1], v, r)
-            for v, r in itertools.product(variance_candidates, shortfall_candidates)
-        ]
-        with ProcessPoolExecutor(max_workers=min(4, os.cpu_count() or 1)) as executor:
-            rows = list(executor.map(_candidate_job, jobs))
-        frame = pd.DataFrame(rows)
-        v_order = {v: i for i, v in enumerate(variance_candidates)}
-        r_order = {r: i for i, r in enumerate(shortfall_candidates)}
-        frame["variance_rank"] = frame.variance_penalty.map(v_order)
-        frame["shortfall_rank"] = frame.shortfall_penalty.map(r_order)
-        selected, eligible = _select_candidate(frame)
-        frame["within_one_standard_error"] = frame.index.isin(eligible.index)
-        frame["selected"] = frame.index == selected.name
-        frame.insert(0, "schedule_year", year)
-        frame.insert(1, "calibration_start", calibration_dates[0])
-        frame.insert(2, "calibration_end", calibration_dates[-1])
-        frame.insert(3, "validation_start", validation_dates[0])
-        frame.insert(4, "validation_end", validation_dates[-1])
-        validation_rows.append(frame)
-        schedules.append({
-            "effective_date": str(effective.date()),
-            "information_end": str(validation_dates[-1].date()),
-            "rrp_variance_penalty": float(selected.variance_penalty),
-            "lambda_pen": float(selected.shortfall_penalty),
-            "validation_net_sharpe": float(selected.sharpe_ratio),
-            "validation_annualized_turnover": float(selected.annualized_turnover),
-            "candidate_count": int(len(frame)),
-            "within_one_standard_error_count": int(len(eligible)),
-            "selected_has_eligible_neighbor": bool(selected.has_eligible_neighbor),
-        })
-        print(year, schedules[-1], flush=True)
-
-    candidates = pd.concat(validation_rows, ignore_index=True)
+    schedules, candidates, contract = calibrate_parameters(returns, force=args.force_recalibrate)
     candidates.to_csv(OUTPUT / "validation_candidates.csv", index=False)
     pd.DataFrame(schedules).to_csv(OUTPUT / "selected_schedule.csv", index=False)
     (OUTPUT / "selected_schedule.json").write_text(json.dumps(schedules, indent=2), encoding="utf-8")
@@ -299,6 +409,7 @@ def main():
         clean_cfg.pop("m", None)
         clean_cfg.pop("rrp_target_annual_return", None)
     (OUTPUT / "configuration.json").write_text(json.dumps(clean_cfg, indent=2), encoding="utf-8")
+    _save_calibration_cache(OUTPUT, returns, schedules, candidates, contract)
     print(json.dumps(summary), flush=True)
 
 

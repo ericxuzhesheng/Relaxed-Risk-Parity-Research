@@ -37,11 +37,11 @@ Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0,
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.06% | 3.58% | 1.660 | 2.371 | -6.80% | 17.27% |
-| HRP Benchmark | 2.10% | 0.26% | 7.837 | 17.394 | -0.19% | 3.52% |
-| HERC Benchmark | 2.52% | 0.81% | 3.084 | 4.646 | -1.57% | 15.82% |
-| Equal Weight | 8.68% | 13.12% | 0.701 | 0.989 | -18.23% | 8.79% |
-| 60/40 Benchmark | 6.36% | 12.06% | 0.572 | 0.819 | -20.46% | 7.65% |
+| Global RRP | 6.00% | 3.59% | 1.644 | 2.346 | -6.80% | 17.27% |
+| HRP Benchmark | 2.10% | 0.26% | 7.840 | 17.401 | -0.19% | 3.52% |
+| HERC Benchmark | 2.51% | 0.81% | 3.077 | 4.633 | -1.57% | 15.83% |
+| Equal Weight | 8.46% | 13.13% | 0.685 | 0.966 | -18.23% | 8.81% |
+| 60/40 Benchmark | 6.20% | 12.07% | 0.559 | 0.800 | -20.46% | 7.66% |
 
 Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.34%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
