@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -109,4 +110,26 @@ def test_contract_tracks_solver_settings_but_ignores_evaluation_end(monkeypatch)
     monkeypatch.setitem(DEFAULT_CONFIG, "evaluation_end_date", "2026-10-23")
     assert rolling._calibration_contract() == before
     monkeypatch.setitem(rolling.BASE, "transaction_cost_bps", 4.)
+    assert rolling._calibration_contract() != before
+
+
+def test_snapshot_date_and_new_schedule_year_do_not_invalidate_contract(monkeypatch):
+    before = rolling._calibration_contract()
+    read_text = Path.read_text
+
+    def next_snapshot(path, *args, **kwargs):
+        text = read_text(path, *args, **kwargs)
+        if path.name in {"utils.py", "data_loader.py", "run_global_rrp_rolling_calibration.py"}:
+            text = text.replace("2026-10-16", "2026-10-23").replace("20261016", "20261023")
+            text = text.replace("LAST_SCHEDULE_YEAR = 2026", "LAST_SCHEDULE_YEAR = 2027")
+        return text
+
+    monkeypatch.setattr(Path, "read_text", next_snapshot)
+    assert rolling._calibration_contract() == before
+
+
+def test_dependency_version_change_invalidates_contract(monkeypatch):
+    before = rolling._calibration_contract()
+    installed_version = rolling.version
+    monkeypatch.setattr(rolling, "version", lambda name: "changed" if name == "numpy" else installed_version(name))
     assert rolling._calibration_contract() != before

@@ -143,7 +143,8 @@ def _calibration_contract() -> dict:
     for key in ("tushare_token", "evaluation_end_date"):
         config.pop(key, None)
     sources = {}
-    paths = [*sorted((ROOT / "src").glob("*.py")), Path(__file__),
+    # Loader changes are checked through the actual return inputs, not fetch-date defaults.
+    paths = [*(p for p in sorted((ROOT / "src").glob("*.py")) if p.name != "data_loader.py"), Path(__file__),
              ROOT / "scripts/run_convex_adaptive_rrp.py",
              ROOT / "scripts/run_global_rrp_research.py"]
     for path in paths:
