@@ -24,6 +24,6 @@ Rebalance inputs precede the trading date. Saved daily returns reconcile target 
 
 ## Reproduction
 
-Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. Annual calibration reuses matching local results and recomputes new or revised histories; `--force-recalibrate` recomputes every year. The pipeline refreshes ETF data, runs final backtests and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.
+Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. Add `--force-recalibrate --force-backtest` for a complete recomputation. The pipeline refreshes ETF data, updates backtests and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.
 
 Configuration and validation live in `results/tables/primary_model_configuration.json` and `primary_publication_audit.json`. The annual schedule and all candidate results are stored beside them. Complete weekly holdings remain in repository CSV files.

@@ -114,7 +114,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。缓存覆盖 **2007-01-18 至 2026-10-16**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。数据覆盖 **2007-01-18 至 2026-10-16**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -131,7 +131,11 @@ python scripts/run_primary_publication_pipeline.py
 
 入口首先刷新ETF数据，再运行年度校准与四个对照，生成表格和图形，同步文档，最后编译论文及答辩PDF。两个PDF均执行三轮 XeLaTeX 编译，流程退出时自动清理临时文件。当前 rf=0 口径不调用中债利率接口。
 
-年度校准默认复用本地缓存中历史收益、校准配置、计算代码及数值依赖版本均一致的结果；只重算新增或受历史修订影响的年度。首次运行或缓存失效时执行完整校准。在发布命令后加 `--force-recalibrate` 可强制重算全部年度。最终回测、五模型比较和发布核验每次执行。
+完整重算年度校准与五个模型的回测：
+
+```powershell
+python scripts/run_primary_publication_pipeline.py --force-recalibrate --force-backtest
+```
 
 | 路径 | 内容 |
 |---|---|
@@ -230,7 +234,7 @@ The [latest target allocation](results/tables/latest_holdings.csv) uses the late
 
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The cache spans **2007-01-18 to 2026-10-16**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The price data span **2007-01-18 to 2026-10-16**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 
@@ -242,7 +246,11 @@ python scripts/run_primary_publication_pipeline.py
 
 The entry point refreshes ETF data, runs annual calibration and four comparisons, generates tables and figures, synchronizes documents, and compiles both PDFs with three XeLaTeX passes each. Temporary files are cleaned on exit. The zero risk-free convention does not require ChinaBond data.
 
-Annual calibration reuses a local cache only when prior returns, calibration settings, computation code and numerical dependency versions match. New or revised annual histories are recalibrated; a first run or invalid cache performs full calibration. Add `--force-recalibrate` to the publication command to recompute every year. Final backtests, five-model comparisons and publication checks run each time.
+To recompute every annual calibration and all five backtests from the beginning:
+
+```powershell
+python scripts/run_primary_publication_pipeline.py --force-recalibrate --force-backtest
+```
 
 | Path | Contents |
 |---|---|
