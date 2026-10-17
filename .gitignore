@@ -161,3 +161,4 @@ tmp/
 report/reference/*.pdf
 report/reference/*.epub
 results/global_rrp_rolling_252/calibration_cache.json*
+results/backtest_checkpoints/

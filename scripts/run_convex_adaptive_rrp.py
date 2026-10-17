@@ -30,6 +30,7 @@ from src.convex_adaptive_rrp import (
 )
 from src.data_loader import load_data
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
+from src.incremental_backtest import resume_weights
 from src.metrics import calculate_metrics
 from src.public_labels import apply_public_model_labels, public_model_label
 from src.utils import get_config, resolve_path
@@ -134,12 +135,11 @@ def summarize_result(name: str, result: pd.DataFrame, eval_start_date: str, conf
 
 
 def run_hrp_like(returns: pd.DataFrame, model_type: str, transaction_cost_bps: float,
-                 rebalance_frequency: str = "M") -> pd.DataFrame:
+                 rebalance_frequency: str = "M", *, resume: pd.Series | None = None) -> pd.DataFrame:
     from src.investable import expand_weights, investable_columns, portfolio_return_for_available
 
-    dates = returns.index
+    dates, weights = resume_weights(returns, resume)
     rebalance_dates = rebalance_dates_for_frequency(returns, rebalance_frequency)
-    weights = np.zeros(len(returns.columns))
     rows = []
     cost_rate = transaction_cost_bps / 10000.0
     for date in dates:

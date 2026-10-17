@@ -34,6 +34,7 @@ from src.covariance_estimators import estimate_covariance
 from src.convex_adaptive_rrp import drift_weights
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
+from src.incremental_backtest import resume_weights
 from src.risk_overlay import (
     RiskOverlayConfig,
     apply_risk_overlay,
@@ -186,6 +187,8 @@ def run_static_backtest(
     model_type: str = "relaxed",
     config_overrides: dict = None,
     diagnostics_out: dict | None = None,
+    *,
+    resume: pd.Series | None = None,
 ) -> pd.DataFrame:
     """Run the monthly rebalance backtest.
 
@@ -204,8 +207,10 @@ def run_static_backtest(
         unchanged so existing callers continue to work without modification.
     """
     config = get_config(config_overrides)
+    if resume is not None and config.get("risk_overlay_enabled", True):
+        raise ValueError("Resuming requires the publication specification without a risk overlay")
     n_assets = len(returns.columns)
-    dates = returns.index
+    dates, initial_weights = resume_weights(returns, resume)
     model_type = model_type.lower()
     if model_type not in {"standard", "relaxed", "hrp", "herc"}:
         raise ValueError(f"Unsupported model_type: {model_type}")
@@ -227,7 +232,7 @@ def run_static_backtest(
     universe_rows: list[dict] | None = [] if diagnostics_out is not None else None
 
     results = []
-    current_weights = np.zeros(n_assets)
+    current_weights = initial_weights
     portfolio_navs = [1.0]
     high_water_mark = 1.0
     risk_state = {}

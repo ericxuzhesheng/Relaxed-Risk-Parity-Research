@@ -8,6 +8,7 @@ from src.convex_adaptive_rrp import drift_weights, rebalance_dates_for_frequency
 from src.covariance_estimators import estimate_covariance
 from src.hierarchical_risk_parity import solve_herc, solve_hrp
 from src.investable import expand_weights, investable_columns, portfolio_return_for_available
+from src.incremental_backtest import resume_weights
 from src.risk_parity import solve_standard_rp
 from src.utils import get_config, infer_asset_class
 
@@ -102,20 +103,22 @@ def run_benchmark_backtest(
     lookback_days: int = 240,
     transaction_cost_bps: float = 3.0,
     rebalance_frequency: str = "M",
+    *,
+    resume: pd.Series | None = None,
 ) -> pd.DataFrame:
     if name not in BENCHMARK_BUILDERS:
         raise ValueError(f"Unknown benchmark: {name}")
     builder = BENCHMARK_BUILDERS[name]
     returns = returns.copy()
     returns.index = pd.to_datetime(returns.index)
-    dates = returns.index
+    dates, initial_weights = resume_weights(returns, resume)
     rebalance_dates = rebalance_dates_for_frequency(returns, rebalance_frequency)
     n_assets = len(returns.columns)
-    weights = np.zeros(n_assets)
+    weights = initial_weights
     rows = []
     cost_rate = transaction_cost_bps / 10000.0
-    skipped = False
-    skip_reason = ""
+    skipped = resume is not None and resume["benchmark_status"] == "skipped"
+    skip_reason = "" if resume is None else resume["skip_reason"]
     for date in dates:
         turnover = 0.0
         if date in rebalance_dates:
