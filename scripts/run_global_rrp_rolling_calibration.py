@@ -166,8 +166,8 @@ def _calibration_contract() -> dict:
             packages[package] = version(package)
         except PackageNotFoundError:
             packages[package] = None
-    return {"configuration": config, "sources": sources,
-            "python": sys.version, "packages": packages}
+    return json.loads(json.dumps({"configuration": config, "sources": sources,
+                                 "python": sys.version, "packages": packages}))
 
 
 def _read_calibration_cache(output: Path, contract: dict):
