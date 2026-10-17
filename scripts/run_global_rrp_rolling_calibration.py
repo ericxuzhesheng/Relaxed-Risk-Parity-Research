@@ -177,7 +177,7 @@ def _read_calibration_cache(output: Path, contract: dict):
         if record["contract"] != contract:
             return None
         inputs = pd.read_csv(StringIO(record["inputs"]), index_col=0,
-                             parse_dates=True, float_precision="round_trip")
+                             parse_dates=True, float_precision="round_trip").astype(record["input_dtypes"])
         schedule = pd.read_csv(StringIO(record["schedule"]), float_precision="round_trip").astype(record["schedule_dtypes"])
         candidates = pd.read_csv(StringIO(record["candidates"]), float_precision="round_trip").astype(record["candidate_dtypes"])
         return inputs, schedule, candidates
@@ -191,6 +191,7 @@ def _save_calibration_cache(output, returns, schedules, candidates, contract):
     record = {
         "contract": contract,
         "inputs": returns.loc[returns.index < cutoff].to_csv(float_format="%.17g"),
+        "input_dtypes": returns.dtypes.astype(str).to_dict(),
         "schedule": schedule.to_csv(index=False, float_format="%.17g"),
         "candidates": candidates.to_csv(index=False, float_format="%.17g"),
         "schedule_dtypes": schedule.dtypes.astype(str).to_dict(),

@@ -15,6 +15,7 @@ def experiment(monkeypatch, tmp_path):
     returns = pd.DataFrame(np.random.default_rng(8).normal(0, .01, (len(dates), 2)),
                            index=dates, columns=["a", "b"])
     returns.iloc[:4, 1] = np.nan
+    returns["zero"] = 0.0
     calls, neutral_calls = [], []
     monkeypatch.setattr(rolling, "FIRST_SCHEDULE_YEAR", 2020)
     monkeypatch.setattr(rolling, "LAST_SCHEDULE_YEAR", 2021)
@@ -52,7 +53,7 @@ def experiment(monkeypatch, tmp_path):
 
 def test_append_reuses_every_year_and_matches_full_calibration(experiment):
     returns, output, calls, neutral_calls, full = experiment
-    extra = pd.DataFrame([[.02, -.01]], index=pd.DatetimeIndex(["2021-09-01"], name="date"),
+    extra = pd.DataFrame([[.02, -.01, 0.]], index=pd.DatetimeIndex(["2021-09-01"], name="date"),
                          columns=returns.columns)
     cached = rolling.calibrate_parameters(pd.concat([returns, extra]), output=output)
     assert calls == [] and neutral_calls == []
