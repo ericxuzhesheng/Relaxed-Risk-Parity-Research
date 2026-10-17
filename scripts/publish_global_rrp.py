@@ -76,7 +76,7 @@ def main():
 
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
     models = {"Global RRP": primary}
-    contract = _calibration_contract()
+    contract = {**_calibration_contract(), "publisher": Path(__file__).read_text(encoding="utf-8")}
     for name, key in [("HRP Benchmark", "hrp"), ("HERC Benchmark", "herc")]:
         print("Running", name, flush=True)
         def hierarchical(data, resume, diagnostics):
