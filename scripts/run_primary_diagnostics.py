@@ -358,10 +358,10 @@ def render_artifacts():
             ["实验设定", "净年化收益", "年化波动", "夏普", "最大回撤", "月均换手"],
             rows, "lrrrrr"), "utf-8")
     rows = [[LABELS[key], f'{summary.loc[key, "mean_tracking_squared"]:.5f}',
-             pct(summary.loc[key, "mean_max_risk_budget_error"]),
+             f'{summary.loc[key, "mean_max_risk_budget_error"]*100:.4f}',
              pct(summary.loc[key, "mean_cash_weight"])] for key in ABLATIONS]
     (THESIS / "generated_diagnostic_mechanism.tex").write_text(tex_table(
-        ["实验设定", "平均权重距离平方", "平均最大风险预算偏离", "平均货币权重"],
+        ["实验设定", "平均权重距离平方", "风险预算偏离（百分点）", "平均货币权重"],
         rows, "lrrr"), "utf-8")
     rows = []
     for row in robust.itertuples():
@@ -391,8 +391,8 @@ def render_artifacts():
     macros["diagMatchDecisions"] = str(len(match))
     macros["diagMatchFeasible"] = str(int(match.ceiling_feasible.sum()))
     macros["diagLWMatchInfeasible"] = str(int((~match.lw_ceiling_feasible).sum()))
-    macros["diagPrimaryRCError"] = pct(summary.loc["primary", "mean_max_risk_budget_error"])
-    macros["diagReferenceRCError"] = pct(summary.loc["reference", "mean_max_risk_budget_error"])
+    macros["diagPrimaryRCError"] = f'{summary.loc["primary", "mean_max_risk_budget_error"]*100:.4f}'
+    macros["diagReferenceRCError"] = f'{summary.loc["reference", "mean_max_risk_budget_error"]*100:.4f}'
     (THESIS / "generated_diagnostic_numbers.tex").write_text("\n".join(
         "\\newcommand{\\"+key+"}{"+value+"}" for key, value in macros.items())+"\n", "utf-8")
 
@@ -402,9 +402,13 @@ def render_artifacts():
     colors = ["#B51F35", "#123F70", "#176DA3", "#7C1735", "#476B94"]
     for ax, field, title in zip(axes, ["net_annual_return", "mean_max_risk_budget_error"],
                                ["净年化收益", "平均最大风险预算偏离"]):
-        ax.barh([LABELS[k] for k in ABLATIONS], summary.loc[ABLATIONS, field], color=colors)
+        is_risk_share = field == "mean_max_risk_budget_error"
+        ax.barh([LABELS[k] for k in ABLATIONS], summary.loc[ABLATIONS, field] * (100 if is_risk_share else 1), color=colors)
         ax.invert_yaxis()
-        ax.xaxis.set_major_formatter(PercentFormatter(1))
+        if is_risk_share:
+            ax.set_xlabel("百分点（逐期最大偏离的均值）")
+        else:
+            ax.xaxis.set_major_formatter(PercentFormatter(1))
         ax.set_title(title)
         ax.grid(axis="x", alpha=.4)
     fig.tight_layout()

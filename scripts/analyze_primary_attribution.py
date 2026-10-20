@@ -58,6 +58,10 @@ def main():
     matched = read(ROOT / "results/primary_diagnostics/matched_equal_daily.csv")
     index = primary.index
     assert equal.index.equals(index) and matched.index.equals(index)
+    baseline_date = index[0]
+    # Match the return sample recovered by publication NAV pct_change.
+    primary, equal, matched = primary.iloc[1:], equal.iloc[1:], matched.iloc[1:]
+    index = primary.index
     raw = returns.loc[index, assets]
     # Match the published dot-product convention: an unavailable quote adds zero.
     daily = raw.fillna(0)
@@ -179,6 +183,8 @@ def main():
         "status": "passed", "daily_reconstruction_max_error": max(reconstructed_errors),
         "daily_attribution_identity_max_error": max_identity_error,
         "days": len(index), "market_down_days": int(state.sum()),
+        "excluded_nav_baseline_date": str(baseline_date.date()),
+        "attribution_start": str(index[0].date()),
         "complete_weekly_intervals": len(positions),
         "missing_held_return_counts": missing_held_counts,
         "units": "arithmetic mean daily basis points; not compounded or annualized",
