@@ -143,6 +143,15 @@ def main():
     (THESIS / "generated_brinson_allocation.tex").write_text(tex_table(
         ["归因组", "等权全样本", "等权下跌日", "匹配全样本", "匹配下跌日"],
         table_rows, "lrrrr"), encoding="utf-8")
+    macros = {"attrDays": str(len(index)), "attrDownDays": str(int(state.sum()))}
+    for key, prefix in [("equal", "Equal"), ("matched_equal", "Matched")]:
+        for sample, suffix in [("all", "All"), ("market_down", "Down")]:
+            result = summary.query("benchmark == @key and sample == @sample").iloc[0]
+            macros[f"attr{prefix}Net{suffix}"] = f"{result.net_active_bps:.2f}"
+        cash = category.query("benchmark == @key and sample == 'market_down' and group == '货币'").iloc[0]
+        macros[f"attr{prefix}CashDown"] = f"{cash.allocation_bps:.2f}"
+    (THESIS / "generated_attribution_numbers.tex").write_text("\n".join(
+        rf"\newcommand{{\{key}}}{{{value}}}" for key, value in macros.items()) + "\n", encoding="utf-8")
 
     prior = (1 + returns["沪深300ETF"]).rolling(63).apply(np.prod, raw=True).sub(1).shift(1)
     dates = index[primary.is_rebalance_day]

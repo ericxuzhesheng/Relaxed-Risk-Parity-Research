@@ -1,0 +1,62 @@
+{
+  "status": "passed",
+  "daily_reconstruction_max_error": 1.0928757898653885e-16,
+  "daily_attribution_identity_max_error": 9.67628754899863e-15,
+  "days": 2130,
+  "market_down_days": 1054,
+  "complete_weekly_intervals": 449,
+  "missing_held_return_counts": {
+    "equal": 0,
+    "primary": 0,
+    "matched_equal": 0
+  },
+  "units": "arithmetic mean daily basis points; not compounded or annualized",
+  "groups": {
+    "货币": [
+      "日利ETF"
+    ],
+    "国债": [
+      "5年国债ETF",
+      "10年国债ETF"
+    ],
+    "信用债": [
+      "信用债ETF"
+    ],
+    "可转债": [
+      "可转债ETF"
+    ],
+    "境内权益": [
+      "沪深300ETF",
+      "中证500ETF",
+      "中证1000ETF",
+      "中证2000ETF",
+      "创业板ETF",
+      "红利ETF",
+      "半导体ETF",
+      "人工智能ETF",
+      "新能源ETF",
+      "科创50ETF",
+      "证券ETF",
+      "军工ETF",
+      "消费ETF"
+    ],
+    "境外权益": [
+      "恒生ETF",
+      "纳指ETF",
+      "标普500ETF",
+      "日经225ETF",
+      "欧洲ETF"
+    ],
+    "商品相关": [
+      "白银LOF",
+      "黄金ETF",
+      "有色金属期货ETF",
+      "能源化工期货ETF",
+      "豆粕ETF",
+      "煤炭ETF",
+      "原油ETF"
+    ]
+  },
+  "zero_weight_convention": "empty portfolio groups use unscaled Equal Weight group return; empty benchmark groups use the same fallback",
+  "market_state": "daily attribution: contemporaneous CSI300 ETF negative return, ex-post descriptive; weekly positions: strictly prior 63-day return"
+}
