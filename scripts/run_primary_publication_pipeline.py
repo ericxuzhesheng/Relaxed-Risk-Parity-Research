@@ -49,11 +49,26 @@ def _write_build_verification() -> None:
         ROOT / "report/thesis_latex/main.log",
         ROOT / "report/ppt/rrp_defense.log",
     ]
-    overfull = sum(
-        path.read_text(encoding="utf-8", errors="replace").count("Overfull")
-        for path in logs
-        if path.exists()
-    )
+    log_text = "\n".join(path.read_text(encoding="utf-8", errors="replace") for path in logs)
+    overfull = log_text.count("Overfull")
+    if overfull or any(note in log_text for note in (
+        "There were undefined references", "There were multiply-defined labels",
+        "Missing character:",
+    )):
+        raise ValueError("Publication PDFs require layout, reference or glyph repair")
+    font_checks = {}
+    for pdf in (thesis_pdf, slides_pdf):
+        font_list = subprocess.run(["pdffonts", str(pdf)], capture_output=True, check=True).stdout.decode("utf-8")
+        rows = font_list.splitlines()[2:]
+        if not rows or any(row.split()[-5] != "yes" for row in rows if row.strip()):
+            raise ValueError(f"Unembedded fonts in {pdf}")
+        chinese_fonts = sorted({
+            row.split()[0] for row in rows
+            if any(name in row.lower() for name in ("simsun", "simhei", "yahei", "stzhong", "fangsong"))
+        })
+        if not chinese_fonts:
+            raise ValueError(f"No embedded Chinese font found in {pdf}")
+        font_checks[pdf.name] = {"all_fonts_embedded": True, "chinese_fonts": chinese_fonts}
     verification = {
         "primary_model": "Global RRP",
         "publication_models": models,
@@ -67,6 +82,9 @@ def _write_build_verification() -> None:
         "primary_audit_status": audit["status"],
         "diagnostic_audit_status": diagnostic_audit["status"],
         "diagnostic_experiment_count": diagnostic_audit["experiment_count"],
+        "risk_matching_decisions": diagnostic_audit["risk_matching_decisions"],
+        "risk_matching_infeasible_count": diagnostic_audit["risk_matching_infeasible_count"],
+        "fonts": font_checks,
         "figures": "high-contrast red-blue PNG and vector PDF",
     }
     (ROOT / "results/tables/publication_build_verification.json").write_text(
