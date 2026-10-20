@@ -49,7 +49,9 @@ def main():
     }
 
     def read(path):
-        return pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        frame = pd.read_csv(path, parse_dates=["date"]).set_index("date")
+        frame["transaction_cost"] = frame.gross_return - frame.net_return
+        return frame
 
     primary = read(TABLES / "comparison_global_rrp_returns.csv")
     equal = read(TABLES / "comparison_equal_weight_returns.csv")
