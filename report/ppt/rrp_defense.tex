@@ -30,6 +30,7 @@
 % ── 数值宏。与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
 \input{../thesis_latex/generated_diagnostic_numbers.tex}
+\input{../thesis_latex/generated_attribution_numbers.tex}
 
 
 % ── 辅助命令。图片帧（单图 + 可选注释）────────────────────────────────────────
@@ -201,6 +202,17 @@
 \end{column}
 \end{columns}
 \end{frame}
+\begin{frame}{现金与债券配置也是仓位管理}
+\begin{itemize}
+\item 满额投资约束下，资本结构仍能调节组合的风险承担
+\item 海龟交易法按波动确定持仓单位；本文通过协方差与资本预算确定ETF权重
+\item 国债与信用债分别承担利率、信用风险，防御效果取决于市场冲击
+\end{itemize}
+\medskip
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_position_states.tex}}
+\par\medskip\scriptsize
+状态使用调仓前63日沪深300ETF收益，仅作持仓描述。来源：OriginalTurtles.org（2003）；Moreira与Muir（JF，2017）。
+\end{frame}
 \section{机制与稳健性}
 \begin{frame}{消融：第二阶段优化的作用}
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_ablation.tex}}
@@ -262,6 +274,31 @@
 \end{itemize}
 \end{frame}
 \section{结论}
+\begin{frame}{Brinson归因：解释相对基准的收益差}
+\small
+\begin{align*}
+A_g&=(w^P_g-w^B_g)(r^B_g-R^B) &&\text{配置}\\
+S_g&=w^B_g(r^P_g-r^B_g) &&\text{组内选择}\\
+I_g&=(w^P_g-w^B_g)(r^P_g-r^B_g) &&\text{交互}
+\end{align*}
+\begin{itemize}
+\item 三项之和解释毛收益差，加入费用差后逐日核对净收益差
+\item 本文的选择效应指组内ETF配置；风险贡献另由权重和协方差计算
+\item 现金超配的贡献取决于现金收益相对基准整体收益的高低
+\end{itemize}
+\scriptsize 来源：Brinson与Fachler（JPM，1985）；Brinson等（FAJ，1986）；Bacon（CFA Institute，2019）。
+\end{frame}
+\begin{frame}{下跌日的配置贡献取决于基准}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_brinson_summary.tex}}
+\par\medskip
+\begin{itemize}
+\item 表中为平均单日基点；下跌日按沪深300ETF当日负收益事后划分
+\item 下跌日货币配置项：相对原始等权为\attrEqualCashDown{}，相对风险匹配等权为\attrMatchedCashDown{}
+\item 风险匹配基准本身持有较多现金，评价应同时观察国债、信用债和组内配置
+\end{itemize}
+\medskip\scriptsize
+共\attrDays{}个交易日，其中\attrDownDays{}个下跌日。单日算术归因与年化、复合收益分别报告。
+\end{frame}
 \begin{frame}{研究结论}
 \begin{itemize}
 \item 构建两阶段凸配置框架：可行收益目标、风险预算参考和年度决策规则
