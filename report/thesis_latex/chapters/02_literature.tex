@@ -39,6 +39,13 @@ CVaR 将注意力集中于损失分布的尾部。Rockafellar 与 Uryasev 给出
 
 Rockafellar 与 Uryasev 对一般损失分布的讨论说明，有限样本和离散损失下的尾部风险定义仍需保持一致\cite{rockafellar2002conditional}。Almgren 与 Chriss 将交易执行中的价格风险、暂时性冲击和永久性冲击纳入分析\cite{almgren2001optimal}，为区分本文的固定费率扣减与实际执行成本提供了依据。
 
+\subsection{风险承担、杠杆约束与估计误差}
+Frazzini 与 Pedersen 在《Journal of Financial Economics》提出，融资约束会影响投资者选择风险暴露的方式：受到杠杆约束的投资者可能倾向于高贝塔资产，从而改变不同贝塔资产的定价关系\cite{frazzini2014betting}。这一机制说明，相同资本规模与相同风险规模是两种不同的比较条件。本文据此同时保留原始配置比较和事前风险匹配比较，以区分风险承担数量与配置结构对绩效的影响。
+
+Moreira 与 Muir 在《Journal of Finance》研究波动管理组合，指出条件波动上升与预期收益增加并不必然同比例发生，调整风险暴露可能改善风险调整后表现\cite{moreira2017volatility}。本文的方差惩罚作用于多资产权重，经济含义同样在于控制风险承担数量；收益短缺项则为这种调整设置收益代价。两项消融共同检验风险压缩与收益维持之间的权衡。该解释以本文自身实验为依据，文献提供理论联系。
+
+年度校准还面对估计精度与响应速度的取舍。DeMiguel 等在《Review of Financial Studies》中的结果提示，估计驱动的复杂规则需要通过简单配置来评价其增量价值\cite{demiguel2009optimal}。本文将首年参数冻结作为比较，使年度更新的边际作用可以单独观察。Jagannathan 与 Ma 在《Journal of Finance》讨论了非负约束缓和估计误差的作用\cite{jagannathan2003risk}。这一结果为本文多头预算约束提供统计层面的依据，与境内ETF持有组合的实施定位相互呼应。
+
 \subsection{国内实践与研究有效性}
 国内风险平价研究关注资产波动差异、工具范围和配置实施条件。华泰证券关于国内实践的研究讨论了资产风险与宏观风险暴露的联系\cite{htsc2024practice}，低利率环境研究则将多资产配置与绝对收益目标相联系\cite{htsc2025lowrate}。这些研究提供了应用背景，本文仍以无杠杆 ETF 组合为研究对象，不将其他策略的收益结果作为本模型的验证。
 
