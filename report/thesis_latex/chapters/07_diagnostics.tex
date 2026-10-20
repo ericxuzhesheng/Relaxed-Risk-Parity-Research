@@ -18,7 +18,7 @@
 \resizebox{\textwidth}{!}{\input{generated_diagnostic_mechanism.tex}}
 \end{table}
 
-表\ref{tab:diagnostic_mechanism}将资本权重距离和风险预算偏离分别列示。完整模型的平均最大风险预算偏离为 \diagPrimaryRCError，参考组合对应 \diagReferenceRCError；该列的百分数表示相对风险贡献份额的差值。指标在每次决策日使用当期估计协方差计算，再对决策日取平均。由此，本文将宽松配置带来的风险贡献变化与实际收益、波动和成本联系起来。
+表\ref{tab:diagnostic_mechanism}将资本权重距离和风险预算偏离分别列示。完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合对应\diagReferenceRCError{}个百分点。计算先在每个决策日取资产风险贡献份额相对等预算的最大绝对差，再对决策日取平均；它衡量预算偏离，并非组合年化波动或收益损失。该指标统一使用主模型当期Ledoit--Wolf矩阵，参考组合接近等预算，最终组合则体现收益与方差调整后的偏离。
 
 \figmaybe{primary_diagnostic_ablation.pdf}{目标项消融的收益与风险预算偏离}{fig:diagnostic_ablation}
 
@@ -29,6 +29,8 @@
 表\ref{tab:diagnostic_matched}展示简单组合与货币 ETF 混合后的结果。风险匹配在每个决策日使用历史协方差和主模型当期目标权重完成，全部 \diagMatchDecisions{} 个配对决策中，\diagMatchFeasible{} 个满足估计方差上限。逐期预测风险、混合比例和匹配误差保存于配套CSV。
 
 可行性检验还发现，在主模型的Ledoit--Wolf收缩协方差下，\diagLWMatchInfeasible{}个配对决策的混合集合最低方差高于主模型目标。向共同对角尺度收缩提高了货币ETF的估计风险，使集中货币持仓在该估计下也需要承担较大方差。表中辅助结果因此采用同一历史样本协方差统一衡量双方风险，同时完整保留收缩估计的可行性记录。这一现象揭示了风险模型与工具集合的相互作用：可交易的低波动资产如何进入协方差估计，会影响可实现的风险匹配。
+
+这里的配对记录对应450个周度决策日与两个简单基准。样本矩阵匹配是给定历史规格的辅助比较，收缩矩阵下的不可行结果亦构成研究发现。由于匹配尺度在历史诊断中确定，所得差异应解释为该尺度下的配置证据；既不能称作所有风险维度均相同，也不能据此识别与风险模型无关的超额收益能力。
 
 \begin{table}[htbp]\centering
 \caption{事前风险匹配后的辅助比较}\label{tab:diagnostic_matched}

@@ -14,7 +14,7 @@
 \end{figure}
 
 \subsection{风险贡献分解}
-对正波动组合，定义
+本文采用波动率的一阶齐次性进行Euler风险分解\cite{tasche2008euler,roncalli2013introduction}。对正波动组合，定义
 \[
 \sigma(w)=\sqrt{w^\mathsf T\Sigma_t w},\qquad
 \frac{\partial\sigma(w)}{\partial w_i}=\frac{(\Sigma_t w)_i}{\sigma(w)}.
@@ -28,6 +28,8 @@ RC_i(w)=w_i\frac{(\Sigma_t w)_i}{\sigma(w)}.
 \sum_i RC_i(w)=\frac{w^\mathsf T\Sigma_t w}{\sigma(w)}=\sigma(w).
 \]
 这一恒等式解释了风险贡献与总波动之间的联系。它并未要求各项必须非负，也未要求各项相等。某些资产与组合的协方差可能为负，因此负边际贡献在一般组合中具有数学可能性。风险预算问题通过选择特定参考权重，将贡献比例与正预算相匹配。
+
+为比较份额，进一步定义$RRC_i=RC_i/\sigma(w)=w_i(\Sigma_t w)_i/(w^\mathsf T\Sigma_t w)$，其合计为一。$RC_i$具有年化波动的单位，$RRC_i$为无量纲份额；某项份额相对预算的差值以百分点表示。上述指标均以给定协方差为条件，反映当期估计风险的分配，并非该资产贡献的实际收益。
 
 令预算 $b_i=1/n_t$，理想参考满足
 \[
