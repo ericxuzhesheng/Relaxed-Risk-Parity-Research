@@ -53,5 +53,16 @@
     "targeted_tests_passed": 9,
     "risk_matching_covariance": "common prior sample covariance; original LW feasibility separately recorded",
     "visual_pdf_review": "passed"
+  },
+  {
+    "step": "defense_consistency_review",
+    "returncode": 0,
+    "source": "existing published backtests; no model recalibration",
+    "risk_contribution_decisions": 450,
+    "attribution_return_sample": "NAV-derived returns excluding initial NAV observation",
+    "targeted_tests_passed": 15,
+    "bibliography_keys_checked": 35,
+    "visual_pdf_review": "passed",
+    "compile_passes_per_pdf": 3
   }
 ]
