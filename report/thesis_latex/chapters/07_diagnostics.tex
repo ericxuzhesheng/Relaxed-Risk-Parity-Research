@@ -26,6 +26,8 @@
 \subsection{事前风险水平可比的辅助比较}
 表\ref{tab:diagnostic_matched}展示简单组合与货币 ETF 混合后的结果。风险匹配在每个决策日使用历史协方差和主模型当期目标权重完成，全部 \diagMatchDecisions{} 个配对决策中，\diagMatchFeasible{} 个满足估计方差上限。逐期预测风险、混合比例和匹配误差保存于配套CSV。
 
+可行性检验还发现，在主模型的Ledoit--Wolf收缩协方差下，\diagLWMatchInfeasible{}个配对决策的混合集合最低方差高于主模型目标。向共同对角尺度收缩提高了货币ETF的估计风险，使集中货币持仓在该估计下也需要承担较大方差。表中辅助结果因此采用同一历史样本协方差统一衡量双方风险，同时完整保留收缩估计的可行性记录。这一现象揭示了风险模型与工具集合的相互作用：可交易的低波动资产如何进入协方差估计，会影响可实现的风险匹配。
+
 \begin{table}[htbp]\centering
 \caption{事前风险匹配后的辅助比较}\label{tab:diagnostic_matched}
 \resizebox{\textwidth}{!}{\input{generated_diagnostic_matched.tex}}
@@ -47,6 +49,8 @@
 \end{table}
 
 在单边20 bps费用下，主模型净年化收益为 \diagCostTwentyReturn。将原目标顺延一个交易日执行后，净年化收益为 \diagDelayReturn，年化波动为 \diagDelayVol，夏普为 \diagDelaySharpe，最大回撤为 \diagDelayDD。费用与执行实验把交易条件变化映射为可观察的收益风险差异。10日与40日半衰期结果进一步说明，均值估计的响应速度会改变给定年度惩罚下的配置路径。
+
+较短半衰期提高近期收益的影响，也提高了交易需求；较长半衰期使输入调整更平缓。其经济取舍是信号响应速度与估计噪声、成本之间的平衡，与DeMiguel等关于估计误差影响配置收益的讨论相联系\cite{demiguel2009optimal}。在本次敏感性范围内，净年化收益和风险指标保持相近数量级，说明主结果对所检验的均值响应速度具有一定稳定性。
 
 \subsection{固定子区间比较}
 表\ref{tab:diagnostic_subperiods}使用预先固定的三个连续子区间，比较主模型与两条风险匹配辅助路径。区间划分覆盖不同市场阶段，2026年只计入截至样本终点的观察。每个子区间重新以首日净值为基期计算绩效，回撤使用区间内历史高点。

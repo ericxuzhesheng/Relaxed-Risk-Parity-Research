@@ -1,14 +1,16 @@
 {
   "status": "passed",
   "experiment_count": 10,
-  "primary_return_parity_max_error": 9.990923019453923e-17,
+  "primary_return_parity_max_error": 3.3881317890172014e-21,
   "replay_parity": true,
   "long_only_fully_invested": true,
   "prior_only_solver_inputs": true,
   "cost_identity": true,
   "risk_matching_decisions": 900,
-  "risk_matching_infeasible_count": 900,
-  "risk_matching_max_abs_gap": 0.04355319396688094,
+  "risk_matching_infeasible_count": 0,
+  "risk_matching_max_abs_gap": 2.0816681711721685e-17,
+  "risk_matching_covariance": "prior 252-day sample covariance with PSD floor",
+  "lw_risk_matching_infeasible_count": 900,
   "paired_bootstrap_rows": 15,
   "confidence_intervals": "pointwise percentile intervals conditional on historical specification; no multiple-selection correction"
 }

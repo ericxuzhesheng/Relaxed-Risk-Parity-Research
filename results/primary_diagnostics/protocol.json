@@ -207,6 +207,6 @@
   "frozen_parameters": "last schedule entry effective before evaluation; retained throughout evaluation",
   "ablation_parameters": "retain the primary annual schedule for the remaining objective terms",
   "mean_sensitivity": "retain primary annual penalties; change only the EWMA half-life",
-  "risk_matching": "largest base fraction in [0,1] with prior LW variance <= contemporaneous primary; minimum-variance mixture if infeasible",
+  "risk_matching": "largest base fraction in [0,1] with prior sample covariance variance <= contemporaneous primary; LW feasibility recorded separately",
   "execution_delay": "trade the original targets one observed trading day later; recompute drift and costs"
 }

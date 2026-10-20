@@ -22,7 +22,7 @@
 \hypersetup{
   pdftitle={基于宽松风险平价的多资产 ETF 配置研究——凸优化建模与年度滚动校准},
   pdfauthor={许哲圣},
-  pdfkeywords={宽松风险平价, 全球多资产配置, CVaR, ETF}
+  pdfkeywords={宽松风险平价, 凸优化, 消融实验, 风险匹配, ETF}
 }
 
 \setlength{\emergencystretch}{2em}
@@ -162,22 +162,22 @@
 本人郑重声明，所呈交的毕业论文是在指导教师指导下独立完成的研究成果。引用他人的成果均已注明来源。历史回测结果仅用于研究，不构成未来收益承诺。
 \clearpage
 \begin{abstract}
-本文研究全球 ETF 配置中的风险预算、收益目标和风险惩罚尺度。Global RRP 为主模型，HRP Benchmark、HERC Benchmark、Equal Weight 和 60/40 Benchmark 为对照。资产池包含 \etfCount{} 只 ETF，评价区间为 \evalStartDate{} 至 \evalEndDate{}，按 \annualizationDays{} 个交易日年化，单边约定成本为 \txCostBps{} bps。
+本文研究境内上市ETF机会集合下的多资产风险收益配置，构建以Global RRP为主模型、四种配置规则为对照的实证框架。资产池包含\etfCount{}只ETF，评价区间为\evalStartDate{}至\evalEndDate{}，采用\annualizationDays{}日年化和\txCostBps{} bps单边交易成本。研究以多头、满额投资且无杠杆的预算集合对应境内ETF持有组合，并从工具覆盖和融资条件解释其与桥水全球机构配置框架的区别。
 
-主模型通过凸对数风险预算问题构造参考权重，再求解包含参考跟踪、组合方差和预测收益短缺的凸问题。收益目标取当期可行参考组合的预测收益。模型采用 \lookbackDays{} 日窗口、Ledoit--Wolf 收缩协方差和半衰期为 20 个交易日的指数加权收益估计。方差及收益短缺惩罚每年根据生效日前两个连续历史区间更新，随后冻结一年。组合为周频、多头、无杠杆，并允许全部满足历史数据条件的资产参与优化。
+主模型先求解凸风险预算参考，再通过资本跟踪、组合方差和预测收益短缺的凸目标生成最终权重。收益目标取当期可行参考组合的预测收益，协方差使用Ledoit--Wolf收缩估计，均值使用20日半衰期指数加权估计。两项惩罚根据生效日前的历史区间年度更新。本文进一步设置目标项消融、首年参数冻结、事前风险匹配及成本、执行延迟和均值响应速度实验，采用配对区块抽样评价绩效差异。
 
-主模型净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，最大回撤为 \globalMaxDD。有 \primaryAssetsUsed{} 只 ETF 在合格期间曾形成超过数值容差的持仓。十个年度的候选均缺乏显著区分，模型结果属于探索性证据。
+Global RRP的净年化收益为\globalNetReturn，年化波动为\globalVolatility，夏普为\globalSharpe，最大回撤为\globalMaxDD。相对直接持有风险预算参考的\diagReferenceReturn{}收益和\diagReferenceVol{}波动，第二阶段优化在保持相近收益的同时降低了实现波动。收益短缺项体现了收益维持与交易需求的权衡。风险匹配后的Equal Weight与60/40 Benchmark净年化收益分别为\diagMatchedEWReturn{}和\diagMatchedSBReturn。单边成本提高至20 bps及执行顺延一日时，主模型净年化收益分别为\diagCostTwentyReturn{}和\diagDelayReturn。年度更新与首年参数冻结得到相近结果，配合年度候选的弱识别特征，表明模型的经验价值主要体现于配置结构与实施权衡。上述证据形成了固定资产池和既定历史规格下可复现的探索性结论。
 
 \noindent\textbf{关键词 } 宽松风险平价；全球资产配置；凸优化；ETF；交易成本
 \end{abstract}
 \clearpage
 \renewcommand{\abstractname}{Abstract}
 \begin{abstract}
-This thesis evaluates Global RRP against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark in a common universe of \etfCount{} ETFs. The evaluation spans \evalStartDate{} to \evalEndDate{}, uses \annualizationDays-day annualization, and deducts an assumed \txCostBps{}-bp one-way transaction cost.
+This thesis studies multi-asset allocation within a universe of \etfCount{} China-listed ETFs. Global RRP is evaluated against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark from \evalStartDate{} to \evalEndDate{}, with \annualizationDays-day annualization and a \txCostBps{}-bp one-way transaction cost. Its long-only, fully invested and unlevered budget reflects the chosen ETF opportunity set. Differences in instrument coverage and financing arrangements distinguish this setting from Bridgewater's global institutional framework.
 
-Global RRP uses a convex risk-budget reference followed by a convex objective for reference tracking, portfolio variance and expected-return shortfall. The feasible return target equals the predicted return of the contemporaneous reference portfolio. The model uses a \lookbackDays-day window, Ledoit--Wolf covariance shrinkage and exponentially weighted return estimates with a 20-trading-day half-life. Penalties update annually from two strictly earlier historical blocks and remain fixed during the following year. The primary portfolio is weekly, long-only and unlevered.
+The model constructs a convex risk-budget reference and then optimizes reference tracking, variance and expected-return shortfall. The return target equals the reference portfolio's predicted return. Ledoit--Wolf covariance estimates and exponentially weighted means use strictly prior observations, and penalties update annually from earlier calibration and validation blocks. Objective ablations, frozen initial penalties, ex-ante risk matching, cost and execution scenarios, and mean-estimation sensitivity identify the roles of model components and implementation conditions. Paired block bootstrap intervals quantify uncertainty in Sharpe differences.
 
-The primary model records \globalNetReturn{} net annual return, \globalVolatility{} annual volatility, \globalSharpe{} Sharpe and \globalMaxDD{} maximum drawdown. A total of \primaryAssetsUsed{} ETFs receive material allocations during eligible periods. All annual candidates fall within one Sharpe standard error, so the data do not identify unique penalties. Historical design choices prevent an untouched model-selection claim.
+Global RRP achieves a net annual return of \globalNetReturn, volatility of \globalVolatility, a Sharpe ratio of \globalSharpe, and a maximum drawdown of \globalMaxDD. The risk-budget reference achieves \diagReferenceReturn{} return and \diagReferenceVol{} volatility, showing that the second stage preserves a similar return while reducing realized risk. Risk-matched Equal Weight and 60/40 Benchmark achieve \diagMatchedEWReturn{} and \diagMatchedSBReturn{} net annual returns. Under a 20-bp cost and a one-day execution delay, the primary model achieves \diagCostTwentyReturn{} and \diagDelayReturn{}, respectively. Annual updating and frozen initial penalties produce similar outcomes, consistent with weak identification of the annual coefficients. The evidence supports an allocation mechanism and implementation trade-off conditional on the fixed universe and historical specification.
 \end{abstract}
 \clearpage
 \setcounter{tocdepth}{2}
