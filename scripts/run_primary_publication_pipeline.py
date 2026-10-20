@@ -90,6 +90,7 @@ def main():
         [python, "scripts/export_primary_weekly_holdings.py"],
         [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-23"],
         [python, "scripts/render_publication_figures.py"],
+        [python, "scripts/run_primary_diagnostics.py"],
         [python, "scripts/sync_global_rrp_docs.py"],
     ]
     try:
