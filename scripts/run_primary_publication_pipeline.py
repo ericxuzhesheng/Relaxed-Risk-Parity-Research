@@ -45,6 +45,11 @@ def _write_build_verification() -> None:
     )
     if diagnostic_audit["status"] != "passed":
         raise ValueError("Current-specification diagnostics have not passed")
+    attribution_audit = json.loads(
+        (ROOT / "results/tables/primary_attribution_audit.json").read_text(encoding="utf-8")
+    )
+    if attribution_audit["status"] != "passed":
+        raise ValueError("Holdings attribution has not reconciled")
     logs = [
         ROOT / "report/thesis_latex/main.log",
         ROOT / "report/ppt/rrp_defense.log",
@@ -81,6 +86,8 @@ def _write_build_verification() -> None:
         "estimation_window_days": audit["estimation_window_days"],
         "primary_audit_status": audit["status"],
         "diagnostic_audit_status": diagnostic_audit["status"],
+        "attribution_audit_status": attribution_audit["status"],
+        "attribution_daily_identity_max_error": attribution_audit["daily_attribution_identity_max_error"],
         "diagnostic_experiment_count": diagnostic_audit["experiment_count"],
         "risk_matching_decisions": diagnostic_audit["risk_matching_decisions"],
         "risk_matching_infeasible_count": diagnostic_audit["risk_matching_infeasible_count"],

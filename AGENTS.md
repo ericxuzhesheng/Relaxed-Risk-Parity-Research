@@ -47,6 +47,8 @@ Primary average money-market weight is 18.02%, with a maximum of 26.43%. The ave
 
 Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 900 sample-covariance matches attain the target; 900 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
 
+Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, `primary_brinson_categories.csv` and `primary_attribution_audit.json`. Seven attribution groups separate cash, government bonds and credit bonds without changing the ETF universe. Effects are arithmetic mean daily basis points, not annualized or compounded; down-day attribution is ex-post descriptive. Risk contribution, prior-state position analysis and return attribution are distinct outputs. Turtle position sizing is an economic analogy, not an implemented breakout strategy.
+
 ---
 
 ## ETF Asset Pool
