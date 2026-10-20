@@ -1,0 +1,212 @@
+{
+  "evaluation_start": "2018-01-02",
+  "evaluation_end": "2026-10-16",
+  "primary_configuration": {
+    "trading_days_per_year": 252,
+    "evaluation_start_date": "2018-01-02",
+    "evaluation_end_date": "2026-10-16",
+    "data_start_date": "2000-01-01",
+    "plot_start_date": "2018-01-02",
+    "lambda_pen": 1.0,
+    "optim_tol": 1e-06,
+    "optim_maxiter": 2000,
+    "asset_weight_bounds": [
+      0.0,
+      1.0
+    ],
+    "max_single_asset_weight": 1.0,
+    "bond_keywords": [
+      "国债",
+      "信用票",
+      "美债",
+      "债"
+    ],
+    "bond_leverage_upper": 1.0,
+    "risk_free_monthly_path": "data/processed/risk_free_rate_monthly.csv",
+    "risk_free_rate": 0.0,
+    "target_vol": 0.06,
+    "gross_exposure_cap": 1.0,
+    "turnover_cap": 0.25,
+    "transaction_cost_bps": 3.0,
+    "rebalance_frequency": "W",
+    "risk_overlay_enabled": false,
+    "trend_filter_mode": "off",
+    "lookback_days": 252,
+    "rrp_variance_reference": "equal_weight",
+    "rrp_return_target_mode": "reference",
+    "mean_estimator": "ewma",
+    "mean_ewma_halflife": 20.0,
+    "covariance_method": "ledoit_wolf",
+    "rrp_variance_penalty": 1.0,
+    "rrp_parameter_schedule": [
+      {
+        "effective_date": "2017-01-01",
+        "information_end": "2016-12-30",
+        "rrp_variance_penalty": 6.857438533452148e-12,
+        "lambda_pen": 16.544500126622328,
+        "validation_net_sharpe": 1.467320456678859,
+        "validation_annualized_turnover": 1.3296175675143955,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2018-01-01",
+        "information_end": "2017-12-29",
+        "rrp_variance_penalty": 0.14016120527178422,
+        "lambda_pen": 8.826463999193615,
+        "validation_net_sharpe": 1.6298557344587312,
+        "validation_annualized_turnover": 2.465559762398135,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2019-01-01",
+        "information_end": "2018-12-28",
+        "rrp_variance_penalty": 0.0821342847329994,
+        "lambda_pen": 24.725511173446606,
+        "validation_net_sharpe": 0.02595982044059075,
+        "validation_annualized_turnover": 1.31059577202022,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2020-01-01",
+        "information_end": "2019-12-31",
+        "rrp_variance_penalty": 0.10123904931096604,
+        "lambda_pen": 9.384804606730212,
+        "validation_net_sharpe": 3.4330306173427605,
+        "validation_annualized_turnover": 2.0859743446784376,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2021-01-01",
+        "information_end": "2020-12-31",
+        "rrp_variance_penalty": 0.11811057302601154,
+        "lambda_pen": 2.936358453803832,
+        "validation_net_sharpe": 1.6285697428191932,
+        "validation_annualized_turnover": 3.1476521588093136,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2022-01-01",
+        "information_end": "2021-12-31",
+        "rrp_variance_penalty": 0.08514454490947383,
+        "lambda_pen": 2.0097571746190166,
+        "validation_net_sharpe": 2.051095933667248,
+        "validation_annualized_turnover": 2.357392952410183,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2023-01-01",
+        "information_end": "2022-12-30",
+        "rrp_variance_penalty": 0.13361142532486142,
+        "lambda_pen": 8.519545925613333,
+        "validation_net_sharpe": 0.2800028277235462,
+        "validation_annualized_turnover": 1.3607136134406308,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2024-01-01",
+        "information_end": "2023-12-29",
+        "rrp_variance_penalty": 0.20224348536038575,
+        "lambda_pen": 11.521431051199524,
+        "validation_net_sharpe": 2.795621674071663,
+        "validation_annualized_turnover": 1.7657694187653796,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2025-01-01",
+        "information_end": "2024-12-31",
+        "rrp_variance_penalty": 0.19313534657825204,
+        "lambda_pen": 15.491782972824248,
+        "validation_net_sharpe": 2.547217056774163,
+        "validation_annualized_turnover": 2.6100168098198515,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      },
+      {
+        "effective_date": "2026-01-01",
+        "information_end": "2025-12-31",
+        "rrp_variance_penalty": 0.15735878978244452,
+        "lambda_pen": 3.7925457379872687,
+        "validation_net_sharpe": 2.2068018866896115,
+        "validation_annualized_turnover": 2.0803460668047205,
+        "candidate_count": 9,
+        "within_one_standard_error_count": 9,
+        "selected_has_eligible_neighbor": true
+      }
+    ]
+  },
+  "experiments": {
+    "primary": "Global RRP",
+    "reference": "仅风险预算参考",
+    "no_shortfall": "收益短缺惩罚置零",
+    "no_variance": "方差惩罚置零",
+    "frozen": "冻结评价首年参数",
+    "matched_equal": "Equal Weight（风险匹配）",
+    "matched_60_40": "60/40 Benchmark（风险匹配）",
+    "half_life_10": "均值半衰期10日",
+    "half_life_40": "均值半衰期40日",
+    "delay_1": "延后一交易日执行"
+  },
+  "cost_bps": [
+    0,
+    3,
+    10,
+    20
+  ],
+  "subperiods": [
+    [
+      "2018--2020",
+      "2018-01-02",
+      "2020-12-31"
+    ],
+    [
+      "2021--2023",
+      "2021-01-01",
+      "2023-12-31"
+    ],
+    [
+      "2024--2026",
+      "2024-01-01",
+      "2026-10-16"
+    ]
+  ],
+  "bootstrap": {
+    "resamples": 2000,
+    "block_sizes": [
+      5,
+      21,
+      63
+    ],
+    "seed": 20261020,
+    "confidence": 0.95,
+    "pairs": [
+      "reference",
+      "no_shortfall",
+      "frozen",
+      "matched_equal",
+      "matched_60_40"
+    ]
+  },
+  "role": "historical diagnostic experiments; no primary model selection",
+  "frozen_parameters": "last schedule entry effective before evaluation; retained throughout evaluation",
+  "ablation_parameters": "retain the primary annual schedule for the remaining objective terms",
+  "mean_sensitivity": "retain primary annual penalties; change only the EWMA half-life",
+  "risk_matching": "largest base fraction in [0,1] with prior LW variance <= contemporaneous primary; minimum-variance mixture if infeasible",
+  "execution_delay": "trade the original targets one observed trading day later; recompute drift and costs"
+}
