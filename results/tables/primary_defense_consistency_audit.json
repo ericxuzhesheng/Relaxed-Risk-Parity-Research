@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "decisions": 450,
+  "lw_formula_max_error": 0.0,
+  "euler_identity_max_error": 6.661338147750939e-16,
+  "mean_risk_budget_error_matches_saved_solver": true,
+  "risk_contribution_scope": "decision-date target weights; common eligible set; each matrix separately",
+  "sample_covariance": "unbiased M-1 denominator plus PSD floor",
+  "lw_covariance": "centered M denominator, isotropic Ledoit-Wolf shrinkage, annualization and PSD floor"
+}

@@ -91,7 +91,7 @@ def main():
              "risk_contribution_scope":"decision-date target weights; common eligible set; each matrix separately",
              "sample_covariance":"unbiased M-1 denominator plus PSD floor",
              "lw_covariance":"centered M denominator, isotropic Ledoit-Wolf shrinkage, annualization and PSD floor"}
-    (tables / "defense_consistency_audit.json").write_text(json.dumps(audit,indent=2),encoding="utf-8")
+    (tables / "primary_defense_consistency_audit.json").write_text(json.dumps(audit,indent=2),encoding="utf-8")
     print(json.dumps(audit))
     print(grouped.to_string())
     print(detail[["observations","shrinkage","sample_cash_volatility","lw_cash_volatility"]].describe().to_string())

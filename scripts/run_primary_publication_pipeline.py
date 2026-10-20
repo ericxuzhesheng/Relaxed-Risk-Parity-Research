@@ -51,7 +51,7 @@ def _write_build_verification() -> None:
     if attribution_audit["status"] != "passed":
         raise ValueError("Holdings attribution has not reconciled")
     defense_audit = json.loads(
-        (ROOT / "results/tables/defense_consistency_audit.json").read_text(encoding="utf-8")
+        (ROOT / "results/tables/primary_defense_consistency_audit.json").read_text(encoding="utf-8")
     )
     if defense_audit["status"] != "passed":
         raise ValueError("Covariance and risk contributions have not reconciled")

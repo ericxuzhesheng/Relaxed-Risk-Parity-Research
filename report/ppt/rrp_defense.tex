@@ -159,7 +159,8 @@
 \scriptsize 经验矩阵使用中心化日收益和$M$分母；年化后再作数值修复。来源：Ledoit与Wolf（Journal of Multivariate Analysis，2004）。
 \end{frame}
 \begin{frame}{收缩估计怎样影响风险判断}
-\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_covariance_interpretation.tex}}
+\centering
+\resizebox{0.90\textwidth}{!}{\input{../thesis_latex/generated_covariance_interpretation.tex}}
 \par\medskip
 \[
 w^\mathsf T\widetilde\Sigma w=(1-\delta)w^\mathsf T S^{\rm ML}w+\delta\tau\|w\|_2^2
@@ -249,7 +250,8 @@ Brinson & 每日持仓与实现收益 & 相对基准的实际收益差\\\bottomr
 \small 三者共享持仓路径。估计风险份额、日均收益贡献和年化绩效使用不同单位。
 \end{frame}
 \begin{frame}{同一持仓的风险份额随估计尺度变化}
-\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_group_risk_contribution.tex}}
+\centering
+\resizebox{0.88\textwidth}{!}{\input{../thesis_latex/generated_group_risk_contribution.tex}}
 \par\medskip
 \small 各决策日先计算风险份额，再按组加总并取均值；每个风险列合计100\%。
 \par\medskip
@@ -268,7 +270,7 @@ Brinson & 每日持仓与实现收益 & 相对基准的实际收益差\\\bottomr
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_matched.tex}}
 \medskip
 \begin{itemize}
-\item 同一历史样本矩阵衡量双方风险：450个决策日、两个基准
+\item 同一历史样本矩阵衡量双方风险：\primaryRebalances{}个决策日、两个基准
 \item 简单组合与货币ETF混合，保持无杠杆并按各自换手计费
 \item 主模型净收益和夏普更高，实现波动与全期回撤幅度也更高
 \end{itemize}

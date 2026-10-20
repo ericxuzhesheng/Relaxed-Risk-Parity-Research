@@ -8,9 +8,9 @@
 实验报告净年化收益、波动、夏普、最大回撤、月均换手，并计算平均资本跟踪距离、平均最大风险预算偏离和平均货币权重。上述指标分别对应实现绩效、交易需求与配置机制。
 
 \subsubsection{事前风险匹配}
-对 Equal Weight 和 60/40 Benchmark，记其当期目标为 $u_t$，货币 ETF 的单位持仓向量为 $c_t$。辅助配置取
+对 Equal Weight 和 60/40 Benchmark，记其当期目标为 $u_t$，货币 ETF 的单位持仓向量为 $e_t^{\rm cash}$。辅助配置取
 \[
-z_t(a)=a u_t+(1-a)c_t,\qquad 0\leq a\leq1.
+z_t(a)=a u_t+(1-a)e_t^{\rm cash},\qquad 0\leq a\leq1.
 \]
 使用调仓日前的252日窗口，在共同完整观察上估计样本协方差$\widehat S_t$，并施加与现有估计模块一致的半正定数值修复。主模型权重仍由原有Ledoit--Wolf输入求得，辅助比较则对双方权重统一使用$\widehat S_t$衡量风险，选择满足
 \[
