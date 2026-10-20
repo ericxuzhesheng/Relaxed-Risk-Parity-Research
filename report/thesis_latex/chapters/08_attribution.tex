@@ -26,6 +26,8 @@ I_{g,t}&=(w^P_{g,t}-w^B_{g,t})(r^P_{g,t}-r^B_{g,t}).
 
 表\ref{tab:brinson_summary}使用日均基点表示各项贡献，一个基点等于0.01个百分点。该统计是单日效应的算术平均，适合比较全样本和条件样本；复合累计收益及年化收益仍由前文净值路径计算。Bacon讨论了多期归因需要处理收益链接的问题\cite{bacon2019attribution}，本文据此将单日均值与复合绩效分别报告。
 
+归因样本与主绩效中由相邻净值计算的收益样本对齐，2018年1月2日作为净值基期，归因从下一交易日开始。每日四项效应之和等于当日净收益差，因而各项均值之和也等于平均日净收益差。对这些均值乘以252只会得到算术年化差异，无法直接还原两项复合年化收益之差。表中各项独立四舍五入，显示值的加总可能有末位差异，逐日未舍入数值另行核验。
+
 \begin{table}[htbp]\centering
 \caption{Brinson--Fachler归因：平均单日贡献（基点）}\label{tab:brinson_summary}
 \resizebox{\textwidth}{!}{\input{generated_brinson_summary.tex}}
