@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "experiment_count": 10,
+  "primary_return_parity_max_error": 9.990923019453923e-17,
+  "replay_parity": true,
+  "long_only_fully_invested": true,
+  "prior_only_solver_inputs": true,
+  "cost_identity": true,
+  "risk_matching_decisions": 900,
+  "risk_matching_infeasible_count": 900,
+  "risk_matching_max_abs_gap": 0.04355319396688094,
+  "paired_bootstrap_rows": 15,
+  "confidence_intervals": "pointwise percentile intervals conditional on historical specification; no multiple-selection correction"
+}
