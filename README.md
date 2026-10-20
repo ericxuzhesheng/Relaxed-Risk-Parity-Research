@@ -2,7 +2,7 @@
 
 [中文](#中文) · [English](#english) · [完整论文](report/thesis_latex/main.pdf) · [答辩演示](report/ppt/rrp_defense.pdf) · [结果数据](results/tables/model_performance_summary.csv)
 
-更新日期 / Last updated: **2026-10-17**
+更新日期 / Last updated: **2026-10-20**
 
 ## 中文
 
@@ -12,7 +12,7 @@
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
-当前样本中，Global RRP 的净年化收益为 **6.00%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
+当前样本中，Global RRP 的净年化收益为 **6.00%**，年化波动为 **3.59%**，最大回撤为 **-6.80%**。研究通过目标项消融、事前风险匹配和配对区块抽样，量化优化规则、风险承担与参数更新形成的取舍。
 
 ### 快速阅读与证据入口
 
@@ -69,11 +69,24 @@ $$
 
 Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
-日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.34%**。这一持仓结构为理解较低波动提供了依据，尚不能单独证明优化方法带来了多少风险改善。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
+日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.34%**。这一持仓结构与目标项消融、风险匹配实验共同解释组合的风险收益权衡。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
 
 年度校准中，每年的九组候选均进入一倍标准误集合，有区分力的年度为 **0/10**。因此，当前样本不足以识别唯一惩罚系数，最终选择更多依赖换手和稳定性规则。
 
-### 图表与持仓解释
+### 机制实验与图表
+
+诊断实验围绕当前主模型逐项改变目标项和实施条件。固定参数取评价期开始前选出的系数；事前风险匹配通过简单配置与货币ETF混合实现，以同一历史样本协方差衡量双方风险，包含货币资产自身风险并保持无杠杆。原Ledoit–Wolf估计下的匹配可行性另行保存，用于解释收缩对低波动货币资产的影响。
+
+| 诊断设定 | 净年化收益 | 实现年化波动 | 夏普 |
+|---|---:|---:|---:|
+| Global RRP：仅持有风险预算参考 | 5.93% | 4.77% | 1.232 |
+| Global RRP：冻结评价首年参数 | 5.98% | 3.55% | 1.654 |
+| Equal Weight：事前风险匹配 | 3.53% | 3.17% | 1.110 |
+| 60/40 Benchmark：事前风险匹配 | 3.10% | 3.17% | 0.980 |
+
+同一主模型持仓路径在单边20 bps费用下的净年化收益为 **5.61%**；延后一交易日执行的净年化收益为 **5.90%**。均值半衰期、固定子区间和5/21/63日区块长度共同刻画结果敏感性。配对抽样区间反映固定历史规格下的统计不确定性。
+
+[消融与辅助比较](results/tables/primary_diagnostic_summary.csv) · [稳健性检验](results/tables/primary_robustness.csv) · [配对抽样](results/tables/primary_paired_bootstrap.csv) · [实验协议](results/primary_diagnostics/protocol.json) · [核验记录](results/tables/primary_diagnostics_audit.json)
 
 #### 累计净值
 
@@ -111,6 +124,10 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 图表采用红蓝配色，同时提供同名矢量PDF和300 dpi PNG。
 
 [最新目标持仓](results/tables/latest_holdings.csv)使用最新收盘信息求解，保留全部30只ETF及零权重。该结果为下一次周度调仓的预估配置，正式决策仍须纳入届时新增行情；信息截止日、年度参数与求解核验见[持仓审计](results/tables/latest_holdings_audit.json)。
+
+### 无杠杆设定的经济含义
+
+本研究完成的是境内ETF持有组合的资本配置。相对桥水全球机构框架，当前30只工具覆盖的独立利率、通胀与货币对冲风险来源较少；多头单位预算使风险规模与资本占用直接相连。论文据[桥水官方说明](https://www.bridgewater.com/research-and-insights/the-all-weather-story)区分两者工具范围，并以[Frazzini与Pedersen（2014，JFE）](https://doi.org/10.1016/j.jfineco.2013.10.005)和[Brunnermeier与Pedersen（2009，RFS）](https://doi.org/10.1093/rfs/hhn098)解释杠杆约束、融资与流动性风险。无杠杆约束使配置绩效与当前可核算的ETF持仓和费用相对应。
 
 ### 数据与复现
 
@@ -213,9 +230,24 @@ The evaluation period is **2018-01-02 to 2026-10-16**. Realized returns retain e
 
 Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
 
-The money-market ETF averages **18.02%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.34%**. This allocation helps explain the low volatility; isolating the optimizer's contribution requires further comparison. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
+The money-market ETF averages **18.02%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.34%**. This allocation, objective ablations and risk-matched comparisons jointly explain the risk-return trade-off. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
 
 All nine candidates enter the one-standard-error set in every annual validation. There are **0/10** informative years, so the sample does not identify unique penalty coefficients. Turnover and stability rules play a larger role in the final selection.
+
+### Diagnostic experiments
+
+The study evaluates objective-term ablations, parameters frozen before evaluation, and ex-ante risk matching. The auxiliary comparisons mix each simple allocation with the money-market ETF using the same prior sample covariance for both portfolios, including cash-asset risk and covariance, while remaining unlevered. Original Ledoit–Wolf feasibility is reported separately.
+
+| Diagnostic setting | Net annual return | Realized volatility | Sharpe |
+|---|---:|---:|---:|
+| Global RRP: reference only | 5.93% | 4.77% | 1.232 |
+| Global RRP: initial parameters frozen | 5.98% | 3.55% | 1.654 |
+| Equal Weight: ex-ante risk matching | 3.53% | 3.17% | 1.110 |
+| 60/40 Benchmark: ex-ante risk matching | 3.10% | 3.17% | 0.980 |
+
+At 20-bp one-way costs, the primary holdings path records **5.61%** net annual return. Executing original targets one trading day later records **5.90%**. Mean half-life changes, fixed subperiods and paired moving-block bootstrap intervals with 5/21/63-day blocks describe sensitivity conditional on the historical specification.
+
+[Diagnostic results](results/tables/primary_diagnostic_summary.csv) · [Robustness](results/tables/primary_robustness.csv) · [Paired bootstrap](results/tables/primary_paired_bootstrap.csv) · [Protocol](results/primary_diagnostics/protocol.json)
 
 ### Figures and holdings
 
@@ -231,6 +263,10 @@ The shared [figure section](#图表与持仓解释) presents four complementary 
 All 30 ETFs receive material allocations during eligible periods. The [holdings chart](results/figures/primary_weights.png) shows the structure, while [weekly holdings](results/tables/primary_weekly_holdings.csv), [weights](results/tables/primary_weekly_weights.csv) and [weekly summaries](results/tables/primary_weekly_summary.csv) retain the detailed record. Every decision includes all 30 assets and sample-boundary flags. Figures use a red-blue palette with matching vector PDF and 300-dpi PNG files.
 
 The [latest target allocation](results/tables/latest_holdings.csv) uses the latest observed close and includes all 30 ETFs, including zero weights. It is a forecast for the next weekly decision, which must incorporate newly available data before execution. The [holdings audit](results/tables/latest_holdings_audit.json) records the information cutoff, annual penalties and solver checks.
+
+### Why the model is unlevered
+
+The chosen China-listed ETF universe offers narrower independent rate, inflation and currency-hedging exposures than a global institutional instrument set. A long-only unit budget connects risk allocation directly to capital use. The thesis distinguishes this setting from [Bridgewater's All Weather framework](https://www.bridgewater.com/research-and-insights/the-all-weather-story), and uses research on [leverage constraints](https://doi.org/10.1016/j.jfineco.2013.10.005) and [funding liquidity](https://doi.org/10.1093/rfs/hhn098) to explain the financing and margin considerations behind the unlevered specification.
 
 ### Data and reproduction
 

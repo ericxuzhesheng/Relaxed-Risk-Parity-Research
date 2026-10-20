@@ -22,6 +22,12 @@ The historical path records 6.00% net annual return, 3.59% annual volatility, a 
 
 Rebalance inputs precede the trading date. Saved daily returns reconcile target weights, drifted weights, turnover and costs. The backtest does not establish actual execution prices, market impact or capacity. Historical design choices also prevent an untouched model-selection claim.
 
+## Diagnostic evidence and economic interpretation
+
+Objective ablations separate variance reduction from expected-return maintenance. Frozen initial penalties isolate annual updating. Risk matching mixes each simple benchmark with the money-market ETF, uses a common prior sample covariance for both portfolios and charges each path's own turnover. Ledoit-Wolf feasibility is recorded separately because common-diagonal shrinkage raises the estimated money-market variance. Cost, execution-delay, mean-half-life and fixed-subperiod experiments evaluate the current model. Paired bootstrap intervals use 2,000 draws at block lengths 5, 21 and 63 and are pointwise exploratory evidence.
+
+The unlevered budget reflects the limited risk coverage of the chosen China-listed ETF set relative to global institutional instruments and financing arrangements. Thesis references distinguish Bridgewater's official implementation explanation from peer-reviewed research on estimation error, risk management and funding liquidity.
+
 ## Reproduction
 
 Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. Add `--force-recalibrate --force-backtest` for a complete recomputation. The pipeline refreshes ETF data, updates backtests and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.

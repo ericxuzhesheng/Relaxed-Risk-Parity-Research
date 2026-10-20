@@ -6,7 +6,15 @@ Global RRP 与四个对照共同构成五模型发布结果。主模型每年根
 
 十个年度中，每年九组候选都进入一倍标准误集合。现有样本无法精确区分参数，年度选择主要由换手和稳定性规则决定。该结果已写入发布审计，论文和答辩不得将系数称作唯一最优值。
 
+## 当前模型诊断
+
+目标项消融、首年参数冻结、事前风险匹配和实施敏感性共同解释当前指定模型。风险匹配以共同历史样本协方差衡量双方风险，并记录Ledoit–Wolf估计下的可行性。配对区块抽样使用5、21和63日区块、每组2000次重抽样；区间属于固定历史规格下的逐项百分位区间。当前实验用于机制分析，不据结果选择新的主模型。
+
 ## 可核查证据
+
+- `results/primary_diagnostics/protocol.json` 记录诊断设定及抽样种子。
+- `results/tables/primary_diagnostics_audit.json` 记录路径、计费及风险匹配核验。
+- `results/tables/primary_paired_bootstrap.csv` 记录配对差异与区间。
 
 - `results/tables/primary_model_configuration.json` 记录完整配置和校准规则。
 - `results/tables/primary_parameter_schedule.csv` 记录年度参数及信息截止日。

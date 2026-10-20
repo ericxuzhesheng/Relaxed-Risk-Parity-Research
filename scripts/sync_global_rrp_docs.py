@@ -40,6 +40,7 @@ def main():
     ]].sum(axis=1).mean()
     primary = data.iloc[0]
     diagnostics = pd.read_csv(tables / "primary_diagnostic_summary.csv").set_index("experiment")
+    diagnostic_audit = json.loads((tables / "primary_diagnostics_audit.json").read_text(encoding="utf-8"))
     robust = pd.read_csv(tables / "primary_robustness.csv").set_index("experiment")
     diagnostic_keys = ["reference", "frozen", "matched_equal", "matched_60_40"]
     zh_labels = ["Global RRP：仅持有风险预算参考", "Global RRP：冻结评价首年参数",
@@ -123,13 +124,13 @@ $$
 
 Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
-日利ETF的平均权重为 **{cash_mean:.2%}**，最高权重为 **{cash_max:.2%}**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **{defensive:.2%}**。这一持仓结构为理解较低波动提供了依据，尚不能单独证明优化方法带来了多少风险改善。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
+日利ETF的平均权重为 **{cash_mean:.2%}**，最高权重为 **{cash_max:.2%}**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **{defensive:.2%}**。这一持仓结构与目标项消融、风险匹配实验共同解释组合的风险收益权衡。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
 
 年度校准中，每年的九组候选均进入一倍标准误集合，有区分力的年度为 **{audit['parameter_selection_informative_years']}/{audit['parameter_selection_years']}**。因此，当前样本不足以识别唯一惩罚系数，最终选择更多依赖换手和稳定性规则。
 
-### 图表与持仓解释
+### 机制实验与图表
 
-诊断实验围绕当前主模型逐项改变目标项和实施条件。固定参数取评价期开始前选出的系数；事前风险匹配通过简单配置与货币ETF混合实现，包含货币资产自身风险并保持无杠杆。
+诊断实验围绕当前主模型逐项改变目标项和实施条件。固定参数取评价期开始前选出的系数；事前风险匹配通过简单配置与货币ETF混合实现，以同一历史样本协方差衡量双方风险，包含货币资产自身风险并保持无杠杆。原Ledoit–Wolf估计下的匹配可行性另行保存，用于解释收缩对低波动货币资产的影响。
 
 | 诊断设定 | 净年化收益 | 实现年化波动 | 夏普 |
 |---|---:|---:|---:|
@@ -175,6 +176,10 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 图表采用红蓝配色，同时提供同名矢量PDF和300 dpi PNG。
 
 [最新目标持仓](results/tables/latest_holdings.csv)使用最新收盘信息求解，保留全部30只ETF及零权重。该结果为下一次周度调仓的预估配置，正式决策仍须纳入届时新增行情；信息截止日、年度参数与求解核验见[持仓审计](results/tables/latest_holdings_audit.json)。
+
+### 无杠杆设定的经济含义
+
+本研究完成的是境内ETF持有组合的资本配置。相对桥水全球机构框架，当前30只工具覆盖的独立利率、通胀与货币对冲风险来源较少；多头单位预算使风险规模与资本占用直接相连。论文据[桥水官方说明](https://www.bridgewater.com/research-and-insights/the-all-weather-story)区分两者工具范围，并以[Frazzini与Pedersen（2014，JFE）](https://doi.org/10.1016/j.jfineco.2013.10.005)和[Brunnermeier与Pedersen（2009，RFS）](https://doi.org/10.1093/rfs/hhn098)解释杠杆约束、融资与流动性风险。无杠杆约束使配置绩效与当前可核算的ETF持仓和费用相对应。
 
 ### 数据与复现
 
@@ -271,13 +276,13 @@ The evaluation period is **2018-01-02 to 2026-10-16**. Realized returns retain e
 
 Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
 
-The money-market ETF averages **{cash_mean:.2%}** and reaches **{cash_max:.2%}**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **{defensive:.2%}**. This allocation helps explain the low volatility; isolating the optimizer's contribution requires further comparison. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
+The money-market ETF averages **{cash_mean:.2%}** and reaches **{cash_max:.2%}**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **{defensive:.2%}**. This allocation, objective ablations and risk-matched comparisons jointly explain the risk-return trade-off. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
 
 All nine candidates enter the one-standard-error set in every annual validation. There are **{audit['parameter_selection_informative_years']}/{audit['parameter_selection_years']}** informative years, so the sample does not identify unique penalty coefficients. Turnover and stability rules play a larger role in the final selection.
 
 ### Diagnostic experiments
 
-The study evaluates objective-term ablations, parameters frozen before evaluation, and ex-ante risk matching. The auxiliary comparisons mix each simple allocation with the money-market ETF using prior covariance estimates, including cash-asset risk and covariance, while remaining unlevered.
+The study evaluates objective-term ablations, parameters frozen before evaluation, and ex-ante risk matching. The auxiliary comparisons mix each simple allocation with the money-market ETF using the same prior sample covariance for both portfolios, including cash-asset risk and covariance, while remaining unlevered. Original Ledoit–Wolf feasibility is reported separately.
 
 | Diagnostic setting | Net annual return | Realized volatility | Sharpe |
 |---|---:|---:|---:|
@@ -301,6 +306,10 @@ The shared [figure section](#图表与持仓解释) presents four complementary 
 All 30 ETFs receive material allocations during eligible periods. The [holdings chart](results/figures/primary_weights.png) shows the structure, while [weekly holdings](results/tables/primary_weekly_holdings.csv), [weights](results/tables/primary_weekly_weights.csv) and [weekly summaries](results/tables/primary_weekly_summary.csv) retain the detailed record. Every decision includes all 30 assets and sample-boundary flags. Figures use a red-blue palette with matching vector PDF and 300-dpi PNG files.
 
 The [latest target allocation](results/tables/latest_holdings.csv) uses the latest observed close and includes all 30 ETFs, including zero weights. It is a forecast for the next weekly decision, which must incorporate newly available data before execution. The [holdings audit](results/tables/latest_holdings_audit.json) records the information cutoff, annual penalties and solver checks.
+
+### Why the model is unlevered
+
+The chosen China-listed ETF universe offers narrower independent rate, inflation and currency-hedging exposures than a global institutional instrument set. A long-only unit budget connects risk allocation directly to capital use. The thesis distinguishes this setting from [Bridgewater's All Weather framework](https://www.bridgewater.com/research-and-insights/the-all-weather-story), and uses research on [leverage constraints](https://doi.org/10.1016/j.jfineco.2013.10.005) and [funding liquidity](https://doi.org/10.1093/rfs/hhn098) to explain the financing and margin considerations behind the unlevered specification.
 
 ### Data and reproduction
 
@@ -378,11 +387,13 @@ Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0,
 
 Primary average money-market weight is {cash_mean:.2%}, with a maximum of {cash_max:.2%}. The average combined money-market and three-bond weight is {defensive:.2%}. All 30 ETFs receive material allocations during eligible periods. The annual calibration has {audit['parameter_selection_informative_years']} informative years out of {audit['parameter_selection_years']} under the one-standard-error rule.
 
-Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. The experiment protocol records the comparison design before its execution. Bootstrap intervals are pointwise and conditional on the historical specification.
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All {diagnostic_audit['risk_matching_decisions'] - diagnostic_audit['risk_matching_infeasible_count']} sample-covariance matches attain the target; {diagnostic_audit['lw_risk_matching_infeasible_count']} original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
 
 ---
 
 ''' + text[end:]
+    text = text.replace("Only the designated weekly specification is published; other experiment results remain archival.",
+                        "The designated weekly specification and its explanatory diagnostic experiments are published; unrelated historical specifications remain archival.")
     (ROOT / "AGENTS.md").write_text(text, encoding="utf-8")
 
     (ROOT / "docs/MODEL_GOVERNANCE.md").write_text(
@@ -410,6 +421,12 @@ The historical path records {primary.net_annual_return:.2%} net annual return, {
 
 Rebalance inputs precede the trading date. Saved daily returns reconcile target weights, drifted weights, turnover and costs. The backtest does not establish actual execution prices, market impact or capacity. Historical design choices also prevent an untouched model-selection claim.
 
+## Diagnostic evidence and economic interpretation
+
+Objective ablations separate variance reduction from expected-return maintenance. Frozen initial penalties isolate annual updating. Risk matching mixes each simple benchmark with the money-market ETF, uses a common prior sample covariance for both portfolios and charges each path's own turnover. Ledoit-Wolf feasibility is recorded separately because common-diagonal shrinkage raises the estimated money-market variance. Cost, execution-delay, mean-half-life and fixed-subperiod experiments evaluate the current model. Paired bootstrap intervals use 2,000 draws at block lengths 5, 21 and 63 and are pointwise exploratory evidence.
+
+The unlevered budget reflects the limited risk coverage of the chosen China-listed ETF set relative to global institutional instruments and financing arrangements. Thesis references distinguish Bridgewater's official implementation explanation from peer-reviewed research on estimation error, risk management and funding liquidity.
+
 ## Reproduction
 
 Run `scripts/run_primary_publication_pipeline.py` with `TUSHARE_TOKEN` set. Add `--force-recalibrate --force-backtest` for a complete recomputation. The pipeline refreshes ETF data, updates backtests and four comparisons, generates current tables and figures, synchronizes prose, compiles both PDFs and removes temporary files. The rf=0 convention does not require ChinaBond data.
@@ -428,7 +445,15 @@ Global RRP 与四个对照共同构成五模型发布结果。主模型每年根
 
 十个年度中，每年九组候选都进入一倍标准误集合。现有样本无法精确区分参数，年度选择主要由换手和稳定性规则决定。该结果已写入发布审计，论文和答辩不得将系数称作唯一最优值。
 
+## 当前模型诊断
+
+目标项消融、首年参数冻结、事前风险匹配和实施敏感性共同解释当前指定模型。风险匹配以共同历史样本协方差衡量双方风险，并记录Ledoit–Wolf估计下的可行性。配对区块抽样使用5、21和63日区块、每组2000次重抽样；区间属于固定历史规格下的逐项百分位区间。当前实验用于机制分析，不据结果选择新的主模型。
+
 ## 可核查证据
+
+- `results/primary_diagnostics/protocol.json` 记录诊断设定及抽样种子。
+- `results/tables/primary_diagnostics_audit.json` 记录路径、计费及风险匹配核验。
+- `results/tables/primary_paired_bootstrap.csv` 记录配对差异与区间。
 
 - `results/tables/primary_model_configuration.json` 记录完整配置和校准规则。
 - `results/tables/primary_parameter_schedule.csv` 记录年度参数及信息截止日。

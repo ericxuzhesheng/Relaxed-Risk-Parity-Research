@@ -45,6 +45,8 @@ Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0,
 
 Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.34%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 900 sample-covariance matches attain the target; 900 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
+
 ---
 
 ## ETF Asset Pool
@@ -161,7 +163,7 @@ Use these figure embeds when files exist:
 - `results/figures/global_rrp_turnover_comparison.png`
 - `results/figures/global_rrp_cvar_comparison.png`
 
-Figures must use the current primary publication outputs. Explain NAV, drawdown, turnover and CVaR together with the money-market weight. Only the designated weekly specification is published; other experiment results remain archival. Use `scripts/run_primary_publication_pipeline.py` to reproduce the current publication.
+Figures must use the current primary publication outputs. Explain NAV, drawdown, turnover and CVaR together with the money-market weight. The designated weekly specification and its explanatory diagnostic experiments are published; unrelated historical specifications remain archival. Use `scripts/run_primary_publication_pipeline.py` to reproduce the current publication.
 
 ---
 

@@ -29,6 +29,7 @@
 
 % ── 数值宏。与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
+\input{../thesis_latex/generated_diagnostic_numbers.tex}
 
 
 % ── 辅助命令。图片帧（单图 + 可选注释）────────────────────────────────────────
@@ -134,6 +135,25 @@
 \par\medskip
 \small 年化与估计窗口均采用 252 日。规格仍需新增数据验证。
 \end{frame}
+\begin{frame}{为什么采用无杠杆配置}
+\begin{itemize}
+\item 境内ETF机会集合：权益工具较多，独立利率、通胀与货币对冲风险来源较有限
+\item 多头单位预算将风险规模与资本占用相连，低波动配置需要更多资本
+\item 桥水全球机构框架使用更广泛的债券、衍生品及融资安排调节风险规模
+\item 本文完成给定资本预算下的配置；融资扩展需同步计入利息、保证金与展期
+\end{itemize}
+\medskip\scriptsize 来源：Bridgewater（2012）；Frazzini与Pedersen（JFE，2014）；Brunnermeier与Pedersen（RFS，2009）。
+\end{frame}
+\begin{frame}{经济机制与可检验问题}
+\begin{tabular}{p{0.26\textwidth}p{0.64\textwidth}}\toprule
+机制 & 本文的检验\\\midrule
+风险承担数量 & 方差项消融：风险压缩的收益与换手代价\\
+收益维持 & 收益短缺项消融：预测收益约束如何影响实际持仓\\
+估计误差与响应速度 & 冻结首年参数、10/40日均值半衰期\\
+风险规模与配置结构 & 简单组合与货币ETF混合后的事前风险匹配\\\bottomrule
+\end{tabular}
+\medskip\scriptsize 理论联系：Moreira与Muir（JF，2017）；DeMiguel等（RFS，2009）；Jagannathan与Ma（JF，2003）。
+\end{frame}
 \section{实证结果}
 \begin{frame}{Global RRP 主模型结果}
 \begin{columns}[T]
@@ -149,8 +169,8 @@
 \end{column}
 \begin{column}{0.49\textwidth}
 \begin{itemize}
-\item 净年化收益 \globalNetReturn，年化波动 \globalVolatility，夏普 \globalSharpe
-\item 最大回撤 \globalMaxDD，月均换手 \globalMonthlyTurnover
+\item 处于低波动层次配置与高波动简单配置之间
+\item 平均货币及三只债券权重 \primaryDefensiveMean
 \item \primaryAssetsUsed{} 只 ETF 曾在合格期间形成实质持仓
 \item 净收益已扣除约定交易成本，历史表现不构成未来保证
 \end{itemize}
@@ -181,7 +201,42 @@
 \end{column}
 \end{columns}
 \end{frame}
-\section{验证与边界}
+\section{机制与稳健性}
+\begin{frame}{消融：第二阶段优化的作用}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_ablation.tex}}
+\medskip
+\begin{itemize}
+\item 相对风险预算参考：相近净收益、更低实现波动，交易需求上升
+\item 收益短缺项：提高收益，同时增加波动和换手
+\item 冻结首年参数与年度更新接近，贡献主要体现于配置结构
+\end{itemize}
+\end{frame}
+\begin{frame}{事前风险匹配：统一风险尺度的比较}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_matched.tex}}
+\medskip
+\begin{itemize}
+\item 同一历史样本协方差衡量双方风险，\diagMatchFeasible{}次配对决策达到上限
+\item 简单组合与货币ETF混合，保持无杠杆并按各自换手计费
+\item 主模型净收益和夏普更高，实现波动与全期回撤幅度也更高
+\end{itemize}
+\scriptsize 原Ledoit--Wolf估计的货币方差上移，\diagLWMatchInfeasible{}次混合不可达；可行性另行记录。
+\end{frame}
+\figframe{风险匹配后的净值路径}{primary_diagnostic_risk_matched.pdf}{0.95}{比较控制调仓时估计风险；实现波动仍由后续收益和资产构成决定。}
+\begin{frame}{当前主模型的稳健性}
+\centering
+\resizebox{0.88\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_robustness.tex}}
+\medskip
+\small 费用、执行时点和均值响应速度分别变化，其余规则保持一致。
+\end{frame}
+\begin{frame}{配对差异的统计证据}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_bootstrap.tex}}
+\medskip
+\begin{itemize}
+\item 对参考及风险匹配路径：三种区块长度的区间均位于零上方
+\item 对短缺项置零及冻结参数：区间覆盖零，按机制权衡解释
+\end{itemize}
+\scriptsize 表中为21日区块、2000次配对抽样的95\%逐项百分位区间；5/63日作敏感性检查，条件于历史规格。
+\end{frame}
 \begin{frame}{分自然年结果}
 \centering
 {\scriptsize\renewcommand{\arraystretch}{0.88}\input{../thesis_latex/generated_primary_annual.tex}}
@@ -197,24 +252,23 @@
 \item $5\times10^{-5}$ 只用于识别数值残差，不是最低持仓约束
 \end{itemize}
 \end{frame}
-\begin{frame}{研究边界}
+\begin{frame}{成果适用条件}
 \begin{itemize}
-\item 规格选择利用历史结果，尚需新增数据检验
-\item 均值和协方差估计存在误差
-\item 固定成本未证明实际成交、容量与市场冲击
-\item 未处理负债、资本占用及久期缺口
-\item 资产曾被使用，不等于风险贡献充分分散
-\item 年度候选缺乏显著区分，参数不能解释为唯一最优值
+\item 给定境内30只ETF机会集合与多头单位预算的配置结果
+\item 消融和风险匹配用于识别配置机制，五个正式模型保持一致
+\item 费率与延迟实验覆盖约定执行条件，账户实施接入实际成交与资金规模
+\item 配对区间属于历史规格下的探索性证据，后续冻结规则积累新增观察
+\item 年度参数体现低换手和稳定性偏好，九组候选均在一倍标准误集合内
 \end{itemize}
 \end{frame}
 \section{结论}
 \begin{frame}{研究结论}
 \begin{itemize}
-\item Global RRP 采用凸优化生成周频、多头、无杠杆组合
-\item 净年化收益 \globalNetReturn，夏普 \globalSharpe
-\item 年化波动 \globalVolatility，最大回撤 \globalMaxDD
-\item 年度参数只使用生效日前数据，但统计识别仍然较弱
-\item \primaryAssetsUsed{} 只 ETF 曾形成超过数值容差的持仓
+\item 构建两阶段凸配置框架：可行收益目标、风险预算参考和年度决策规则
+\item 完成机制识别：方差压缩与收益维持的作用由消融分别检验
+\item 完成风险可比评价：主模型收益\globalNetReturn，辅助路径\diagMatchedEWReturn{}与\diagMatchedSBReturn
+\item 完成实施检验：20 bps成本下收益\diagCostTwentyReturn，延后一日执行\diagDelayReturn
+\item 形成可复现证据：完整持仓、核验记录、子区间和配对抽样结果
 \end{itemize}
 \end{frame}
 \begin{frame}[plain]\centering\Huge 谢谢各位老师\end{frame}
