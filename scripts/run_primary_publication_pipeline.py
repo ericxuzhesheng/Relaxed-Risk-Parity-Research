@@ -40,6 +40,11 @@ def _write_build_verification() -> None:
             encoding="utf-8"
         )
     )
+    diagnostic_audit = json.loads(
+        (ROOT / "results/tables/primary_diagnostics_audit.json").read_text(encoding="utf-8")
+    )
+    if diagnostic_audit["status"] != "passed":
+        raise ValueError("Current-specification diagnostics have not passed")
     logs = [
         ROOT / "report/thesis_latex/main.log",
         ROOT / "report/ppt/rrp_defense.log",
@@ -60,6 +65,8 @@ def _write_build_verification() -> None:
         "annualization_days": audit["annualization_days"],
         "estimation_window_days": audit["estimation_window_days"],
         "primary_audit_status": audit["status"],
+        "diagnostic_audit_status": diagnostic_audit["status"],
+        "diagnostic_experiment_count": diagnostic_audit["experiment_count"],
         "figures": "high-contrast red-blue PNG and vector PDF",
     }
     (ROOT / "results/tables/publication_build_verification.json").write_text(

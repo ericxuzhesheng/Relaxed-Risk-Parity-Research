@@ -1,67 +1,44 @@
-\section{五模型实证结果}
+\section{实证结果、机制分析与稳健性检验}
 \subsection{共同区间绩效}
-表\ref{tab:main_performance}汇总共同评价区间的净绩效。所有数值从同一发布表生成。Global RRP 使用 \lookbackDays{} 日窗口、收缩协方差、收益半衰期 20 日及年度滚动惩罚参数。净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，Sortino 为 \globalSortino，最大回撤为 \globalMaxDD。
+表\ref{tab:main_performance}汇总五个周频模型在共同评价区间的扣费结果。Global RRP 的净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，Sortino 为 \globalSortino，最大回撤为 \globalMaxDD。所有指标均由保存的日收益按统一规则生成。
 
 \begin{table}[htbp]\centering
 \caption{五模型净绩效}\label{tab:main_performance}
 {\setlength{\tabcolsep}{9pt}\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}}
 \end{table}
 
-指定模型的净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，最大回撤为 \globalMaxDD。将该配置确定为主模型，表示后续分析围绕同一条可复现路径展开，不表示其在每项指标上均优于对照。
+五个模型形成不同的收益风险位置。Equal Weight 和 60/40 Benchmark 获得较高绝对收益，同时承担较大的波动与回撤；HRP Benchmark 和 HERC Benchmark 形成较低收益、较低波动的路径。Global RRP 在两类配置之间实现了中间风险水平的收益积累。下文通过消融和事前风险匹配进一步分析这一位置的形成机制。
 
-Equal Weight 和 60/40 Benchmark 的净年化收益高于 Global RRP，同时承担更大的波动与回撤。HRP Benchmark 和 HERC Benchmark 的绝对收益较低，波动及回撤也更小。Global RRP 位于两类对照之间，主模型定位不表示其在每项指标上占优。
-
-\subsection{累计净值的时间结构}
-图\ref{fig:nav}展示五条日净值路径。图中统一使用同一日期轴和线性净值刻度。红色突出 Global RRP，蓝色与其他红色层次配合线型区分对照，避免只靠淡色区分相邻路径。曲线显示的是净收益的时间累积，而非平均收益和标准差的完整替代。
+\subsection{净值增长与回撤过程}
+图\ref{fig:nav}展示扣费后净值的时间变化，图\ref{fig:drawdown}展示相对于历史高点的回撤。净值说明财富累积过程，回撤则记录这一过程中承受的连续损失。Global RRP 的最大历史回撤为 \globalMaxDD，结合持仓结构可以观察防御性资产与增长资产共同作用下的组合路径。
 
 \figmaybe{global_rrp_nav_comparison.pdf}{五模型累计净值}{fig:nav}
-
-\subsection{最大回撤与风险承受}
-图\ref{fig:drawdown}以净值历史高点为基准，呈现各模型的亏损幅度。Global RRP 最大回撤为 \globalMaxDD。该值是样本中观察到的最大损失，不是未来回撤的硬上界。优化器并未使用滚动最大回撤约束，因此不能将这一数字解释为策略自动止损的阈值。
-
 \figmaybe{global_rrp_drawdown_comparison.pdf}{五模型历史回撤}{fig:drawdown}
 
-回撤图中的低点具有路径依赖。某一年内相对于该年高点的下跌，可能与跨年高点计算的完整回撤不同。年度表格以各年截取净值计算，因此年度最深回撤不能简单求平均，也不能机械替代全区间最深回撤。
+回撤具有路径依赖性。全区间回撤采用整个评价期的历史高点，年度表采用各年内部的高点，两者对应不同的观察范围。本文据此分别报告全样本与自然年风险，为比较短期损失和长期配置表现提供依据。
 
-对机构而言，相同的回撤幅度在不同负债条件下意义不同。短期需要现金支付的账户可能不得不在回撤时卖出资产，而具有稳定长期资金的账户可能拥有更长恢复期限。本文没有负债现金流输入，因而将回撤作为资产端风险统计，而不直接作资本充足性判断。
-
-\subsection{换手和成本代价}
-Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}以零起点、统一线性尺度展示五模型的月均换手，并直接标注数值。五个模型均按周调仓，月均换手反映同一日历下各配置规则产生的交易量。
+\subsection{换手与成本}
+Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}比较共同周度日历下各配置规则的交易需求。交易量以目标权重和交易前漂移权重之差计算，能够反映主动调整及价格变化带来的再平衡需求。
 
 \figmaybe{global_rrp_turnover_comparison.pdf}{五模型月均买卖合计换手}{fig:turnover}
 
-周频决策使组合持续调整，年度参数选择规则则在合格候选中优先考虑较低换手。最终权重问题没有直接加入换手惩罚或硬上限，因此年度筛选只能影响参数，不能逐期限制交易量。成本在路径计算中进入净值，实际市场冲击仍未建模。
+主模型毛年化收益为 \globalGrossReturn，扣除单边 \txCostBps{} bps 费用后，净年化收益为 \globalNetReturn，年化收益差为 \globalCostDrag。年度选择中的换手规则作用于参数筛选，最终交易成本由实际持仓路径决定。图\ref{fig:cost_drag}报告各模型毛、净收益复利路径的年化差值；后文通过多档费率进一步量化成本敏感性。
 
-同一主模型毛年化收益为 \globalGrossReturn，净年化收益为 \globalNetReturn，约定成本对应年化收益差为 \globalCostDrag。该差值来自毛、净路径各自复利后的比较。若实际费率和市场冲击高于约定，净收益会进一步下降。本文没有用未经回测的成本数字替代当前结果。
-
-图\ref{fig:cost_drag}进一步比较约定费用对五模型年化收益的影响。图中数值为毛、净年化收益之差，百分数刻度应按收益率差理解，不是相对于毛收益的损失比例。
 \figmaybe{global_rrp_transaction_cost_comparison.pdf}{五模型约定交易成本的年化收益拖累}{fig:cost_drag}
 \FloatBarrier
 
-\subsection{尾部损失的补充信息}
-图\ref{fig:cvar}展示五模型历史 95\% 日度尾部损失。该图使用统一线性尺度和实心条形，较小数值另以直接标签呈现。尾部统计反映损失较大的一组交易日，能够补充标准差对正负波动对称处理的不足。
+\subsection{尾部损失}
+图\ref{fig:cvar}报告95\%日度历史CVaR，Global RRP 的对应值为 \globalCVaR。该指标汇总日损失分布尾部的平均水平，与最大回撤共同描述下行风险。CVaR 用于事后评价，优化中的风险项采用归一化方差。
 
 \figmaybe{global_rrp_cvar_comparison.pdf}{五模型历史日度尾部损失}{fig:cvar}
 
-Global RRP 的日度 CVaR 为 \globalCVaR。该指标对尾部日损失取平均，最大回撤则衡量从历史高点到低点的连续路径损失。两者不能直接相加，尾部中也可能存在高于 CVaR 的个别损失。
-
-当前 Global RRP 未启用 CVaR 优化约束。尾部指标是同一指定组合的事后描述，不构成另一项实验，也不能作为启用尾部控制后的对照结果。本文保留风险定义与实际模型之间的对应关系。
-
-\subsection{自然年结果}
-表\ref{tab:annual}列示指定配置的年度表现。2026 年只截至样本终点，表中收益与波动均按统一规则年化。年度数据揭示了完整区间平均值无法表达的差异，其中 2018 年接近零收益，2022 年出现负收益，其他年份的表现也并不均匀。
+\subsection{自然年表现}
+表\ref{tab:annual}显示完整区间内部的年度差异。年度结果将长期平均表现分解为可观察的时间阶段，为后续固定子区间比较提供背景。
 
 \begin{table}[htbp]\centering
 \caption{Global RRP 自然年绩效}\label{tab:annual}
 \input{generated_primary_annual.tex}
 \end{table}
 
-2020 年的年度净年化收益约为 7.70\%，最大回撤约为 6.80\%；2022 年净年化收益约为负 0.45\%。年度差异说明，完整区间指标不能当作逐年收益保证。
-
-2026 年截至样本终点的年化收益为 \primaryLatestYearReturn，对应累计收益为 \primaryLatestYearCumulativeReturn。部分年度年化值与实际全年兑现并非同一概念，样本区间也不随最近表现重新定义。年度分析只用于解释指定路径的时间分布。
-
+2026年截至 \evalEndDate{}，年化收益为 \primaryLatestYearReturn，对应累计收益为 \primaryLatestYearCumulativeReturn。年化值用于统一统计尺度，累计收益表示该部分年度实际观察到的复利变化。
 \FloatBarrier
-\Needspace{14\baselineskip}
-\subsection{结果的证据等级}
-五模型比较、年度分解和尾部统计都来自历史路径，属于描述性证据。它们可以回答样本中发生的损失和收益，不能独立证明统计显著性，也不能消除规格选择偏差。凸性、逐期时序和结果重算属于实现证据，说明同一输入与规则可以获得一致输出。
-
-因此，本文将结论限定为指定配置在既定样本和规则下达到夏普及回撤要求，同时保留收益目标未完成的事实。下一步应固定资产池复核规则、年度校准程序和计费方式，在新增观察上继续记录结果。若再次调整目标或窗口，应建立新的实验记录，不能与当前路径混称为连续验证。

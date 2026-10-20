@@ -64,6 +64,7 @@
 % 论文中的核心数值通过宏统一引用，以保持全文口径一致。
 % generated_numbers.tex defines what the pipeline produced; fallback fills any remaining gaps.
 \IfFileExists{generated_numbers.tex}{\input{generated_numbers.tex}}{}
+\input{generated_diagnostic_numbers.tex}
 
 
 
@@ -189,10 +190,13 @@ The primary model records \globalNetReturn{} net annual return, \globalVolatilit
 \input{chapters/04_data.tex}
 \input{chapters/05_execution.tex}
 \input{chapters/06_comparisons.tex}
+\input{chapters/04_experiment_design.tex}
 \input{chapters/07_results.tex}
 \input{chapters/08_holdings.tex}
-\input{chapters/09_institution.tex}
+\input{chapters/07_diagnostics.tex}
 \input{chapters/10_conclusion.tex}
+\input{chapters/09_institution.tex}
+\label{sec:body_end}
 \clearpage
 \appendix
 \section{ETF 资产池}

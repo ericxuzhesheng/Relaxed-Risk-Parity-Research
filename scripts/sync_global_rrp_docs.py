@@ -39,12 +39,30 @@ def main():
         "weight_日利ETF", "weight_5年国债ETF", "weight_10年国债ETF", "weight_信用债ETF"
     ]].sum(axis=1).mean()
     primary = data.iloc[0]
+    diagnostics = pd.read_csv(tables / "primary_diagnostic_summary.csv").set_index("experiment")
+    robust = pd.read_csv(tables / "primary_robustness.csv").set_index("experiment")
+    diagnostic_keys = ["reference", "frozen", "matched_equal", "matched_60_40"]
+    zh_labels = ["Global RRP：仅持有风险预算参考", "Global RRP：冻结评价首年参数",
+                 "Equal Weight：事前风险匹配", "60/40 Benchmark：事前风险匹配"]
+    en_labels = ["Global RRP: reference only", "Global RRP: initial parameters frozen",
+                 "Equal Weight: ex-ante risk matching", "60/40 Benchmark: ex-ante risk matching"]
+
+    def diagnostic_table(labels):
+        return "\n".join(
+            f"| {label} | {diagnostics.loc[key, 'net_annual_return']:.2%} | "
+            f"{diagnostics.loc[key, 'annualized_volatility']:.2%} | "
+            f"{diagnostics.loc[key, 'sharpe_ratio']:.3f} |"
+            for key, label in zip(diagnostic_keys, labels)
+        )
+
+    zh_diagnostics = diagnostic_table(zh_labels)
+    en_diagnostics = diagnostic_table(en_labels)
 
     readme = f'''# 宽松风险平价全球资产配置框架 | Relaxed Risk Parity Framework for Global Asset Allocation
 
 [中文](#中文) · [English](#english) · [完整论文](report/thesis_latex/main.pdf) · [答辩演示](report/ppt/rrp_defense.pdf) · [结果数据](results/tables/model_performance_summary.csv)
 
-更新日期 / Last updated: **2026-10-17**
+更新日期 / Last updated: **2026-10-20**
 
 ## 中文
 
@@ -54,7 +72,7 @@ def main():
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
-当前样本中，Global RRP 的净年化收益为 **{primary.net_annual_return:.2%}**，年化波动为 **{primary.annualized_volatility:.2%}**，最大回撤为 **{primary.max_drawdown:.2%}**。低风险表现需要结合货币与债券持仓理解，年度参数的统计识别也较弱。项目的研究价值在于把这些取舍放在同一套可核查证据中。
+当前样本中，Global RRP 的净年化收益为 **{primary.net_annual_return:.2%}**，年化波动为 **{primary.annualized_volatility:.2%}**，最大回撤为 **{primary.max_drawdown:.2%}**。研究通过目标项消融、事前风险匹配和配对区块抽样，量化优化规则、风险承担与参数更新形成的取舍。
 
 ### 快速阅读与证据入口
 
@@ -110,6 +128,16 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 年度校准中，每年的九组候选均进入一倍标准误集合，有区分力的年度为 **{audit['parameter_selection_informative_years']}/{audit['parameter_selection_years']}**。因此，当前样本不足以识别唯一惩罚系数，最终选择更多依赖换手和稳定性规则。
 
 ### 图表与持仓解释
+
+诊断实验围绕当前主模型逐项改变目标项和实施条件。固定参数取评价期开始前选出的系数；事前风险匹配通过简单配置与货币ETF混合实现，包含货币资产自身风险并保持无杠杆。
+
+| 诊断设定 | 净年化收益 | 实现年化波动 | 夏普 |
+|---|---:|---:|---:|
+{zh_diagnostics}
+
+同一主模型持仓路径在单边20 bps费用下的净年化收益为 **{robust.loc['cost_20', 'net_annual_return']:.2%}**；延后一交易日执行的净年化收益为 **{diagnostics.loc['delay_1', 'net_annual_return']:.2%}**。均值半衰期、固定子区间和5/21/63日区块长度共同刻画结果敏感性。配对抽样区间反映固定历史规格下的统计不确定性。
+
+[消融与辅助比较](results/tables/primary_diagnostic_summary.csv) · [稳健性检验](results/tables/primary_robustness.csv) · [配对抽样](results/tables/primary_paired_bootstrap.csv) · [实验协议](results/primary_diagnostics/protocol.json) · [核验记录](results/tables/primary_diagnostics_audit.json)
 
 #### 累计净值
 
@@ -247,6 +275,18 @@ The money-market ETF averages **{cash_mean:.2%}** and reaches **{cash_max:.2%}**
 
 All nine candidates enter the one-standard-error set in every annual validation. There are **{audit['parameter_selection_informative_years']}/{audit['parameter_selection_years']}** informative years, so the sample does not identify unique penalty coefficients. Turnover and stability rules play a larger role in the final selection.
 
+### Diagnostic experiments
+
+The study evaluates objective-term ablations, parameters frozen before evaluation, and ex-ante risk matching. The auxiliary comparisons mix each simple allocation with the money-market ETF using prior covariance estimates, including cash-asset risk and covariance, while remaining unlevered.
+
+| Diagnostic setting | Net annual return | Realized volatility | Sharpe |
+|---|---:|---:|---:|
+{en_diagnostics}
+
+At 20-bp one-way costs, the primary holdings path records **{robust.loc['cost_20', 'net_annual_return']:.2%}** net annual return. Executing original targets one trading day later records **{diagnostics.loc['delay_1', 'net_annual_return']:.2%}**. Mean half-life changes, fixed subperiods and paired moving-block bootstrap intervals with 5/21/63-day blocks describe sensitivity conditional on the historical specification.
+
+[Diagnostic results](results/tables/primary_diagnostic_summary.csv) · [Robustness](results/tables/primary_robustness.csv) · [Paired bootstrap](results/tables/primary_paired_bootstrap.csv) · [Protocol](results/primary_diagnostics/protocol.json)
+
 ### Figures and holdings
 
 The shared [figure section](#图表与持仓解释) presents four complementary views with the same weekly evaluation calendar.
@@ -337,6 +377,8 @@ Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0,
 {en_table}
 
 Primary average money-market weight is {cash_mean:.2%}, with a maximum of {cash_max:.2%}. The average combined money-market and three-bond weight is {defensive:.2%}. All 30 ETFs receive material allocations during eligible periods. The annual calibration has {audit['parameter_selection_informative_years']} informative years out of {audit['parameter_selection_years']} under the one-standard-error rule.
+
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. The experiment protocol records the comparison design before its execution. Bootstrap intervals are pointwise and conditional on the historical specification.
 
 ---
 
