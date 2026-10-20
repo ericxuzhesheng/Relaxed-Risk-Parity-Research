@@ -127,7 +127,7 @@
 项目 & 设置\\\midrule
 协方差 & Ledoit--Wolf 收缩估计\\
 收益估计 & 指数加权，半衰期 20 个交易日\\
-历史窗口 & \lookbackDays{} 个观察\\
+历史窗口 & 最多\lookbackDays{}日，使用共同完整观察\\
 方差尺度 & 当期等权组合方差\\
 收益目标 & 当期风险预算参考的预测收益\\
 参数更新 & 年度滚动，生效日前完成验证\\
@@ -144,6 +144,30 @@
 \item 本文完成给定资本预算下的配置；融资扩展需同步计入利息、保证金与展期
 \end{itemize}
 \medskip\scriptsize 来源：Bridgewater（2012）；Frazzini与Pedersen（JFE，2014）；Brunnermeier与Pedersen（RFS，2009）。
+\end{frame}
+\begin{frame}{Ledoit--Wolf：收缩什么，为什么收缩}
+\[
+\widetilde\Sigma=(1-\delta)S^{\rm ML}+\delta\tau I,\qquad
+\tau=\operatorname{tr}(S^{\rm ML})/n
+\]
+\begin{itemize}
+\item 有限样本下平衡估计偏差与噪声，改善矩阵稳定性
+\item 方差向各资产平均方差靠拢，协方差向零靠拢
+\item 强度$\delta$由当期历史数据估计，与年度优化惩罚系数分开
+\item 货币ETF原始波动很低，等方差目标会提高其估计波动
+\end{itemize}
+\scriptsize 经验矩阵使用中心化日收益和$M$分母；年化后再作数值修复。来源：Ledoit与Wolf（Journal of Multivariate Analysis，2004）。
+\end{frame}
+\begin{frame}{收缩估计怎样影响风险判断}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_covariance_interpretation.tex}}
+\par\medskip
+\[
+w^\mathsf T\widetilde\Sigma w=(1-\delta)w^\mathsf T S^{\rm ML}w+\delta\tau\|w\|_2^2
+\]
+\begin{itemize}
+\item 共同方差目标使资本集中度进入估计风险，现金集中组合也受影响
+\item 表中是调仓时估计值，经济效果由实际收益、波动与回撤评价
+\end{itemize}
 \end{frame}
 \begin{frame}{经济机制与可检验问题}
 \begin{tabular}{p{0.26\textwidth}p{0.64\textwidth}}\toprule
@@ -214,6 +238,23 @@
 状态使用调仓前63日沪深300ETF收益，仅作持仓描述。来源：OriginalTurtles.org（2003）；Moreira与Muir（JF，2017）。
 \end{frame}
 \section{机制与稳健性}
+\begin{frame}{风险贡献、风险匹配、Brinson归因}
+\begin{tabular}{p{0.17\textwidth}p{0.34\textwidth}p{0.36\textwidth}}\toprule
+分析 & 使用的数据 & 解释对象\\\midrule
+风险贡献 & 持仓与指定协方差 & 估计波动如何在资产间分配\\
+风险匹配 & 同一样本矩阵衡量双方 & 事前方差相近时的实现表现\\
+Brinson & 每日持仓与实现收益 & 相对基准的实际收益差\\\bottomrule
+\end{tabular}
+\par\medskip
+\small 三者共享持仓路径。估计风险份额、日均收益贡献和年化绩效使用不同单位。
+\end{frame}
+\begin{frame}{同一持仓的风险份额随估计尺度变化}
+\resizebox{\textwidth}{!}{\input{../thesis_latex/generated_group_risk_contribution.tex}}
+\par\medskip
+\small 各决策日先计算风险份额，再按组加总并取均值；每个风险列合计100\%。
+\par\medskip
+\small 主模型预算偏离按LW计算：\diagPrimaryRCError{}个百分点；参考组合为\diagReferenceRCError{}个百分点。该数是逐期最大份额偏离的均值。
+\end{frame}
 \begin{frame}{消融：第二阶段优化的作用}
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_ablation.tex}}
 \medskip
@@ -227,11 +268,11 @@
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_matched.tex}}
 \medskip
 \begin{itemize}
-\item 同一历史样本协方差衡量双方风险，\diagMatchFeasible{}次配对决策达到上限
+\item 同一历史样本矩阵衡量双方风险：450个决策日、两个基准
 \item 简单组合与货币ETF混合，保持无杠杆并按各自换手计费
 \item 主模型净收益和夏普更高，实现波动与全期回撤幅度也更高
 \end{itemize}
-\scriptsize 原Ledoit--Wolf估计的货币方差上移，\diagLWMatchInfeasible{}次混合不可达；可行性另行记录。
+\scriptsize 样本矩阵下\diagMatchFeasible{}次达到目标；LW下\diagLWMatchInfeasible{}次不可达。属于指定估计尺度下的历史辅助比较。
 \end{frame}
 \figframe{风险匹配后的净值路径}{primary_diagnostic_risk_matched.pdf}{0.95}{比较控制调仓时估计风险；实现波动仍由后续收益和资产构成决定。}
 \begin{frame}{当前主模型的稳健性}

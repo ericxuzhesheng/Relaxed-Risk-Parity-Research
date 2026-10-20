@@ -50,6 +50,11 @@ def _write_build_verification() -> None:
     )
     if attribution_audit["status"] != "passed":
         raise ValueError("Holdings attribution has not reconciled")
+    defense_audit = json.loads(
+        (ROOT / "results/tables/defense_consistency_audit.json").read_text(encoding="utf-8")
+    )
+    if defense_audit["status"] != "passed":
+        raise ValueError("Covariance and risk contributions have not reconciled")
     logs = [
         ROOT / "report/thesis_latex/main.log",
         ROOT / "report/ppt/rrp_defense.log",
@@ -87,6 +92,7 @@ def _write_build_verification() -> None:
         "primary_audit_status": audit["status"],
         "diagnostic_audit_status": diagnostic_audit["status"],
         "attribution_audit_status": attribution_audit["status"],
+        "defense_consistency_audit_status": defense_audit["status"],
         "attribution_daily_identity_max_error": attribution_audit["daily_attribution_identity_max_error"],
         "diagnostic_experiment_count": diagnostic_audit["experiment_count"],
         "risk_matching_decisions": diagnostic_audit["risk_matching_decisions"],
@@ -124,6 +130,7 @@ def main():
         [python, "scripts/render_publication_figures.py"],
         [python, "scripts/run_primary_diagnostics.py"],
         [python, "scripts/analyze_primary_attribution.py"],
+        [python, "scripts/audit_defense_consistency.py"],
         [python, "scripts/sync_global_rrp_docs.py"],
     ]
     try:
