@@ -152,7 +152,7 @@ def validate_path(result, config):
     return public
 
 
-def run_experiments():
+def run_experiments(*, reuse_solver_paths=False):
     logging.getLogger().setLevel(logging.ERROR)
     config = json.loads((TABLES / "primary_model_configuration.json").read_text("utf-8"))["configuration"]
     returns = load_data(source="tushare", force_update=False).dropna(how="all")
@@ -161,6 +161,10 @@ def run_experiments():
     start = returns.index.searchsorted(config["evaluation_start_date"])
     returns = returns.iloc[max(0, start-504):]
     OUTPUT.mkdir(parents=True, exist_ok=True)
+    if reuse_solver_paths:
+        prior = json.loads((OUTPUT / "protocol.json").read_text("utf-8"))
+        if prior["primary_configuration"] != config:
+            raise ValueError("Saved solver paths use a different primary configuration")
     protocol = {
         "evaluation_start": config["evaluation_start_date"],
         "evaluation_end": config["evaluation_end_date"],
@@ -174,13 +178,17 @@ def run_experiments():
         "frozen_parameters": "last schedule entry effective before evaluation; retained throughout evaluation",
         "ablation_parameters": "retain the primary annual schedule for the remaining objective terms",
         "mean_sensitivity": "retain primary annual penalties; change only the EWMA half-life",
-        "risk_matching": "largest base fraction in [0,1] with prior LW variance <= contemporaneous primary; minimum-variance mixture if infeasible",
+        "risk_matching": "largest base fraction in [0,1] with prior sample covariance variance <= contemporaneous primary; LW feasibility recorded separately",
         "execution_delay": "trade the original targets one observed trading day later; recompute drift and costs",
     }
     (OUTPUT / "protocol.json").write_text(json.dumps(protocol, indent=2, ensure_ascii=False), "utf-8")
     paths, full, solvers = {}, {}, {}
     for key in ABLATIONS + ["half_life_10", "half_life_40"]:
         print(f"Running diagnostic: {key}", flush=True)
+        if reuse_solver_paths:
+            paths[key] = validate_path(pd.read_csv(OUTPUT / f"{key}_daily.csv", parse_dates=["date"]), config)
+            solvers[key] = pd.read_csv(OUTPUT / f"{key}_solver.csv", parse_dates=["date"])
+            continue
         diagnostics = {}
         cfg = experiment_config(config, key)
         result = run_static_backtest(returns, "standard" if key == "reference" else "relaxed", cfg, diagnostics)
@@ -194,6 +202,13 @@ def run_experiments():
         paths[key], full[key], solvers[key] = public, result, solver
         public.to_csv(OUTPUT / f"{key}_daily.csv", index=False)
         solver.to_csv(OUTPUT / f"{key}_solver.csv", index=False)
+    if reuse_solver_paths:
+        from src.incremental_backtest import _restore_frame
+        checkpoint = json.loads((ROOT / "results/backtest_checkpoints/global_rrp.json").read_text("utf-8"))
+        full["primary"] = _restore_frame(checkpoint["result"])
+        cached_public = validate_path(full["primary"], config)
+        pd.testing.assert_series_equal(cached_public.date, paths["primary"].date)
+        np.testing.assert_allclose(cached_public.net_return, paths["primary"].net_return, atol=1e-12, rtol=0)
     published = pd.read_csv(TABLES / "comparison_global_rrp_returns.csv", parse_dates=["date"])
     pd.testing.assert_series_equal(paths["primary"].date, published.date)
     parity_error = float(np.max(np.abs(paths["primary"].net_return-published.net_return)))
@@ -204,20 +219,23 @@ def run_experiments():
     primary_full = full["primary"].set_index("date")
     targets = primary_full.loc[primary_full.is_rebalance_day, columns]
     targets = targets[targets.sum(axis=1) > .99].copy()
+    targets = targets.loc[targets.index >= returns.index[252]]
     targets.columns = returns.columns
     contexts = {}
     for date in targets.index:
         window = returns.loc[returns.index < date].iloc[-252:]
         active = investable_columns(window, min_observations=60)
-        sigma = estimate_covariance(window[active], method="ledoit_wolf", trading_days=252,
+        sigma = estimate_covariance(window[active], method="sample", trading_days=252,
                                     annualize=True, allow_fallback=False).to_numpy()
-        contexts[date] = (active, sigma, window.index.max())
+        lw = estimate_covariance(window[active], method="ledoit_wolf", trading_days=252,
+                                 annualize=True, allow_fallback=False).to_numpy()
+        contexts[date] = (active, sigma, lw, window.index.max())
     matching_rows = []
     for key, name in [("matched_equal", "Equal Weight Benchmark"), ("matched_60_40", "60/40 Benchmark")]:
         benchmark = run_benchmark_backtest(returns, name, transaction_cost_bps=3, rebalance_frequency="W").set_index("date")
         matched = []
         for date, target in targets.iterrows():
-            active, sigma, cutoff = contexts[date]
+            active, sigma, lw, cutoff = contexts[date]
             base = benchmark.loc[date, [f"weight_{c}" for c in active]].to_numpy(float)
             np.testing.assert_allclose(base.sum(), 1, atol=1e-6)
             if "日利ETF" not in active:
@@ -227,6 +245,8 @@ def run_experiments():
             primary = target[active].to_numpy(float)
             target_var = float(primary @ sigma @ primary)
             mixed, fraction, feasible = risk_matched_weights(base, cash, sigma, target_var)
+            lw_target = float(primary @ lw @ primary)
+            lw_mixed, lw_fraction, lw_feasible = risk_matched_weights(base, cash, lw, lw_target)
             weights = pd.Series(0.0, index=returns.columns)
             weights.loc[active] = mixed
             matched.append(weights)
@@ -236,6 +256,10 @@ def run_experiments():
                 "matched_volatility": np.sqrt(float(mixed @ sigma @ mixed)),
                 "ceiling_feasible": feasible,
                 "risk_gap": np.sqrt(float(mixed @ sigma @ mixed))-np.sqrt(target_var),
+                "lw_base_fraction": lw_fraction, "lw_ceiling_feasible": lw_feasible,
+                "lw_risk_gap": np.sqrt(float(lw_mixed @ lw @ lw_mixed))-np.sqrt(lw_target),
+                "cash_sample_volatility": np.sqrt(float(cash @ sigma @ cash)),
+                "cash_lw_volatility": np.sqrt(float(cash @ lw @ cash)),
             })
         frame = pd.DataFrame(matched, index=targets.index)
         full[key] = replay_targets(returns, frame)
@@ -280,7 +304,9 @@ def run_experiments():
             result = paths[key]
             result = result[result.date.between(start_date, end_date)]
             subperiods.append({"period": label, "experiment": key, "observations": len(result),
-                              **summarize_result(LABELS[key], result, start_date, config)})
+                              **summarize_result("Global RRP" if key == "primary" else
+                                ("Equal Weight" if key == "matched_equal" else "60/40 Benchmark"),
+                                result, start_date, config)})
     pd.DataFrame(subperiods).to_csv(TABLES / "primary_subperiods.csv", index=False)
 
     bootstrap = []
@@ -304,6 +330,8 @@ def run_experiments():
         "risk_matching_decisions": len(match),
         "risk_matching_infeasible_count": int((~match.ceiling_feasible).sum()),
         "risk_matching_max_abs_gap": float(match.risk_gap.abs().max()),
+        "risk_matching_covariance": "prior 252-day sample covariance with PSD floor",
+        "lw_risk_matching_infeasible_count": int((~match.lw_ceiling_feasible).sum()),
         "paired_bootstrap_rows": len(bootstrap),
         "confidence_intervals": "pointwise percentile intervals conditional on historical specification; no multiple-selection correction",
     }
@@ -362,6 +390,7 @@ def render_artifacts():
     macros["diagCostTwentyReturn"] = pct(robust.set_index("experiment").loc["cost_20", "net_annual_return"])
     macros["diagMatchDecisions"] = str(len(match))
     macros["diagMatchFeasible"] = str(int(match.ceiling_feasible.sum()))
+    macros["diagLWMatchInfeasible"] = str(int((~match.lw_ceiling_feasible).sum()))
     macros["diagPrimaryRCError"] = pct(summary.loc["primary", "mean_max_risk_budget_error"])
     macros["diagReferenceRCError"] = pct(summary.loc["reference", "mean_max_risk_budget_error"])
     (THESIS / "generated_diagnostic_numbers.tex").write_text("\n".join(
@@ -410,7 +439,9 @@ def render_artifacts():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--render-only", action="store_true")
+    parser.add_argument("--reuse-solver-paths", action="store_true",
+                        help="Rebuild matching/replay/statistics from validated saved solver paths")
     args = parser.parse_args()
     if not args.render_only:
-        run_experiments()
+        run_experiments(reuse_solver_paths=args.reuse_solver_paths)
     render_artifacts()
