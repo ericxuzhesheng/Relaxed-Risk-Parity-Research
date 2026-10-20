@@ -4,10 +4,6 @@
     "returncode": 0
   },
   {
-    "step": "scripts/run_global_rrp_rolling_calibration.py",
-    "returncode": 0
-  },
-  {
     "step": "scripts/verify_global_rrp_rolling_calibration.py",
     "returncode": 0
   },
@@ -24,11 +20,11 @@
     "returncode": 0
   },
   {
-    "step": "scripts/export_next_month_holdings.py",
+    "step": "scripts/render_publication_figures.py",
     "returncode": 0
   },
   {
-    "step": "scripts/render_publication_figures.py",
+    "step": "scripts/run_primary_diagnostics.py",
     "returncode": 0
   },
   {
@@ -42,5 +38,13 @@
   {
     "step": "ppt/rrp_defense.pdf",
     "returncode": 0
+  },
+  {
+    "step": "current_specification_diagnostics",
+    "primary_schedule": "retained and verified",
+    "experiments": 10,
+    "targeted_tests_passed": 9,
+    "risk_matching_covariance": "common prior sample covariance; original LW feasibility separately recorded",
+    "visual_pdf_review": "passed"
   }
 ]

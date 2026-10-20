@@ -8,12 +8,50 @@
     "60/40 Benchmark"
   ],
   "model_count": 5,
-  "thesis_pages": 41,
-  "slides_pages": 24,
+  "thesis_pages": 47,
+  "slides_pages": 31,
   "compile_passes": 3,
   "overfull_boxes": 0,
   "annualization_days": 252,
   "estimation_window_days": 252,
   "primary_audit_status": "passed",
+  "diagnostic_audit_status": "passed",
+  "diagnostic_experiment_count": 10,
+  "risk_matching_decisions": 900,
+  "risk_matching_infeasible_count": 0,
+  "fonts": {
+    "main.pdf": {
+      "all_fonts_embedded": true,
+      "chinese_fonts": [
+        "BFIDME+STZhongsong",
+        "CPWLDB+SimHei",
+        "DDTTLW+MicrosoftYaHei",
+        "DFIMHP+MicrosoftYaHei",
+        "DTQSCH+STFangsong",
+        "EOIOZW+MicrosoftYaHei-Bold",
+        "FAWBMH+MicrosoftYaHei",
+        "FAWBMH+MicrosoftYaHei-Bold",
+        "HBGWOI+MicrosoftYaHei-Bold",
+        "IRQUGZ+STFangsong",
+        "KOOBRH+SimSun",
+        "MIUVPK+STZhongsong",
+        "QEULYP+SimSun",
+        "QJRUYZ+SimHei",
+        "QVIUWV+STZhongsong",
+        "TDODLP+SimSun",
+        "VJKBIL+STFangsong"
+      ]
+    },
+    "rrp_defense.pdf": {
+      "all_fonts_embedded": true,
+      "chinese_fonts": [
+        "CYUOEW+MicrosoftYaHei",
+        "DFIMHP+MicrosoftYaHei",
+        "QIUZMB+MicrosoftYaHei",
+        "SOOEBT+MicrosoftYaHei",
+        "TPCBRS+MicrosoftYaHei"
+      ]
+    }
+  },
   "figures": "high-contrast red-blue PNG and vector PDF"
 }
