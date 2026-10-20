@@ -181,6 +181,12 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 本研究完成的是境内ETF持有组合的资本配置。相对桥水全球机构框架，当前30只工具覆盖的独立利率、通胀与货币对冲风险来源较少；多头单位预算使风险规模与资本占用直接相连。论文据[桥水官方说明](https://www.bridgewater.com/research-and-insights/the-all-weather-story)区分两者工具范围，并以[Frazzini与Pedersen（2014，JFE）](https://doi.org/10.1016/j.jfineco.2013.10.005)和[Brunnermeier与Pedersen（2009，RFS）](https://doi.org/10.1093/rfs/hhn098)解释杠杆约束、融资与流动性风险。无杠杆约束使配置绩效与当前可核算的ETF持仓和费用相对应。
 
+### 仓位管理与收益归因
+
+货币和债券配置使满额投资组合仍能调节风险承担。论文借助海龟交易法的波动持仓单位解释风险数量管理，并用[调仓前市场状态与持仓](results/tables/primary_position_summary.csv)核查这种关系。
+
+[Brinson–Fachler归因](results/tables/primary_brinson_summary.csv)以原始等权及风险匹配等权为基准，将日收益差拆为配置、组内ETF选择、交互和费用差。[各资产组贡献](results/tables/primary_brinson_categories.csv)单列现金、国债和信用债；下跌日按沪深300ETF当日负收益事后划分。数值为平均单日基点，基准选择决定贡献含义。方法依据[Brinson与Fachler（1985）](https://doi.org/10.3905/jpm.1985.409005)和[CFA Institute归因综述](https://rpc.cfainstitute.org/research/foundation/2019/performance-attribution)。
+
 ### 数据与复现
 
 资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。数据覆盖 **2007-01-18 至 2026-10-16**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
@@ -311,6 +317,12 @@ The [latest target allocation](results/tables/latest_holdings.csv) uses the late
 
 The chosen China-listed ETF universe offers narrower independent rate, inflation and currency-hedging exposures than a global institutional instrument set. A long-only unit budget connects risk allocation directly to capital use. The thesis distinguishes this setting from [Bridgewater's All Weather framework](https://www.bridgewater.com/research-and-insights/the-all-weather-story), and uses research on [leverage constraints](https://doi.org/10.1016/j.jfineco.2013.10.005) and [funding liquidity](https://doi.org/10.1093/rfs/hhn098) to explain the financing and margin considerations behind the unlevered specification.
 
+### Position management and return attribution
+
+Cash and bond allocations adjust risk within a fully invested portfolio. The thesis relates this principle to volatility-based Turtle position units and reports [holdings by prior market state](results/tables/primary_position_summary.csv).
+
+[Brinson–Fachler attribution](results/tables/primary_brinson_summary.csv) reconciles daily active returns into allocation, within-group ETF selection, interaction and cost differences against both original and risk-matched Equal Weight. [Category results](results/tables/primary_brinson_categories.csv) distinguish money-market, government-bond and credit-bond contributions. Down days are identified ex post by negative CSI 300 ETF returns. Effects are arithmetic mean daily basis points and depend on the chosen benchmark. References include [Brinson and Fachler (1985)](https://doi.org/10.3905/jpm.1985.409005) and the [CFA Institute attribution review](https://rpc.cfainstitute.org/research/foundation/2019/performance-attribution).
+
 ### Data and reproduction
 
 The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The price data span **2007-01-18 to 2026-10-16**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
@@ -388,6 +400,8 @@ Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0,
 Primary average money-market weight is {cash_mean:.2%}, with a maximum of {cash_max:.2%}. The average combined money-market and three-bond weight is {defensive:.2%}. All 30 ETFs receive material allocations during eligible periods. The annual calibration has {audit['parameter_selection_informative_years']} informative years out of {audit['parameter_selection_years']} under the one-standard-error rule.
 
 Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All {diagnostic_audit['risk_matching_decisions'] - diagnostic_audit['risk_matching_infeasible_count']} sample-covariance matches attain the target; {diagnostic_audit['lw_risk_matching_infeasible_count']} original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
+
+Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, `primary_brinson_categories.csv` and `primary_attribution_audit.json`. Seven attribution groups separate cash, government bonds and credit bonds without changing the ETF universe. Effects are arithmetic mean daily basis points, not annualized or compounded; down-day attribution is ex-post descriptive. Risk contribution, prior-state position analysis and return attribution are distinct outputs. Turtle position sizing is an economic analogy, not an implemented breakout strategy.
 
 ---
 
