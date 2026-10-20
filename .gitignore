@@ -7,8 +7,9 @@ __pycache__/
 *.log
 tmp_pytest*/
 tmp_render/
-# LaTeX build intermediates (main.bbl is kept for distribution)
+# LaTeX build intermediates (bibliography is rebuilt from references.bib)
 *.aux
+*.bbl
 *.fdb_latexmk
 *.fls
 *.blg
@@ -150,6 +151,8 @@ backtest/V3/*
 !results/tables/global_rrp_covariance_diagnostics.csv
 !results/figures/primary_weights.png
 !results/figures/primary_weights.pdf
+!results/figures/primary_diagnostic_*.pdf
+!results/figures/primary_diagnostic_*.png
 !results/figures/global_rrp_*_comparison.pdf
 !results/figures/rebalance_frequency_sensitivity.pdf
 !results/figures/asset_graph_stress_timeline.pdf

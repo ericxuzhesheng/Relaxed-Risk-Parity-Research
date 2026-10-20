@@ -129,6 +129,12 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 本研究完成的是境内ETF持有组合的资本配置。相对桥水全球机构框架，当前30只工具覆盖的独立利率、通胀与货币对冲风险来源较少；多头单位预算使风险规模与资本占用直接相连。论文据[桥水官方说明](https://www.bridgewater.com/research-and-insights/the-all-weather-story)区分两者工具范围，并以[Frazzini与Pedersen（2014，JFE）](https://doi.org/10.1016/j.jfineco.2013.10.005)和[Brunnermeier与Pedersen（2009，RFS）](https://doi.org/10.1093/rfs/hhn098)解释杠杆约束、融资与流动性风险。无杠杆约束使配置绩效与当前可核算的ETF持仓和费用相对应。
 
+### 风险估计与解释口径
+
+Ledoit–Wolf将经验协方差与等方差对角目标加权组合，强度由当期历史样本估计。低波动货币工具的估计方差可能因此上升，风险贡献须说明使用哪一个矩阵。[两种矩阵下的同一持仓风险份额](results/tables/primary_group_risk_contribution.csv)和[收缩特征](results/tables/primary_covariance_interpretation.csv)展示这一影响。主模型使用LW矩阵，辅助风险匹配以共同样本矩阵衡量双方，Brinson则直接核算实现收益差。风险贡献份额与收益贡献分别报告。
+
+主模型回看上限为252日，四个正式对照沿用240日；五模型比较对应完整规则，消融实验用于保持其余主模型设定一致的机制比较。Brinson与净值收益统计共同排除首个净值基期观察。
+
 ### 仓位管理与收益归因
 
 货币和债券配置使满额投资组合仍能调节风险承担。论文借助海龟交易法的波动持仓单位解释风险数量管理，并用[调仓前市场状态与持仓](results/tables/primary_position_summary.csv)核查这种关系。
@@ -273,6 +279,12 @@ The [latest target allocation](results/tables/latest_holdings.csv) uses the late
 ### Why the model is unlevered
 
 The chosen China-listed ETF universe offers narrower independent rate, inflation and currency-hedging exposures than a global institutional instrument set. A long-only unit budget connects risk allocation directly to capital use. The thesis distinguishes this setting from [Bridgewater's All Weather framework](https://www.bridgewater.com/research-and-insights/the-all-weather-story), and uses research on [leverage constraints](https://doi.org/10.1016/j.jfineco.2013.10.005) and [funding liquidity](https://doi.org/10.1093/rfs/hhn098) to explain the financing and margin considerations behind the unlevered specification.
+
+### Risk estimation and interpretation
+
+Ledoit–Wolf combines the empirical covariance with an equal-variance diagonal target using a sample-estimated intensity. It can raise the estimated money-market variance. [Risk shares under both matrices for identical holdings](results/tables/primary_group_risk_contribution.csv) and [covariance diagnostics](results/tables/primary_covariance_interpretation.csv) document this effect. The primary model uses LW; auxiliary matching uses a common sample matrix; Brinson decomposes realized return differences. Risk shares and return effects have distinct units.
+
+The primary lookback is up to 252 days; the four published benchmarks retain 240 days. Model comparisons evaluate complete rules, while objective ablations hold the remaining primary settings fixed. Brinson and NAV-derived return statistics both exclude the initial NAV observation.
 
 ### Position management and return attribution
 
