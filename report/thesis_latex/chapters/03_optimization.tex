@@ -38,7 +38,7 @@ q_i(\Sigma_t q)_i=b_i q^\mathsf T\Sigma_t q.
 直接把这些乘积等式作为最终问题的约束，并不能由其形式立即保证凸性。本文改为求解可验证的对数风险预算问题，再将其归一化结果作为参考。
 
 \subsection{对数风险预算参考}
-在 $x_i>0$ 上求解
+采用 Spinu 的对数风险预算表示\cite{spinu2013algorithm}，在 $x_i>0$ 上求解
 \[
 \min_x f_t(x)=\frac12x^\mathsf T\Sigma_t x-\sum_i b_i\log x_i.
 \]
@@ -73,7 +73,7 @@ q^\mathsf T\Sigma_t q=\frac{1}{(\mathbf1^\mathsf T x)^2}.
 \[
 R_t=\mu_t^\mathsf Tq_t.
 \]
-参考权重 $q_t$ 属于单纯形，因此该目标在当期估计下可由参考组合达到。它不再依赖固定收益倍数，也不等于对随后实现收益作保证。
+参考权重 $q_t$ 属于单纯形，因此该目标在当期估计下可由参考组合达到。Gambeta 与 Kwon 的算法以风险平价组合的预期收益乘以给定倍数设置目标\cite{gambeta2020risk}；本文对应其中倍数为一的目标设定，并采用下文的软惩罚表达收益要求。预测目标不等于对随后实现收益作保证。
 
 归一化尺度为
 \[
@@ -84,6 +84,45 @@ e_t=\frac1{n_t}\mathbf1,
 s_t=\max(|R_t|,\max_i|\mu_{i,t}|,\varepsilon_m).
 \]
 其中 $\varepsilon_v$ 为协方差数值修复使用的正尺度下限，$\varepsilon_m$ 为机器精度下限。二者只防止除零，不代表投资者的收益或风险要求。
+
+\subsection{目标项的文献依据与经济含义}
+\subsubsection{参考跟踪与方差控制}
+参考跟踪项 $\|w-q_t\|_2^2$ 限制资本配置偏离风险预算参考的程度。Bourgeron 等的 Tikhonov 配置模型包含 $\|\Gamma(w-w_0)\|_2^2$ 形式的正则项\cite{bourgeron2018robust}。取 $\Gamma=I$、$w_0=q_t$ 即得到本文采用的距离形式。由于参考点随历史输入更新，这一项保留的是当期风险预算配置的结构，而非固定历史权重。
+
+方差项 $w^\mathsf T\Sigma_t w$ 衡量组合整体风险。风险预算均衡只规定各资产承担风险的相对份额，并不直接最小化总方差，因此加入方差项具有独立作用。Feng 与 Palomar 在 SCRIP 的一般模型中，将风险集中程度与均值--方差偏好加权结合，偏好函数包含 $-\mu^\mathsf T w+\nu w^\mathsf T\Sigma w$，其中 $\nu>0$\cite{feng2015scrip}。本文借鉴这种将风险分配与总风险控制共同考虑的思路，以参考权重距离保留风险预算结构，并以独立的方差惩罚控制风险水平。其与本文的联系是目标设计，本文无需采用 SCRIP 针对非凸风险集中度问题的逐次凸近似算法。
+
+\subsubsection{预测收益下限的二次软惩罚}
+若将收益目标作为硬约束，其形式为 $\mu_t^\mathsf T w\geq R_t$。设归一化约束函数为
+\[
+h_t(w)=\frac{\mu_t^\mathsf T w-R_t}{s_t},\qquad h_t(w)\geq0.
+\]
+Nocedal 与 Wright 在第二版第 17.1 节、式 (17.7) 中，对不等式 $h(w)\geq0$ 采用负部平方 $[h(w)]_-^2$ 构造二次罚函数，其中 $[z]_- =\max(-z,0)$\cite{nocedal2006numerical}。代入上述收益约束，得到
+\[
+\lambda_{r,t}[h_t(w)]_-^2
+=\lambda_{r,t}\left[\max\left(0,\frac{R_t-\mu_t^\mathsf T w}{s_t}\right)\right]^2,
+\]
+恰为本文的预测收益短缺项。Boyd 等第 4.6 节的组合优化软约束讨论，则提供了将约束违反量纳入投资目标的应用依据\cite{boyd2017multiperiod}；该文示例使用线性正部惩罚，本文选择二次形式，使短缺增大时边际惩罚递增。
+
+当 $\mu_t^\mathsf T w\geq R_t$ 时，该项为零；当预测收益低于参考目标时，差额按平方计入目标。其经济作用是为降低方差所伴随的预测收益损失设置代价，避免方差控制完全忽略收益要求。由于 $q_t$ 本身能够达到目标，软化收益下限的目的在于允许收益与风险之间的取舍。年度确定的有限惩罚系数表达这种取舍，并不要求收益下限在每期严格满足，也不属于通过不断增大罚系数逼近硬约束解的迭代过程。
+
+Siegmann 与 Lucas 第 4 节、式 (10) 使用基准财富以下的二次短缺来表达损失偏好\cite{siegmann2005discrete}。这一研究支持短缺惩罚递增的金融解释，但其随机财富短缺与本文的预测均值短缺需要区分。对随机组合收益 $Z$ 和给定目标 $R$，一般有
+\[
+\bigl[R-\mathbb E(Z)\bigr]_+^2
+\neq\mathbb E\bigl([R-Z]_+^2\bigr),\qquad [z]_+=\max(z,0).
+\]
+本文惩罚前者所对应的预测目标缺口，不将其称为下半方差或 CVaR。国内损失厌恶与动态参照点研究为设置收益参照及非对称偏好提供相关背景\cite{liu2018lossaverse,wang2021reference}，实际配置效果仍通过目标项消融及扣费后的样本外回测评价。
+
+\subsubsection{等价的二次规划表达}
+引入一个非负辅助变量 $u$，最终配置可等价写为
+\[
+\begin{aligned}
+\min_{w,u}\quad &\|w-q_t\|_2^2
++\frac{\lambda_{v,t}}{v_t}w^\mathsf T\Sigma_t w+\lambda_{r,t}u^2,\\
+\text{s.t.}\quad &\mathbf1^\mathsf T w=1,\quad w\geq0,\\
+&u\geq0,\quad s_tu\geq R_t-\mu_t^\mathsf T w.
+\end{aligned}
+\]
+对给定 $w$，当 $\lambda_{r,t}>0$ 时，最优 $u$ 等于归一化短缺的正部；当该系数为零时，辅助变量不影响权重目标。因而第二阶段是带线性约束的凸二次规划。实际实现使用 CVXPY 描述目标和约束并调用求解器，研究工作侧重目标设定、参数校准和实证评价，无需另行设计通用求解算法。
 
 \subsection{年度参数校准}
 两项惩罚系数按年度更新。设某一年度的生效日为 $d_y$，校准使用 $d_y$ 之前两个连续的 252 日区间。较早区间用于确定候选尺度，随后区间用于候选验证。
