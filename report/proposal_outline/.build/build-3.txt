@@ -177,7 +177,7 @@ Package xeCJK Warning: Redefining CJKfamily `\CJKrmdefault' (SimSun(0)).
 *geometry* detected driver: xetex
 (.build/Thesis_Proposal.out) (.build/Thesis_Proposal.out)
 (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd)
-(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd) [1] [2] [3]
-(.build/Thesis_Proposal.aux) )
-Output written on .build/Thesis_Proposal.pdf (3 pages).
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd) [1] [2] [3] [4]
+[5] (.build/Thesis_Proposal.aux) )
+Output written on .build/Thesis_Proposal.pdf (5 pages).
 Transcript written on .build/Thesis_Proposal.log.
