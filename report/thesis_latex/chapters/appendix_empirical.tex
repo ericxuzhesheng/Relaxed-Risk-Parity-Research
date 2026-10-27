@@ -53,7 +53,7 @@ Moreira与Muir在《Journal of Finance》的研究说明，随波动调整风险
 
 \begin{table}[htbp]\centering
 \caption{调仓前市场状态与Global RRP目标权重}\label{tab:position_states}
-\resizebox{\textwidth}{!}{\input{generated_position_states.tex}}
+\fitthesistable{\input{generated_position_states.tex}}
 \end{table}
 
 表\ref{tab:position_states}按调仓日前63个交易日沪深300ETF累计收益的正负分组，比较相邻调仓日之间具有完整持有区间的周度决策。两端不完整区间不参与这一统计。弱势状态下的平均货币权重以及货币、三只债券合计权重均较高，表明本样本中的配置具有一定防御性。状态划分只用于描述已经生成的持仓；主模型仍由协方差、预期收益和年度惩罚共同决定权重。该表说明市场状态与资本配置的对应关系，后文Brinson归因进一步计算这些配置相对基准的收益贡献。
@@ -70,7 +70,7 @@ Moreira与Muir在《Journal of Finance》的研究说明，随波动调整风险
 
 \begin{table}[htbp]\centering
 \caption{同一目标持仓在两种协方差尺度下的风险贡献份额}\label{tab:group_risk_contribution}
-\resizebox{\textwidth}{!}{\input{generated_group_risk_contribution.tex}}
+\fitthesistable{\input{generated_group_risk_contribution.tex}}
 \end{table}
 
 表\ref{tab:group_risk_contribution}对每个决策日先计算资产相对风险贡献，再按与Brinson归因一致的七组汇总，最后对全部决策日取平均。两列风险份额分别以各自矩阵下的组合波动归一化，合计均为100\%；它们对应不同风险模型，不能相互混合加总。资本列统计周度目标，因而与前文含日间漂移的平均权重略有不同。
@@ -85,11 +85,11 @@ Moreira与Muir在《Journal of Finance》的研究说明，随波动调整风险
 \subsection{消融与参数冻结的完整结果}
 \begin{table}[htbp]\centering
 \caption{目标项消融与参数冻结的完整比较}\label{tab:ablation_full}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_ablation.tex}}
+\fitthesistable{\input{generated_diagnostic_ablation.tex}}
 \end{table}
 \begin{table}[htbp]\centering
 \caption{资本跟踪与风险贡献偏离}\label{tab:diagnostic_mechanism}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_mechanism.tex}}
+\fitthesistable{\input{generated_diagnostic_mechanism.tex}}
 \end{table}
 
 表\ref{tab:diagnostic_mechanism}将资本权重距离和风险预算偏离分别列示。完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合对应\diagReferenceRCError{}个百分点。计算先在每个决策日取资产风险贡献份额相对等预算的最大绝对差，再对决策日取平均；它衡量预算偏离，并非组合年化波动或收益损失。该指标统一使用主模型当期Ledoit--Wolf矩阵，参考组合接近等预算，最终组合则体现收益与方差调整后的偏离。
@@ -126,7 +126,7 @@ z_t(a)^\mathsf T\widehat S_t z_t(a)
 
 \begin{table}[htbp]\centering
 \caption{当前 Global RRP 的实施与估计敏感性}\label{tab:diagnostic_robustness}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_robustness.tex}}
+\fitthesistable{\input{generated_diagnostic_robustness.tex}}
 \end{table}
 
 在单边20 bps费用下，主模型净年化收益为 \diagCostTwentyReturn。将原目标顺延一个交易日执行后，净年化收益为 \diagDelayReturn，年化波动为 \diagDelayVol，夏普为 \diagDelaySharpe，最大回撤为 \diagDelayDD。费用与执行实验把交易条件变化映射为可观察的收益风险差异。10日与40日半衰期结果进一步说明，均值估计的响应速度会改变给定年度惩罚下的配置路径。
@@ -154,7 +154,7 @@ Brinson归因 & 每日收益记账权重与实现收益；相对基准的日均�
 
 \begin{table}[htbp]\centering
 \caption{配对夏普差异的区块抽样区间}\label{tab:diagnostic_bootstrap}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_bootstrap.tex}}
+\fitthesistable{\input{generated_diagnostic_bootstrap.tex}}
 \end{table}
 
 \figmaybe{primary_diagnostic_bootstrap.pdf}{不同区块长度下的配对夏普差及95\%区间}{fig:diagnostic_bootstrap}

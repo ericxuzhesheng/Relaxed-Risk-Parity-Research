@@ -14,6 +14,7 @@
 \usepackage{flafter}
 \usepackage{placeins}
 \usepackage{needspace}
+\usepackage{adjustbox}
 \usetikzlibrary{arrows.meta,positioning}
 \definecolor{holdingRed}{HTML}{B53B4A}
 \definecolor{holdingBlue}{HTML}{194F7D}
@@ -43,8 +44,8 @@
 \setlength{\absleftindent}{0pt}
 \setlength{\absrightindent}{0pt}
 \setlength{\absparindent}{2em}
-\AtBeginEnvironment{longtable}{\small\linespread{1.15}\selectfont}
-\AtBeginEnvironment{table}{\linespread{1.15}\selectfont}
+\AtBeginEnvironment{longtable}{\songti\rmfamily\zihao{5}\linespread{1.15}\selectfont}
+\AtBeginEnvironment{table}{\songti\rmfamily\zihao{5}\linespread{1.15}\selectfont}
 \counterwithin{figure}{section}
 \counterwithin{table}{section}
 \renewcommand{\thefigure}{\thesection-\arabic{figure}}
@@ -72,7 +73,9 @@
 \setlength{\textfloatsep}{14pt plus 2pt minus 3pt}
 \setlength{\floatsep}{12pt plus 2pt minus 2pt}
 \setlength{\intextsep}{12pt plus 2pt minus 2pt}
-\captionsetup[figure]{font=small,labelfont=bf,labelsep=space,skip=6pt}
+\captionsetup{font={heiti,bf,wuhao},labelfont={heiti,bf,wuhao},labelsep=space,skip=6pt}
+% Tables retain their normal font size unless the available width requires reduction.
+\newcommand{\fitthesistable}[1]{\begin{adjustbox}{max width=\textwidth}#1\end{adjustbox}}
 
 \newcommand{\figmaybe}[3]{
   \IfFileExists{../../results/figures/#1}{
@@ -203,6 +206,7 @@ Global RRP achieves a net annual return of \globalNetReturn, volatility of \glob
 \clearpage
 \appendix
 \input{chapters/appendix_empirical.tex}
+\input{chapters/appendix_methods.tex}
 \section{ETF 资产池}
 \input{generated_etf_pool_table.tex}
 \section{符号与指标口径}

@@ -3,7 +3,7 @@
 为检验模型设定的作用，表\ref{tab:diagnostic_ablation}在相同估计、资产准入和计费条件下，比较直接持有风险预算参考、完整模型以及将收益短缺惩罚置零的配置。置零实验保留其余年度系数，考察相应目标项在既定规则中的作用。
 \begin{table}[htbp]\centering
 \caption{两项惩罚的核心消融比较}\label{tab:diagnostic_ablation}
-\resizebox{\textwidth}{!}{%
+\fitthesistable{%
 \begin{tabular}{lrrrrr}\toprule
 实验设定 & 净年化收益 & 年化波动 & 夏普 & 最大回撤 & 月均换手\\\midrule
 风险预算参考 & \diagReferenceReturn & \diagReferenceVol & \diagReferenceSharpe & \diagReferenceDD & \diagReferenceTurnover\\

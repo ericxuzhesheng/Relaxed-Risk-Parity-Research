@@ -5,7 +5,7 @@
 表\ref{tab:main_performance}比较五个周频模型在\evalStartDate{}至\evalEndDate{}的表现，统一采用\annualizationDays{}日年化、零无风险利率和\txCostBps{} bps单边成本。Global RRP净年化收益为\globalNetReturn，年化波动为\globalVolatility，最大回撤为\globalMaxDD。
 \begin{table}[htbp]\centering
 \caption{五模型净绩效}\label{tab:main_performance}
-\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}
+\fitthesistable{\input{generated_global_performance.tex}}
 \end{table}
 
 Equal Weight与60/40 Benchmark的绝对收益较高，同时承担更大波动和回撤；HRP Benchmark与HERC Benchmark则形成较低收益、较低波动的配置。Global RRP处于两类配置之间，体现了收益维持与风险控制的折中。在零无风险利率口径下，货币资产的正收益也进入夏普分子，因此低波动组合的高夏普需要结合绝对收益及持仓结构理解。

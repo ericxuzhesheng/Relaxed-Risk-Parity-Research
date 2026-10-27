@@ -6,7 +6,7 @@ Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、
 为进一步观察低风险资产配置的影响，表\ref{tab:diagnostic_matched}将简单基准与货币ETF混合，在每次调仓前使用同一历史样本协方差衡量双方风险，使辅助组合的估计方差不超过主模型。主模型权重仍由原有Ledoit--Wolf协方差求得。原收缩矩阵下的匹配均不可行，因此此处采用样本矩阵统一比较；该尺度是在历史诊断中确定的，计算与可行性记录见附录\ref{app:empirical}。
 \begin{table}[htbp]\centering
 \caption{指定事前风险尺度下的辅助比较}\label{tab:diagnostic_matched}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_matched.tex}}
+\fitthesistable{\input{generated_diagnostic_matched.tex}}
 \end{table}
 
 在这一尺度下，Global RRP的净收益和夏普高于两条辅助路径，但其实现波动及最大回撤幅度也更高。因此，结果支持不同资产构成形成了不同的收益风险取舍，不能据此认定所有风险均相同或模型在各项指标上占优。两种协方差下的风险贡献及资产组收益归因保留于附录，供进一步核查配置原因。
