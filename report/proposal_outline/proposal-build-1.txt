@@ -53,12 +53,46 @@ For additional information on amsmath, use the `?' option.
 (c:/texlive/2026/texmf-dist/tex/latex/graphics-def/xetex.def)
 (c:/texlive/2026/texmf-dist/tex/latex/graphics/mathcolor.ltx))
 (c:/texlive/2026/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/hyperref.sty
+(c:/texlive/2026/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+(c:/texlive/2026/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(c:/texlive/2026/texmf-dist/tex/generic/infwarerr/infwarerr.sty)))
+(c:/texlive/2026/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/nameref.sty
+(c:/texlive/2026/texmf-dist/tex/latex/refcount/refcount.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+(c:/texlive/2026/texmf-dist/tex/latex/kvoptions/kvoptions.sty)))
+(c:/texlive/2026/texmf-dist/tex/latex/etoolbox/etoolbox.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/stringenc/stringenc.sty)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(c:/texlive/2026/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/puenc.def)
+(c:/texlive/2026/texmf-dist/tex/latex/url/url.sty)
+(c:/texlive/2026/texmf-dist/tex/generic/bitset/bitset.sty
+(c:/texlive/2026/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty)))
+(c:/texlive/2026/texmf-dist/tex/latex/hyperref/hxetex.def
+(c:/texlive/2026/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(c:/texlive/2026/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty)))
 
 Package xeCJK Warning: Redefining CJKfamily `\CJKrmdefault' (SimSun(0)).
 
-No file Thesis_Proposal.aux.
+(./Thesis_Proposal.aux)
 *geometry* driver: auto-detecting
 *geometry* detected driver: xetex
-[1] [2] [3] (./Thesis_Proposal.aux) )
+
+Package hyperref Warning: Rerun to get /PageLabels entry.
+
+[1] (c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(c:/texlive/2026/texmf-dist/tex/latex/amsfonts/umsb.fd) [2] [3]
+(./Thesis_Proposal.aux)
+
+Package rerunfilecheck Warning: File `Thesis_Proposal.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
 Output written on Thesis_Proposal.pdf (3 pages).
 Transcript written on Thesis_Proposal.log.
