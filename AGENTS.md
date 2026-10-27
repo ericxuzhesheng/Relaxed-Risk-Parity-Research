@@ -33,19 +33,19 @@ Use exactly these five model names in current publication prose, tables and figu
 
 Always read CSV before writing numbers. Authoritative metrics are `results/tables/model_performance_summary.csv` and `hrp_comparison.csv`. The annual parameter path is `primary_parameter_schedule.csv`, and asset statistics are in `asset_descriptive_statistics.csv` under the same directory.
 
-Current results use 2018-01-02 to 2026-10-16, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Price history starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
+Current results use 2018-01-02 to 2026-10-23, unfiltered realized returns, rf=0, 252-day annualization and 3-bp one-way cost. All five models rebalance weekly. Price history starts 2007-01-18. Eligibility requires 60 prior valid observations and positive variance.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 6.00% | 3.59% | 1.644 | 2.346 | -6.80% | 17.27% |
-| HRP Benchmark | 2.10% | 0.26% | 7.840 | 17.401 | -0.19% | 3.52% |
-| HERC Benchmark | 2.51% | 0.81% | 3.077 | 4.633 | -1.57% | 15.83% |
-| Equal Weight | 8.46% | 13.13% | 0.685 | 0.966 | -18.23% | 8.81% |
-| 60/40 Benchmark | 6.20% | 12.07% | 0.559 | 0.800 | -20.46% | 7.66% |
+| Global RRP | 5.97% | 3.58% | 1.636 | 2.335 | -6.80% | 17.28% |
+| HRP Benchmark | 2.09% | 0.26% | 7.834 | 17.391 | -0.19% | 3.53% |
+| HERC Benchmark | 2.51% | 0.81% | 3.073 | 4.628 | -1.57% | 15.84% |
+| Equal Weight | 8.29% | 13.13% | 0.673 | 0.949 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.12% | 12.07% | 0.553 | 0.791 | -20.46% | 7.68% |
 
-Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.34%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
+Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.36%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
-Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 900 sample-covariance matches attain the target; 900 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 902 sample-covariance matches attain the target; 902 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
 
 Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, `primary_brinson_categories.csv` and `primary_attribution_audit.json`. Seven attribution groups separate cash, government bonds and credit bonds without changing the ETF universe. Attribution excludes the initial NAV date to align with NAV-derived return statistics. `primary_group_risk_contribution.csv` evaluates identical decision weights under LW and sample covariance; risk-budget deviations are percentage points. `primary_defense_consistency_audit.json` verifies LW reconstruction and Euler identities. The primary model uses a 252-day lookback; published benchmark implementations retain 240 days. Effects are arithmetic mean daily basis points, not annualized or compounded; down-day attribution is ex-post descriptive. Risk contribution, prior-state position analysis and return attribution are distinct outputs. Turtle position sizing is an economic analogy, not an implemented breakout strategy.
 
@@ -53,7 +53,7 @@ Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, 
 
 ## ETF Asset Pool
 
-Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-10-16`. Source: `src/asset_universe.py` (single source of truth).
+Current universe: **30 ETFs** across **8 categories**. Longest valid data range: `2007-01-18` to `2026-10-23`. Source: `src/asset_universe.py` (single source of truth).
 
 | ETF | Ticker | Category |
 |---|---|---|
@@ -116,7 +116,7 @@ On native Windows, consistently use the repository's `.venv\Scripts\python.exe` 
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
-python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20261016
+python scripts/update_etf_data.py --provider tushare --start-date 20000101 --end-date 20261023
 ```
 
 ### After running — refresh artifacts in this order before any commit:

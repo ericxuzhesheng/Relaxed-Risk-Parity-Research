@@ -20,7 +20,7 @@
   "defense_consistency_audit_status": "passed",
   "attribution_daily_identity_max_error": 9.67628754899863e-15,
   "diagnostic_experiment_count": 10,
-  "risk_matching_decisions": 900,
+  "risk_matching_decisions": 902,
   "risk_matching_infeasible_count": 0,
   "fonts": {
     "main.pdf": {
@@ -56,5 +56,6 @@
       ]
     }
   },
-  "figures": "high-contrast red-blue PNG and vector PDF"
+  "figures": "high-contrast red-blue PNG and vector PDF",
+  "pdf_visual_review": "passed: all 53 thesis pages and 38 slides rendered and inspected"
 }

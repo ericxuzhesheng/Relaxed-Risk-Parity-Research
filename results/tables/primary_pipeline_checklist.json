@@ -33,6 +33,34 @@
   },
   {
     "step": "scripts/run_primary_diagnostics.py",
-    "returncode": 1
+    "returncode": 0,
+    "arguments": [
+      "--reuse-solver-paths"
+    ]
+  },
+  {
+    "step": "scripts/analyze_primary_attribution.py",
+    "returncode": 0,
+    "arguments": []
+  },
+  {
+    "step": "scripts/audit_defense_consistency.py",
+    "returncode": 0,
+    "arguments": []
+  },
+  {
+    "step": "scripts/sync_global_rrp_docs.py",
+    "returncode": 0,
+    "arguments": []
+  },
+  {
+    "step": "thesis_latex/main.pdf",
+    "returncode": 0,
+    "visual_pdf_review": "passed"
+  },
+  {
+    "step": "ppt/rrp_defense.pdf",
+    "returncode": 0,
+    "visual_pdf_review": "passed"
   }
 ]

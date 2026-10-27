@@ -15,5 +15,7 @@
     "results\\backtest_checkpoints\\global_rrp.json",
     "results\\backtest_checkpoints\\herc.json",
     "results\\backtest_checkpoints\\hrp.json"
-  ]
+  ],
+  "independent_resolve_daily_return_max_abs_difference": 2.7146614639994744e-07,
+  "diagnostic_primary_source": "canonical published checkpoint; independent solve retained in backup"
 }
