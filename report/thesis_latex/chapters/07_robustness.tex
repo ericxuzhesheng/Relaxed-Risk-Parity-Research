@@ -1,0 +1,28 @@
+\subsection{实施条件与阶段稳定性}
+\subsubsection{成本与执行时点}
+表\ref{tab:implementation_core}保留基准费率、较高费率和延迟执行三个代表情景。成本变化沿用同一目标权重路径；延迟实验将原决策顺延一个交易日执行，并重新核算漂移持仓、交易量与净收益。
+\begin{table}[htbp]\centering
+\caption{成本与执行条件的核心比较}\label{tab:implementation_core}
+\begin{tabular}{lr}\toprule
+情景 & 净年化收益\\\midrule
+基准：单边\txCostBps{} bps & \globalNetReturn\\
+单边成本20 bps & \diagCostTwentyReturn\\
+延后一交易日执行 & \diagDelayReturn\\\bottomrule
+\end{tabular}
+\end{table}
+\FloatBarrier
+较高费用降低了净收益；延后一日执行时，年化波动为\diagDelayVol，最大回撤为\diagDelayDD，与基准结果接近。这些检验说明结果在所考察的实施变化下未出现明显反转，同时表明交易成本仍是配置效果的一部分。完整费率、风险指标和均值半衰期敏感性见表\ref{tab:diagnostic_robustness}。
+
+\subsubsection{不同时间阶段}
+表\ref{tab:diagnostic_subperiods}使用预先固定的三个连续子区间，比较主模型与两条风险匹配辅助路径。区间划分覆盖不同市场阶段，2026年只计入截至样本终点的观察。每个子区间重新以首日净值为基期计算绩效，回撤使用区间内历史高点。
+
+\begin{table}[htbp]\centering
+\caption{固定子区间中的收益、夏普与回撤}\label{tab:diagnostic_subperiods}
+\resizebox{\textwidth}{!}{\input{generated_diagnostic_subperiods.tex}}
+\end{table}
+
+主模型在三个子区间的净年化收益均高于两条风险匹配辅助路径，2021--2023年的收益水平较低，2024--2026年较高。回撤关系则随区间变化：在2018--2020年，主模型的区间最大回撤更大；在2021--2023年，其最大回撤较小。由此可见，平均收益优势与阶段损失控制需要分别评价。子区间证据刻画了结果的时间分布，宏观增长、利率与通胀风险可作为理解资产暴露的经济背景，具体因果归因仍以相应因子数据为条件。
+\FloatBarrier
+
+
+以上证据表明，两项惩罚在当前样本中形成了可解释的收益风险调整，效果仍随时间阶段和实施条件变化。配对区块抽样及其区间见附录\ref{app:empirical}，正文以核心对照和实际取舍评价模型有效性。

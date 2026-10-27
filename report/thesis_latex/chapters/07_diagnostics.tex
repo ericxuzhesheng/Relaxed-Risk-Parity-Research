@@ -1,86 +1,20 @@
-\subsection{目标项消融与配置机制}
+\subsection{方差与预测收益短缺惩罚的作用}
 \label{sec:ablation_results}
-表\ref{tab:diagnostic_ablation}展示相同估计、准入和计费条件下的目标项消融结果。直接持有风险预算参考的净年化收益为 \diagReferenceReturn，年化波动为 \diagReferenceVol，夏普为 \diagReferenceSharpe。完整 Global RRP 对应 \globalNetReturn、\globalVolatility{} 和 \globalSharpe。相对参考路径，第二阶段优化在本样本中保持了相近的收益水平，并降低实现波动与最大回撤；月均换手由 \diagReferenceTurnover{} 变化至 \globalMonthlyTurnover，表明风险调整伴随更高交易需求。
-
+为检验模型设定的作用，表\ref{tab:diagnostic_ablation}在相同估计、资产准入和计费条件下，比较直接持有风险预算参考、完整模型以及将收益短缺惩罚置零的配置。置零实验保留其余年度系数，考察相应目标项在既定规则中的作用。
 \begin{table}[htbp]\centering
-\caption{Global RRP 目标项消融与参数冻结实验}\label{tab:diagnostic_ablation}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_ablation.tex}}
+\caption{两项惩罚的核心消融比较}\label{tab:diagnostic_ablation}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrr}\toprule
+实验设定 & 净年化收益 & 年化波动 & 夏普 & 最大回撤 & 月均换手\\\midrule
+风险预算参考 & \diagReferenceReturn & \diagReferenceVol & \diagReferenceSharpe & \diagReferenceDD & \diagReferenceTurnover\\
+Global RRP & \globalNetReturn & \globalVolatility & \globalSharpe & \globalMaxDD & \globalMonthlyTurnover\\
+收益短缺惩罚置零 & \diagNoShortfallReturn & \diagNoShortfallVol & \diagNoShortfallSharpe & \diagNoShortfallDD & \diagNoShortfallTurnover\\\bottomrule
+\end{tabular}}
 \end{table}
 
-将收益短缺惩罚置零后，净年化收益为 \diagNoShortfallReturn，年化波动为 \diagNoShortfallVol，夏普为 \diagNoShortfallSharpe。与完整模型相比，这一实验获得了更低的波动和换手，同时收益水平下降。由此可见，在其余年度系数固定的条件下，收益短缺项维护了参考目标附近的预测收益，并在历史实现路径中体现为收益与交易需求的共同上升。
+\textbf{方差项推动风险调整。}相对风险预算参考，完整模型的净年化收益保持相近水平，年化波动由\diagReferenceVol{}降至\globalVolatility，最大回撤幅度也较小，但换手增加。去掉方差项时，参考点同时使权重距离和收益短缺为零，最终配置在理论上回到参考组合；数值结果与这一性质近似一致，详见表\ref{tab:ablation_full}。
 
-方差惩罚置零实验对应第三章给出的退化性质：参考点同时使跟踪项与收益短缺项取零，因此最终权重回到参考组合。表中的数值结果用于核对这一理论性质。该实验说明，两项惩罚围绕参考点发挥不同作用，方差项推动降低条件估计风险，收益短缺项调节这一调整的收益代价。
+\textbf{短缺项调节收益代价。}去掉收益短缺惩罚后，净年化收益降至\diagNoShortfallReturn，波动与换手也下降。完整模型在本样本中以较高的波动和交易需求维持了较高收益。因此，该项的作用是调整降低风险时愿意承受的预测收益损失，其价值体现为收益风险取舍，不能仅以某一个绩效比率判断。
 
-这一结果与波动管理研究提出的风险承担数量调整相联系\cite{moreira2017volatility}。完整模型相对参考组合的主要变化是压低实现波动，同时保留相近收益；相对收益短缺项置零实验，则表现为提高收益并增加交易。消融由此给出两项机制的分别证据：方差项影响风险规模，收益短缺项影响降低风险时愿意承受的预测收益损失。
-
-\begin{table}[htbp]\centering
-\caption{资本跟踪与风险贡献偏离}\label{tab:diagnostic_mechanism}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_mechanism.tex}}
-\end{table}
-
-表\ref{tab:diagnostic_mechanism}将资本权重距离和风险预算偏离分别列示。完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合对应\diagReferenceRCError{}个百分点。计算先在每个决策日取资产风险贡献份额相对等预算的最大绝对差，再对决策日取平均；它衡量预算偏离，并非组合年化波动或收益损失。该指标统一使用主模型当期Ledoit--Wolf矩阵，参考组合接近等预算，最终组合则体现收益与方差调整后的偏离。
-
-\figmaybe{primary_diagnostic_ablation.pdf}{目标项消融的收益与风险预算偏离}{fig:diagnostic_ablation}
-
-冻结评价首年参数的净年化收益为 \diagFrozenReturn，夏普为 \diagFrozenSharpe，月均换手为 \diagFrozenTurnover。该实验把参数更新的作用与凸优化结构本身区分开来。年度更新与冻结规则的差异结合下文配对抽样区间评价，年度候选集合的宽度则用于说明选择规则的统计分辨能力。
-\FloatBarrier
-
-\subsection{事前风险水平可比的辅助比较}
-表\ref{tab:diagnostic_matched}展示简单组合与货币 ETF 混合后的结果。风险匹配在每个决策日使用历史协方差和主模型当期目标权重完成，全部 \diagMatchDecisions{} 个配对决策中，\diagMatchFeasible{} 个满足估计方差上限。逐期预测风险、混合比例和匹配误差保存于配套CSV。
-
-可行性检验还发现，在主模型的Ledoit--Wolf收缩协方差下，\diagLWMatchInfeasible{}个配对决策的混合集合最低方差高于主模型目标。向共同对角尺度收缩提高了货币ETF的估计风险，使集中货币持仓在该估计下也需要承担较大方差。表中辅助结果因此采用同一历史样本协方差统一衡量双方风险，同时完整保留收缩估计的可行性记录。这一现象揭示了风险模型与工具集合的相互作用：可交易的低波动资产如何进入协方差估计，会影响可实现的风险匹配。
-
-这里的配对记录对应\primaryRebalances{}个周度决策日与两个简单基准。样本矩阵匹配是给定历史规格的辅助比较，收缩矩阵下的不可行结果亦构成研究发现。由于匹配尺度在历史诊断中确定，所得差异应解释为该尺度下的配置证据；既不能称作所有风险维度均相同，也不能据此识别与风险模型无关的超额收益能力。
-
-\begin{table}[htbp]\centering
-\caption{事前风险匹配后的辅助比较}\label{tab:diagnostic_matched}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_matched.tex}}
-\end{table}
-
-风险匹配后的 Equal Weight 净年化收益为 \diagMatchedEWReturn，实现波动为 \diagMatchedEWVol，夏普为 \diagMatchedEWSharpe；风险匹配后的 60/40 Benchmark 分别为 \diagMatchedSBReturn、\diagMatchedSBVol{} 和 \diagMatchedSBSharpe。两条辅助路径按自身漂移权重和实际交易量计费。图\ref{fig:diagnostic_matched}展示同一初始净值下的扣费增长过程。
-
-\figmaybe{primary_diagnostic_risk_matched.pdf}{主模型与事前风险匹配辅助配置的净值}{fig:diagnostic_matched}
-
-该比较控制的是调仓时条件估计下的方差水平。实现波动的差异同时反映资产构成、协方差预测误差和持有期间的权重漂移。因此，本文将其解释为事前风险预算相近条件下的配置比较，并同时呈现实际收益与实际风险，而以配对区块抽样衡量夏普差异的不确定性。
-
-在这一统一尺度下，主模型取得更高净收益和夏普，同时实现波动及全区间最大回撤幅度也高于两条辅助路径。风险匹配后的简单组合主要通过增加货币持仓压缩风险，主模型则在债券、权益与商品之间调整资本结构。因此，结果体现的是不同资产构成下的收益、持续波动与阶段损失权衡。Frazzini与Pedersen关于杠杆约束影响风险选择的研究\cite{frazzini2014betting}，有助于理解为何在无杠杆条件下，仅调整低风险资产的资本比例就会改变比较结论。
-\FloatBarrier
-
-\subsection{成本、执行与估计敏感性}
-表\ref{tab:diagnostic_robustness}将稳健性检验统一限定于当前主模型。成本变化沿用相同的目标路径，执行延迟重新核算交易前权重，均值半衰期实验则保留年度参数路径。
-
-\begin{table}[htbp]\centering
-\caption{当前 Global RRP 的实施与估计敏感性}\label{tab:diagnostic_robustness}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_robustness.tex}}
-\end{table}
-
-在单边20 bps费用下，主模型净年化收益为 \diagCostTwentyReturn。将原目标顺延一个交易日执行后，净年化收益为 \diagDelayReturn，年化波动为 \diagDelayVol，夏普为 \diagDelaySharpe，最大回撤为 \diagDelayDD。费用与执行实验把交易条件变化映射为可观察的收益风险差异。10日与40日半衰期结果进一步说明，均值估计的响应速度会改变给定年度惩罚下的配置路径。
-
-较短半衰期提高近期收益的影响，也提高了交易需求；较长半衰期使输入调整更平缓。其经济取舍是信号响应速度与估计噪声、成本之间的平衡，与DeMiguel等关于估计误差影响配置收益的讨论相联系\cite{demiguel2009optimal}。在本次敏感性范围内，净年化收益和风险指标保持相近数量级，说明主结果对所检验的均值响应速度具有一定稳定性。
-
-\subsection{固定子区间比较}
-表\ref{tab:diagnostic_subperiods}使用预先固定的三个连续子区间，比较主模型与两条风险匹配辅助路径。区间划分覆盖不同市场阶段，2026年只计入截至样本终点的观察。每个子区间重新以首日净值为基期计算绩效，回撤使用区间内历史高点。
-
-\begin{table}[htbp]\centering
-\caption{固定子区间中的收益、夏普与回撤}\label{tab:diagnostic_subperiods}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_subperiods.tex}}
-\end{table}
-
-主模型在三个子区间的净年化收益均高于两条风险匹配辅助路径，2021--2023年的收益水平较低，2024--2026年较高。回撤关系则随区间变化：在2018--2020年，主模型的区间最大回撤更大；在2021--2023年，其最大回撤较小。由此可见，平均收益优势与阶段损失控制需要分别评价。子区间证据刻画了结果的时间分布，宏观增长、利率与通胀风险可作为理解资产暴露的经济背景，具体因果归因仍以相应因子数据为条件。
-\FloatBarrier
-
-\subsection{配对绩效差异与统计不确定性}
-表\ref{tab:diagnostic_bootstrap}报告主模型减比较对象的夏普差及21日区块抽样95\%区间；正值表示主模型样本夏普较高。图\ref{fig:diagnostic_bootstrap}同时展示5日与63日区块长度的结果，用于评价对局部依赖长度的敏感性。
-
-\begin{table}[htbp]\centering
-\caption{配对夏普差异的区块抽样区间}\label{tab:diagnostic_bootstrap}
-\resizebox{\textwidth}{!}{\input{generated_diagnostic_bootstrap.tex}}
-\end{table}
-
-\figmaybe{primary_diagnostic_bootstrap.pdf}{不同区块长度下的配对夏普差及95\%区间}{fig:diagnostic_bootstrap}
-\FloatBarrier
-
-在5日、21日和63日三种区块长度下，主模型相对风险预算参考及两条风险匹配辅助路径的夏普差异区间均位于零上方。这为第二阶段优化及资产构成调整提供了方向一致的样本证据。相对收益短缺项置零和冻结首年参数，差异区间均覆盖零：前者的贡献更适合解释为收益、波动与换手之间的权衡；后者说明两种参数规则在本样本中表现接近。
-
-本文据此将经验结论分为配置结构与参数规则两个层次。配置结构获得了消融和风险匹配的共同支持，年度参数则体现一倍标准误集合内对换手与稳定性的选择偏好。所有区间均条件于当前历史规格，属于逐项百分位区间，研究证据定位为固定资产池与既定实施规则下的探索性经验结果。
+\textbf{年度更新的增量作用有限。}冻结评价首年参数的净年化收益为\diagFrozenReturn，夏普为\diagFrozenSharpe，与年度更新结果接近。每年九组候选均进入一倍标准误集合，表明现有参数识别较弱。本文将年度更新视为随历史条件调整的决策规则，主要经验结论仍落在配置结构及两项惩罚的作用上。
 \FloatBarrier

@@ -1,44 +1,19 @@
-\section{实证结果、机制分析与稳健性检验}
-\subsection{共同区间绩效}
-表\ref{tab:main_performance}汇总五个周频模型在共同评价区间的扣费结果。Global RRP 的净年化收益为 \globalNetReturn，年化波动为 \globalVolatility，夏普为 \globalSharpe，Sortino 为 \globalSortino，最大回撤为 \globalMaxDD。所有指标均由保存的日收益按统一规则生成。
+\section{实证结果与有效性检验}
+本章依次考察总体收益风险表现、两项惩罚的作用、持仓结构及实施稳定性。模型的有效性体现为风险预算参考基础上可解释的配置调整，以及扣费后的收益风险取舍。补充图表、完整诊断和收益归因见附录\ref{app:empirical}。
 
+\subsection{整体表现与收益风险取舍}
+表\ref{tab:main_performance}比较五个周频模型在\evalStartDate{}至\evalEndDate{}的表现，统一采用\annualizationDays{}日年化、零无风险利率和\txCostBps{} bps单边成本。Global RRP净年化收益为\globalNetReturn，年化波动为\globalVolatility，最大回撤为\globalMaxDD。
 \begin{table}[htbp]\centering
 \caption{五模型净绩效}\label{tab:main_performance}
-{\setlength{\tabcolsep}{9pt}\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}}
+\resizebox{\textwidth}{!}{\input{generated_global_performance.tex}}
 \end{table}
 
-五个模型形成不同的收益风险位置。Equal Weight 和 60/40 Benchmark 获得较高绝对收益，同时承担较大的波动与回撤；HRP Benchmark 和 HERC Benchmark 形成较低收益、较低波动的路径。Global RRP 在两类配置之间实现了中间风险水平的收益积累。下文通过消融和事前风险匹配进一步分析这一位置的形成机制。
+Equal Weight与60/40 Benchmark的绝对收益较高，同时承担更大波动和回撤；HRP Benchmark与HERC Benchmark则形成较低收益、较低波动的配置。Global RRP处于两类配置之间，体现了收益维持与风险控制的折中。在零无风险利率口径下，货币资产的正收益也进入夏普分子，因此低波动组合的高夏普需要结合绝对收益及持仓结构理解。
 
-\subsection{净值增长与回撤过程}
-图\ref{fig:nav}展示扣费后净值的时间变化，图\ref{fig:drawdown}展示相对于历史高点的回撤。净值说明财富累积过程，回撤则记录这一过程中承受的连续损失。Global RRP 的最大历史回撤为 \globalMaxDD，结合持仓结构可以观察防御性资产与增长资产共同作用下的组合路径。
-
-\figmaybe{global_rrp_nav_comparison.pdf}{五模型累计净值}{fig:nav}
-\figmaybe{global_rrp_drawdown_comparison.pdf}{五模型历史回撤}{fig:drawdown}
-
-回撤具有路径依赖性。全区间回撤采用整个评价期的历史高点，年度表采用各年内部的高点，两者对应不同的观察范围。本文据此分别报告全样本与自然年风险，为比较短期损失和长期配置表现提供依据。
-
-\subsection{换手与成本}
-Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}比较共同周度日历下各配置规则的交易需求。交易量以目标权重和交易前漂移权重之差计算，能够反映主动调整及价格变化带来的再平衡需求。
-
-\figmaybe{global_rrp_turnover_comparison.pdf}{五模型月均买卖合计换手}{fig:turnover}
-
-主模型毛年化收益为 \globalGrossReturn，扣除单边 \txCostBps{} bps 费用后，净年化收益为 \globalNetReturn，年化收益差为 \globalCostDrag。年度选择中的换手规则作用于参数筛选，最终交易成本由实际持仓路径决定。图\ref{fig:cost_drag}报告各模型毛、净收益复利路径的年化差值；后文通过多档费率进一步量化成本敏感性。
-
-\figmaybe{global_rrp_transaction_cost_comparison.pdf}{五模型约定交易成本的年化收益拖累}{fig:cost_drag}
-\FloatBarrier
-
-\subsection{尾部损失}
-图\ref{fig:cvar}报告95\%日度历史CVaR，Global RRP 的对应值为 \globalCVaR。该指标汇总日损失分布尾部的平均水平，与最大回撤共同描述下行风险。CVaR 用于事后评价，优化中的风险项采用归一化方差。
-
-\figmaybe{global_rrp_cvar_comparison.pdf}{五模型历史日度尾部损失}{fig:cvar}
-
-\subsection{自然年表现}
-表\ref{tab:annual}显示完整区间内部的年度差异。年度结果将长期平均表现分解为可观察的时间阶段，为后续固定子区间比较提供背景。
-
-\begin{table}[htbp]\centering
-\caption{Global RRP 自然年绩效}\label{tab:annual}
-\input{generated_primary_annual.tex}
-\end{table}
-
-2026年截至 \evalEndDate{}，年化收益为 \primaryLatestYearReturn，对应累计收益为 \primaryLatestYearCumulativeReturn。年化值用于统一统计尺度，累计收益表示该部分年度实际观察到的复利变化。
+图\ref{fig:nav}展示净值与回撤过程。长期平均指标概括整个样本，曲线则显示收益积累和阶段损失的时间分布。Global RRP月均换手为\globalMonthlyTurnover，毛、净年化收益之差为\globalCostDrag；后文通过成本变化检验这一交易需求对净收益的影响。
+\begin{figure}[htbp]\centering
+\includegraphics[width=0.94\textwidth,height=0.28\textheight,keepaspectratio]{global_rrp_nav_comparison.pdf}\par\medskip
+\includegraphics[width=0.94\textwidth,height=0.28\textheight,keepaspectratio]{global_rrp_drawdown_comparison.pdf}
+\caption{五模型累计净值与历史回撤}\label{fig:nav}\label{fig:drawdown}
+\end{figure}
 \FloatBarrier

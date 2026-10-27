@@ -165,7 +165,7 @@
 \begin{abstract}
 本文研究境内上市ETF机会集合下的多资产风险收益配置，构建以Global RRP为主模型、四种配置规则为对照的实证框架。资产池包含\etfCount{}只ETF，评价区间为\evalStartDate{}至\evalEndDate{}，采用\annualizationDays{}日年化和\txCostBps{} bps单边交易成本。研究以多头、满额投资且无杠杆的预算集合对应境内ETF持有组合，并从工具覆盖和融资条件解释其与桥水全球机构配置框架的区别。
 
-主模型先求解凸风险预算参考，再通过资本跟踪、组合方差和预测收益短缺的凸目标生成最终权重。收益目标取当期可行参考组合的预测收益，协方差使用Ledoit--Wolf收缩估计，均值使用20日半衰期指数加权估计。两项惩罚根据生效日前的历史区间年度更新。本文进一步设置目标项消融、首年参数冻结、事前风险匹配及成本、执行延迟和均值响应速度实验，采用配对区块抽样评价绩效差异。
+主模型先求解凸风险预算参考，再通过资本跟踪、组合方差和预测收益短缺的凸目标生成最终权重。收益目标取当期可行参考组合的预测收益，协方差使用Ledoit--Wolf收缩估计，均值使用20日半衰期指数加权估计。两项惩罚根据生效日前的历史区间年度更新。实证依次考察整体表现、两项惩罚的作用、持仓结构和实施稳定性；完整敏感性检验、统计区间与收益归因保留于附录。
 
 Global RRP的净年化收益为\globalNetReturn，年化波动为\globalVolatility，夏普为\globalSharpe，最大回撤为\globalMaxDD。相对直接持有风险预算参考的\diagReferenceReturn{}收益和\diagReferenceVol{}波动，第二阶段优化在保持相近收益的同时降低了实现波动。收益短缺项体现了收益维持与交易需求的权衡。风险匹配后的Equal Weight与60/40 Benchmark净年化收益分别为\diagMatchedEWReturn{}和\diagMatchedSBReturn。单边成本提高至20 bps及执行顺延一日时，主模型净年化收益分别为\diagCostTwentyReturn{}和\diagDelayReturn。年度更新与首年参数冻结得到相近结果，配合年度候选的弱识别特征，表明模型的经验价值主要体现于配置结构与实施权衡。上述证据形成了固定资产池和既定历史规格下可复现的探索性结论。
 
@@ -176,7 +176,7 @@ Global RRP的净年化收益为\globalNetReturn，年化波动为\globalVolatili
 \begin{abstract}
 This thesis studies multi-asset allocation within a universe of \etfCount{} China-listed ETFs. Global RRP is evaluated against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark from \evalStartDate{} to \evalEndDate{}, with \annualizationDays-day annualization and a \txCostBps{}-bp one-way transaction cost. Its long-only, fully invested and unlevered budget reflects the chosen ETF opportunity set. Differences in instrument coverage and financing arrangements distinguish this setting from Bridgewater's global institutional framework.
 
-The model constructs a convex risk-budget reference and then optimizes reference tracking, variance and expected-return shortfall. The return target equals the reference portfolio's predicted return. Ledoit--Wolf covariance estimates and exponentially weighted means use strictly prior observations, and penalties update annually from earlier calibration and validation blocks. Objective ablations, frozen initial penalties, ex-ante risk matching, cost and execution scenarios, and mean-estimation sensitivity identify the roles of model components and implementation conditions. Paired block bootstrap intervals quantify uncertainty in Sharpe differences.
+The model constructs a convex risk-budget reference and then optimizes reference tracking, variance and expected-return shortfall. The return target equals the reference portfolio's predicted return. Ledoit--Wolf covariance estimates and exponentially weighted means use strictly prior observations, and penalties update annually from earlier calibration and validation blocks. The empirical analysis examines overall performance, the roles of the two penalties, portfolio composition, and implementation stability. Detailed sensitivity checks, statistical intervals, and return attribution are provided in the appendix.
 
 Global RRP achieves a net annual return of \globalNetReturn, volatility of \globalVolatility, a Sharpe ratio of \globalSharpe, and a maximum drawdown of \globalMaxDD. The risk-budget reference achieves \diagReferenceReturn{} return and \diagReferenceVol{} volatility, showing that the second stage preserves a similar return while reducing realized risk. Risk-matched Equal Weight and 60/40 Benchmark achieve \diagMatchedEWReturn{} and \diagMatchedSBReturn{} net annual returns. Under a 20-bp cost and a one-day execution delay, the primary model achieves \diagCostTwentyReturn{} and \diagDelayReturn{}, respectively. Annual updating and frozen initial penalties produce similar outcomes, consistent with weak identification of the annual coefficients. The evidence supports an allocation mechanism and implementation trade-off conditional on the fixed universe and historical specification.
 \end{abstract}
@@ -194,14 +194,15 @@ Global RRP achieves a net annual return of \globalNetReturn, volatility of \glob
 \input{chapters/06_comparisons.tex}
 \input{chapters/04_experiment_design.tex}
 \input{chapters/07_results.tex}
-\input{chapters/08_holdings.tex}
 \input{chapters/07_diagnostics.tex}
-\input{chapters/08_attribution.tex}
+\input{chapters/08_holdings.tex}
+\input{chapters/07_robustness.tex}
 \input{chapters/10_conclusion.tex}
 \input{chapters/09_institution.tex}
 \label{sec:body_end}
 \clearpage
 \appendix
+\input{chapters/appendix_empirical.tex}
 \section{ETF 资产池}
 \input{generated_etf_pool_table.tex}
 \section{符号与指标口径}

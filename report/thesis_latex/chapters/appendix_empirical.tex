@@ -1,0 +1,168 @@
+\section{实证补充结果与检验方法}
+\label{app:empirical}
+本附录保存正文所用配置的补充结果、风险匹配口径和统计检验。各项计算沿用正文的数据与实施规则，完整逐期持仓保存在仓库 CSV 文件中。
+\subsection{换手与成本}
+Global RRP 月均买卖合计换手为 \globalMonthlyTurnover。图\ref{fig:turnover}比较共同周度日历下各配置规则的交易需求。交易量以目标权重和交易前漂移权重之差计算，能够反映主动调整及价格变化带来的再平衡需求。
+
+\figmaybe{global_rrp_turnover_comparison.pdf}{五模型月均买卖合计换手}{fig:turnover}
+
+主模型毛年化收益为 \globalGrossReturn，扣除单边 \txCostBps{} bps 费用后，净年化收益为 \globalNetReturn，年化收益差为 \globalCostDrag。年度选择中的换手规则作用于参数筛选，最终交易成本由实际持仓路径决定。图\ref{fig:cost_drag}报告各模型毛、净收益复利路径的年化差值；后文通过多档费率进一步量化成本敏感性。
+
+\figmaybe{global_rrp_transaction_cost_comparison.pdf}{五模型约定交易成本的年化收益拖累}{fig:cost_drag}
+\FloatBarrier
+
+\subsection{尾部损失}
+图\ref{fig:cvar}报告95\%日度历史CVaR，Global RRP 的对应值为 \globalCVaR。该指标汇总日损失分布尾部的平均水平，与最大回撤共同描述下行风险。CVaR 用于事后评价，优化中的风险项采用归一化方差。
+
+\figmaybe{global_rrp_cvar_comparison.pdf}{五模型历史日度尾部损失}{fig:cvar}
+
+\subsection{自然年表现}
+表\ref{tab:annual}显示完整区间内部的年度差异。年度结果将长期平均表现分解为可观察的时间阶段，为正文的固定子区间比较提供补充。
+
+\begin{table}[htbp]\centering
+\caption{Global RRP 自然年绩效}\label{tab:annual}
+\input{generated_primary_annual.tex}
+\end{table}
+
+2026年截至 \evalEndDate{}，年化收益为 \primaryLatestYearReturn，对应累计收益为 \primaryLatestYearCumulativeReturn。年化值用于统一统计尺度，累计收益表示该部分年度实际观察到的复利变化。
+\FloatBarrier
+
+\subsection{持仓结构补充证据}
+\subsubsection{资本权重的可视化}
+图\ref{fig:weight_path}展示指定 Global RRP 的全部周度目标权重。上方单独呈现货币市场 ETF，纵轴范围明确标注；下方保留其他 29 只基金的完整时间序列。所有资产使用同一权重分档，不进行逐行归一化，因此相同颜色仍具有相同的资本含义。
+
+热图采用明确的非等宽分档，让小于几个百分点的实际持仓仍可辨识。浅灰表示接近零的权重，蓝色对应较低权重区间，红色对应较高区间。图例直接写明各档上下界，不能将颜色差异解释为等距离的数值变化。分档仅用于显示，不进入优化器，也不改变原始权重。
+
+\subsubsection{现金与固定收益配置}
+主模型平均日度现金类 ETF 权重为 \primaryCashMean，最高为 \primaryCashMax。日利ETF与三只国债、信用债工具的平均合计权重为 \primaryDefensiveMean。该统计包括非调仓日的漂移权重，因此与仅在周度决策日计算的目标权重可以略有差别。
+
+货币ETF提供低波动的资本配置去向，国债和信用债则使组合继续承担一定的利率与信用风险。对满额投资组合而言，货币ETF权重表示主动选择的持仓。将高波动资产替换为货币工具通常会降低历史收益波动，同时减少权益和商品参与上涨时的资本份额；在具体风险模型下，估计方差还受协方差和收缩目标影响。因此，本文同时报告资本结构、两种矩阵下的风险贡献和实现绩效，后文的风险匹配实验则考察指定估计尺度下的收益取舍。
+
+这些工具的经济风险各有来源。名义国债价格对折现率变化敏感，信用债还承担信用利差变化，可转债收益兼具债券和权益属性。相同的“债券类”名称因此可能对应不同的协方差和回撤路径。本文分别估计各工具收益，在风险预算中保留这种差异。货币ETF与三只债券合计权重用于概括资本结构，具体风险贡献由当期协方差和持仓共同计算。
+
+权益类ETF数量较多，也会影响简单等权的经济含义：行业与宽基产品分别获得资本后，相关的权益风险可能累积。主模型通过协方差刻画这种共同变化，使资本权重随资产间关系调整。风险贡献的分散程度在表\ref{tab:diagnostic_mechanism}中单独报告，从而把“持有多个产品”与“控制共同风险”落实为两个可检验指标。
+
+\figwide{primary_weights.pdf}{Global RRP 周度目标权重}{fig:weight_path}
+
+\subsubsection{调仓前市场状态与持仓}
+满额投资约束规定资本权重之和为一，但组合承担的风险仍随持仓结构变化。将部分权益或商品配置转向货币ETF，能够在保持资金投入的同时调节风险承担。债券配置也属于仓位管理，只是其作用取决于久期、信用利差与其他资产的协方差。在增长走弱且利率下行的环境中，国债可能提供分散化收益；当冲击来自通胀、利率上升或信用收缩时，应分别考察国债与信用债的表现。
+
+Campbell、Pflueger与Viceira在《Journal of Political Economy》从通胀与产出关系的变化解释股债相关性的变动\cite{campbell2020macro}。该研究支持按冲击来源讨论债券的分散作用，其美国市场证据在本文中承担机制参照的角色；境内国债ETF的实际贡献仍由本样本计算。由此，“多配债券”具有条件性的经济解释，不能把债券类别直接等同于无风险现金。
+
+Moreira与Muir在《Journal of Finance》的研究说明，随波动调整风险承担具有明确的经济含义\cite{moreira2017volatility}。这一文献联系使本文的现金持仓可以从风险数量管理解释，而实际权重是否在弱势市场中提高，仍应由持仓数据回答。
+
+\begin{table}[htbp]\centering
+\caption{调仓前市场状态与Global RRP目标权重}\label{tab:position_states}
+\resizebox{\textwidth}{!}{\input{generated_position_states.tex}}
+\end{table}
+
+表\ref{tab:position_states}按调仓日前63个交易日沪深300ETF累计收益的正负分组，比较相邻调仓日之间具有完整持有区间的周度决策。两端不完整区间不参与这一统计。弱势状态下的平均货币权重以及货币、三只债券合计权重均较高，表明本样本中的配置具有一定防御性。状态划分只用于描述已经生成的持仓；主模型仍由协方差、预期收益和年度惩罚共同决定权重。该表说明市场状态与资本配置的对应关系，后文Brinson归因进一步计算这些配置相对基准的收益贡献。
+
+\subsubsection{资产是否实际使用}
+全部 \primaryAssetsUsed{} 只 ETF 都曾在合格期间形成实质持仓。审计采用 $5\times10^{-5}$ 的权重阈值区分数值残差与实际正权重，这一阈值没有作为优化下限。所有资产中，最小的历史峰值权重约为 1.25\%，因而资产参与并非由机器精度附近的微小正数构成。
+
+允许某一期权重为零是优化决策的一部分。只要资产满足准入条件，它仍然参与下一期求解；当前零权重不构成永久剔除。与之相对，上市前或历史不足时的零权重由数据条件决定。热图中两类零权重可能颜色相同，原因需要结合准入记录识别。
+
+\subsubsection{持仓数量与风险贡献}
+资本分散和风险分散仍需分别评价。若多个权益基金高度相关，即使每个权重都不大，也可能共同承担相似市场风险。若某只低波动资产权重大，其资本占比与风险贡献也可能相差较大。全部资产曾参与只能说明机会集合获得使用，不能说明每一期风险均匀分配。
+
+参考组合的贡献误差与最终组合的贡献误差应分别读取。前者验证风险预算参考的构造，后者反映收益风险松弛造成的偏离。最终问题并未要求贡献完全相等，所以更大的最终误差不能自动作为求解失败；应结合预算、目标值和预测风险检查。
+
+\begin{table}[htbp]\centering
+\caption{同一目标持仓在两种协方差尺度下的风险贡献份额}\label{tab:group_risk_contribution}
+\resizebox{\textwidth}{!}{\input{generated_group_risk_contribution.tex}}
+\end{table}
+
+表\ref{tab:group_risk_contribution}对每个决策日先计算资产相对风险贡献，再按与Brinson归因一致的七组汇总，最后对全部决策日取平均。两列风险份额分别以各自矩阵下的组合波动归一化，合计均为100\%；它们对应不同风险模型，不能相互混合加总。资本列统计周度目标，因而与前文含日间漂移的平均权重略有不同。
+
+该比较保持持仓完全相同，展示协方差估计本身的作用。货币与国债在LW尺度下承担的份额高于样本尺度，说明结构化收缩参与决定了风险预算的经济含义。主模型实现的是正则化风险模型下的预算配置；历史收益波动、尾部损失和收益归因提供另外的评价依据。现金在某个下跌日贡献正的相对收益，也可以同时只有很小的样本波动风险份额，二者分别回答收益差来源与估计风险分配的问题。
+
+\subsubsection{持仓变化与收益解释}
+持仓图展示资本配置的时间变化，目标项消融则提供配置机制的直接比较。前者用于观察货币、债券和增长资产的组合结构，后者在保持数据与实施规则一致的条件下改变优化目标，由净收益、波动和换手的共同变化判断各项的作用。本文据此把持仓描述与控制实验连接起来。
+
+在 $r_f=0$ 的统计口径下，货币工具的正收益也进入夏普分子。当组合主要持有此类资产且日收益波动很小时，夏普比率可能很高。因而，对HRP Benchmark等低波动组合，本文同时报告绝对收益、货币持仓和实现波动；对Global RRP，则进一步用事前风险匹配和配对夏普差异评价其配置效率。
+
+\subsection{消融与参数冻结的完整结果}
+\begin{table}[htbp]\centering
+\caption{目标项消融与参数冻结的完整比较}\label{tab:ablation_full}
+\resizebox{\textwidth}{!}{\input{generated_diagnostic_ablation.tex}}
+\end{table}
+\begin{table}[htbp]\centering
+\caption{资本跟踪与风险贡献偏离}\label{tab:diagnostic_mechanism}
+\resizebox{\textwidth}{!}{\input{generated_diagnostic_mechanism.tex}}
+\end{table}
+
+表\ref{tab:diagnostic_mechanism}将资本权重距离和风险预算偏离分别列示。完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合对应\diagReferenceRCError{}个百分点。计算先在每个决策日取资产风险贡献份额相对等预算的最大绝对差，再对决策日取平均；它衡量预算偏离，并非组合年化波动或收益损失。该指标统一使用主模型当期Ledoit--Wolf矩阵，参考组合接近等预算，最终组合则体现收益与方差调整后的偏离。
+
+\figmaybe{primary_diagnostic_ablation.pdf}{目标项消融的收益与风险预算偏离}{fig:diagnostic_ablation}
+
+冻结评价首年参数的净年化收益为 \diagFrozenReturn，夏普为 \diagFrozenSharpe，月均换手为 \diagFrozenTurnover。该实验把参数更新的作用与凸优化结构本身区分开来。年度更新与冻结规则的差异结合下文配对抽样区间评价，年度候选集合的宽度则用于说明选择规则的统计分辨能力。
+\FloatBarrier
+
+
+\subsection{事前风险匹配的计算与可行性}
+对 Equal Weight 和 60/40 Benchmark，记其当期目标为 $u_t$，货币 ETF 的单位持仓向量为 $e_t^{\rm cash}$。辅助配置取
+\[
+z_t(a)=a u_t+(1-a)e_t^{\rm cash},\qquad 0\leq a\leq1.
+\]
+使用调仓日前的252日窗口，在共同完整观察上估计样本协方差$\widehat S_t$，并施加与现有估计模块一致的半正定数值修复。主模型权重仍由原有Ledoit--Wolf输入求得，辅助比较则对双方权重统一使用$\widehat S_t$衡量风险，选择满足
+\[
+z_t(a)^\mathsf T\widehat S_t z_t(a)
+\leq w_t^\mathsf T\widehat S_t w_t
+\]
+的最大 $a$。方差计算保留货币 ETF 的波动及其与其他资产的协方差。若整个简单组合已满足上限，则保留全部简单组合；若混合集合的最低方差仍高于目标，则采用集合内最低方差点并记录未达到上限的日期。
+
+该规则使用当期可获得的信息，保持多头、满仓和无杠杆。风险匹配针对条件估计，实际波动由随后实现收益决定，因此结果同时报告预测风险误差与实现波动。每周重新求得混合权重，随后按日漂移，并根据混合组合自身的交易量扣费。
+
+样本矩阵尺度来自历史可行性诊断。收缩对货币估计风险的影响见第\ref{sec:lw}节；本文同时保留LW矩阵下的最低可达风险及可行性记录，两种尺度的结果分别解释。
+
+可行性检验还发现，在主模型的Ledoit--Wolf收缩协方差下，\diagLWMatchInfeasible{}个配对决策的混合集合最低方差高于主模型目标。向共同对角尺度收缩提高了货币ETF的估计风险，使集中货币持仓在该估计下也需要承担较大方差。表中辅助结果因此采用同一历史样本协方差统一衡量双方风险，同时完整保留收缩估计的可行性记录。这一现象揭示了风险模型与工具集合的相互作用：可交易的低波动资产如何进入协方差估计，会影响可实现的风险匹配。
+
+这里的配对记录对应\primaryRebalances{}个周度决策日与两个简单基准。样本矩阵匹配是给定历史规格的辅助比较，收缩矩阵下的不可行结果亦构成研究发现。由于匹配尺度在历史诊断中确定，所得差异应解释为该尺度下的配置证据；既不能称作所有风险维度均相同，也不能据此识别与风险模型无关的超额收益能力。
+
+\figmaybe{primary_diagnostic_risk_matched.pdf}{主模型与事前风险匹配辅助配置的净值}{fig:diagnostic_matched}
+\subsection{成本、执行与估计敏感性}
+表\ref{tab:diagnostic_robustness}将稳健性检验统一限定于当前主模型。成本变化沿用相同的目标路径，执行延迟重新核算交易前权重，均值半衰期实验则保留年度参数路径。
+
+\begin{table}[htbp]\centering
+\caption{当前 Global RRP 的实施与估计敏感性}\label{tab:diagnostic_robustness}
+\resizebox{\textwidth}{!}{\input{generated_diagnostic_robustness.tex}}
+\end{table}
+
+在单边20 bps费用下，主模型净年化收益为 \diagCostTwentyReturn。将原目标顺延一个交易日执行后，净年化收益为 \diagDelayReturn，年化波动为 \diagDelayVol，夏普为 \diagDelaySharpe，最大回撤为 \diagDelayDD。费用与执行实验把交易条件变化映射为可观察的收益风险差异。10日与40日半衰期结果进一步说明，均值估计的响应速度会改变给定年度惩罚下的配置路径。
+
+较短半衰期提高近期收益的影响，也提高了交易需求；较长半衰期使输入调整更平缓。其经济取舍是信号响应速度与估计噪声、成本之间的平衡，与DeMiguel等关于估计误差影响配置收益的讨论相联系\cite{demiguel2009optimal}。在本次敏感性范围内，净年化收益和风险指标保持相近数量级，说明主结果对所检验的均值响应速度具有一定稳定性。
+
+\subsection{补充分析的口径与统计方法}
+\begin{table}[htbp]\centering
+\caption{三类分析的对象与解释口径}\label{tab:analysis_scope}
+\begin{tabularx}{\textwidth}{@{}l L L@{}}\toprule
+分析 & 数据与统计量 & 回答的问题\\\midrule
+风险贡献 & 决策日前协方差与目标权重；波动贡献及其份额 & 给定风险模型下，各资产分担多少估计风险\\
+风险匹配 & 同一历史样本矩阵衡量双方目标方差；随后比较实现绩效 & 指定事前方差尺度相近时，不同配置如何表现\\
+Brinson归因 & 每日收益记账权重与实现收益；相对基准的日均基点 & 已实现收益差如何分解为配置、选择、交互和费用\\\bottomrule
+\end{tabularx}
+\end{table}
+三类分析共享持仓路径。主模型风险贡献按LW计算，并以样本矩阵作敏感性对照；匹配统一使用样本矩阵，Brinson直接使用实现收益。方差相近不保证尾部或因子风险相同，正的归因贡献也不能替代统计推断。
+
+\subsubsection{配对区块自助抽样}
+区块抽样通过重抽连续收益片段保留局部时间依赖\cite{kunsch1989bootstrap}。本文将主模型与比较对象的日收益按同一日期配对，每次对两列使用相同的区块起点，以保留模型间同期相关性。每组进行2000次重抽样，分别采用5、21和63个交易日的区块长度；主表报告21日设定，图形展示三种长度的敏感性。
+
+每次重抽样计算主模型减比较对象的年化夏普差，以2.5\%和97.5\%分位点构造95\%区间。夏普的收益序列与主绩效口径一致，扣除首日净值基期对应的收益观察。区间刻画固定历史规格下的配对差异不确定性，属于逐项百分位区间。Ledoit 与 Wolf 的研究讨论了学生化时间序列自助法在夏普差异推断中的作用\cite{ledoit2008sharpe}；本文采用的百分位区间用于探索性比较，结论同时考虑区块长度和历史规格选择条件。
+\subsection{配对绩效差异与统计不确定性}
+表\ref{tab:diagnostic_bootstrap}报告主模型减比较对象的夏普差及21日区块抽样95\%区间；正值表示主模型样本夏普较高。图\ref{fig:diagnostic_bootstrap}同时展示5日与63日区块长度的结果，用于评价对局部依赖长度的敏感性。
+
+\begin{table}[htbp]\centering
+\caption{配对夏普差异的区块抽样区间}\label{tab:diagnostic_bootstrap}
+\resizebox{\textwidth}{!}{\input{generated_diagnostic_bootstrap.tex}}
+\end{table}
+
+\figmaybe{primary_diagnostic_bootstrap.pdf}{不同区块长度下的配对夏普差及95\%区间}{fig:diagnostic_bootstrap}
+\FloatBarrier
+
+在5日、21日和63日三种区块长度下，主模型相对风险预算参考及两条风险匹配辅助路径的夏普差异区间均位于零上方。这为第二阶段优化及资产构成调整提供了方向一致的样本证据。相对收益短缺项置零和冻结首年参数，差异区间均覆盖零：前者的贡献更适合解释为收益、波动与换手之间的权衡；后者说明两种参数规则在本样本中表现接近。
+
+本文据此将经验结论分为配置结构与参数规则两个层次。配置结构获得了消融和风险匹配的共同支持，年度参数则体现一倍标准误集合内对换手与稳定性的选择偏好。所有区间均条件于当前历史规格，属于逐项百分位区间，研究证据定位为固定资产池与既定实施规则下的探索性经验结果。
+\FloatBarrier
+
+\input{chapters/08_attribution.tex}

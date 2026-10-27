@@ -1,0 +1,7 @@
+This is BibTeX, Version 0.99e (TeX Live 2026)
+The top-level auxiliary file: .build/main.aux
+The style file: gbt7714-numeric.bst
+Database file #1: references.bib
+Warning--empty urldate in bridgewater2012allweather
+Warning--empty urldate in msci2026factor
+(There were 2 warnings)
