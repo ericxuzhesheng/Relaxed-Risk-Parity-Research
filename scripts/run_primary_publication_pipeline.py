@@ -117,7 +117,7 @@ def main():
     records = []
     python = sys.executable
     commands = [
-        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20261016"],
+        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20261023"],
         [python, "scripts/run_global_rrp_rolling_calibration.py",
          *(["--force-recalibrate"] if args.force_recalibrate else []),
          *(["--force-backtest"] if args.force_backtest else [])],
@@ -126,7 +126,7 @@ def main():
         [python, "scripts/publish_global_rrp.py",
          *(["--force-backtest"] if args.force_backtest else [])],
         [python, "scripts/export_primary_weekly_holdings.py"],
-        [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-23"],
+        [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-30"],
         [python, "scripts/render_publication_figures.py"],
         [python, "scripts/run_primary_diagnostics.py"],
         [python, "scripts/analyze_primary_attribution.py"],

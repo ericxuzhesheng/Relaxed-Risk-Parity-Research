@@ -108,7 +108,7 @@ def test_invalid_cached_candidate_is_not_reused(experiment):
 
 def test_contract_tracks_solver_settings_but_ignores_evaluation_end(monkeypatch):
     before = rolling._calibration_contract()
-    monkeypatch.setitem(DEFAULT_CONFIG, "evaluation_end_date", "2026-10-23")
+    monkeypatch.setitem(DEFAULT_CONFIG, "evaluation_end_date", "2026-10-30")
     assert rolling._calibration_contract() == before
     monkeypatch.setitem(rolling.BASE, "transaction_cost_bps", 4.)
     assert rolling._calibration_contract() != before
@@ -121,7 +121,7 @@ def test_snapshot_date_and_new_schedule_year_do_not_invalidate_contract(monkeypa
     def next_snapshot(path, *args, **kwargs):
         text = read_text(path, *args, **kwargs)
         if path.name in {"utils.py", "data_loader.py", "run_global_rrp_rolling_calibration.py"}:
-            text = text.replace("2026-10-16", "2026-10-23").replace("20261016", "20261023")
+            text = text.replace("2026-10-23", "2026-10-30").replace("20261023", "20261030")
             text = text.replace("LAST_SCHEDULE_YEAR = 2026", "LAST_SCHEDULE_YEAR = 2027")
         return text
 
