@@ -1,93 +1,138 @@
 \documentclass[UTF8,zihao=-4]{ctexart}
-\usepackage[a4paper,top=2.15cm,bottom=2.0cm,left=2.5cm,right=2.5cm]{geometry}
-\usepackage{amsmath,amssymb,booktabs,array,enumitem,xcolor,fancyhdr}
+\usepackage[a4paper,top=1.9cm,bottom=1.8cm,left=2.0cm,right=2.0cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,array,xcolor,fancyhdr,graphicx,tikz}
+\usetikzlibrary{arrows.meta,positioning}
 \usepackage[hidelinks]{hyperref}
 \setCJKmainfont[BoldFont=SimHei]{SimSun}
 \setmainfont{Times New Roman}
 \definecolor{inkblue}{HTML}{17456D}
-\definecolor{softgray}{HTML}{555F68}
-\setlength{\parindent}{2em}
+\definecolor{redaccent}{HTML}{B51C3B}
+\definecolor{softgray}{HTML}{58616A}
+\definecolor{paleblue}{HTML}{EEF4F8}
+\setlength{\parindent}{0pt}
 \setlength{\parskip}{0.35em}
-\setlist[itemize]{leftmargin=2em,itemsep=0.4em,topsep=0.25em}
-\renewcommand{\baselinestretch}{1.28}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyhead[L]{\small\color{softgray}毕业论文开题思路}
-\fancyhead[R]{\small\color{softgray}资产配置与最优化方法}
-\fancyfoot[C]{\small\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\baselinestretch}{1.12}
+\ctexset{section={format=\large\bfseries\color{inkblue},beforeskip=0.7em,afterskip=0.4em},subsection={format=\normalsize\bfseries,beforeskip=0.6em,afterskip=0.3em}}
+\pagestyle{fancy}\fancyhf{}
+\fancyhead[L]{\small\color{softgray}毕业论文选题交流}
+\fancyhead[R]{\small\color{softgray}策略模型与初步回测}
+\fancyfoot[C]{\small\thepage\,/\,3}
 \setlength{\headheight}{15pt}
+\graphicspath{{../../results/figures/}}
+\newcommand{\note}[1]{{\small\color{softgray}#1\par}}
+\newcommand{\askbox}[1]{\par\smallskip\colorbox{paleblue}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small #1}}\par}
 \begin{document}
-
 \begin{center}
-{\zihao{2}\bfseries\color{inkblue}基于宽松风险平价的\\[0.25em]多资产 ETF 配置研究}\\[0.8em]
-{\large 本科毕业论文开题思路（拟）}\\[0.5em]
-{\normalsize 研究方向\quad 资产配置与最优化方法}
+{\fontsize{18}{23}\selectfont\bfseries\color{inkblue}基于宽松风险平价的多资产 ETF 配置研究}\\[0.35em]
+{\normalsize 实习中整理的策略思路与当前实现}
 \end{center}
-\vspace{0.4em}
+\askbox{\textbf{目前进度}\quad 策略代码与初步回测已完成。文献阅读、研究定位及论文文字仍需继续完善。}
 
-\section*{一、选题缘起与研究问题}
+\section*{一、策略模型}
+\note{思路来源于实习中对桥水风险分散理念的整理。当前实现采用境内上市 ETF，多头、满仓、无杠杆，按周调整配置。以下省略调仓日下标。}
 
-\subsection*{选题缘起}
+\subsection*{1. 先求风险预算参考组合}
+\[
+ x^*=\arg\min_{x_i>0}\left\{
+ \underbrace{\frac12x^\top\Sigma x}_{\text{控制风险规模}}
+ +\underbrace{\left(-\sum_{i=1}^n b_i\log x_i\right)}_{\substack{\text{引入风险预算}\\\text{避免正预算资产的 }x_i\text{ 趋零}}}\right\}.
+\]
+\[
+ \underbrace{q_i=\frac{x_i^*}{\sum_jx_j^*}}_{\text{归一化为资金权重}},\qquad
+ \underbrace{b_i=\frac1n}_{\text{等风险预算}},\qquad
+ \underbrace{\frac{q_i(\Sigma q)_i}{q^\top\Sigma q}=b_i}_{\text{各资产按预算承担估计风险}}.
+\]
+\note{$x$ 为辅助变量，$q$ 为参考权重，$n$ 为当期合格资产数；等风险预算并不意味着等资金权重。}
 
-此前在实习中接触到桥水全天候策略的风险分散理念，我开始关注多资产配置。股票、债券等资产在不同市场环境下的表现各有差异，怎样安排它们的资金比例，让组合的风险更分散，是我希望在毕业论文中进一步研究的问题。
-
-学院选题指南中列有“优化理论及在投资组合问题中的应用”等方向，也允许在指导老师同意后自拟题目。结合您的最优化研究方向，我想以境内上市 ETF 为对象，研究风险预算与收益目标之间的权衡。暂拟题目为《基于宽松风险平价的多资产 ETF 配置研究》，希望请您看看是否适合作为本科论文选题。
-
-\subsection*{希望回答的问题}
-
-风险平价关注各资产对组合风险的贡献。在此基础上考虑收益目标时，配置权重可能需要调整。我想研究的是，允许权重适度偏离风险预算参考组合后，收益与风险会发生怎样的变化，原有的分散效果能够保留多少。
-
-初步考虑将研究限定在多头、满仓、无杠杆的条件下，集中讨论资产之间的资金分配。桥水的配置理念作为选题的出发点，具体分析则围绕风险预算模型和 ETF 数据展开。
-
-\subsection*{论文希望完成的工作}
-
-希望把上述问题写成一个含义清楚、能够求解的优化模型，再通过实证比较解释权重调整带来的影响。研究范围和理论分析的深度，还想听取您的意见。
-
-\clearpage
-\section*{二、初步的模型思路}
-
-\subsection*{以风险预算组合作为起点}
-
-模型初步分为两步。先根据资产的风险关系求得风险预算参考权重，再考虑收益目标，对参考权重作适度调整。题目中的“宽松”指允许最终配置偏离参考组合，从而为收益与风险之间的取舍留出空间。
-
-调整过程中，希望兼顾对参考权重的跟踪与组合方差，并对预测收益低于目标的情形设置惩罚。收益目标初步考虑取参考组合自身的预测收益，参数则用于表达各项目标的相对权重。
-
-\subsection*{为什么考虑凸优化}
-
-这部分与最优化方法的联系较为直接。协方差矩阵半正定时，组合方差是关于权重的凸二次函数；权重非负、权重之和为一可写成线性约束。若参考跟踪和收益不足惩罚也采用适当的凸形式，后续配置就可以写成凸优化问题。
-
-参考组合的求解同样需要选择具有凸形式的风险预算模型，并说明成立条件。论文计划将这两个步骤分别写清楚，解释目标函数与约束各自对应的投资含义。
-
-\subsection*{数学部分的考虑}
-
-在模型确定后，计划先讨论可行性与凸性，再结合具体假设分析最优解的存在性和唯一性。如有必要，也希望进一步学习如何用最优性条件解释权重的变化。
-
-这部分想请您指导应当分析到什么程度，以便将问题限定在适合本科论文的范围内。对收益预测误差的影响，初步考虑通过敏感性检验观察。
+\subsection*{2. 再求最终配置权重}
+\begin{align*}
+ \min_w J(w)
+ &=\underbrace{\|w-q\|_2^2}_{\substack{\text{尽量保留参考配置}\\\text{衡量资金权重距离}}}
+ +\underbrace{\lambda_v\frac{w^\top\Sigma w}{v}}_{\substack{\text{降低组合方差}\\\lambda_v\text{ 控制风险惩罚强度}}}\\[0.3em]
+ &\quad+\underbrace{\lambda_r\left[\max\left(0,\frac{R-\mu^\top w}{s}\right)\right]^2}_{\substack{\text{惩罚低于目标的预测收益，达标时为零}\\\lambda_r\text{ 控制收益短缺惩罚强度}}}.
+\end{align*}
+\[
+ \underbrace{\mathbf1^\top w=1}_{\text{全部资金投入}},\qquad
+ \underbrace{w_i\ge0}_{\text{不卖空，可为零}},\qquad
+ \underbrace{R=\mu^\top q}_{\text{以参考组合预测收益为目标}}.
+\]
+\note{$w$ 为最终资金权重，$\mu$ 为预测年化收益率，$\Sigma$ 为年化协方差，$\mathbf1$ 为全 1 向量。$\lambda_v,\lambda_r\ge0$；跟踪项系数固定为 1。}
+\[
+ \underbrace{v=\max(e^\top\Sigma e,\varepsilon_v)}_{\text{用等权方差统一风险量级}},\qquad
+ \underbrace{s=\max(|R|,\max_i|\mu_i|,\varepsilon_m)}_{\text{用预测收益量级归一化短缺}}.
+\]
+\note{$e=\mathbf1/n$；$\varepsilon_v,\varepsilon_m$ 为防止除零的正下限。输入与尺度在当次求解前固定。}
+\askbox{\textbf{“宽松”的含义}\quad 允许最终权重偏离参考组合。收益目标采用软惩罚，风险贡献不再要求严格相等；预测收益目标也不代表实际收益保证。}
 
 \clearpage
-\section*{三、实证思路与请教事项}
+\section*{二、策略如何运行与求解}
+\subsection*{每周的完整流程}
+\begin{center}
+\begin{tikzpicture}[
+ box/.style={draw=inkblue!45,fill=paleblue,rounded corners=3pt,align=center,text width=4.55cm,minimum height=1.2cm,font=\small},
+ arr/.style={-{Stealth[length=2mm]},thick,draw=inkblue},node distance=0.5cm and 0.65cm]
+ \node[box](a){\textbf{历史数据与合格资产}\\30 只 ETF，按可用性筛选\\只使用调仓日前的信息};
+ \node[box,right=of a](b){\textbf{估计收益与协方差}\\指数加权均值 $\mu$\\收缩协方差 $\Sigma$};
+ \node[box,right=of b](c){\textbf{风险预算参考}\\求解对数风险预算问题\\归一化得到 $q$};
+ \node[box,below=of c](d){\textbf{最终权重优化}\\输入 $q,\mu,\Sigma,\lambda_v,\lambda_r$\\得到 $w$，检查求解结果};
+ \node[box,left=of d](e){\textbf{执行与持有}\\周度调仓，期内权重漂移\\按实际权重变动扣费};
+ \node[box,left=of e](f){\textbf{记录回测结果}\\净值、回撤、换手与持仓\\进入下一个调仓周期};
+ \draw[arr](a)--(b);\draw[arr](b)--(c);\draw[arr](c)--(d);\draw[arr](d)--(e);\draw[arr](e)--(f);
+\end{tikzpicture}
+\end{center}
 
-\subsection*{数据与比较方法}
+{\small\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}p{2.4cm}p{13.7cm}@{}}
+\toprule
+数据输入 & 股票、债券、货币市场、商品及海外权益 ETF；至少 60 个历史有效观察且方差为正，上市前不回填。\\
+估计设置 & 最多使用此前 252 个交易日；均值采用 20 日半衰期 EWMA；协方差采用 Ledoit--Wolf 收缩并作正定数值处理。\\
+年度参数 & 较早 252 日形成 $3\times3$ 候选网格，随后 252 日按扣费表现筛选；两段均早于生效日，选定后固定一年。\\
+交易成本 & 单边 3 bp，按买卖绝对权重变化之和扣减；成本进入回测，当前目标函数未直接惩罚换手。\\
+\bottomrule
+\end{tabular}}
 
-数据拟选取境内上市、覆盖股票、债券、商品及海外市场的 ETF。资产范围和样本区间根据数据可得性确定，并考虑基金上市时间不同带来的影响。各期配置仅使用当时能够获得的历史信息。
+\subsection*{已经使用 CVXPY 实现}
+\[
+ \underbrace{\text{CVXPY}}_{\text{表达目标与约束，检查凸性规则}}
+ \quad\longrightarrow\quad
+ \underbrace{\text{CLARABEL}}_{\text{现成数值求解器}}
+ \quad\longrightarrow\quad
+ \underbrace{q\,,\ w}_{\text{参考权重与最终权重}}.
+\]
+\note{第一步含对数项，使用支持指数锥的求解器；第二步的正部平方可等价改写为凸二次规划。现有代码通过 CVXPY 建模并调用 CLARABEL。}
+\[
+ \min_{w,z}\quad
+ \underbrace{\|w-q\|_2^2+\lambda_v\frac{w^\top\Sigma w}{v}+\lambda_r z^2}_{\text{二次目标}},
+ \qquad
+ \underbrace{z\ge0,\ z\ge\frac{R-\mu^\top w}{s}}_{\text{线性约束表达非负收益短缺}}.
+\]
+\note{同时保留 $\mathbf1^\top w=1,w\ge0$。$z$ 为辅助变量，$\lambda_r>0$ 时最优 $z$ 等于归一化短缺的正部。该改写说明可调用标准 QP 求解器；当前实现保留 CVXPY 的正部平方表达。}
 
-实证中，希望先与风险预算参考组合比较，观察加入收益目标后权重如何变化，再以等权和固定股债比例等常见配置作为参照。评价时同时考虑收益、波动与回撤，并计入交易成本。
+\askbox{\textbf{已有求解记录}\quad 451 次周度求解均返回 \texttt{optimal}，使用 CLARABEL；最大约束误差约 $1.8\times10^{-13}$。数值求解已跑通，投资效果仍需结合回测评价。}
+\note{年度参数并非唯一识别的估计值，现有每年九组候选均进入一倍标准误筛选集合。后续会解释参数选择的作用与局限。}
 
-\subsection*{希望从实证中了解什么}
-
-重点关注收益目标是否改变了风险分散程度，以及这些变化是否伴随更频繁的交易。对于不同市场阶段，也希望观察模型的配置特征和适用局限。
-
-在此基础上，选择必要的参数与成本敏感性检验，考察结论是否依赖某一组设定。具体检验范围希望结合模型特点确定，避免研究内容过于分散。
-
-\subsection*{希望请您指导的事项}
-
-\begin{itemize}
-\item 目前的题目与研究问题是否合适，是否需要进一步缩小范围？
-\item 对于凸优化模型，您建议将理论分析的重点放在哪些性质上？
-\item 实证部分按上述思路安排是否恰当，有哪些文献值得优先阅读？
-\end{itemize}
-
-以上是我整理的开题思路，想先请您对选题和研究范围提些建议，再据此完善开题报告。感谢老师的指导。
-
+\clearpage
+\section*{三、已经得到的初步回测结果}
+\note{评价区间 2018-01-02 至 2026-10-23；五种配置均按周调仓，扣单边 3 bp 成本，252 日年化，$r_f=0$。红色实线为本文策略 Global RRP。}
+\begin{center}
+\includegraphics[width=0.87\linewidth]{global_rrp_nav_comparison.pdf}\par
+{\small\textbf{图 1}\quad 扣费后的累计净值}\par\vspace{0.2em}
+\includegraphics[width=0.87\linewidth]{global_rrp_drawdown_comparison.pdf}\par
+{\small\textbf{图 2}\quad 从历史净值高点计算的回撤}\par
+\end{center}
+\vspace{-0.25em}
+{\small\renewcommand{\arraystretch}{1.12}\centering
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+配置方法 & 净年化收益 & 年化波动 & 夏普比率 & 最大回撤\\
+\midrule
+\textbf{Global RRP} & \textbf{5.97\%} & \textbf{3.58\%} & \textbf{1.636} & \textbf{$-6.80\%$}\\
+HRP Benchmark & 2.09\% & 0.26\% & 7.834 & $-0.19\%$\\
+HERC Benchmark & 2.51\% & 0.81\% & 3.073 & $-1.57\%$\\
+Equal Weight & 8.29\% & 13.13\% & 0.673 & $-18.23\%$\\
+60/40 Benchmark & 6.12\% & 12.07\% & 0.553 & $-20.46\%$\\
+\bottomrule
+\end{tabular}\par}
+\note{当前策略月均换手 17.28\%，平均货币 ETF 权重 18.02\%；货币 ETF 与三只国债、信用债 ETF 合计平均权重 66.36\%。收益与风险差异需结合资产暴露解释，以上为历史回测结果。}
+\askbox{\textbf{接下来希望请老师指导}\quad 策略本身有哪些地方需要调整，尤其是收益目标、惩罚系数的选择，以及对照方法是否合适。您发来的参考文献会继续阅读，再据此补充文献比较、结果解释和论文文字。}
 \end{document}
