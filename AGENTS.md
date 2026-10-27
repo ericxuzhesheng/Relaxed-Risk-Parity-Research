@@ -111,6 +111,8 @@ The publication pipeline stores complete weekly holdings in repository CSV files
 
 The publication command updates annual calibration and final backtests incrementally. Use `--force-recalibrate --force-backtest` for a complete recomputation. Verify parity with full backtests before changing the incremental path.
 
+On native Windows, consistently use the repository's `.venv\Scripts\python.exe` for data, pipeline and tests. Cache identity uses the Python version number and primary numerical dependencies; build metadata and unused fallback solver versions do not invalidate it. Historical return comparisons tolerate only CSV round-trip noise up to `1e-14` absolute error.
+
 ### Before running:
 ```powershell
 if (-not $env:TUSHARE_TOKEN) { throw "Set TUSHARE_TOKEN in the local environment before refreshing Tushare data." }
