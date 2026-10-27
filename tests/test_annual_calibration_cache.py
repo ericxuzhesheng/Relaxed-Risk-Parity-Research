@@ -82,6 +82,15 @@ def test_new_year_reuses_old_years(experiment, monkeypatch):
     assert len(schedules) == 3 and len(candidates) == 27
 
 
+def test_csv_roundoff_reuses_calibration(experiment):
+    returns, output, calls, neutral_calls, full = experiment
+    changed = returns.copy()
+    changed.iloc[20, 0] += 5e-16
+    actual = rolling.calibrate_parameters(changed, output=output)
+    assert calls == [] and neutral_calls == []
+    assert actual[0] == full[0]
+
+
 @pytest.mark.parametrize("reason", ["force", "contract", "broken_cache"])
 def test_cache_miss_and_force_recompute_all_years(experiment, monkeypatch, reason):
     returns, output, calls, neutral_calls, _ = experiment
@@ -134,3 +143,11 @@ def test_dependency_version_change_invalidates_contract(monkeypatch):
     installed_version = rolling.version
     monkeypatch.setattr(rolling, "version", lambda name: "changed" if name == "numpy" else installed_version(name))
     assert rolling._calibration_contract() != before
+
+
+def test_build_details_and_unused_solvers_do_not_invalidate_contract(monkeypatch):
+    before = rolling._calibration_contract()
+    monkeypatch.setattr(rolling.sys, "version", "3.12.14 (another build)")
+    installed_version = rolling.version
+    monkeypatch.setattr(rolling, "version", lambda name: "changed" if name in {"scs", "osqp"} else installed_version(name))
+    assert rolling._calibration_contract() == before

@@ -152,3 +152,22 @@ def test_credentials_are_not_written_to_checkpoint(history, tmp_path):
     run_incremental_backtest(history, runner_for("Equal Weight Benchmark"), path=path,
                               contract={"configuration": {**BASE, "tushare_token": "private-token"}})
     assert "private-token" not in path.read_text(encoding="utf-8")
+
+
+def test_csv_roundoff_keeps_incremental_prefix(history, tmp_path):
+    path = tmp_path / "backtest.json"
+    contract = {"configuration": BASE}
+    runner = runner_for("Equal Weight Benchmark")
+    run_incremental_backtest(history.iloc[:110], runner, path=path, contract=contract)
+    revised = history.copy()
+    revised.iloc[70, 0] += 5e-16
+    resumed = []
+
+    def measured(data, resume, diagnostics):
+        resumed.append(resume is not None)
+        return runner(data, resume, diagnostics)
+
+    actual = run_incremental_backtest(revised, measured, path=path, contract=contract)
+    assert resumed == [True]
+    expected = runner(revised, None, {})
+    pd.testing.assert_frame_equal(actual, expected, check_exact=False, rtol=0, atol=1e-14)

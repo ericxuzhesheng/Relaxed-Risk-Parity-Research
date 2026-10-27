@@ -28,7 +28,7 @@ from scripts.run_convex_adaptive_rrp import slice_and_rebase_result, summarize_r
 from scripts.run_global_rrp_research import participation
 from src.backtest import run_static_backtest
 from src.data_loader import load_data
-from src.incremental_backtest import run_incremental_backtest
+from src.incremental_backtest import run_incremental_backtest, same_return_history
 from src.utils import get_config
 
 
@@ -163,13 +163,13 @@ def _calibration_contract() -> dict:
                 node.value = ast.Constant(value=None)
         sources[str(path.relative_to(ROOT))] = ast.dump(tree, include_attributes=False)
     packages = {}
-    for package in ("numpy", "pandas", "scipy", "scikit-learn", "cvxpy", "clarabel", "scs", "osqp"):
+    for package in ("numpy", "pandas", "scipy", "scikit-learn", "cvxpy", "clarabel"):
         try:
             packages[package] = version(package)
         except PackageNotFoundError:
             packages[package] = None
     return json.loads(json.dumps({"configuration": config, "sources": sources,
-                                 "python": sys.version, "packages": packages}))
+                                 "python": sys.version.split()[0], "packages": packages}))
 
 
 def _read_calibration_cache(output: Path, contract: dict):
@@ -209,7 +209,7 @@ def _cached_year(cache, returns, year):
     try:
         inputs, schedule, candidates = cache
         effective = pd.Timestamp(f"{year}-01-01")
-        if not inputs.loc[inputs.index < effective].equals(returns.loc[returns.index < effective]):
+        if not same_return_history(inputs.loc[inputs.index < effective], returns.loc[returns.index < effective]):
             return None
         selected = schedule[pd.to_datetime(schedule.effective_date).eq(effective)]
         frame = candidates[candidates.schedule_year.eq(year)].copy()

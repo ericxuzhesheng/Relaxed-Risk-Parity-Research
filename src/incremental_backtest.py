@@ -25,6 +25,13 @@ def _restore_frame(record):
     return pd.DataFrame(record["data"], columns=record["columns"]).astype(record["dtypes"])
 
 
+def same_return_history(left, right):
+    """Ignore CSV round-trip noise, while retaining dates, assets and missingness."""
+    return (left.index.equals(right.index) and left.columns.equals(right.columns)
+            and np.allclose(left.to_numpy(), right.to_numpy(), rtol=0, atol=1e-14,
+                            equal_nan=True))
+
+
 def _json_value(value):
     if value is pd.NaT:
         return None
@@ -76,7 +83,7 @@ def run_incremental_backtest(returns, runner, *, path, contract, diagnostics_out
             numeric = [*[f"weight_{asset}" for asset in returns.columns],
                        "net_return", "gross_return", "turnover"]
             if (count > 0 and count <= len(returns)
-                    and old_inputs.equals(returns.iloc[:count])
+                    and same_return_history(old_inputs, returns.iloc[:count])
                     and np.isfinite(old[numeric].to_numpy(dtype=float)).all()
                     and pd.DatetimeIndex(old.date).equals(old_inputs.index)):
                 keep = count if count == len(returns) else count - 1
