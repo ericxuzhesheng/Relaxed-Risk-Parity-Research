@@ -1,10 +1,10 @@
 {
   "evaluation_start": "2018-01-02",
-  "evaluation_end": "2026-10-16",
+  "evaluation_end": "2026-10-23",
   "primary_configuration": {
     "trading_days_per_year": 252,
     "evaluation_start_date": "2018-01-02",
-    "evaluation_end_date": "2026-10-16",
+    "evaluation_end_date": "2026-10-23",
     "data_start_date": "2000-01-01",
     "plot_start_date": "2018-01-02",
     "lambda_pen": 1.0,
@@ -183,7 +183,7 @@
     [
       "2024--2026",
       "2024-01-01",
-      "2026-10-16"
+      "2026-10-23"
     ]
   ],
   "bootstrap": {

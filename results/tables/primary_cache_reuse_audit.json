@@ -1,0 +1,19 @@
+{
+  "status": "passed",
+  "reason": "Python build metadata, unused solvers and CSV round-trip noise excluded from identity",
+  "numerical_calibration_functions_unchanged": true,
+  "primary_dependencies_match": true,
+  "recorded_solver": "CLARABEL",
+  "annual_entries_reusable": 10,
+  "backtest_checkpoints_reusable": 5,
+  "return_absolute_tolerance": 1e-14,
+  "original_cache_backup": "tmp\\cache_before_identity_update_20261023",
+  "updated_caches": [
+    "results\\global_rrp_rolling_252\\calibration_cache.json",
+    "results\\backtest_checkpoints\\60_40.json",
+    "results\\backtest_checkpoints\\equal_weight.json",
+    "results\\backtest_checkpoints\\global_rrp.json",
+    "results\\backtest_checkpoints\\herc.json",
+    "results\\backtest_checkpoints\\hrp.json"
+  ]
+}

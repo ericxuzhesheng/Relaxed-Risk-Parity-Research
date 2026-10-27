@@ -4,6 +4,10 @@
     "returncode": 0
   },
   {
+    "step": "scripts/run_global_rrp_rolling_calibration.py",
+    "returncode": 0
+  },
+  {
     "step": "scripts/verify_global_rrp_rolling_calibration.py",
     "returncode": 0
   },
@@ -20,49 +24,15 @@
     "returncode": 0
   },
   {
+    "step": "scripts/export_next_month_holdings.py",
+    "returncode": 0
+  },
+  {
     "step": "scripts/render_publication_figures.py",
     "returncode": 0
   },
   {
     "step": "scripts/run_primary_diagnostics.py",
-    "returncode": 0
-  },
-  {
-    "step": "scripts/analyze_primary_attribution.py",
-    "returncode": 0,
-    "targeted_tests_passed": 2,
-    "visual_pdf_review": "passed",
-    "daily_reconciliation": "passed"
-  },
-  {
-    "step": "scripts/sync_global_rrp_docs.py",
-    "returncode": 0
-  },
-  {
-    "step": "thesis_latex/main.pdf",
-    "returncode": 0
-  },
-  {
-    "step": "ppt/rrp_defense.pdf",
-    "returncode": 0
-  },
-  {
-    "step": "current_specification_diagnostics",
-    "primary_schedule": "retained and verified",
-    "experiments": 10,
-    "targeted_tests_passed": 9,
-    "risk_matching_covariance": "common prior sample covariance; original LW feasibility separately recorded",
-    "visual_pdf_review": "passed"
-  },
-  {
-    "step": "defense_consistency_review",
-    "returncode": 0,
-    "source": "existing published backtests; no model recalibration",
-    "risk_contribution_decisions": 450,
-    "attribution_return_sample": "NAV-derived returns excluding initial NAV observation",
-    "targeted_tests_passed": 15,
-    "bibliography_keys_checked": 35,
-    "visual_pdf_review": "passed",
-    "compile_passes_per_pdf": 3
+    "returncode": 1
   }
 ]
