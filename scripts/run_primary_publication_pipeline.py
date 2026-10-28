@@ -107,6 +107,9 @@ def _write_build_verification() -> None:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--end-date", default=None, help="Refresh through YYYYMMDD; defaults to the published snapshot")
+    parser.add_argument("--rebalance-date", default=None, help="Next weekly trading date, YYYY-MM-DD")
+    parser.add_argument("--skip-data-refresh", action="store_true", help="Use data already refreshed and validated by the daily runner")
     parser.add_argument("--force-recalibrate", action="store_true",
                         help="Recompute all annual validations instead of reusing matching results")
     parser.add_argument("--force-backtest", action="store_true",
@@ -116,8 +119,20 @@ def main():
         raise RuntimeError("Set TUSHARE_TOKEN before running; existing results are untouched.")
     records = []
     python = sys.executable
+    sys.path.insert(0, str(ROOT))
+    from src.utils import get_config
+    end_date = args.end_date or get_config()["evaluation_end_date"].replace("-", "")
+    if args.rebalance_date is None:
+        from scripts.run_daily_publication import next_weekly_decision
+        import pandas as pd
+        import tushare as ts
+        cutoff = pd.Timestamp(get_config()["evaluation_end_date"])
+        calendar = ts.pro_api(os.environ["TUSHARE_TOKEN"], timeout=60).trade_cal(
+            exchange="SSE", start_date=cutoff.strftime("%Y%m%d"),
+            end_date=(cutoff + pd.Timedelta(days=21)).strftime("%Y%m%d"))
+        args.rebalance_date = next_weekly_decision(cutoff, calendar)
     commands = [
-        [python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", "20261023"],
+        *([] if args.skip_data_refresh else [[python, "scripts/update_etf_data.py", "--provider", "tushare", "--start-date", "20000101", "--end-date", end_date]]),
         [python, "scripts/run_global_rrp_rolling_calibration.py",
          *(["--force-recalibrate"] if args.force_recalibrate else []),
          *(["--force-backtest"] if args.force_backtest else [])],
@@ -126,7 +141,7 @@ def main():
         [python, "scripts/publish_global_rrp.py",
          *(["--force-backtest"] if args.force_backtest else [])],
         [python, "scripts/export_primary_weekly_holdings.py"],
-        [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", "2026-10-30"],
+        [python, "scripts/export_next_month_holdings.py", "--latest", "--rebalance-date", args.rebalance_date],
         [python, "scripts/render_publication_figures.py"],
         [python, "scripts/run_primary_diagnostics.py"],
         [python, "scripts/analyze_primary_attribution.py"],
