@@ -320,7 +320,7 @@ def main():
         "cost": "3 bps per unit absolute trade weight",
         "adaptive_grid_expansion": False,
         "public_evaluation_start": "2018-01-02",
-        "public_evaluation_end": "2026-10-23",
+        "public_evaluation_end": "2026-10-28",
     }
     (OUTPUT / "protocol.json").write_text(json.dumps(protocol, indent=2), encoding="utf-8")
 
