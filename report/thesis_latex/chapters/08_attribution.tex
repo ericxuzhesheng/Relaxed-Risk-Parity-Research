@@ -28,10 +28,7 @@ I_{g,t}&=(w^P_{g,t}-w^B_{g,t})(r^P_{g,t}-r^B_{g,t}).
 
 归因样本与主绩效中由相邻净值计算的收益样本对齐，2018年1月2日作为净值基期，归因从下一交易日开始。每日四项效应之和等于当日净收益差，因而各项均值之和也等于平均日净收益差。对这些均值乘以252只会得到算术年化差异，无法直接还原两项复合年化收益之差。表中各项独立四舍五入，显示值的加总可能有末位差异，逐日未舍入数值另行核验。
 
-\begin{table}[htbp]\centering
-\caption{Brinson--Fachler归因：平均单日贡献（基点）}\label{tab:brinson_summary}
-\fitthesistable{\input{generated_brinson_summary.tex}}
-\end{table}
+
 
 全样本共\attrDays{}个交易日，沪深300ETF当日收益小于零的观察有\attrDownDays{}个。下跌日按当期实现收益事后划分，用于解释已实现损益，与表\ref{tab:position_states}中依据历史信息划分的弱势状态口径不同。相对Equal Weight，主模型在下跌日的平均净收益差为\attrEqualNetDown{}个基点，全样本对应\attrEqualNetAll{}个基点；这一组合同时体现了下跌时的损失缓冲和较低风险配置的长期收益机会成本。相对风险匹配等权路径，全样本和下跌日的平均净收益差分别为\attrMatchedNetAll{}和\attrMatchedNetDown{}个基点。
 

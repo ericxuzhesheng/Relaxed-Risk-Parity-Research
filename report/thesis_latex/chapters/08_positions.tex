@@ -1,0 +1,29 @@
+\subsection{配置路径与市场状态}
+\label{sec:positions}
+图\ref{fig:weight_path}显示全部周度目标权重，货币工具单独列示，其他基金使用相同的权重分档。色阶未作逐行归一化，相同颜色表示相同资本区间；各档宽度不同，应按图例读取。国债与信用债构成较稳定的资本配置，权益和商品相关工具的权重则随估计输入调整。
+
+\figmaybe{primary_weights.pdf}{Global RRP 周度目标权重}{fig:weight_path}
+\FloatBarrier
+
+全部\primaryAssetsUsed{}只 ETF 均曾在合格期间形成实质持仓。某期权重为零可以来自未满足准入条件，也可以来自当期优化选择，需结合准入记录区分。持仓图展示配置路径，具体目标项的作用由前文消融识别；收益差则由后续归因核算。
+
+为观察配置与此前市场环境的关系，表\ref{tab:position_states}按调仓日前63个交易日沪深300ETF累计收益的正负分组，仅保留相邻决策之间具有完整持有区间的记录。
+\begin{table}[htbp]\centering
+\caption{调仓前市场状态与Global RRP目标权重}\label{tab:position_states}
+\fitthesistable{\input{generated_position_states.tex}}
+\end{table}
+
+此前市场收益为负的组中，平均货币权重以及货币与三只债券的合计权重均较高。该对应关系与防御性配置相符，但状态划分只用于描述，未作为独立交易信号输入模型。债券的分散作用还取决于利率、信用和股债相关性。Campbell等关于宏观条件与股债风险的研究提供了机制参照\cite{campbell2020macro}，本样本的具体贡献仍由持仓与收益计算。
+
+\subsection{相对收益差的来源}
+本文以Brinson与Fachler的类别分解考察配置、组内选择与交互效应\cite{brinson1985measuring}，另列交易费用差。类别采用货币、国债、信用债、可转债、境内权益、境外权益和商品相关七组，与前文风险贡献分组一致。完整公式和空组处理见附录第\ref{sec:brinson}节。
+
+\begin{table}[htbp]\centering
+\caption{Brinson与Fachler归因的平均单日贡献（基点）}\label{tab:brinson_summary}
+\fitthesistable{\input{generated_brinson_summary.tex}}
+\end{table}
+
+表\ref{tab:brinson_summary}各项为单日效应的算术平均，一个基点等于0.01个百分点，不能直接作为复合年化收益差。下跌日按沪深300ETF当日实现收益为负划分，与表\ref{tab:position_states}中的调仓前状态不同。
+
+相对原始 Equal Weight，主模型在下跌日的平均净收益差为\attrEqualNetDown{}个基点，全样本为\attrEqualNetAll{}个基点，体现了损失缓冲与长期收益机会成本。相对风险匹配等权路径，全样本和下跌日净差异分别为\attrMatchedNetAll{}和\attrMatchedNetDown{}个基点。该分解说明贡献依赖比较基准，其会计解释应结合实现波动、回撤与消融结果共同评价。
+\FloatBarrier

@@ -1,5 +1,17 @@
 \subsection{持仓结构与风险水平的解释}
-Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、信用债工具的平均合计权重为\primaryDefensiveMean。现金和债券占用较多资本，是理解较低实现波动的重要原因；同时，较低的权益敞口也会减少上涨阶段的收益参与。国债与信用债仍分别承担利率和信用风险，不能与现金等同。完整持仓热图及市场状态分组见附录\ref{app:empirical}。
+Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、信用债工具的平均合计权重为\primaryDefensiveMean。现金和债券占用较多资本，是理解较低实现波动的重要原因；同时，较低的权益敞口也会减少上涨阶段的收益参与。国债与信用债仍分别承担利率和信用风险，不能与现金等同。配置路径与调仓前市场状态见第\ref{sec:positions}节。
+
+低波动持仓对绩效的解释还需结合估计方法。收缩矩阵将各资产方差向共同水平拉近，对货币工具估计风险的影响尤其明显。因此，较高资本占比与模型中较高风险贡献可能同时出现，而其实际日收益仍较平稳。本文用两种矩阵下的同一持仓对照识别这一影响，相关资产组结果见表\ref{tab:group_risk_contribution}。
+
+\begin{table}[htbp]\centering
+\caption{同一目标持仓在两种协方差尺度下的风险贡献份额}\label{tab:group_risk_contribution}
+\fitthesistable{\input{generated_group_risk_contribution.tex}}
+\end{table}
+\FloatBarrier
+
+表\ref{tab:group_risk_contribution}保持每个决策日的目标权重相同，仅改变评价风险的协方差矩阵，再分别汇总资产组贡献。货币工具在样本矩阵下的风险份额很小，收缩矩阵则赋予其更高份额。权益与商品的资本权重相对有限，仍承担较多样本风险。两列风险贡献各自合计为百分之百，不能与资本占比直接相加。
+
+这组比较说明，本文的参考组合对应收缩风险模型下的预算配置。判断结果时，需要同时观察资本用途、估计风险分配和实现收益路径。降低估计方差的数学目标与降低市场实际损失的经济效果，通过相同持仓的对照和回测结果连接。
 
 资本权重与风险贡献回答不同问题。参考组合按当期协方差近似满足等风险预算，最终组合为兼顾方差和收益目标而接受偏离。采用主模型的Ledoit--Wolf矩阵计算，完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合为\diagReferenceRCError{}个百分点，具体定义和结果见表\ref{tab:diagnostic_mechanism}。这说明最终配置围绕参考组合进行调整，同时允许风险预算不再严格相等。
 
@@ -9,5 +21,5 @@ Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、
 \fitthesistable{\input{generated_diagnostic_matched.tex}}
 \end{table}
 
-在这一尺度下，Global RRP的净收益和夏普高于两条辅助路径，但其实现波动及最大回撤幅度也更高。因此，结果支持不同资产构成形成了不同的收益风险取舍，不能据此认定所有风险均相同或模型在各项指标上占优。两种协方差下的风险贡献及资产组收益归因保留于附录，供进一步核查配置原因。
+在这一尺度下，Global RRP的净收益和夏普高于两条辅助路径，但其实现波动及最大回撤幅度也更高。因此，结果支持不同资产构成形成了不同的收益风险取舍，不能据此认定所有风险均相同或模型在各项指标上占优。资产组风险贡献与归因汇总列于正文，附录保留归因公式和分组细节，供核查配置原因。
 \FloatBarrier

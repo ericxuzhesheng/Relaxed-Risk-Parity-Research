@@ -24,9 +24,25 @@ Chopra 与 Ziemba 指出输入估计误差会影响组合选择\cite{chopra1993e
 
 国内另一类研究以尾部风险为核心。康志林、李仲飞在 CVaR 鲁棒均值与 CVaR 模型中考虑均值估计风险，并研究对偶与光滑求解方法\cite{kang2017cvar}；刘家和等从安全准则出发，通过最大违反概率表达安全要求\cite{liu2016cvar}。本文采用方差作为优化中的风险项，CVaR 仅用于事后评价。其尾部统计依据 Rockafellar 与 Uryasev 的相关研究\cite{rockafellar2000optimization,rockafellar2002conditional}，不据此将回测表现归因于未设置的 CVaR 约束。
 
-\subsection{求解、比较与实证定位}
+\subsection{求解与实证定位}
 凸优化为给定输入下的求解与最优性检验提供方法基础\cite{boyd2004convex}。本文使用已有求解器完成计算，重点考察模型设定和实际配置效果。国内风险平价实践与低利率环境下的配置研究提供了应用背景\cite{htsc2024practice,htsc2025lowrate}。
 
 比较模型包括 HRP、HERC 所代表的层次配置思路\cite{lopezdeprado2016building,raffinot2018hierarchical}，以及等权和固定股债预算。DeMiguel 等的样本外研究说明简单配置有必要作为估计驱动模型的对照\cite{demiguel2009optimal}；Jagannathan 与 Ma 则讨论了非负约束缓和估计误差的作用\cite{jagannathan2003risk}。本文对层次模型的具体实现范围在第四章及附录中说明。
 
 融资约束与波动管理研究提示，绩效差异还可能来自风险承担规模\cite{frazzini2014betting,moreira2017volatility}，因此本文结合持仓和事前风险匹配解释结果。交易成本按固定费率计入净收益，实际市场冲击与容量问题仍需额外建模\cite{almgren2001optimal}。历史分析也受规格选择影响\cite{white2000reality,bailey2014probability,bailey2017pbo}，本文将结论限定于当前资产池及研究规格，以消融、成本和执行检验说明配置机制及其实施条件。
+
+\subsection{本文设定与既有研究的对应}
+表\ref{tab:literature_model_link}归纳模型的主要来源及本文处理。已有文献为各项设定提供依据，两阶段组合及其在境内 ETF 上的实施效果由本文检验。年度更新用于保持参数选择的信息时序，现有结果尚不足以将所选系数视为唯一偏好估计。
+
+\begin{table}[htbp]\centering
+\caption{模型设定的文献依据与本文处理}\label{tab:literature_model_link}
+\begin{tabularx}{\textwidth}{@{}p{2.6cm} L L@{}}
+\toprule 设定 & 研究依据 & 本文处理\\\midrule
+风险预算参考 & Spinu 的对数凸模型\cite{spinu2013algorithm} & 求解后归一化，确定跟踪中心\\
+方差控制 & SCRIP 中的方差偏好项\cite{feng2015scrip} & 控制总风险并允许偏离参考\\
+参考正则化 & 参考组合平方范数惩罚\cite{bourgeron2018robust} & 跟踪当期风险预算权重\\
+预测收益目标 & 风险平价参考收益目标\cite{gambeta2020risk} & 取参考自身收益，保持目标可行\\
+平方短缺 & 二次罚函数与参照财富损失\cite{nocedal2006numerical,siegmann2005discrete} & 惩罚预测均值的不足，区别于随机财富尾部损失\\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,9 +1,9 @@
 \documentclass{thesisSWUFE}
 
 % 封面信息。
-\covertitle{\shortstack[c]{\zihao{4}基于宽松风险平价的\\\zihao{4}多资产 ETF 配置研究\\[2pt]\zihao{5}——凸优化建模与年度滚动校准}}
+\covertitle{\shortstack[c]{\zihao{3}基于宽松风险平价的\\\zihao{3}多资产 ETF 配置研究\\[2pt]\zihao{4}——凸优化建模与年度滚动校准}}
 \covercollege{特拉华数据科学学院}
-\covermajor{金融数学（金融服务与量化分析方向）}
+\covermajor{\shortstack[c]{金融数学\\（金融服务与量化分析方向）}}
 \coverauthor{许哲圣}
 \coverstudentid{42353012}
 \covergrade{2023级}
@@ -21,21 +21,22 @@
 \graphicspath{{../../results/figures/}}
 
 \hypersetup{
+  hypertexnames=false,
   pdftitle={基于宽松风险平价的多资产 ETF 配置研究——凸优化建模与年度滚动校准},
   pdfauthor={许哲圣},
   pdfkeywords={宽松风险平价, 凸优化, 消融实验, 风险匹配, ETF}
 }
 
 \setlength{\emergencystretch}{2em}
-\renewcommand{\arraystretch}{1.18}
-\linespread{1.35}
+\renewcommand{\arraystretch}{1.0}
+\linespread{1.5}
 
 % 阅读版式：章首页、标题层级与正文保持统一，不设置页数上限。
 \pretocmd{\section}{\clearpage}{}{}
-\titleformat{\section}{\hwzhongsong\centering\bfseries\zihao{-2}}{\thesection}{0.7em}{}
-\titlespacing*{\section}{0pt}{0pt}{24pt}
-\titlespacing*{\subsection}{0pt}{18pt plus 3pt minus 2pt}{9pt plus 2pt minus 1pt}
-\titlespacing*{\subsubsection}{0pt}{12pt plus 2pt minus 1pt}{6pt plus 1pt minus 1pt}
+\titleformat{\section}{\hwzhongsong\centering\bfseries\zihao{2}}{\thesection}{0.7em}{}
+\titlespacing*{\section}{0pt}{3\baselineskip}{2\baselineskip}
+\titlespacing*{\subsection}{0pt}{\baselineskip}{\baselineskip}
+\titlespacing*{\subsubsection}{0pt}{\baselineskip}{\baselineskip}
 \raggedbottom
 \clubpenalty=10000
 \widowpenalty=10000
@@ -44,8 +45,8 @@
 \setlength{\absleftindent}{0pt}
 \setlength{\absrightindent}{0pt}
 \setlength{\absparindent}{2em}
-\AtBeginEnvironment{longtable}{\songti\rmfamily\zihao{5}\linespread{1.15}\selectfont}
-\AtBeginEnvironment{table}{\songti\rmfamily\zihao{5}\linespread{1.15}\selectfont}
+\AtBeginEnvironment{longtable}{\songti\rmfamily\zihao{5}\linespread{1.0}\selectfont}
+\AtBeginEnvironment{table}{\songti\rmfamily\zihao{5}\linespread{1.0}\selectfont}
 \counterwithin{figure}{section}
 \counterwithin{table}{section}
 \renewcommand{\thefigure}{\thesection-\arabic{figure}}
@@ -159,33 +160,54 @@
 }
 
 \begin{document}
+% 中文文献先列，英文文献随后按引用顺序排列。
+\nocite{jing2026esg,wang2015tracking,liu2018lossaverse,wang2021reference,liang2014robust,an2014robust,kang2017cvar,liu2016cvar,htsc2024practice,htsc2025lowrate}
 \makecover
 \clearpage
-\pagenumbering{Roman}
 \section*{学术声明}
-本人郑重声明，所呈交的毕业论文是在指导教师指导下独立完成的研究成果。引用他人的成果均已注明来源。历史回测结果仅用于研究，不构成未来收益承诺。
+\thispagestyle{empty}
+本人郑重声明，所呈交的毕业论文是本人在导师的指导下取得的成果，论文写作严格遵循学术规范。对本论文的研究做出重要贡献的个人和集体，均已在文中以明确方式标明。因本毕业论文引起的法律结果完全由本人承担。
+
+本毕业论文成果归西南财经大学所有。
+
+特此声明。
+
+\vspace{2\baselineskip}
+毕业论文作者签名\quad\underline{\hspace{5cm}}
+
+作者专业\quad\underline{\hspace{6cm}}
+
+作者学号\quad\underline{\hspace{6cm}}
+
+\hfill 年\quad 月\quad 日
+
 \clearpage
+\pagenumbering{arabic}
 \begin{abstract}
-本文研究境内上市ETF机会集合下的多资产风险收益配置，构建以Global RRP为主模型、四种配置规则为对照的实证框架。资产池包含\etfCount{}只ETF，评价区间为\evalStartDate{}至\evalEndDate{}，采用\annualizationDays{}日年化和\txCostBps{} bps单边交易成本。研究以多头、满额投资且无杠杆的预算集合对应境内ETF持有组合，并从工具覆盖和融资条件解释其与桥水全球机构配置框架的区别。
+本文研究境内多资产交易型开放式指数基金（ETF）的风险与收益配置，构建两阶段凸优化模型 Global RRP。模型先求风险预算参考组合，再以资本跟踪、方差及预测收益短缺确定最终权重，收益目标取可行参考的预测收益，惩罚系数依此前数据年度更新。在多头、满额投资与无杠杆约束下，使用\etfCount{}只 ETF，于\evalStartDate{}至\evalEndDate{}开展周度扣费回测。主模型净年化收益为\globalNetReturn，年化波动为\globalVolatility，最大回撤为\globalMaxDD。消融表明，方差项降低风险，短缺项以增加交易需求维持收益。持仓与实施检验支持当前样本中的配置解释，但年度参数识别较弱。研究展示了风险预算与收益目标结合的可行方法，结论受资产池、估计方式及历史规格限制。
 
-主模型先求解凸风险预算参考，再通过资本跟踪、组合方差和预测收益短缺的凸目标生成最终权重。收益目标取当期可行参考组合的预测收益，协方差使用Ledoit--Wolf收缩估计，均值使用20日半衰期指数加权估计。两项惩罚根据生效日前的历史区间年度更新。实证依次考察整体表现、两项惩罚的作用、持仓结构和实施稳定性；完整敏感性检验、统计区间与收益归因保留于附录。
-
-Global RRP的净年化收益为\globalNetReturn，年化波动为\globalVolatility，夏普为\globalSharpe，最大回撤为\globalMaxDD。相对直接持有风险预算参考的\diagReferenceReturn{}收益和\diagReferenceVol{}波动，第二阶段优化在保持相近收益的同时降低了实现波动。收益短缺项体现了收益维持与交易需求的权衡。风险匹配后的Equal Weight与60/40 Benchmark净年化收益分别为\diagMatchedEWReturn{}和\diagMatchedSBReturn。单边成本提高至20 bps及执行顺延一日时，主模型净年化收益分别为\diagCostTwentyReturn{}和\diagDelayReturn。年度更新与首年参数冻结得到相近结果，配合年度候选的弱识别特征，表明模型的经验价值主要体现于配置结构与实施权衡。上述证据形成了固定资产池和既定历史规格下可复现的探索性结论。
-
-\noindent\textbf{关键词 } 宽松风险平价；全球资产配置；凸优化；ETF；交易成本
+\noindent\textbf{关键词 } 宽松风险平价；资产配置；凸优化；ETF；交易成本
 \end{abstract}
 \clearpage
+\pagenumbering{arabic}
 \renewcommand{\abstractname}{Abstract}
+\renewcommand{\abstractnamefont}{\rmfamily\bfseries\zihao{2}}
 \begin{abstract}
-This thesis studies multi-asset allocation within a universe of \etfCount{} China-listed ETFs. Global RRP is evaluated against HRP Benchmark, HERC Benchmark, Equal Weight and 60/40 Benchmark from \evalStartDate{} to \evalEndDate{}, with \annualizationDays-day annualization and a \txCostBps{}-bp one-way transaction cost. Its long-only, fully invested and unlevered budget reflects the chosen ETF opportunity set. Differences in instrument coverage and financing arrangements distinguish this setting from Bridgewater's global institutional framework.
+This thesis studies the allocation of risk and return across China-listed exchange-traded funds (ETFs). It develops Global RRP, a two-stage convex optimization model. The first stage constructs a risk-budget reference portfolio. The second determines final weights by balancing squared weight deviations, portfolio variance, and squared expected-return shortfall. The return target equals the predicted return of the feasible reference portfolio. Penalty coefficients are updated annually using calibration and validation blocks that strictly precede their application.
 
-The model constructs a convex risk-budget reference and then optimizes reference tracking, variance and expected-return shortfall. The return target equals the reference portfolio's predicted return. Ledoit--Wolf covariance estimates and exponentially weighted means use strictly prior observations, and penalties update annually from earlier calibration and validation blocks. The empirical analysis examines overall performance, the roles of the two penalties, portfolio composition, and implementation stability. Detailed sensitivity checks, statistical intervals, and return attribution are provided in the appendix.
+The empirical study covers \etfCount{} ETFs from \evalStartDate{} to \evalEndDate{}. Portfolios are long-only, fully invested, unlevered, and rebalanced weekly. Performance is evaluated after a \txCostBps{}-basis-point one-way transaction cost using \annualizationDays{} trading days for annualization. The model achieves a net annual return of \globalNetReturn, annualized volatility of \globalVolatility, and a maximum drawdown of \globalMaxDD. Comparisons include hierarchical allocation rules, equal weighting, and a fixed equity-bond allocation. Ablation experiments connect the objective terms to observed allocation changes. The variance penalty reduces risk relative to the reference portfolio, while the shortfall penalty helps preserve return at the cost of additional trading. Holdings and implementation checks provide further evidence on the sources and practical conditions of these outcomes.
 
-Global RRP achieves a net annual return of \globalNetReturn, volatility of \globalVolatility, a Sharpe ratio of \globalSharpe, and a maximum drawdown of \globalMaxDD. The risk-budget reference achieves \diagReferenceReturn{} return and \diagReferenceVol{} volatility, showing that the second stage preserves a similar return while reducing realized risk. Risk-matched Equal Weight and 60/40 Benchmark achieve \diagMatchedEWReturn{} and \diagMatchedSBReturn{} net annual returns. Under a 20-bp cost and a one-day execution delay, the primary model achieves \diagCostTwentyReturn{} and \diagDelayReturn{}, respectively. Annual updating and frozen initial penalties produce similar outcomes, consistent with weak identification of the annual coefficients. The evidence supports an allocation mechanism and implementation trade-off conditional on the fixed universe and historical specification.
+The findings support an interpretable integration of risk budgeting and a feasible return target within the chosen historical setting. Annual penalty selection remains weakly identified, and the benefits of updating are limited relative to retaining initial coefficients. Conclusions are conditional on the ETF universe, estimation methods, and historical specification. The study therefore evaluates the allocation mechanism and its implementation trade-offs while leaving validation on newly observed data to subsequent research.
+
+\noindent\textbf{Keywords } Relaxed risk parity; Asset allocation; Convex optimization; ETF; Transaction costs
 \end{abstract}
 \clearpage
+\pagenumbering{Roman}
 \setcounter{tocdepth}{2}
+\begingroup
+\linespread{1.35}\selectfont
 \tableofcontents
+\endgroup
 \clearpage
 \pagenumbering{arabic}
 \input{chapters/01_introduction.tex}
@@ -199,10 +221,17 @@ Global RRP achieves a net annual return of \globalNetReturn, volatility of \glob
 \input{chapters/07_results.tex}
 \input{chapters/07_diagnostics.tex}
 \input{chapters/08_holdings.tex}
+\input{chapters/08_positions.tex}
 \input{chapters/07_robustness.tex}
 \input{chapters/10_conclusion.tex}
 \input{chapters/09_institution.tex}
 \label{sec:body_end}
+\clearpage
+\phantomsection
+\addcontentsline{toc}{section}{参考文献}
+\bibliographystyle{gbt7714-numeric}
+\bibliography{references}
+
 \clearpage
 \appendix
 \input{chapters/appendix_empirical.tex}
@@ -233,11 +262,6 @@ $D_t$ & 净值相对历史高点的下跌比例\\
 $RC_i$ & 相对于估计协方差的资产波动风险贡献\\
 \bottomrule
 \end{longtable}
-\clearpage
-\phantomsection
-\addcontentsline{toc}{section}{参考文献}
-\bibliographystyle{gbt7714-numeric}
-\bibliography{references}
 \clearpage
 \section*{致谢}
 \addcontentsline{toc}{section}{致谢}
