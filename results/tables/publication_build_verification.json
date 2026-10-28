@@ -8,7 +8,7 @@
     "60/40 Benchmark"
   ],
   "model_count": 5,
-  "thesis_pages": 53,
+  "thesis_pages": 56,
   "slides_pages": 38,
   "compile_passes": 3,
   "overfull_boxes": 0,
@@ -20,29 +20,26 @@
   "defense_consistency_audit_status": "passed",
   "attribution_daily_identity_max_error": 9.67628754899863e-15,
   "diagnostic_experiment_count": 10,
-  "risk_matching_decisions": 902,
+  "risk_matching_decisions": 904,
   "risk_matching_infeasible_count": 0,
   "fonts": {
     "main.pdf": {
       "all_fonts_embedded": true,
       "chinese_fonts": [
-        "BFIDME+STZhongsong",
-        "CPWLDB+SimHei",
+        "AOGCSG+SimSun",
+        "BFIDME+SimHei",
         "DDTTLW+MicrosoftYaHei",
         "DFIMHP+MicrosoftYaHei",
-        "DTQSCH+STFangsong",
         "EOIOZW+MicrosoftYaHei-Bold",
         "FAWBMH+MicrosoftYaHei",
         "FAWBMH+MicrosoftYaHei-Bold",
         "HBGWOI+MicrosoftYaHei-Bold",
         "IRQUGZ+STFangsong",
-        "KOOBRH+SimSun",
-        "MIUVPK+STZhongsong",
-        "QEULYP+SimSun",
-        "QJRUYZ+SimHei",
+        "KONLXK+STFangsong",
+        "MIUVPK+SimSun",
+        "QEULYP+SimHei",
         "QVIUWV+STZhongsong",
-        "TDODLP+SimSun",
-        "VJKBIL+STFangsong"
+        "VJKBIL+STZhongsong"
       ]
     },
     "rrp_defense.pdf": {
@@ -56,6 +53,5 @@
       ]
     }
   },
-  "figures": "high-contrast red-blue PNG and vector PDF",
-  "pdf_visual_review": "passed: all 53 thesis pages and 38 slides rendered and inspected"
+  "figures": "high-contrast red-blue PNG and vector PDF"
 }

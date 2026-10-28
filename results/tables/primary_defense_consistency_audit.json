@@ -1,6 +1,6 @@
 {
   "status": "passed",
-  "decisions": 451,
+  "decisions": 452,
   "lw_formula_max_error": 0.0,
   "euler_identity_max_error": 6.661338147750939e-16,
   "mean_risk_budget_error_matches_saved_solver": true,

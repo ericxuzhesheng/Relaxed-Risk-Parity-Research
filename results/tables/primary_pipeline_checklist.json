@@ -1,9 +1,5 @@
 [
   {
-    "step": "scripts/update_etf_data.py",
-    "returncode": 0
-  },
-  {
     "step": "scripts/run_global_rrp_rolling_calibration.py",
     "returncode": 0
   },
@@ -33,34 +29,26 @@
   },
   {
     "step": "scripts/run_primary_diagnostics.py",
-    "returncode": 0,
-    "arguments": [
-      "--reuse-solver-paths"
-    ]
+    "returncode": 0
   },
   {
     "step": "scripts/analyze_primary_attribution.py",
-    "returncode": 0,
-    "arguments": []
+    "returncode": 0
   },
   {
     "step": "scripts/audit_defense_consistency.py",
-    "returncode": 0,
-    "arguments": []
+    "returncode": 0
   },
   {
     "step": "scripts/sync_global_rrp_docs.py",
-    "returncode": 0,
-    "arguments": []
+    "returncode": 0
   },
   {
     "step": "thesis_latex/main.pdf",
-    "returncode": 0,
-    "visual_pdf_review": "passed"
+    "returncode": 0
   },
   {
     "step": "ppt/rrp_defense.pdf",
-    "returncode": 0,
-    "visual_pdf_review": "passed"
+    "returncode": 0
   }
 ]
