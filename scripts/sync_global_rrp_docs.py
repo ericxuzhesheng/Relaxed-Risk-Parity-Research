@@ -1,5 +1,6 @@
 """Synchronize publication prose with the designated rolling Global RRP results."""
 from pathlib import Path
+from datetime import datetime
 import json
 
 import pandas as pd
@@ -63,7 +64,7 @@ def main():
 
 [中文](#中文) · [English](#english) · [完整论文](report/thesis_latex/main.pdf) · [答辩演示](report/ppt/rrp_defense.pdf) · [结果数据](results/tables/model_performance_summary.csv)
 
-更新日期 / Last updated: **2026-10-27**
+更新日期 / Last updated: **{datetime.now().date().isoformat()}**
 
 ## 中文
 

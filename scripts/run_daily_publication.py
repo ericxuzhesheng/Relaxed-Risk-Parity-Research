@@ -43,7 +43,7 @@ def update_snapshot_dates(root, previous, actual):
     paths = (
         "src/utils.py", "src/data_loader.py", "scripts/update_etf_data.py",
         "scripts/run_global_rrp_rolling_calibration.py",
-        "scripts/run_primary_diagnostics.py", "scripts/sync_global_rrp_docs.py",
+        "scripts/run_primary_diagnostics.py", "scripts/sync_global_rrp_docs.py", "AGENTS.md",
     )
     for name in paths:
         path = root / name

@@ -122,6 +122,8 @@ def main():
     sys.path.insert(0, str(ROOT))
     from src.utils import get_config
     end_date = args.end_date or get_config()["evaluation_end_date"].replace("-", "")
+    if end_date.replace("-", "") != get_config()["evaluation_end_date"].replace("-", ""):
+        raise ValueError("Use run_daily_publication.py --end-date to advance the complete publication snapshot")
     if args.rebalance_date is None:
         from scripts.run_daily_publication import next_weekly_decision
         import pandas as pd
