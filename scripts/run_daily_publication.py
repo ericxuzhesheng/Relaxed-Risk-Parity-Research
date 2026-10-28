@@ -99,10 +99,14 @@ def main():
     changed = not same_return_history(price_to_returns(existing), price_to_returns(merged))
     completed_path = ROOT / "results/tables/daily_publication_completed.json"
     completed = json.loads(completed_path.read_text("utf-8")) if completed_path.exists() else {}
-    if not changed and actual <= pd.Timestamp(previous) and completed.get("evaluation_end") == previous:
+    if (not changed and actual <= pd.Timestamp(previous)
+            and completed.get("evaluation_end") == previous and completed.get("status") == "passed"):
         print("No new returns or historical revisions; publication unchanged.")
         return
     decision = next_weekly_decision(actual, calendar)
+    completed_path.parent.mkdir(parents=True, exist_ok=True)
+    completed_path.write_text(json.dumps({"evaluation_end": actual.date().isoformat(),
+                                         "status": "running"}, indent=2), encoding="utf-8")
     merged.to_csv(path)
     update_snapshot_dates(ROOT, previous, actual.date().isoformat())
     print(f"Publishing through {actual.date()}; next weekly decision {decision}", flush=True)
