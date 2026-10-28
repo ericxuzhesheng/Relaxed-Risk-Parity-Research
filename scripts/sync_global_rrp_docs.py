@@ -213,9 +213,9 @@ python scripts/run_primary_publication_pipeline.py
 
 入口首先刷新ETF数据，再运行年度校准与四个对照，生成表格和图形，同步文档，最后编译论文及答辩PDF。两个PDF均执行三轮 XeLaTeX 编译，流程退出时自动清理临时文件。当前 rf=0 口径不调用中债利率接口。
 
-完整重算年度校准与五个模型的回测：
-
 日常更新使用 `.venv/Scripts/python.exe scripts/run_daily_publication.py`，在北京时间17:00后获取最新完整行情并推进评价截止日。无新增收益或历史修订时跳过发布；已有年度校准和主模型回测按缓存复用，现有诊断仅在数据变化后刷新。周频调仓日期取交易所日历中的周末最后交易日，开题报告不随行情改写。
+
+完整重算年度校准与五个模型的回测：
 
 ```powershell
 python scripts/run_primary_publication_pipeline.py --force-recalibrate --force-backtest
@@ -352,9 +352,9 @@ python scripts/run_primary_publication_pipeline.py
 
 The entry point refreshes ETF data, runs annual calibration and four comparisons, generates tables and figures, synchronizes documents, and compiles both PDFs with three XeLaTeX passes each. Temporary files are cleaned on exit. The zero risk-free convention does not require ChinaBond data.
 
-To recompute every annual calibration and all five backtests from the beginning:
-
 For daily updates, run `.venv/Scripts/python.exe scripts/run_daily_publication.py` after 17:00 Asia/Shanghai. It advances the snapshot only after complete market data are available, skips unchanged returns, reuses matching calibration and primary backtest caches, and refreshes existing diagnostics only when inputs change. Weekly decisions use the exchange calendar's last trading day of the week. Proposal documents remain unchanged.
+
+To recompute every annual calibration and all five backtests from the beginning:
 
 ```powershell
 python scripts/run_primary_publication_pipeline.py --force-recalibrate --force-backtest
