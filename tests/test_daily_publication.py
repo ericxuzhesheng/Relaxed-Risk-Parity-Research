@@ -48,8 +48,8 @@ def test_date_update_preserves_calibration_contract(tmp_path, monkeypatch):
     assert '"evaluation_end_date": "2026-11-06"' in updated(root / files[0], encoding="utf-8")
 
 
-@pytest.mark.parametrize("incomplete", [False, True])
-def test_no_change_or_incomplete_data_does_not_publish(tmp_path, monkeypatch, incomplete):
+@pytest.mark.parametrize("incomplete,unfinished", [(False, False), (True, False), (False, True)])
+def test_publication_requires_complete_data_and_retries_unfinished(tmp_path, monkeypatch, incomplete, unfinished):
     dates = pd.bdate_range("2026-10-19", "2026-10-23", name="trade_date")
     prices = pd.DataFrame({"a": range(100, 105), "b": range(200, 205)}, index=dates)
     path = tmp_path / "data/processed/etf_prices_updated.csv"
@@ -59,6 +59,8 @@ def test_no_change_or_incomplete_data_does_not_publish(tmp_path, monkeypatch, in
     completion = tmp_path / "results/tables/daily_publication_completed.json"
     completion.parent.mkdir(parents=True)
     completion.write_text('{"evaluation_end": "2026-10-23", "status": "passed"}', encoding="utf-8")
+    if unfinished:
+        completion.write_text('{"evaluation_end": "2026-10-23", "status": "running"}', encoding="utf-8")
     refreshed = prices.copy()
     if incomplete:
         refreshed.loc[pd.Timestamp("2026-10-26")] = [105, float("nan")]
@@ -79,7 +81,15 @@ def test_no_change_or_incomplete_data_does_not_publish(tmp_path, monkeypatch, in
         pytest.fail("Unchanged/incomplete market data must not update files or publish")
     monkeypatch.setattr(daily, "update_snapshot_dates", unexpected)
     monkeypatch.setattr(daily.subprocess, "run", unexpected)
-    if incomplete:
+    if unfinished:
+        monkeypatch.setattr(daily, "update_snapshot_dates", lambda *args: None)
+        calls = []
+        monkeypatch.setattr(daily.subprocess, "run", lambda *args, **kwargs: calls.append(args))
+        daily.main()
+        assert len(calls) == 1
+        assert '"status": "passed"' in completion.read_text("utf-8")
+        return
+    elif incomplete:
         with pytest.raises(ValueError, match="Incomplete"):
             daily.main()
     else:
