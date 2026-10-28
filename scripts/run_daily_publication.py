@@ -5,6 +5,7 @@ those date literals preserves the existing, date-neutral calibration contract.
 """
 from pathlib import Path
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -96,7 +97,9 @@ def main():
     merged = merge_adjusted_history(existing, refreshed)
     validate_prices(merged)
     changed = not same_return_history(price_to_returns(existing), price_to_returns(merged))
-    if not changed and actual <= pd.Timestamp(previous):
+    completed_path = ROOT / "results/tables/daily_publication_completed.json"
+    completed = json.loads(completed_path.read_text("utf-8")) if completed_path.exists() else {}
+    if not changed and actual <= pd.Timestamp(previous) and completed.get("evaluation_end") == previous:
         print("No new returns or historical revisions; publication unchanged.")
         return
     decision = next_weekly_decision(actual, calendar)
@@ -107,6 +110,8 @@ def main():
         sys.executable, "scripts/run_primary_publication_pipeline.py", "--skip-data-refresh",
         "--end-date", actual.strftime("%Y%m%d"), "--rebalance-date", decision,
     ], cwd=ROOT, check=True)
+    completed_path.write_text(json.dumps({"evaluation_end": actual.date().isoformat(),
+                                         "status": "passed"}, indent=2), encoding="utf-8")
 
 
 if __name__ == "__main__":

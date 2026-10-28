@@ -56,6 +56,9 @@ def test_no_change_or_incomplete_data_does_not_publish(tmp_path, monkeypatch, in
     path.parent.mkdir(parents=True)
     prices.to_csv(path)
     original = path.read_bytes()
+    completion = tmp_path / "results/tables/daily_publication_completed.json"
+    completion.parent.mkdir(parents=True)
+    completion.write_text('{"evaluation_end": "2026-10-23", "status": "passed"}', encoding="utf-8")
     refreshed = prices.copy()
     if incomplete:
         refreshed.loc[pd.Timestamp("2026-10-26")] = [105, float("nan")]
