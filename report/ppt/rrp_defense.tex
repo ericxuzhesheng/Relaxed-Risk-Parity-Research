@@ -280,6 +280,7 @@ Brinson & 每日持仓与实现收益 & 相对基准的实际收益差\\\bottomr
 \par\medskip
 \small 主模型预算偏离按LW计算：\diagPrimaryRCError{}个百分点；参考组合为\diagReferenceRCError{}个百分点。该数是逐期最大份额偏离的均值。
 \end{frame}
+\figframe{资本距离不能替代风险预算偏离}{primary_tracking_risk.pdf}{0.88}{跨期秩相关为\trackingRiskCorrelation{}；距离下四分位组中，\trackingExampleDate{}的距离为\trackingExampleDistance{}，最大风险份额偏离为\trackingExampleError{}个百分点。}
 \begin{frame}{消融：第二阶段优化的作用}
 \resizebox{\textwidth}{!}{\input{../thesis_latex/generated_diagnostic_ablation.tex}}
 \medskip
@@ -365,6 +366,16 @@ I_g&=(w^P_g-w^B_g)(r^P_g-r^B_g) &&\text{交互}
 共\attrDays{}个交易日，其中\attrDownDays{}个下跌日。单日算术归因与年化、复合收益分别报告。
 \end{frame}
 \section{结论}
+\begin{frame}{与文献的对话及研究边界}
+\small
+\begin{itemize}
+\item 收益目标型风险平价：本样本短缺惩罚以波动与交易需求换取收益维持
+\item 估计风险：共同对角收缩目标改变货币工具风险尺度，未检验替代估计器优劣
+\item 参数复杂度：年度更新与冻结接近，证据主要支持配置结构与信息时序
+\item 近期路径：端到端风险预算学习、厚尾与动态相关模型均未在本文实现
+\end{itemize}
+\medskip\scriptsize 来源：Gambeta与Kwon（2020）；Ledoit与Wolf（2004、2022）；DeMiguel等（2009）；Uysal等（2024）；Paolella等（2025）。
+\end{frame}
 \begin{frame}{研究结论}
 \begin{itemize}
 \item 构建两阶段凸配置框架：可行收益目标、风险预算参考和年度决策规则
