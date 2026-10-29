@@ -201,7 +201,9 @@ def _asset_stats_table(stats_df: pd.DataFrame, out_dir: Path) -> None:
             r"\multicolumn{7}{@{}l}{\footnotesize $^*$ 近期上市 ETF，"
             r"可用历史较短，仅在积累足够观测后参与优化。} \\"
         )
-    lines += [r"\end{longtable}", r"}", ""]
+    lines += [r"\end{longtable}",
+              r"\noindent 注：各资产使用自身有效历史。年化收益按首末有效价格及其间交易日数以252日折算，年化波动为日收益标准差乘以$\sqrt{252}$。",
+              r"}", ""]
 
     out_path = out_dir / "generated_asset_stats_table.tex"
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
