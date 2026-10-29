@@ -74,6 +74,8 @@ def main():
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
+这里的“宽松”指最终权重允许偏离等风险贡献参考。资本距离惩罚不直接限制风险贡献偏离，实际关系见[周度配对诊断](results/tables/primary_tracking_risk.csv)和[图形](results/figures/primary_tracking_risk.png)。本研究检验参考正则化结构的配置效果，不主张优于未在同一数据上复现的原始RRP方法。
+
 当前样本中，Global RRP 的净年化收益为 **{primary.net_annual_return:.2%}**，年化波动为 **{primary.annualized_volatility:.2%}**，最大回撤为 **{primary.max_drawdown:.2%}**。研究通过目标项消融、事前风险匹配和配对区块抽样，量化优化规则、风险承担与参数更新形成的取舍。
 
 ### 快速阅读与证据入口
@@ -95,7 +97,7 @@ def main():
 |---|---|---|
 | **Global RRP** | 跟踪凸风险预算参考，平衡归一化方差与预测收益短缺 | 周频主模型 |
 | HRP Benchmark | 根据资产相关结构聚类，再递归分配风险 | 层次风险平价对照 |
-| HERC Benchmark | 按层次结构进行等风险贡献配置 | 层次等风险贡献对照 |
+| HERC Benchmark | 相关性排序、列表递归二分及子簇波动比例分配 | 简化层次对照，不是原始HERC的完整复现 |
 | Equal Weight | 在当期合格资产间等权配置 | 简单分散化对照 |
 | 60/40 Benchmark | 按项目分类配置60%权益与40%债券，组内等权 | 固定股债比例对照 |
 
@@ -116,6 +118,8 @@ $$
 | 收益与成本 | 保留极端收益观察，rf=0，252日年化，单边3 bps约定成本 |
 
 **年度校准只使用生效日前的信息。** 较早的252日区间确定候选尺度，随后的252日区间检验九组参数的扣费表现。选择规则考虑一倍夏普标准误集合、相邻候选、换手与季度稳定性，所选参数在下一年保持固定。
+
+筛选宽度采用独立同分布正态近似下的夏普标准误，未校正序列相关，不是候选差异的联合置信集合。候选分位点、网格邻接与换手排序是本文实施约定；全部候选入围不等于统计等价。公式与来源见论文第三章（Hastie等，2009；Lo，2002）。
 
 ### 历史结果与研究判断
 
@@ -248,6 +252,8 @@ Can a risk-budget portfolio balance return and diversification while remaining l
 
 **Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **{primary.net_annual_return:.2%}** net annual return, **{primary.annualized_volatility:.2%}** annual volatility and **{primary.max_drawdown:.2%}** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
 
+“Relaxed” means that final weights may depart from the equal-risk-contribution reference. Capital-weight regularization does not impose a risk-contribution deviation ceiling. The [paired weekly diagnostic](results/tables/primary_tracking_risk.csv) and [figure](results/figures/primary_tracking_risk.png) evaluate both distances. This study tests the reference-based structure and does not claim superiority over original RRP methods not reproduced on the same data.
+
 ### Reading guide and evidence
 
 Start with the results below and the [figures](#图表与持仓解释), then consult the [thesis](report/thesis_latex/main.pdf) for derivations and empirical details. The [slides](report/ppt/rrp_defense.pdf) provide a shorter account of the design.
@@ -267,7 +273,7 @@ Equal capital weights do not ensure equal risk contributions. Risk budgeting add
 |---|---|---|
 | **Global RRP** | Reference tracking with normalized variance and expected-return shortfall penalties | Weekly primary model |
 | HRP Benchmark | Correlation clustering and recursive risk allocation | Hierarchical risk parity comparison |
-| HERC Benchmark | Equal risk contributions within a hierarchical structure | Hierarchical equal risk contribution comparison |
+| HERC Benchmark | Correlation ordering, list bisection and subcluster volatility allocation | Simplified comparison, not a complete reproduction of original HERC |
 | Equal Weight | Equal weights across eligible assets | Simple diversification comparison |
 | 60/40 Benchmark | 60% equity and 40% bonds under project classifications, equal weights within each group | Fixed stock-bond comparison |
 
@@ -282,6 +288,8 @@ There is no fixed target multiplier. The portfolio remains long-only, fully inve
 Inputs use up to 252 trading days, Ledoit-Wolf covariance shrinkage and EWMA means with a 20-day half-life. An asset needs at least 60 prior valid observations and positive variance. All five models rebalance weekly.
 
 Penalty calibration uses two strictly earlier 252-day blocks. The first supplies candidate scales; the second evaluates nine combinations after costs. Selection considers the one-standard-error Sharpe set, neighboring candidates, turnover and quarterly stability. Selected coefficients remain fixed for the following year.
+
+The screening width uses an IID-normal approximation to the Sharpe standard error without serial-correlation adjustment. It is not a joint confidence set for candidate differences. Quantile grids, adjacency and turnover ordering are implementation choices; admission of every candidate does not establish statistical equivalence. Chapter 3 gives the formula and sources (Hastie et al., 2009; Lo, 2002).
 
 ### Historical results and interpretation
 
@@ -398,10 +406,12 @@ Use exactly these five model names in current publication prose, tables and figu
 ## Main Positioning
 
 - Global RRP is the weekly primary model. It is long-only, fully invested and unlevered.
+- Relaxed refers to capital-weight regularization around an equal-risk-contribution reference, not a hard bound on risk-share deviations. `primary_tracking_risk.csv` and its summary report both measures. HERC Benchmark is a simplified list-bisection implementation, not a full reproduction of original HERC.
 - The lookback and annualization conventions both use 252 trading days. Inputs use Ledoit-Wolf covariance shrinkage and 20-day half-life EWMA means.
 - The return target equals the predicted return of the contemporaneous feasible risk-budget reference. There is no fixed target multiplier.
 - Variance and shortfall penalties update annually from two strictly earlier 252-day blocks. The first block determines candidate scales and the second evaluates candidates after costs. Selected values remain fixed for the following year.
 - Every annual validation admits all nine candidates to the one-standard-error set. Report this weak identification and do not describe the selected coefficients as unique estimates.
+- The screening standard error uses an IID-normal approximation without serial-correlation correction. The set is a heuristic, not a joint confidence set; grid adjacency and turnover ordering are implementation choices.
 - All eligible ETFs may participate, including zero weights on a date. There is no artificial minimum allocation.
 - rf=0 is the current rate convention. ChinaBond refresh is not required.
 - Primary status records the designated research specification. Historical results do not imply performance dominance or future guarantees.
@@ -438,11 +448,15 @@ Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Wei
 
 A convex log risk-budget problem produces the reference portfolio. A second convex problem balances reference tracking, normalized variance and expected-return shortfall. The return target equals the predicted return of the contemporaneous feasible reference portfolio.
 
+Capital-weight proximity is not a hard bound on risk-contribution deviations. The paired tracking/risk diagnostic evaluates both using the same decision weights and covariance. HERC Benchmark uses simplified list bisection and subcluster volatility allocation; comparisons do not establish superiority over original HERC or RRP formulations not reproduced here.
+
 The lookback and annualization conventions both use 252 trading days. Covariance uses Ledoit-Wolf shrinkage, and expected returns use a 20-trading-day half-life. Weights are long-only, sum to one and receive no post-solve risk scaling. The model has no active CVaR or turnover constraint. One-way costs of 3 bps multiply the sum of absolute weight trades.
 
 Variance and shortfall penalties update once a year. An earlier 252-day block supplies objective-term ratios for three data-derived candidates per penalty. The following 252-day block evaluates the nine combinations after costs. Selection uses the one-standard-error Sharpe set, an adjacent qualifying grid point when available, lower turnover and quarterly stability. The selected values remain fixed for the next year.
 
 All nine candidates enter the one-standard-error set in every annual validation. The procedure therefore limits arbitrary fixed coefficients but does not identify a unique pair. This uncertainty must accompany any discussion of the parameter schedule.
+
+The screening width is an IID-normal approximation to annualized Sharpe uncertainty, without serial-correlation correction. It is neither a joint confidence set nor a test of candidate equivalence. Quantile grids, adjacency, turnover and quarterly ordering are implementation conventions. The thesis distinguishes this heuristic from the separate paired block-bootstrap diagnostics.
 
 ## Data and evidence
 
