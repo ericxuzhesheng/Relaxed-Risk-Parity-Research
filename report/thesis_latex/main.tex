@@ -185,7 +185,7 @@
 \clearpage
 \pagenumbering{arabic}
 \begin{abstract}
-本文研究境内多资产交易型开放式指数基金（ETF）的风险与收益配置，构建两阶段凸优化模型 Global RRP。模型先求风险预算参考组合，再以资本跟踪、方差及预测收益短缺确定最终权重，收益目标取可行参考的预测收益，惩罚系数依此前数据年度更新。在多头、满额投资与无杠杆约束下，使用\etfCount{}只 ETF，于\evalStartDate{}至\evalEndDate{}开展周度扣费回测。主模型净年化收益为\globalNetReturn，年化波动为\globalVolatility，最大回撤为\globalMaxDD。消融表明，方差项降低风险，短缺项以增加交易需求维持收益。持仓与实施检验支持当前样本中的配置解释，但年度参数识别较弱。研究展示了风险预算与收益目标结合的可行方法，结论受资产池、估计方式及历史规格限制。
+本文研究境内多资产交易型开放式指数基金（ETF）的风险与收益配置，构建两阶段凸优化模型 Global RRP。模型先求风险预算参考组合，再以资本跟踪、方差及预测收益短缺确定最终权重。资本跟踪允许偏离等风险贡献条件，不设置风险份额偏离的硬上限。收益目标取可行参考的预测收益，惩罚系数依此前数据年度更新。在多头、满额投资与无杠杆约束下，使用\etfCount{}只 ETF，于\evalStartDate{}至\evalEndDate{}开展周度扣费回测。主模型净年化收益为\globalNetReturn，年化波动为\globalVolatility，最大回撤为\globalMaxDD。消融表明，方差项降低风险，短缺项以增加交易需求维持收益。持仓与实施检验支持当前样本中的配置解释，但年度参数识别较弱。研究展示了风险预算与收益目标结合的可行方法，结论受资产池、估计方式及历史规格限制。
 
 \noindent\textbf{关键词 } 宽松风险平价；资产配置；凸优化；ETF；交易成本
 \end{abstract}
@@ -194,7 +194,7 @@
 \renewcommand{\abstractname}{Abstract}
 \renewcommand{\abstractnamefont}{\rmfamily\bfseries\zihao{2}}
 \begin{abstract}
-This thesis studies the allocation of risk and return across China-listed exchange-traded funds (ETFs). It develops Global RRP, a two-stage convex optimization model. The first stage constructs a risk-budget reference portfolio. The second determines final weights by balancing squared weight deviations, portfolio variance, and squared expected-return shortfall. The return target equals the predicted return of the feasible reference portfolio. Penalty coefficients are updated annually using calibration and validation blocks that strictly precede their application.
+This thesis studies the allocation of risk and return across China-listed exchange-traded funds (ETFs). It develops Global RRP, a two-stage convex optimization model. The first stage constructs a risk-budget reference portfolio. The second determines final weights by balancing squared weight deviations, portfolio variance, and squared expected-return shortfall. The weight penalty does not impose a bound on risk-contribution deviations. The return target equals the predicted return of the feasible reference portfolio. Penalty coefficients are updated annually using calibration and validation blocks that strictly precede their application.
 
 The empirical study covers \etfCount{} ETFs from \evalStartDate{} to \evalEndDate{}. Portfolios are long-only, fully invested, unlevered, and rebalanced weekly. Performance is evaluated after a \txCostBps{}-basis-point one-way transaction cost using \annualizationDays{} trading days for annualization. The model achieves a net annual return of \globalNetReturn, annualized volatility of \globalVolatility, and a maximum drawdown of \globalMaxDD. Comparisons include hierarchical allocation rules, equal weighting, and a fixed equity-bond allocation. Ablation experiments connect the objective terms to observed allocation changes. The variance penalty reduces risk relative to the reference portfolio, while the shortfall penalty helps preserve return at the cost of additional trading. Holdings and implementation checks provide further evidence on the sources and practical conditions of these outcomes.
 

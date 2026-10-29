@@ -36,7 +36,10 @@ def _annualized_return(price: pd.Series, trading_days: int) -> float:
     if len(clean) < 2:
         return 0.0
     total_return = float(clean.iloc[-1] / clean.iloc[0] - 1.0)
-    years = max((clean.index[-1] - clean.index[0]).days / 365.25, 1.0 / trading_days)
+    # Price rows follow the trading calendar; retain intervening missing dates
+    # when measuring elapsed time, rather than compressing suspensions.
+    intervals = len(price.loc[clean.index[0]:clean.index[-1]]) - 1
+    years = max(intervals, 1) / trading_days
     return float((1.0 + total_return) ** (1.0 / years) - 1.0)
 
 

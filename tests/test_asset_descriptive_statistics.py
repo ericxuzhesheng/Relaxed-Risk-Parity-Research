@@ -32,3 +32,4 @@ def test_compute_asset_statistics_schema_and_values() -> None:
     assert stats["available_observations"].min() >= 4
     assert stats["max_drawdown"].le(0).all()
     np.testing.assert_allclose(stats["annualized_volatility"], stats["daily_volatility"] * np.sqrt(252))
+    np.testing.assert_allclose(stats.set_index("etf").loc["Asset A", "annualized_return"], 1.03**(252/4)-1)
