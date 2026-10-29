@@ -31,6 +31,7 @@
 \input{../thesis_latex/generated_numbers.tex}
 \input{../thesis_latex/generated_diagnostic_numbers.tex}
 \input{../thesis_latex/generated_attribution_numbers.tex}
+\input{../thesis_latex/generated_tracking_risk_numbers.tex}
 
 
 % ── 辅助命令。图片帧（单图 + 可选注释）────────────────────────────────────────
@@ -91,7 +92,7 @@
 \item 正半定二次项与负对数项构成凸目标
 \end{itemize}
 \end{frame}
-\begin{frame}{Global RRP 的凸松弛}
+\begin{frame}{Global RRP 的参考正则化配置}
 \[
 \min_w\;\|w-q_t\|_2^2+\lambda_{v,t}\frac{w^\mathsf{T}\Sigma_t w}{v_t}
 +\lambda_{r,t}\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2
@@ -120,7 +121,29 @@
 \end{column}
 \end{columns}
 \par\medskip
-\small 十个年度中，每年九组候选均进入一倍标准误集合，参数没有得到唯一识别。
+\small 十个年度中，每年九组候选均进入筛选集合；采用独立同分布正态近似标准误，非联合置信集合。网格、相邻点与换手排序为本文实施约定。
+\end{frame}
+\begin{frame}{文献定位：宽松的是最终等风险条件}
+\small
+\begin{itemize}
+\item Gambeta与Kwon（2020）：二阶锥风险平价模型与参考收益倍数目标
+\item Costa与Kwon（2020）：直接限制风险分散程度，并处理收益估计不确定性
+\item 本文：跟踪等风险贡献参考的资本权重，允许方差与预测收益要求推动偏离
+\item 资本距离惩罚保持严格凸结构，但不保证风险贡献偏离的固定上限
+\item 贡献是境内ETF场景的结构与机制检验，不主张优于未复现的原始方法
+\end{itemize}
+\medskip\scriptsize 来源：JRFM 13(10), 237；Journal of Global Optimization 78, 207--238。
+\end{frame}
+\begin{frame}{比较基准与参数筛选的解释边界}
+\small
+\begin{itemize}
+\item HERC Benchmark：单链接排序、列表递归二分、子簇波动比例分配
+\item 不包含原始HERC的完整聚类选择、树结构分配与尾部风险变体
+\item 五模型评价完整规则，主模型252日回看、对照240日回看
+\item 候选筛选宽度：$\widehat{\mathrm{se}}(\widehat S)=\sqrt{(252+\widehat S^2/2)/N}$
+\item 该近似未校正序列相关，也不是候选夏普差的标准误；全部入围不等于统计等价
+\end{itemize}
+\medskip\scriptsize 来源：Raffinot（2018）；Hastie等（2009），第7.10节；Lo（FAJ，2002）。
 \end{frame}
 \begin{frame}{Global RRP 指定配置}
 \begin{tabular}{ll}\toprule
