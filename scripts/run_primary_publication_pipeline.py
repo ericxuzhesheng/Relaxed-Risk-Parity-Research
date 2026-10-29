@@ -55,6 +55,8 @@ def _write_build_verification() -> None:
     )
     if defense_audit["status"] != "passed":
         raise ValueError("Covariance and risk contributions have not reconciled")
+    if not defense_audit["tracking_and_risk_errors_reconciled_with_solver"]:
+        raise ValueError("Capital-distance and risk-budget diagnostics have not reconciled")
     logs = [
         ROOT / "report/thesis_latex/main.log",
         ROOT / "report/ppt/rrp_defense.log",
@@ -86,6 +88,8 @@ def _write_build_verification() -> None:
         "thesis_pages": _pdf_page_count(thesis_pdf),
         "slides_pages": _pdf_page_count(slides_pdf),
         "compile_passes": 3,
+        "evaluation_end": audit["source_audit"]["evaluation_end"],
+        "tracking_risk_decisions": defense_audit["tracking_risk_diagnostic"]["decisions"],
         "overfull_boxes": overfull,
         "annualization_days": audit["annualization_days"],
         "estimation_window_days": audit["estimation_window_days"],
