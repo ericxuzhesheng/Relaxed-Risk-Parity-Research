@@ -2,7 +2,9 @@
 \subsection{风险预算与方差控制}
 Markowitz 以预期收益和协方差建立组合选择框架\cite{markowitz1959portfolio}。风险预算进一步从边际风险和风险贡献确定资产配置，Qian、Maillard 等及 Roncalli 对相关思想与性质作了系统讨论\cite{qian2005risk,maillard2010properties,roncalli2013introduction}。Spinu 将风险预算计算写为含负对数项的凸问题\cite{spinu2013algorithm}，本文以此构造第一阶段参考组合。
 
-风险贡献均衡与组合总风险控制各有作用。Feng 与 Palomar 的 SCRIP 框架将风险集中程度与投资者偏好结合，并以包含组合方差的均值与方差函数作为偏好项\cite{feng2015scrip}，为风险平价配置中引入方差控制提供了直接先例。Ardia 等研究风险型组合的绩效权衡\cite{ardia2018beyond}；Gambeta 与 Kwon 则引入收益目标，分析偏离风险平价的配置效果\cite{gambeta2020risk}。本文沿用这一研究方向，采用可行参考收益和两阶段凸优化，具体目标函数与上述模型有所区别。
+风险贡献均衡与组合总风险控制各有作用。Feng 与 Palomar 的 SCRIP 框架将风险集中程度与投资者偏好结合，并以包含组合方差的均值与方差函数作为偏好项\cite{feng2015scrip}。Ardia 等研究风险型组合的绩效权衡\cite{ardia2018beyond}；Gambeta 与 Kwon 将收益目标引入二阶锥风险平价模型，以风险平价参考收益的倍数设置目标\cite{gambeta2020risk}。因此，将收益信息纳入风险平价和采用凸优化表示均已有先例，本文不将其本身视为新的理论贡献。
+
+Costa 与 Kwon 在广义风险平价中同时权衡收益与风险，并对风险分散程度设置限制，还考虑收益估计不确定性\cite{costa2020generalized}。这一路径直接处理风险贡献之间的关系。本文采用资本权重到风险预算参考的平方距离，获得较简单的严格凸二次规划，但不直接约束最终风险贡献的偏离上限。两种距离不可混同：权重接近参考时风险贡献的变化仍取决于协方差结构和组合方差，第三章给出条件性界限，第五章检验实际偏离。
 
 国内研究同样关注风险预算与其他目标的结合。景奎构建整合 ESG 的双层风险预算模型，以预算参数联系下层投资权重\cite{jing2026esg}。本文固定等风险预算生成参考，再调整最终权重，属于顺序求解的两阶段配置。其理论性质及两阶段之间的关系在第三章展开。
 
@@ -25,11 +27,36 @@ Chopra 与 Ziemba 指出输入估计误差会影响组合选择\cite{chopra1993e
 国内另一类研究以尾部风险为核心。康志林、李仲飞在 CVaR 鲁棒均值与 CVaR 模型中考虑均值估计风险，并研究对偶与光滑求解方法\cite{kang2017cvar}；刘家和等从安全准则出发，通过最大违反概率表达安全要求\cite{liu2016cvar}。本文采用方差作为优化中的风险项，CVaR 仅用于事后评价。其尾部统计依据 Rockafellar 与 Uryasev 的相关研究\cite{rockafellar2000optimization,rockafellar2002conditional}，不据此将回测表现归因于未设置的 CVaR 约束。
 
 \subsection{求解与实证定位}
+\label{sec:literature_empirical}
 凸优化为给定输入下的求解与最优性检验提供方法基础\cite{boyd2004convex}。本文使用已有求解器完成计算，重点考察模型设定和实际配置效果。国内风险平价实践与低利率环境下的配置研究提供了应用背景\cite{htsc2024practice,htsc2025lowrate}。
 
 比较模型包括 HRP、HERC 所代表的层次配置思路\cite{lopezdeprado2016building,raffinot2018hierarchical}，以及等权和固定股债预算。DeMiguel 等的样本外研究说明简单配置有必要作为估计驱动模型的对照\cite{demiguel2009optimal}；Jagannathan 与 Ma 则讨论了非负约束缓和估计误差的作用\cite{jagannathan2003risk}。本文对层次模型的具体实现范围在第四章及附录中说明。
 
 融资约束与波动管理研究提示，绩效差异还可能来自风险承担规模\cite{frazzini2014betting,moreira2017volatility}，因此本文结合持仓和事前风险匹配解释结果。交易成本按固定费率计入净收益，实际市场冲击与容量问题仍需额外建模\cite{almgren2001optimal}。历史分析也受规格选择影响\cite{white2000reality,bailey2014probability,bailey2017pbo}，本文将结论限定于当前资产池及研究规格，以消融、成本和执行检验说明配置机制及其实施条件。
+
+\subsection{近期研究与本文的选择}
+风险预算的近期发展进一步关注估计与决策之间的联系。Uysal 等将风险预算优化嵌入神经网络，以端到端方式连接输入信息与配置目标\cite{uysal2024endtoend}。本文保留历史估计、参考求解和最终优化三个可分别检查的环节，便于解释各目标项的作用；相应代价是未联合学习收益估计与投资决策，不能据此声称消除了估计误差。
+
+Paolella 等研究厚尾收益与动态相关性下的风险平价\cite{paolella2025riskparity}，提示固定的二阶矩估计并不足以概括所有风险状态。本文采用线性收缩并在事后报告尾部损失，未建立厚尾条件分布或动态相关模型。Ledoit 与 Wolf 的二次收缩研究提供了不同于既有线性目标的协方差估计路径\cite{ledoit2022quadratic}。本文保留等方差对角目标以维持研究规格，并通过同一持仓在样本矩阵和收缩矩阵下的风险份额比较，揭示低波动货币工具对估计目标的敏感性；该诊断不构成不同估计器的优劣检验。
+
+融资条件也是文献结论的边界。Asness 等将风险平价与杠杆厌恶联系起来\cite{asness2012leverage}。本文采用无杠杆资本预算，因而低波动资产的风险规模受资本占用限制。研究重点是给定可交易ETF集合内的配置取舍，不能直接外推为机构使用融资和衍生品时的风险平价结论。近期方法在本文中用于界定问题与限制，不以增加复杂模型或引用数量作为研究贡献。
+
+\subsection{最接近研究的比较与研究问题}
+表\ref{tab:nearest_literature}比较与本文目标设计直接相关的研究。比较围绕偏离的度量和收益要求展开，参数与成本的处理只说明本文实际采用的程序，不推定原研究未处理相关问题。
+\begin{table}[htbp]\centering
+\caption{最接近研究与本文目标设计的区别}\label{tab:nearest_literature}
+\begin{tabularx}{\textwidth}{@{}p{2.7cm} L L@{}}
+\toprule 研究 & 核心处理 & 本文的对应与边界\\\midrule
+Feng与Palomar\cite{feng2015scrip} & 风险集中与均值--方差偏好；逐次凸优化 & 用资本参考距离替代直接风险集中目标，最终问题为严格凸二次规划\\
+Gambeta与Kwon\cite{gambeta2020risk} & 二阶锥风险平价模型；参考收益倍数目标 & 采用参考自身收益与平方短缺软惩罚；不复现其原始目标函数\\
+Costa与Kwon\cite{costa2020generalized} & 限制风险分散程度；处理收益不确定性及一般配置 & 不设置风险贡献偏离硬界限，不建立最坏情形收益问题\\
+Bourgeron等\cite{bourgeron2018robust} & 参考组合的Tikhonov正则化 & 令参考随风险预算更新；权重距离与风险距离分别检验\\
+本文 & 等预算参考、方差与预测短缺的顺序凸优化 & 以前期数据年度选择惩罚，按实际换手计费；结论限定于本资产池\\\bottomrule
+\end{tabularx}
+\end{table}
+\FloatBarrier
+
+由此形成三个可检验问题：资本参考跟踪能保留多少风险均衡特征；收益短缺惩罚能否改变方差压缩的实际收益代价；年度参数更新相对于冻结系数是否具有增量作用。对应证据分别为距离与风险贡献配对诊断、目标项消融以及冻结参数比较。本文不以通用凸优化性质替代经济证据，也未在相同数据上复现上述全部原始模型，因此不作优于既有宽松风险平价方法的判断。
 
 \subsection{本文设定与既有研究的对应}
 表\ref{tab:literature_model_link}归纳模型的主要来源及本文处理。已有文献为各项设定提供依据，两阶段组合及其在境内 ETF 上的实施效果由本文检验。年度更新用于保持参数选择的信息时序，现有结果尚不足以将所选系数视为唯一偏好估计。
@@ -43,6 +70,7 @@ Chopra 与 Ziemba 指出输入估计误差会影响组合选择\cite{chopra1993e
 参考正则化 & 参考组合平方范数惩罚\cite{bourgeron2018robust} & 跟踪当期风险预算权重\\
 预测收益目标 & 风险平价参考收益目标\cite{gambeta2020risk} & 取参考自身收益，保持目标可行\\
 平方短缺 & 二次罚函数与参照财富损失\cite{nocedal2006numerical,siegmann2005discrete} & 惩罚预测均值的不足，区别于随机财富尾部损失\\
+年度筛选 & 一标准误规则的模型选择思想\cite{hastie2009elements}；夏普估计误差\cite{lo2002statistics} & 使用近似标准误筛选；网格、相邻点及换手排序为本文实施约定\\
 \bottomrule
 \end{tabularx}
 \end{table}
