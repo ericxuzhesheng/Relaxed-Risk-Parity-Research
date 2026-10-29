@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pandas as pd
+import numpy as np
 
 from scripts.run_asset_descriptive_statistics import OUTPUT_COLUMNS, compute_asset_statistics
 
@@ -30,3 +31,4 @@ def test_compute_asset_statistics_schema_and_values() -> None:
     assert stats.loc[stats["etf"].eq("Asset B"), "missing_ratio"].iloc[0] > 0
     assert stats["available_observations"].min() >= 4
     assert stats["max_drawdown"].le(0).all()
+    np.testing.assert_allclose(stats["annualized_volatility"], stats["daily_volatility"] * np.sqrt(252))

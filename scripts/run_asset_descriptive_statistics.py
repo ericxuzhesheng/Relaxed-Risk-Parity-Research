@@ -12,7 +12,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from src.data_loader import load_price_data, price_to_returns
 from src.metrics import drawdown_series
-from src.utils import resolve_path, get_config
+from src.utils import resolve_path
 
 
 OUTPUT_COLUMNS = [
@@ -82,7 +82,7 @@ def compute_asset_statistics(
 def main() -> None:
     mapping = pd.read_csv(resolve_path("data/processed/etf_asset_mapping.csv"))
     prices = load_price_data(source="tushare", force_update=False)
-    stats = compute_asset_statistics(prices, mapping, get_config()["trading_days_per_year"])
+    stats = compute_asset_statistics(prices, mapping, trading_days=252)
     output = resolve_path("results/tables/asset_descriptive_statistics.csv")
     output.parent.mkdir(parents=True, exist_ok=True)
     stats.to_csv(output, index=False)

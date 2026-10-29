@@ -49,8 +49,8 @@ def tracking_risk_diagnostic(detail, thesis, tables):
     (thesis / "generated_tracking_risk_table.tex").write_text(tex_table(
         ["统计量", "数值"],
         [["周度决策数", str(len(detail))],
-         ["资本距离中位数 / 95\%分位数", f'{distance.median():.4f} / {distance.quantile(.95):.4f}'],
-         ["风险偏离中位数 / 95\%分位数（百分点）", f'{error.median()*100:.2f} / {error.quantile(.95)*100:.2f}'],
+         [r"资本距离中位数 / 95\%分位数", f'{distance.median():.4f} / {distance.quantile(.95):.4f}'],
+         [r"风险偏离中位数 / 95\%分位数（百分点）", f'{error.median()*100:.2f} / {error.quantile(.95)*100:.2f}'],
          ["距离与风险偏离的秩相关", f'{summary["spearman_correlation"]:.3f}'],
          ["距离下四分位组的最大风险偏离（百分点）", f'{summary["low_distance_max_error_pp"]:.2f}']],
         "lr"), encoding="utf-8")
