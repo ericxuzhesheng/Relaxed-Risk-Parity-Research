@@ -1,7 +1,22 @@
 {
   "status": "passed",
-  "decisions": 452,
+  "decisions": 451,
   "lw_formula_max_error": 0.0,
+  "tracking_risk_diagnostic": {
+    "decisions": 451,
+    "distance_median": 0.049935541615797475,
+    "distance_p95": 0.06086315889834759,
+    "risk_error_median_pp": 6.139069761874172,
+    "risk_error_p95_pp": 8.211814135882538,
+    "spearman_correlation": 0.32127007175140126,
+    "low_distance_threshold": 0.04070442183526267,
+    "low_distance_count": 113,
+    "low_distance_max_error_date": "2019-07-05",
+    "low_distance_example_distance": 0.03005701759880459,
+    "low_distance_max_error_pp": 8.236661172420837,
+    "example_largest_deviation_asset": "\u9ec4\u91d1ETF"
+  },
+  "tracking_and_risk_errors_reconciled_with_solver": true,
   "euler_identity_max_error": 6.661338147750939e-16,
   "mean_risk_budget_error_matches_saved_solver": true,
   "risk_contribution_scope": "decision-date target weights; common eligible set; each matrix separately",

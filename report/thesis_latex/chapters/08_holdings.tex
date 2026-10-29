@@ -22,7 +22,7 @@ Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、
 \caption{资本距离与风险预算偏离的周度配对统计}\label{tab:tracking_risk}
 \fitthesistable{\input{generated_tracking_risk_table.tex}}
 \end{table}
-\fignarrow{primary_tracking_risk.pdf}{资本参考距离与风险预算偏离}{fig:tracking_risk}
+\figmaybe{primary_tracking_risk.pdf}{资本参考距离与风险预算偏离}{fig:tracking_risk}
 \FloatBarrier
 
 跨期秩相关为\trackingRiskCorrelation{}。协方差与合格资产数随日期变化，该统计描述历史共同变化，不是固定输入下敏感性界限的估计，也不能证明因果关系。为观察距离较小的决策，按资本距离不超过样本第一四分位点\trackingLowThreshold{}分组；其中风险偏离最大的一期为\trackingExampleDate{}，距离为\trackingExampleDistance{}，最大偏离为\trackingExampleError{}个百分点，对应\trackingExampleAsset{}。该日期依上述规则事后选取，仅用于说明两个指标需要分别评价，不代表前瞻交易信号。

@@ -21,10 +21,12 @@ Use exactly these five model names in current publication prose, tables and figu
 ## Main Positioning
 
 - Global RRP is the weekly primary model. It is long-only, fully invested and unlevered.
+- Relaxed refers to capital-weight regularization around an equal-risk-contribution reference, not a hard bound on risk-share deviations. `primary_tracking_risk.csv` and its summary report both measures. HERC Benchmark is a simplified list-bisection implementation, not a full reproduction of original HERC.
 - The lookback and annualization conventions both use 252 trading days. Inputs use Ledoit-Wolf covariance shrinkage and 20-day half-life EWMA means.
 - The return target equals the predicted return of the contemporaneous feasible risk-budget reference. There is no fixed target multiplier.
 - Variance and shortfall penalties update annually from two strictly earlier 252-day blocks. The first block determines candidate scales and the second evaluates candidates after costs. Selected values remain fixed for the following year.
 - Every annual validation admits all nine candidates to the one-standard-error set. Report this weak identification and do not describe the selected coefficients as unique estimates.
+- The screening standard error uses an IID-normal approximation without serial-correlation correction. The set is a heuristic, not a joint confidence set; grid adjacency and turnover ordering are implementation choices.
 - All eligible ETFs may participate, including zero weights on a date. There is no artificial minimum allocation.
 - rf=0 is the current rate convention. ChinaBond refresh is not required.
 - Primary status records the designated research specification. Historical results do not imply performance dominance or future guarantees.
@@ -37,15 +39,15 @@ Current results use 2018-01-02 to 2026-10-23, unfiltered realized returns, rf=0,
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.98% | 3.58% | 1.641 | 2.342 | -6.80% | 17.29% |
-| HRP Benchmark | 2.09% | 0.26% | 7.832 | 17.389 | -0.19% | 3.54% |
-| HERC Benchmark | 2.51% | 0.81% | 3.074 | 4.630 | -1.57% | 15.86% |
-| Equal Weight | 8.22% | 13.13% | 0.668 | 0.941 | -18.23% | 8.84% |
-| 60/40 Benchmark | 6.01% | 12.08% | 0.544 | 0.778 | -20.46% | 7.69% |
+| Global RRP | 5.97% | 3.58% | 1.636 | 2.335 | -6.80% | 17.28% |
+| HRP Benchmark | 2.09% | 0.26% | 7.834 | 17.391 | -0.19% | 3.53% |
+| HERC Benchmark | 2.51% | 0.81% | 3.073 | 4.628 | -1.57% | 15.84% |
+| Equal Weight | 8.29% | 13.13% | 0.673 | 0.949 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.12% | 12.07% | 0.553 | 0.791 | -20.46% | 7.68% |
 
-Primary average money-market weight is 18.03%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.37%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
+Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.36%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
-Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 904 sample-covariance matches attain the target; 904 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 902 sample-covariance matches attain the target; 902 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
 
 Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, `primary_brinson_categories.csv` and `primary_attribution_audit.json`. Seven attribution groups separate cash, government bonds and credit bonds without changing the ETF universe. Attribution excludes the initial NAV date to align with NAV-derived return statistics. `primary_group_risk_contribution.csv` evaluates identical decision weights under LW and sample covariance; risk-budget deviations are percentage points. `primary_defense_consistency_audit.json` verifies LW reconstruction and Euler identities. The primary model uses a 252-day lookback; published benchmark implementations retain 240 days. Effects are arithmetic mean daily basis points, not annualized or compounded; down-day attribution is ex-post descriptive. Risk contribution, prior-state position analysis and return attribution are distinct outputs. Turtle position sizing is an economic analogy, not an implemented breakout strategy.
 

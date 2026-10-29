@@ -2,7 +2,7 @@
 
 [中文](#中文) · [English](#english) · [完整论文](report/thesis_latex/main.pdf) · [答辩演示](report/ppt/rrp_defense.pdf) · [结果数据](results/tables/model_performance_summary.csv)
 
-更新日期 / Last updated: **2026-10-28**
+更新日期 / Last updated: **2026-10-29**
 
 ## 中文
 
@@ -12,7 +12,9 @@
 
 **Global RRP** 是当前主模型。它先求解凸风险预算参考，再通过方差与预测收益短缺惩罚调整配置。研究同时保留四个对照，检验这种调整带来的收益是否伴随更高波动、换手或尾部损失。
 
-当前样本中，Global RRP 的净年化收益为 **5.98%**，年化波动为 **3.58%**，最大回撤为 **-6.80%**。研究通过目标项消融、事前风险匹配和配对区块抽样，量化优化规则、风险承担与参数更新形成的取舍。
+这里的“宽松”指最终权重允许偏离等风险贡献参考。资本距离惩罚不直接限制风险贡献偏离，实际关系见[周度配对诊断](results/tables/primary_tracking_risk.csv)和[图形](results/figures/primary_tracking_risk.png)。本研究检验参考正则化结构的配置效果，不主张优于未在同一数据上复现的原始RRP方法。
+
+当前样本中，Global RRP 的净年化收益为 **5.97%**，年化波动为 **3.58%**，最大回撤为 **-6.80%**。研究通过目标项消融、事前风险匹配和配对区块抽样，量化优化规则、风险承担与参数更新形成的取舍。
 
 ### 快速阅读与证据入口
 
@@ -33,7 +35,7 @@
 |---|---|---|
 | **Global RRP** | 跟踪凸风险预算参考，平衡归一化方差与预测收益短缺 | 周频主模型 |
 | HRP Benchmark | 根据资产相关结构聚类，再递归分配风险 | 层次风险平价对照 |
-| HERC Benchmark | 按层次结构进行等风险贡献配置 | 层次等风险贡献对照 |
+| HERC Benchmark | 相关性排序、列表递归二分及子簇波动比例分配 | 简化层次对照，不是原始HERC的完整复现 |
 | Equal Weight | 在当期合格资产间等权配置 | 简单分散化对照 |
 | 60/40 Benchmark | 按项目分类配置60%权益与40%债券，组内等权 | 固定股债比例对照 |
 
@@ -55,21 +57,23 @@ $$
 
 **年度校准只使用生效日前的信息。** 较早的252日区间确定候选尺度，随后的252日区间检验九组参数的扣费表现。选择规则考虑一倍夏普标准误集合、相邻候选、换手与季度稳定性，所选参数在下一年保持固定。
 
+筛选宽度采用独立同分布正态近似下的夏普标准误，未校正序列相关，不是候选差异的联合置信集合。候选分位点、网格邻接与换手排序是本文实施约定；全部候选入围不等于统计等价。公式与来源见论文第三章（Hastie等，2009；Lo，2002）。
+
 ### 历史结果与研究判断
 
-评价区间为 **2018-01-02 至 2026-10-28**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
+评价区间为 **2018-01-02 至 2026-10-23**。下表由[权威绩效CSV](results/tables/model_performance_summary.csv)生成，并可与[对照结果](results/tables/hrp_comparison.csv)交叉核查。
 
 | 模型 | 净年化收益 | 年化波动 | 夏普 | Sortino | 最大回撤 | 月均换手 |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.98% | 3.58% | 1.641 | 2.342 | -6.80% | 17.29% |
-| HRP Benchmark | 2.09% | 0.26% | 7.832 | 17.389 | -0.19% | 3.54% |
-| HERC Benchmark | 2.51% | 0.81% | 3.074 | 4.630 | -1.57% | 15.86% |
-| Equal Weight | 8.22% | 13.13% | 0.668 | 0.941 | -18.23% | 8.84% |
-| 60/40 Benchmark | 6.01% | 12.08% | 0.544 | 0.778 | -20.46% | 7.69% |
+| Global RRP | 5.97% | 3.58% | 1.636 | 2.335 | -6.80% | 17.28% |
+| HRP Benchmark | 2.09% | 0.26% | 7.834 | 17.391 | -0.19% | 3.53% |
+| HERC Benchmark | 2.51% | 0.81% | 3.073 | 4.628 | -1.57% | 15.84% |
+| Equal Weight | 8.29% | 13.13% | 0.673 | 0.949 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.12% | 12.07% | 0.553 | 0.791 | -20.46% | 7.68% |
 
 Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
-日利ETF的平均权重为 **18.03%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.37%**。这一持仓结构与目标项消融、风险匹配实验共同解释组合的风险收益权衡。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
+日利ETF的平均权重为 **18.02%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.36%**。这一持仓结构与目标项消融、风险匹配实验共同解释组合的风险收益权衡。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
 
 年度校准中，每年的九组候选均进入一倍标准误集合，有区分力的年度为 **0/10**。因此，当前样本不足以识别唯一惩罚系数，最终选择更多依赖换手和稳定性规则。
 
@@ -79,12 +83,12 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 | 诊断设定 | 净年化收益 | 实现年化波动 | 夏普 |
 |---|---:|---:|---:|
-| Global RRP：仅持有风险预算参考 | 5.87% | 4.76% | 1.222 |
-| Global RRP：冻结评价首年参数 | 5.96% | 3.55% | 1.651 |
-| Equal Weight：事前风险匹配 | 3.48% | 3.17% | 1.095 |
-| 60/40 Benchmark：事前风险匹配 | 3.06% | 3.17% | 0.968 |
+| Global RRP：仅持有风险预算参考 | 5.87% | 4.77% | 1.222 |
+| Global RRP：冻结评价首年参数 | 5.95% | 3.55% | 1.646 |
+| Equal Weight：事前风险匹配 | 3.50% | 3.17% | 1.100 |
+| 60/40 Benchmark：事前风险匹配 | 3.08% | 3.17% | 0.975 |
 
-同一主模型持仓路径在单边20 bps费用下的净年化收益为 **5.59%**；延后一交易日执行的净年化收益为 **5.88%**。均值半衰期、固定子区间和5/21/63日区块长度共同刻画结果敏感性。配对抽样区间反映固定历史规格下的统计不确定性。
+同一主模型持仓路径在单边20 bps费用下的净年化收益为 **5.58%**；延后一交易日执行的净年化收益为 **5.87%**。均值半衰期、固定子区间和5/21/63日区块长度共同刻画结果敏感性。配对抽样区间反映固定历史规格下的统计不确定性。
 
 [消融与辅助比较](results/tables/primary_diagnostic_summary.csv) · [稳健性检验](results/tables/primary_robustness.csv) · [配对抽样](results/tables/primary_paired_bootstrap.csv) · [实验协议](results/primary_diagnostics/protocol.json) · [核验记录](results/tables/primary_diagnostics_audit.json)
 
@@ -104,7 +108,7 @@ Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。
 
 ![五个周频模型的月均换手](results/figures/global_rrp_turnover_comparison.png)
 
-换手按买卖绝对权重变化之和计算，再按自然月汇总。Global RRP 的月均换手为 **17.29%**，低波动并不意味着低交易需求。回测按单边3 bps扣费，实际冲击成本仍需单独检验。
+换手按买卖绝对权重变化之和计算，再按自然月汇总。Global RRP 的月均换手为 **17.28%**，低波动并不意味着低交易需求。回测按单边3 bps扣费，实际冲击成本仍需单独检验。
 
 #### 历史尾部损失
 
@@ -143,7 +147,7 @@ Ledoit–Wolf将经验协方差与等方差对角目标加权组合，强度由�
 
 ### 数据与复现
 
-资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。数据覆盖 **2007-01-18 至 2026-10-28**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
+资产池涵盖30只ETF和8类资产，通过境内上市产品获得债券、货币市场、境内外权益及商品相关敞口。数据覆盖 **2007-01-18 至 2026-10-23**，各资产可用起点不同，上市前价格不回填。完整名单以[资产定义](src/asset_universe.py)为准，可用日期与缺失情况见[资产统计](results/tables/asset_descriptive_statistics.csv)。另有6只候选ETF等待下一次资产池评审，不参与当前回测。
 
 完整复现需要 Python 环境、[项目依赖](requirements.txt)、可用的 `TUSHARE_TOKEN`，以及加入 PATH 的 XeLaTeX、BibTeX 和 Poppler `pdfinfo`。LaTeX 环境需要中文字体与相关宏包。
 
@@ -193,7 +197,9 @@ python scripts/run_primary_publication_pipeline.py --force-recalibrate --force-b
 
 Can a risk-budget portfolio balance return and diversification while remaining long-only, fully invested and unlevered? This project studies **30 China-listed ETFs** with domestic and international exposures. It adjusts weights around a risk-budget reference and compares returns, drawdowns and trading costs under a common weekly backtest.
 
-**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **5.98%** net annual return, **3.58%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
+**Global RRP** is the designated primary model. It first solves a convex risk-budget problem, then adjusts the allocation using variance and expected-return shortfall penalties. Four comparisons test the resulting trade-offs. The current sample records **5.97%** net annual return, **3.58%** annual volatility and **-6.80%** maximum drawdown. Money-market and bond exposure, together with weak parameter identification, are central to interpreting these results.
+
+“Relaxed” means that final weights may depart from the equal-risk-contribution reference. Capital-weight regularization does not impose a risk-contribution deviation ceiling. The [paired weekly diagnostic](results/tables/primary_tracking_risk.csv) and [figure](results/figures/primary_tracking_risk.png) evaluate both distances. This study tests the reference-based structure and does not claim superiority over original RRP methods not reproduced on the same data.
 
 ### Reading guide and evidence
 
@@ -214,7 +220,7 @@ Equal capital weights do not ensure equal risk contributions. Risk budgeting add
 |---|---|---|
 | **Global RRP** | Reference tracking with normalized variance and expected-return shortfall penalties | Weekly primary model |
 | HRP Benchmark | Correlation clustering and recursive risk allocation | Hierarchical risk parity comparison |
-| HERC Benchmark | Equal risk contributions within a hierarchical structure | Hierarchical equal risk contribution comparison |
+| HERC Benchmark | Correlation ordering, list bisection and subcluster volatility allocation | Simplified comparison, not a complete reproduction of original HERC |
 | Equal Weight | Equal weights across eligible assets | Simple diversification comparison |
 | 60/40 Benchmark | 60% equity and 40% bonds under project classifications, equal weights within each group | Fixed stock-bond comparison |
 
@@ -230,21 +236,23 @@ Inputs use up to 252 trading days, Ledoit-Wolf covariance shrinkage and EWMA mea
 
 Penalty calibration uses two strictly earlier 252-day blocks. The first supplies candidate scales; the second evaluates nine combinations after costs. Selection considers the one-standard-error Sharpe set, neighboring candidates, turnover and quarterly stability. Selected coefficients remain fixed for the following year.
 
+The screening width uses an IID-normal approximation to the Sharpe standard error without serial-correlation adjustment. It is not a joint confidence set for candidate differences. Quantile grids, adjacency and turnover ordering are implementation choices; admission of every candidate does not establish statistical equivalence. Chapter 3 gives the formula and sources (Hastie et al., 2009; Lo, 2002).
+
 ### Historical results and interpretation
 
-The evaluation period is **2018-01-02 to 2026-10-28**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
+The evaluation period is **2018-01-02 to 2026-10-23**. Realized returns retain extreme observations. Metrics use **rf=0**, 252-day annualization and assumed **3-bp one-way trading costs**.
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.98% | 3.58% | 1.641 | 2.342 | -6.80% | 17.29% |
-| HRP Benchmark | 2.09% | 0.26% | 7.832 | 17.389 | -0.19% | 3.54% |
-| HERC Benchmark | 2.51% | 0.81% | 3.074 | 4.630 | -1.57% | 15.86% |
-| Equal Weight | 8.22% | 13.13% | 0.668 | 0.941 | -18.23% | 8.84% |
-| 60/40 Benchmark | 6.01% | 12.08% | 0.544 | 0.778 | -20.46% | 7.69% |
+| Global RRP | 5.97% | 3.58% | 1.636 | 2.335 | -6.80% | 17.28% |
+| HRP Benchmark | 2.09% | 0.26% | 7.834 | 17.391 | -0.19% | 3.53% |
+| HERC Benchmark | 2.51% | 0.81% | 3.073 | 4.628 | -1.57% | 15.84% |
+| Equal Weight | 8.29% | 13.13% | 0.673 | 0.949 | -18.23% | 8.82% |
+| 60/40 Benchmark | 6.12% | 12.07% | 0.553 | 0.791 | -20.46% | 7.68% |
 
 Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
 
-The money-market ETF averages **18.03%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.37%**. This allocation, objective ablations and risk-matched comparisons jointly explain the risk-return trade-off. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
+The money-market ETF averages **18.02%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.36%**. This allocation, objective ablations and risk-matched comparisons jointly explain the risk-return trade-off. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
 
 All nine candidates enter the one-standard-error set in every annual validation. There are **0/10** informative years, so the sample does not identify unique penalty coefficients. Turnover and stability rules play a larger role in the final selection.
 
@@ -254,12 +262,12 @@ The study evaluates objective-term ablations, parameters frozen before evaluatio
 
 | Diagnostic setting | Net annual return | Realized volatility | Sharpe |
 |---|---:|---:|---:|
-| Global RRP: reference only | 5.87% | 4.76% | 1.222 |
-| Global RRP: initial parameters frozen | 5.96% | 3.55% | 1.651 |
-| Equal Weight: ex-ante risk matching | 3.48% | 3.17% | 1.095 |
-| 60/40 Benchmark: ex-ante risk matching | 3.06% | 3.17% | 0.968 |
+| Global RRP: reference only | 5.87% | 4.77% | 1.222 |
+| Global RRP: initial parameters frozen | 5.95% | 3.55% | 1.646 |
+| Equal Weight: ex-ante risk matching | 3.50% | 3.17% | 1.100 |
+| 60/40 Benchmark: ex-ante risk matching | 3.08% | 3.17% | 0.975 |
 
-At 20-bp one-way costs, the primary holdings path records **5.59%** net annual return. Executing original targets one trading day later records **5.88%**. Mean half-life changes, fixed subperiods and paired moving-block bootstrap intervals with 5/21/63-day blocks describe sensitivity conditional on the historical specification.
+At 20-bp one-way costs, the primary holdings path records **5.58%** net annual return. Executing original targets one trading day later records **5.87%**. Mean half-life changes, fixed subperiods and paired moving-block bootstrap intervals with 5/21/63-day blocks describe sensitivity conditional on the historical specification.
 
 [Diagnostic results](results/tables/primary_diagnostic_summary.csv) · [Robustness](results/tables/primary_robustness.csv) · [Paired bootstrap](results/tables/primary_paired_bootstrap.csv) · [Protocol](results/primary_diagnostics/protocol.json)
 
@@ -296,7 +304,7 @@ Cash and bond allocations adjust risk within a fully invested portfolio. The the
 
 ### Data and reproduction
 
-The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The price data span **2007-01-18 to 2026-10-28**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
+The universe covers 30 ETFs across eight categories, with six candidates excluded until the next universe review. The price data span **2007-01-18 to 2026-10-23**; individual assets have different availability dates, and pre-listing prices are not backfilled. See the [asset definitions](src/asset_universe.py) and [descriptive statistics](results/tables/asset_descriptive_statistics.csv).
 
 Full reproduction requires Python, the pinned [dependencies](requirements.txt), a valid `TUSHARE_TOKEN`, and XeLaTeX, BibTeX and Poppler `pdfinfo` on PATH. The LaTeX installation also needs Chinese fonts and packages. Install dependencies, set the token in the local environment, and run from the repository root.
 

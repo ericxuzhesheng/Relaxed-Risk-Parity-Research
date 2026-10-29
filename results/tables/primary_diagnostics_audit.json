@@ -1,17 +1,17 @@
 {
   "status": "passed",
   "experiment_count": 10,
-  "primary_return_parity_max_error": 9.990923019453923e-17,
+  "primary_return_parity_max_error": 9.996344030316351e-17,
   "primary_path_source": "published Global RRP backtest checkpoint",
   "replay_parity": true,
   "long_only_fully_invested": true,
   "prior_only_solver_inputs": true,
   "cost_identity": true,
-  "risk_matching_decisions": 904,
+  "risk_matching_decisions": 902,
   "risk_matching_infeasible_count": 0,
   "risk_matching_max_abs_gap": 2.0816681711721685e-17,
   "risk_matching_covariance": "prior 252-day sample covariance with PSD floor",
-  "lw_risk_matching_infeasible_count": 904,
+  "lw_risk_matching_infeasible_count": 902,
   "paired_bootstrap_rows": 15,
   "confidence_intervals": "pointwise percentile intervals conditional on historical specification; no multiple-selection correction"
 }

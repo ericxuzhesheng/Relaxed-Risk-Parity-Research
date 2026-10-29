@@ -8,17 +8,21 @@ Global RRP is the weekly primary model. HRP Benchmark, HERC Benchmark, Equal Wei
 
 A convex log risk-budget problem produces the reference portfolio. A second convex problem balances reference tracking, normalized variance and expected-return shortfall. The return target equals the predicted return of the contemporaneous feasible reference portfolio.
 
+Capital-weight proximity is not a hard bound on risk-contribution deviations. The paired tracking/risk diagnostic evaluates both using the same decision weights and covariance. HERC Benchmark uses simplified list bisection and subcluster volatility allocation; comparisons do not establish superiority over original HERC or RRP formulations not reproduced here.
+
 The lookback and annualization conventions both use 252 trading days. Covariance uses Ledoit-Wolf shrinkage, and expected returns use a 20-trading-day half-life. Weights are long-only, sum to one and receive no post-solve risk scaling. The model has no active CVaR or turnover constraint. One-way costs of 3 bps multiply the sum of absolute weight trades.
 
 Variance and shortfall penalties update once a year. An earlier 252-day block supplies objective-term ratios for three data-derived candidates per penalty. The following 252-day block evaluates the nine combinations after costs. Selection uses the one-standard-error Sharpe set, an adjacent qualifying grid point when available, lower turnover and quarterly stability. The selected values remain fixed for the next year.
 
 All nine candidates enter the one-standard-error set in every annual validation. The procedure therefore limits arbitrary fixed coefficients but does not identify a unique pair. This uncertainty must accompany any discussion of the parameter schedule.
 
+The screening width is an IID-normal approximation to annualized Sharpe uncertainty, without serial-correlation correction. It is neither a joint confidence set nor a test of candidate equivalence. Quantile grids, adjacency, turnover and quarterly ordering are implementation conventions. The thesis distinguishes this heuristic from the separate paired block-bootstrap diagnostics.
+
 ## Data and evidence
 
-Evaluation spans 2018-01-02 through 2026-10-28 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
+Evaluation spans 2018-01-02 through 2026-10-23 with rf=0. The 30-ETF pool excludes six candidates. Eligibility requires 60 prior valid observations and positive variance. Returns retain extremes, and pre-listing prices are not backfilled.
 
-The historical path records 5.98% net annual return, 3.58% annual volatility, a 1.641 Sharpe ratio and -6.80% maximum drawdown. All 30 ETFs receive material allocations during eligible periods.
+The historical path records 5.97% net annual return, 3.58% annual volatility, a 1.636 Sharpe ratio and -6.80% maximum drawdown. All 30 ETFs receive material allocations during eligible periods.
 
 Rebalance inputs precede the trading date. Saved daily returns reconcile target weights, drifted weights, turnover and costs. The backtest does not establish actual execution prices, market impact or capacity. Historical design choices also prevent an untouched model-selection claim.
 
