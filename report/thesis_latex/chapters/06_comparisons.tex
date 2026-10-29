@@ -38,3 +38,18 @@ d_{ij}=\sqrt{\frac{1-\rho_{ij}}2}.
 \alpha_R=1-\alpha_L.
 \]
 这种规则相对于方差倒数分配减弱了对子簇波动差异的放大，构成明确可复现的层次对照。它是本仓库的简化递归实现，不包含原始文献中所有聚类选择和风险预算步骤。
+
+Raffinot 的原始HERC结合层次聚类与沿树状结构的等风险贡献分配，并讨论下侧风险度量\cite{raffinot2018hierarchical}。表\ref{tab:herc_scope}列出本文保留与简化的环节。HERC Benchmark 作为固定公开名称，只指下述可复现规则；其结果不代表对原始HERC算法的完整复现或优劣检验。
+\begin{table}[htbp]\centering
+\caption{HERC文献方法与本文基准的实施边界}\label{tab:herc_scope}
+\begin{tabularx}{\textwidth}{@{}p{2.2cm} L L@{}}
+\toprule 环节 & 原始HERC的处理 & 本文HERC Benchmark\\\midrule
+层次结构 & 结合聚类与树的分支结构配置 & 单链接聚类仅提供资产叶节点顺序\\
+簇的划分 & 选择聚类层次并进行簇间和簇内配置 & 按排序列表长度递归二分至单资产，不选择最优簇数\\
+风险分配 & 沿层次结构作等风险贡献配置 & 以逆方差临时簇权重估计簇波动，再按对方波动占比分配\\
+风险度量 & 讨论包括CVaR、CDaR在内的风险度量 & 仅使用协方差导出的波动，不采用尾部风险分配\\\bottomrule
+\end{tabularx}
+\end{table}
+\FloatBarrier
+
+本文五模型比较评价完整实施规则。对Global RRP目标项的归因依赖保持输入相同的消融，不能由简化层次对照推出相对于原始HERC或其他RRP模型的普遍优势。原始方法复现属于不同的比较任务，未纳入本研究的实证结论。
