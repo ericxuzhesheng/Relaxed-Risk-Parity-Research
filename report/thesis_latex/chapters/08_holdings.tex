@@ -15,6 +15,21 @@ Global RRP平均货币ETF权重为\primaryCashMean，货币ETF与三只国债、
 
 资本权重与风险贡献回答不同问题。参考组合按当期协方差近似满足等风险预算，最终组合为兼顾方差和收益目标而接受偏离。采用主模型的Ledoit--Wolf矩阵计算，完整模型的平均最大风险预算偏离为\diagPrimaryRCError{}个百分点，参考组合为\diagReferenceRCError{}个百分点，具体定义和结果见表\ref{tab:diagnostic_mechanism}。这说明最终配置围绕参考组合进行调整，同时允许风险预算不再严格相等。
 
+\subsubsection{资本距离与风险偏离的配对诊断}
+\label{sec:tracking_risk_empirical}
+在每个周度决策日，采用同一合格资产集合及主模型的收缩协方差，计算 $d_t=\|w_t-q_t\|_2$ 与第\ref{sec:tracking_risk_bound}节的 $E_t(w_t)$。参考权重取同输入的风险预算参考实验，距离平方及风险偏离逐期与保存的求解诊断核对。图\ref{fig:tracking_risk}和表\ref{tab:tracking_risk}展示两个指标，而不预先将某个资本距离阈值认定为风险预算接近的充分条件。
+\begin{table}[htbp]\centering
+\caption{资本距离与风险预算偏离的周度配对统计}\label{tab:tracking_risk}
+\fitthesistable{\input{generated_tracking_risk_table.tex}}
+\end{table}
+\fignarrow{primary_tracking_risk.pdf}{资本参考距离与风险预算偏离}{fig:tracking_risk}
+\FloatBarrier
+
+跨期秩相关为\trackingRiskCorrelation{}。协方差与合格资产数随日期变化，该统计描述历史共同变化，不是固定输入下敏感性界限的估计，也不能证明因果关系。为观察距离较小的决策，按资本距离不超过样本第一四分位点\trackingLowThreshold{}分组；其中风险偏离最大的一期为\trackingExampleDate{}，距离为\trackingExampleDistance{}，最大偏离为\trackingExampleError{}个百分点，对应\trackingExampleAsset{}。该日期依上述规则事后选取，仅用于说明两个指标需要分别评价，不代表前瞻交易信号。
+
+因此，本文报告“围绕风险预算参考调整”的资本结构，并直接披露调整后的风险份额。是否可接受所观察到的预算偏离取决于投资者的风险分配要求，不能由严格凸性或参考跟踪形式自动确定。
+
+\subsubsection{统一风险尺度下的辅助比较}
 为进一步观察低风险资产配置的影响，表\ref{tab:diagnostic_matched}将简单基准与货币ETF混合，在每次调仓前使用同一历史样本协方差衡量双方风险，使辅助组合的估计方差不超过主模型。主模型权重仍由原有Ledoit--Wolf协方差求得。原收缩矩阵下的匹配均不可行，因此此处采用样本矩阵统一比较；该尺度是在历史诊断中确定的，计算与可行性记录见附录\ref{app:empirical}。
 \begin{table}[htbp]\centering
 \caption{指定事前风险尺度下的辅助比较}\label{tab:diagnostic_matched}
