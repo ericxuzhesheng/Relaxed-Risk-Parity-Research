@@ -11,8 +11,8 @@
   "thesis_pages": 65,
   "slides_pages": 42,
   "compile_passes": 3,
-  "evaluation_end": "2026-10-23",
-  "tracking_risk_decisions": 451,
+  "evaluation_end": "2026-10-30",
+  "tracking_risk_decisions": 452,
   "overfull_boxes": 0,
   "annualization_days": 252,
   "estimation_window_days": 252,
@@ -22,7 +22,7 @@
   "defense_consistency_audit_status": "passed",
   "attribution_daily_identity_max_error": 9.67628754899863e-15,
   "diagnostic_experiment_count": 10,
-  "risk_matching_decisions": 902,
+  "risk_matching_decisions": 904,
   "risk_matching_infeasible_count": 0,
   "fonts": {
     "main.pdf": {

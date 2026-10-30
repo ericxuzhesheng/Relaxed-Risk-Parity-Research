@@ -37,6 +37,18 @@
   },
   {
     "step": "scripts/audit_defense_consistency.py",
-    "returncode": 1
+    "returncode": 0
+  },
+  {
+    "step": "scripts/sync_global_rrp_docs.py",
+    "returncode": 0
+  },
+  {
+    "step": "thesis_latex/main.pdf",
+    "returncode": 0
+  },
+  {
+    "step": "ppt/rrp_defense.pdf",
+    "returncode": 0
   }
 ]

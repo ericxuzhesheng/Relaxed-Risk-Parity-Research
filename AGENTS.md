@@ -39,15 +39,15 @@ Current results use 2018-01-02 to 2026-10-30, unfiltered realized returns, rf=0,
 
 | Model | Net annual return | Volatility | Sharpe | Sortino | Max drawdown | Monthly turnover |
 |---|---:|---:|---:|---:|---:|---:|
-| Global RRP | 5.97% | 3.58% | 1.636 | 2.335 | -6.80% | 17.28% |
-| HRP Benchmark | 2.09% | 0.26% | 7.834 | 17.391 | -0.19% | 3.53% |
-| HERC Benchmark | 2.51% | 0.81% | 3.073 | 4.628 | -1.57% | 15.84% |
-| Equal Weight | 8.29% | 13.13% | 0.673 | 0.949 | -18.23% | 8.82% |
-| 60/40 Benchmark | 6.12% | 12.07% | 0.553 | 0.791 | -20.46% | 7.68% |
+| Global RRP | 5.94% | 3.58% | 1.631 | 2.327 | -6.80% | 17.29% |
+| HRP Benchmark | 2.09% | 0.26% | 7.820 | 17.346 | -0.19% | 3.53% |
+| HERC Benchmark | 2.49% | 0.81% | 3.049 | 4.586 | -1.57% | 15.87% |
+| Equal Weight | 7.87% | 13.14% | 0.642 | 0.904 | -18.23% | 8.84% |
+| 60/40 Benchmark | 5.65% | 12.09% | 0.515 | 0.736 | -20.46% | 7.70% |
 
-Primary average money-market weight is 18.02%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.36%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
+Primary average money-market weight is 18.03%, with a maximum of 26.43%. The average combined money-market and three-bond weight is 66.37%. All 30 ETFs receive material allocations during eligible periods. The annual calibration has 0 informative years out of 10 under the one-standard-error rule.
 
-Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 902 sample-covariance matches attain the target; 902 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
+Current-specification ablations, ex-ante risk-matched comparisons and robustness diagnostics are in `primary_diagnostic_summary.csv`, `primary_robustness.csv`, `primary_subperiods.csv` and `primary_paired_bootstrap.csv`. They explain the designated model and do not select a replacement. Risk matching uses the same prior sample covariance for both portfolios, while original Ledoit-Wolf feasibility is recorded separately. All 904 sample-covariance matches attain the target; 904 original-shrinkage matches are infeasible because of the money-market variance estimate. The protocol is a reproducibility record for this historical diagnostic study. Bootstrap intervals are pointwise and conditional on the historical specification.
 
 Holdings-based Brinson-Fachler attribution is in `primary_brinson_summary.csv`, `primary_brinson_categories.csv` and `primary_attribution_audit.json`. Seven attribution groups separate cash, government bonds and credit bonds without changing the ETF universe. Attribution excludes the initial NAV date to align with NAV-derived return statistics. `primary_group_risk_contribution.csv` evaluates identical decision weights under LW and sample covariance; risk-budget deviations are percentage points. `primary_defense_consistency_audit.json` verifies LW reconstruction and Euler identities. The primary model uses a 252-day lookback; published benchmark implementations retain 240 days. Effects are arithmetic mean daily basis points, not annualized or compounded; down-day attribution is ex-post descriptive. Risk contribution, prior-state position analysis and return attribution are distinct outputs. Turtle position sizing is an economic analogy, not an implemented breakout strategy.
 
