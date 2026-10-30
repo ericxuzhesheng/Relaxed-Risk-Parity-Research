@@ -18,6 +18,19 @@ from scripts.publish_global_rrp import tex_table, pct
 from scripts.render_publication_figures import style, save
 
 
+def reconcile_tracking_distance(weights, replay_reference, objective_tracking):
+    """Keep the original solve's distance; audit an independent numerical replay.
+
+    Cached solves and independently solved references need not have identical
+    optimizer residuals. Compare L2 distances at 1e-5 in capital-weight units
+    (0.001 percentage points), rather than asserting squared objectives equal.
+    """
+    recorded = float(np.sqrt(objective_tracking))
+    reconstructed = float(np.linalg.norm(weights - replay_reference))
+    np.testing.assert_allclose(reconstructed, recorded, atol=1e-5, rtol=0)
+    return recorded, reconstructed
+
+
 def tracking_risk_diagnostic(detail, thesis, tables):
     """Describe weight distance and risk-budget deviation without changing targets."""
     import matplotlib.pyplot as plt
@@ -110,8 +123,8 @@ def main():
         sample = estimate_covariance(window[active], method="sample", trading_days=252, annualize=True, allow_fallback=False).to_numpy()
         w = primary.loc[date, ["weight_"+a for a in active]].to_numpy(float)
         q = reference.loc[date, ["weight_"+a for a in active]].to_numpy(float)
-        tracking = float(np.linalg.norm(w-q))
-        np.testing.assert_allclose(tracking**2, solver.loc[date, "objective_tracking"], atol=1e-7, rtol=0)
+        tracking, replay_tracking = reconcile_tracking_distance(
+            w, q, solver.loc[date, "objective_tracking"])
         reference_rrc = q*(sigma@q)/float(q@sigma@q)
         variance, sample_variance = float(w @ sigma @ w), float(w @ sample @ w)
         rc = w * (sigma @ w) / np.sqrt(variance)
@@ -127,6 +140,8 @@ def main():
             "primary_sample_volatility": np.sqrt(sample_variance),
             "max_relative_risk_budget_error": np.max(np.abs(rrc-1/len(active))),
             "tracking_distance": tracking,
+            "tracking_distance_reconstructed": replay_tracking,
+            "tracking_reconstruction_error": abs(tracking - replay_tracking),
             "reference_risk_budget_error": np.max(np.abs(reference_rrc-1/len(active))),
             "largest_deviation_asset": active[int(np.argmax(np.abs(rrc-1/len(active))))],
         })
@@ -165,6 +180,9 @@ def main():
     audit = {"status":"passed", "decisions":len(dates), "lw_formula_max_error":max_lw_error,
              "tracking_risk_diagnostic": tracking_summary,
              "tracking_and_risk_errors_reconciled_with_solver": True,
+             "tracking_distance_source": "sqrt of original solver objective_tracking",
+             "tracking_reconstruction_max_error": float(detail.tracking_reconstruction_error.max()),
+             "tracking_reconstruction_tolerance": 1e-5,
              "euler_identity_max_error":max_euler_error, "mean_risk_budget_error_matches_saved_solver":True,
              "risk_contribution_scope":"decision-date target weights; common eligible set; each matrix separately",
              "sample_covariance":"unbiased M-1 denominator plus PSD floor",

@@ -7,11 +7,11 @@
   "long_only_fully_invested": true,
   "prior_only_solver_inputs": true,
   "cost_identity": true,
-  "risk_matching_decisions": 902,
+  "risk_matching_decisions": 904,
   "risk_matching_infeasible_count": 0,
   "risk_matching_max_abs_gap": 2.0816681711721685e-17,
   "risk_matching_covariance": "prior 252-day sample covariance with PSD floor",
-  "lw_risk_matching_infeasible_count": 902,
+  "lw_risk_matching_infeasible_count": 904,
   "paired_bootstrap_rows": 15,
   "confidence_intervals": "pointwise percentile intervals conditional on historical specification; no multiple-selection correction"
 }
