@@ -71,7 +71,7 @@ $$
 | Equal Weight | 7.95% | 13.17% | 0.647 | 0.912 | -18.23% | 8.80% |
 | 60/40 Benchmark | 5.91% | 12.13% | 0.534 | 0.764 | -20.46% | 7.65% |
 
-Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 在这一时期获得更高收益，同时承担更大的波动与回撤。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
+Global RRP 的收益高于两个层次配置对照，波动和回撤也更高。Equal Weight 与 60/40 Benchmark 的波动和回撤幅度均高于 Global RRP，收益水平见上表。主模型身份表示当前研究设定，历史结果没有显示它在各项指标上全面占优。
 
 日利ETF的平均权重为 **18.03%**，最高权重为 **26.43%**。它与5年国债ETF、10年国债ETF、信用债ETF的平均合计权重为 **66.39%**。这一持仓结构与目标项消融、风险匹配实验共同解释组合的风险收益权衡。HRP Benchmark 的高夏普也应结合极低波动和零无风险利率口径阅读。
 
@@ -250,7 +250,7 @@ The evaluation period is **2018-01-02 to 2026-11-06**. Realized returns retain e
 | Equal Weight | 7.95% | 13.17% | 0.647 | 0.912 | -18.23% | 8.80% |
 | 60/40 Benchmark | 5.91% | 12.13% | 0.534 | 0.764 | -20.46% | 7.65% |
 
-Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark earn more over this period with larger fluctuations and drawdowns. Primary status identifies the research specification and does not establish performance dominance.
+Global RRP earns more than the two hierarchical comparisons while taking more volatility and drawdown. Equal Weight and 60/40 Benchmark have higher volatility and deeper drawdowns than Global RRP; their returns are reported in the table above. Primary status identifies the research specification and does not establish performance dominance.
 
 The money-market ETF averages **18.03%** and reaches **26.43%**. Together with the two government-bond ETFs and the credit-bond ETF, it averages **66.39%**. This allocation, objective ablations and risk-matched comparisons jointly explain the risk-return trade-off. HRP Benchmark's high Sharpe also needs to be read alongside its very low volatility and the zero risk-free convention.
 
