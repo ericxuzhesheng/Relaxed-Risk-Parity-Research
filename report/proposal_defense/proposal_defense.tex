@@ -1,7 +1,7 @@
 % Compile twice with local XeLaTeX:
 % xelatex -interaction=nonstopmode -halt-on-error proposal_defense.tex
 % Content source: 许哲圣_本科毕业论文开题报告(1111).docx
-% Six slides. Speaker script: proposal_speech.tex / proposal_speech.pdf
+% Five slides. Speaker script: proposal_speech.tex / proposal_speech.pdf
 \documentclass[aspectratio=169,12pt]{beamer}
 \usepackage[UTF8,fontset=fandol]{ctex}
 \usepackage{amsmath,amssymb}
@@ -39,7 +39,7 @@
   {\small 2026 年 11 月\par}
 \end{frame}
 
-% Slide 2: 50 seconds
+% Slide 2: 65 seconds
 \begin{frame}{研究背景与研究问题}
   \begin{itemize}
     \setlength{\itemsep}{10pt}
@@ -53,7 +53,7 @@
   能否在扣除交易成本后形成合理的收益与风险取舍？
 \end{frame}
 
-% Slide 3: 90 seconds
+% Slide 3: 120 seconds
 \begin{frame}{两阶段模型与核心公式}
   \textbf{第一阶段：}求解等风险预算组合，得到参考权重 $q$。\par
   \textbf{第二阶段：}在参考组合附近优化最终权重 $w$。
@@ -75,7 +75,7 @@
   {\color{Navy}“宽松”指允许最终配置偏离严格的等风险预算关系。}
 \end{frame}
 
-% Slide 4: 65 seconds
+% Slide 4: 75 seconds
 \begin{frame}{数据与验证方法}
   \begin{itemize}
     \setlength{\itemsep}{9pt}
@@ -90,24 +90,7 @@
   \end{itemize}
 \end{frame}
 
-% Slide 5: 55 seconds
-\begin{frame}{已有基础与后续安排}
-  \vspace{2mm}
-  {\color{Navy}\bfseries 已有基础\par}
-  已完成策略代码实现与初步回测，具备数据处理和建模基础。\par
-  \vspace{5mm}
-  {\color{Navy}\bfseries 开题后的工作\par}
-  \begin{itemize}
-    \setlength{\itemsep}{7pt}
-    \item \textbf{第 1--4 周：}补充文献依据，完善模型说明与实现核查。
-    \item \textbf{第 5--7 周：}整理对照、消融与必要的交易成本检验。
-    \item \textbf{第 8--10 周：}形成论文初稿，根据指导意见修改。
-  \end{itemize}
-  \vspace{4mm}
-  {\small 预期成果：解释模型各项设定的作用，评价配置效果及适用边界。}
-\end{frame}
-
-% Slide 6: 10 seconds
+% Slide 5: 10 seconds
 \begin{frame}
   \centering
   \vspace{10mm}
