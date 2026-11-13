@@ -1,0 +1,102 @@
+% Compile twice with local XeLaTeX:
+% xelatex -interaction=nonstopmode -halt-on-error proposal_defense.tex
+% Content source: 许哲圣_本科毕业论文开题报告(1111).docx
+% Five slides. Speaker script: proposal_speech.tex / proposal_speech.pdf
+\documentclass[aspectratio=169,12pt]{beamer}
+\usepackage[UTF8,fontset=fandol]{ctex}
+\usepackage{amsmath,amssymb}
+
+\definecolor{Navy}{HTML}{17385B}
+\definecolor{TextGray}{HTML}{374151}
+\setbeamercolor{normal text}{fg=TextGray,bg=white}
+\setbeamercolor{structure}{fg=Navy}
+\setbeamercolor{frametitle}{fg=Navy,bg=white}
+\setbeamercolor{title}{fg=Navy}
+\setbeamercolor{itemize item}{fg=Navy}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize item}{\small\textbullet}
+\setbeamertemplate{footline}{%
+  \hfill\usebeamercolor[fg]{structure}\scriptsize
+  \insertframenumber\,/\,\inserttotalframenumber\hspace{6mm}\vspace{4mm}}
+\setbeamersize{text margin left=10mm,text margin right=10mm}
+\setlength{\parskip}{5pt}
+\hypersetup{pdftitle={基于宽松风险平价的多资产ETF配置研究 开题答辩},pdfauthor={许哲圣}}
+
+\begin{document}
+
+% Slide 1: 20 seconds
+\begin{frame}
+  \vspace{7mm}
+  {\color{Navy}\small 本科毕业论文开题答辩\par}
+  \vspace{6mm}
+  {\color{Navy}\LARGE\bfseries 基于宽松风险平价的\par 多资产 ETF 配置研究\par}
+  \vspace{8mm}
+  {\normalsize 许哲圣\qquad 指导教师：王磊\par}
+  {\small 特拉华数据科学学院\quad 金融数学专业\par}
+  \vspace{2mm}
+  {\small 2026 年 11 月\par}
+\end{frame}
+
+% Slide 2: 65 seconds
+\begin{frame}{研究背景与研究问题}
+  \begin{itemize}
+    \setlength{\itemsep}{10pt}
+    \item 股票、债券等资产波动不同，资金等权不等于风险均衡。
+    \item 风险预算提供配置参考，但仍需权衡总风险与预期收益。
+    \item 允许组合在参考配置附近调整，检验调整是否值得。
+  \end{itemize}
+  \vspace{6mm}
+  {\color{Navy}\bfseries 核心问题\par}
+  在风险预算参考基础上加入方差和预测收益短缺惩罚，\par
+  能否在扣除交易成本后形成合理的收益与风险取舍？
+\end{frame}
+
+% Slide 3: 120 seconds
+\begin{frame}{两阶段模型与核心公式}
+  \textbf{第一阶段：}求解等风险预算组合，得到参考权重 $q$。\par
+  \textbf{第二阶段：}在参考组合附近优化最终权重 $w$。
+  \vspace{1mm}
+  \[
+    \min_w\quad
+    \underbrace{\lVert w-q\rVert_2^2}_{\text{偏离参考}}
+    +\underbrace{\lambda_v\frac{w^{\mathsf T}\Sigma w}{v}}_{\text{组合方差}}
+    +\underbrace{\lambda_r\!\left[\max\!\left(0,\frac{R-\mu^{\mathsf T}w}{s}\right)\right]^2}_{\text{预测收益短缺}}
+  \]
+  \[
+    \mathbf{1}^{\mathsf T}w=1,\qquad w_i\geq 0,\qquad R=\mu^{\mathsf T}q.
+  \]
+  {\small
+    $\mu$ 为预测年化收益，$\Sigma$ 为年化协方差矩阵。\par
+    $v,s>0$ 为求解前固定的尺度，$\lambda_v,\lambda_r\geq0$ 为惩罚系数。\par
+  }
+  \vspace{2mm}
+  {\color{Navy}“宽松”指允许最终配置偏离严格的等风险预算关系。}
+\end{frame}
+
+% Slide 4: 75 seconds
+\begin{frame}{数据与验证方法}
+  \begin{itemize}
+    \setlength{\itemsep}{9pt}
+    \item \textbf{研究对象：}30 只境内上市 ETF，覆盖股票、债券、\newline
+      货币市场及商品等类别。
+    \item \textbf{回测安排：}使用 2018 年至 2026 年的历史数据，\newline
+      周度调仓，计入单边 3 个基点交易成本。
+    \item \textbf{信息使用：}仅使用历史数据估计输入、选择年度参数，\newline
+      参数选定后在下一年度保持固定。
+    \item \textbf{效果检验：}对比风险预算参考及简单配置，去掉单项\newline
+      惩罚作比较，结合收益、波动、回撤与持仓解释结果。
+  \end{itemize}
+\end{frame}
+
+% Slide 5: 10 seconds
+\begin{frame}
+  \centering
+  \vspace{10mm}
+  {\color{Navy}\LARGE\bfseries 感谢各位老师\par}
+  \vspace{6mm}
+  {\large 请老师批评指正\par}
+\end{frame}
+
+\end{document}
