@@ -1,31 +1,31 @@
 ﻿holding_month,as_of_date,rebalance_date,model,allocation_type,etf,ticker,asset_class,weight,weight_pct
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,日利ETF,511880.SH,money market,0.1884623263,18.8462326292
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,信用债ETF,511030.SH,credit bond,0.1805484902,18.0548490197
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,5年国债ETF,511010.SH,government bond,0.1787058798,17.8705879787
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,10年国债ETF,511260.SH,government bond,0.1768829897,17.6882989744
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,豆粕ETF,159985.SZ,commodity,0.0337179616,3.3717961577
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,能源化工期货ETF,159981.SZ,commodity,0.0298686058,2.9868605825
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,消费ETF,159928.SZ,china consumer,0.0293606764,2.9360676413
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,红利ETF,510880.SH,china equity dividend,0.0264237604,2.6423760409
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,可转债ETF,511380.SH,convertible bond,0.0255369880,2.5536988007
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,欧洲ETF,513030.SH,global equity,0.0220059845,2.2005984531
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,标普500ETF,513500.SH,global equity,0.0206577870,2.0657787048
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,恒生ETF,159920.SZ,hong kong equity,0.0155329813,1.5532981316
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,沪深300ETF,510300.SH,china equity,0.0123363997,1.2336399668
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,原油ETF,162411.SZ,commodity,0.0119766439,1.1976643899
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,证券ETF,512880.SH,china finance,0.0114249891,1.1424989067
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,纳指ETF,159941.SZ,global equity,0.0102608626,1.0260862627
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,有色金属期货ETF,159980.SZ,commodity,0.0081941711,0.8194171147
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,中证2000ETF,563300.SH,china equity,0.0058941504,0.5894150414
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,军工ETF,512660.SH,china defense,0.0035648476,0.3564847639
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,黄金ETF,518880.SH,commodity,0.0025109994,0.2510999359
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,中证1000ETF,512100.SH,china equity,0.0020759421,0.2075942132
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,新能源ETF,516160.SH,china new energy,0.0018069528,0.1806952754
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,科创50ETF,588000.SH,china tech equity,0.0009740034,0.0974003445
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,半导体ETF,512480.SH,china tech equity,0.0009329462,0.0932946216
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,煤炭ETF,515220.SH,commodity,0.0003401309,0.0340130868
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,中证500ETF,510500.SH,china equity,0.0000022206,0.0002220589
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,日经225ETF,513880.SH,global equity,0.0000001524,0.0000152427
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,创业板ETF,159915.SZ,china equity,0.0000001115,0.0000111482
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,人工智能ETF,159819.SZ,china tech equity,0.0000000420,0.0000041979
-2026-11,2026-11-06,2026-11-13,Global RRP,weekly_target_forecast,白银LOF,161226.SZ,commodity,0.0000000031,0.0000003142
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,日利ETF,511880.SH,money market,0.1879721758,18.7972175759
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,信用债ETF,511030.SH,credit bond,0.1798811191,17.9881119135
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,5年国债ETF,511010.SH,government bond,0.1783539194,17.8353919364
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,10年国债ETF,511260.SH,government bond,0.1762292519,17.6229251881
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,豆粕ETF,159985.SZ,commodity,0.0332845852,3.3284585205
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,能源化工期货ETF,159981.SZ,commodity,0.0306115801,3.0611580057
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,消费ETF,159928.SZ,china consumer,0.0299098844,2.9909884405
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,红利ETF,510880.SH,china equity dividend,0.0260427931,2.6042793104
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,可转债ETF,511380.SH,convertible bond,0.0255888272,2.5588827232
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,欧洲ETF,513030.SH,global equity,0.0219840911,2.1984091077
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,标普500ETF,513500.SH,global equity,0.0212782590,2.1278259006
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,恒生ETF,159920.SZ,hong kong equity,0.0158383228,1.5838322769
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,沪深300ETF,510300.SH,china equity,0.0125082691,1.2508269070
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,证券ETF,512880.SH,china finance,0.0120162711,1.2016271147
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,原油ETF,162411.SZ,commodity,0.0117924576,1.1792457566
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,纳指ETF,159941.SZ,global equity,0.0104776885,1.0477688505
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,有色金属期货ETF,159980.SZ,commodity,0.0083737871,0.8373787058
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,中证2000ETF,563300.SH,china equity,0.0055927331,0.5592733100
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,军工ETF,512660.SH,china defense,0.0037198445,0.3719844453
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,黄金ETF,518880.SH,commodity,0.0022377861,0.2237786086
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,新能源ETF,516160.SH,china new energy,0.0021079735,0.2107973455
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,中证1000ETF,512100.SH,china equity,0.0017786551,0.1778655061
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,半导体ETF,512480.SH,china tech equity,0.0010569314,0.1056931375
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,科创50ETF,588000.SH,china tech equity,0.0010346511,0.1034651119
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,煤炭ETF,515220.SH,commodity,0.0003248306,0.0324830606
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,中证500ETF,510500.SH,china equity,0.0000026157,0.0002615687
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,日经225ETF,513880.SH,global equity,0.0000005067,0.0000506657
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,创业板ETF,159915.SZ,china equity,0.0000001341,0.0000134100
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,人工智能ETF,159819.SZ,china tech equity,0.0000000524,0.0000052444
+2026-11,2026-11-13,2026-11-20,Global RRP,weekly_target_forecast,白银LOF,161226.SZ,commodity,0.0000000035,0.0000003517
