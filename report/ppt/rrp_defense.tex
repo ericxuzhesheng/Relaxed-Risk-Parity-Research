@@ -17,15 +17,15 @@
 \graphicspath{{../../results/figures/}{assets/logos/}}
 
 % ── 封面信息 ─────────────────────────────────────────────────────────────────
-\title{基于宽松风险平价的\\多资产 ETF 配置研究}
-\subtitle{——凸优化建模与年度滚动校准}
-\hypersetup{pdftitle={基于宽松风险平价的多资产 ETF 配置研究——凸优化建模与年度滚动校准}}
+\title{多目标优化视角下的\\多资产 ETF 配置研究}
+\subtitle{——基于宽松风险平价}
+\hypersetup{pdftitle={多目标优化视角下的多资产 ETF 配置研究——基于宽松风险平价}}
 \author{许哲圣}
 \studentid{42353012}
 \school{特拉华数据科学学院}
 \major{金融数学（量化分析方向）}
 \supervisor{王磊}
-\date{2026年10月}
+\date{}
 
 % ── 数值宏。与论文共用同一流水线生成文件 ───────────────────────────────────────
 \input{../thesis_latex/generated_numbers.tex}
@@ -92,7 +92,8 @@
 \item 正半定二次项与负对数项构成凸目标
 \end{itemize}
 \end{frame}
-\begin{frame}{Global RRP 的参考正则化配置}
+\begin{frame}{Global RRP：从三目标到加权和}
+在同一可行域上最小化资金权重偏离、方差与预测收益短缺。给定年度权重，三项目标的折中解由下式确定。
 \[
 \min_w\;\|w-q_t\|_2^2+\lambda_{v,t}\frac{w^\mathsf{T}\Sigma_t w}{v_t}
 +\lambda_{r,t}\left[\max\left(0,\frac{R_t-\mu_t^\mathsf{T}w}{s_t}\right)\right]^2

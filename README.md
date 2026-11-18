@@ -39,7 +39,7 @@
 | Equal Weight | 在当期合格资产间等权配置 | 简单分散化对照 |
 | 60/40 Benchmark | 按项目分类配置60%权益与40%债券，组内等权 | 固定股债比例对照 |
 
-**主模型分两步求解。** 首先得到当期可行的风险预算参考组合 $q_t$，随后在参考附近优化实际权重。收益软目标采用参考组合自身的预测收益。
+**主模型分两步求解。** 首先得到当期可行的风险预算参考组合 $q_t$，随后将资金权重偏离、归一化方差与预测收益短缺平方列为三个最小化目标。参考配置的偏离和短缺均为零，但方差未必最低；第二步以年度系数对三项求加权和，得到周度折中配置。收益软目标采用参考组合自身的预测收益。
 
 $$
 R_t = μ_tᵀq_t
@@ -224,7 +224,7 @@ Equal capital weights do not ensure equal risk contributions. Risk budgeting add
 | Equal Weight | Equal weights across eligible assets | Simple diversification comparison |
 | 60/40 Benchmark | 60% equity and 40% bonds under project classifications, equal weights within each group | Fixed stock-bond comparison |
 
-The first convex problem produces a feasible reference $q_t$. The second balances proximity to that reference, normalized variance and predicted-return shortfall. With expected returns $μ_t$, the soft target is
+The first convex problem produces a feasible reference $q_t$. The second minimizes three objectives over the same feasible weights: squared distance to the reference, normalized variance, and squared normalized predicted-return shortfall. A weighted sum with annually calibrated coefficients selects one weekly allocation, not the entire Pareto frontier. With expected returns $μ_t$, the soft target is
 
 $$
 R_t = μ_tᵀq_t

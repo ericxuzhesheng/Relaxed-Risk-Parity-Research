@@ -23,7 +23,7 @@
 \newcommand{\askbox}[1]{\par\smallskip\colorbox{paleblue}{\parbox{\dimexpr\linewidth-2\fboxsep\relax}{\small #1}}\par}
 \begin{document}
 \begin{center}
-{\fontsize{18}{23}\selectfont\bfseries\color{inkblue}基于宽松风险平价的多资产 ETF 配置研究}\\[0.35em]
+{\fontsize{18}{23}\selectfont\bfseries\color{inkblue}多目标优化视角下的多资产 ETF 配置研究——基于宽松风险平价}\\[0.35em]
 {\normalsize 实习中整理的策略思路与当前实现}
 \end{center}
 \askbox{\textbf{目前进度}\quad 策略代码与初步回测已完成，现就模型设定与实证安排请老师指导。}
@@ -60,7 +60,7 @@
 \clearpage
 \section*{一、策略模型（续）}
 \subsection*{2. 再求最终配置权重}
-\textbf{输入与目的。} 固定第一步得到的 $q$，加入预测年化收益率 $\mu$，并令收益目标 $R=\mu^\top q$。第二步希望在尽量保留参考配置的同时降低方差，并控制调整带来的预测收益损失。
+\textbf{输入与目的。} 固定第一步得到的 $q$，加入预测年化收益率 $\mu$，并令收益目标 $R=\mu^\top q$。以资金权重偏离、归一化方差和预测收益短缺平方为 $f_1,f_2,f_3$，先写为三目标问题 $\min_w(f_1,f_2,f_3)$。参考组合使偏离和短缺同时为零，但未必使方差最小。给定年度系数，以加权和选取折中配置：
 \begin{align*}
  \min_w J(w)
  &=\underbrace{\|w-q\|_2^2}_{\substack{\text{尽量保留参考配置}\\\text{衡量资金权重距离}}}
@@ -141,7 +141,7 @@
 
 \clearpage
 \section*{三、已经得到的初步回测结果}
-\note{评价区间 2018-01-02 至 2026-10-23；五种配置均按周调仓，扣单边 3 bp 成本，252 日年化，$r_f=0$。红色实线为本文策略 Global RRP。}
+\note{五种配置均按周调仓，扣单边 3 bp 成本，252 日年化，$r_f=0$。红色实线为本文策略 Global RRP。}
 \begin{center}
 \includegraphics[width=0.87\linewidth]{global_rrp_nav_comparison.pdf}\par
 {\small\textbf{图 1}\quad 扣费后的累计净值}\par\vspace{0.2em}
